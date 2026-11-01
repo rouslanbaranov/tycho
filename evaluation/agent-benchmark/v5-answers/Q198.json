@@ -1,0 +1,84 @@
+{
+  "task_id": "Q198",
+  "answer": "'Twenty requests per second of backlog' mixes a flow with a stock: 'twenty requests per second' is a rate (arrivals or throughput), while a backlog is a level in requests at an instant. Because both are labelled 'requests', a reader cannot tell whether 20 means waiting work or arrivals per second; the phrase describes neither a state nor a rate, and comparing such numbers across candidates can reverse the conclusion. Backlog divided by throughput has a time unit only when the numerator is a stock and the denominator a flow in the same unit. Reading it as a time needs Little's-law conditions: one admission-to-exit boundary; every accepted item counted once and every exit (success, error, cancellation) represented; throughput equal to the admitted or exit rate over a stable, non-growing population; long-run or steady-state averages, not a short window with edge effects; and conservation offered = completed + rejected + backlog. The stock must match the claimed interval: waiting-only backlog yields wait, in-system count yields residence. Then it approximates mean time in system, not per-request latency or p99. Growth or drainage breaks it, as do warmup bias, hidden stocks and retries. Evidence: V12 stock-and-flow and queue-model pages; V07 boundary, finite-window and recovery pages. Confidence is high on units and conditions; the numbers are synthetic, not production evidence.",
+  "citations": [
+    "tycho.page.870e64da1f925c52109a602440048603#the-stock-to-flow-shorthand-error",
+    "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+    "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+    "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+    "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+    "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+    "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window"
+  ],
+  "evidence": [
+    {
+      "claim": "The exact phrase 'twenty requests per second of backlog' mixes a rate with a level and is incoherent as a state description.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#the-stock-to-flow-shorthand-error",
+      "note": "Section uses this exact example and says a correct statement is either 'the backlog is 20 requests' or 'the arrival rate is 20 requests per second'."
+    },
+    {
+      "claim": "A backlog is a stock in requests; arrival and service are flows in requests per second, so a bare 20 is ambiguous.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+      "note": "Backlog changes by arrivals minus completions; the section says a reviewer cannot tell whether 20 means twenty waiting requests or twenty arriving each second."
+    },
+    {
+      "claim": "Backlog divided by throughput has a time unit only when the numerator is a stock and the denominator a flow in the same unit.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#the-stock-to-flow-shorthand-error",
+      "note": "The ratio 'gives an approximate time in system under Little's law' only under that unit condition; unit-free comparison can reverse candidate choice."
+    },
+    {
+      "claim": "Unit rules and the accounting identity offered = completed + rejected + backlog must hold at every integration step.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+      "note": "Each state carries a stock unit, each flow a per-time unit; a persistent gap is a modelling defect and a coarse step can produce negative stock."
+    },
+    {
+      "claim": "Unit collapse, hidden stock, double counting of retries and unrealistic service rates break the stock-flow reading.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+      "note": "Hidden work in a database or retry buffer makes visible backlog look stable while total work grows; a retry doubles counted requests."
+    },
+    {
+      "claim": "Little's law L = lambda * W relates long-run averages, not a per-request identity or a short-window guarantee; V12 labels mean backlog divided by throughput as a derived approximate time and warns warmup/horizon bias.",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+      "note": "Section states the conditions and finite-window caveat, and says the stock-flow model reports mean backlog divided by throughput labeled as derived."
+    },
+    {
+      "claim": "Queue length (waiting only) and in-system count (waiting plus in service) are distinct, so the stock must match the time claimed.",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+      "note": "Section defines queue length as requests waiting for a server; in-system count is waiting plus in service."
+    },
+    {
+      "claim": "Occupancy, throughput and residence time are comparable only within one admission-to-exit boundary, counting every termination once, over a stable non-growing population.",
+      "section_key": "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+      "note": "Conservation N(t1)=N(t0)+A-D requires one consistent count; stable long-run admitted and exit rates converge, otherwise offered, admitted, completed and abandoned events must be separated."
+    },
+    {
+      "claim": "Little's law needs a stable system, a consistent customer definition and steady-state or long-run averages, with lambda as throughput or admitted rate rather than offered RPS; a finite-interval equality holds when the system starts and ends empty.",
+      "section_key": "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+      "note": "Section: 'not a rule that response time is always occupancy divided by offered RPS'; cites Kim and Whitt on edge effects and the empty-at-both-ends special case."
+    },
+    {
+      "claim": "When arrivals exceed completions, backlog grows and the average identity does not yield a fixed response time.",
+      "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+      "note": "Synthetic 120 offered vs 80 completions/s for 20 s: substituting offered rate and transient L is invalid because arrival and departure boundaries differ and the window is not stationary."
+    },
+    {
+      "claim": "During growth or drainage the rates diverge, so the quotient is not a residence time.",
+      "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+      "note": "200 offered vs 150 completed/s for 30 s grows backlog by 1,500; the text rejects using L = 200 x W during a growing queue and notes departures can exceed arrivals while draining."
+    },
+    {
+      "claim": "A finite window that ends with unfinished work invalidates naive backlog/throughput-to-time arithmetic; edge effects need explicit uncertainty analysis.",
+      "section_key": "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+      "note": "One request present throughout [0,5) with eventual 10 s residence: naive arrivals/window x full W gives 2 while observed mean population is 1."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

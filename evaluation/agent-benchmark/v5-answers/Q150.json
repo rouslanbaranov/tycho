@@ -1,0 +1,93 @@
+{
+  "task_id": "Q150",
+  "answer": "Zone-B replicas stay healthy because their probes observe process liveness, not the booking journey. Authorization depends on the zone-A identity endpoint (token validation or signing keys), and commit depends on the single zone-A database writer. When A fails, B processes keep running, but requests cannot be authenticated and no safely fenced authoritative writer exists outside A, so no booking completes; spreading replicas did not remove either shared dependency. A successful health response cannot prove identity or a transaction, and processes can stay up while quorum is unreachable.\n\nInstead, the availability claim must be failure-scoped and capability-scoped, not topology-scoped. It must state the user capability (completed bookings), the declared failure class (loss of zone A or any one zone), the dependencies assumed to survive (identity/signing keys, routing, a promotable writer or quorum), the authority-transfer and fencing rule, the promised degraded mode (read-only catalogue; new bookings refused until one writer is safely promoted), RTO/RPO targets, and drill evidence of correct completed journeys with no dual writer. Without that evidence, record insufficient evidence rather than claim success; replica count is not availability. Active/passive with demonstrated failover may be safer, and the claim is bounded by the weakest shared dependency. Confidence is high on the mechanism. Unknowns: whether a safe writer promotion or identity fallback works; no drill is reported.",
+  "citations": [
+    "tycho.page.6b3725950fad4c0db82417b3d0225d32#purpose-and-mission",
+    "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+    "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+    "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+    "tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims",
+    "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+    "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+    "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability"
+  ],
+  "evidence": [
+    {
+      "claim": "A process can be healthy while the overall user journey is unavailable when replicas share a datastore, identity, routing plane or failure domain.",
+      "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#purpose-and-mission",
+      "note": "Observed: 'A process can be healthy and the overall user journey unavailable because all replicas share a datastore...'; more replicas do not guarantee isolation unless placement and dependencies are modeled."
+    },
+    {
+      "claim": "In the question's exact topology, zone-B replicas remain healthy at process level after zone A fails but cannot authorize or commit reservations.",
+      "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+      "note": "Observed: 'three API replicas are spread across zones A and B. All replicas use one identity endpoint and one database writer reachable only through a zone-A dependency chain'; B replicas 'remain healthy at process level but cannot authorize or commit reservations'."
+    },
+    {
+      "claim": "The zone-A couplings are identity token validation/signing keys and the sole database writer with no safely promoted writer or routing outside zone A.",
+      "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+      "note": "Observed dependency table: identity/credentials hidden coupling is 'token validation or signing-key service solely in zone A'; booking data is 'no safely promoted writer or routing outside zone A'."
+    },
+    {
+      "claim": "A healthy process or readiness check does not prove a transaction, identity or user contract is correct, and processes may keep running without quorum.",
+      "section_key": "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+      "note": "Observed: 'a successful process-health check does not prove a transaction, identity or user contract is correct. A cluster may keep processes running when it cannot reach a quorum.'"
+    },
+    {
+      "claim": "Failure domains are dependency sets; an availability design must state which faults it survives without violating state authority.",
+      "section_key": "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+      "note": "Observed: 'An availability design should state which faults it intends to survive without violating state authority'; zonal workers with one unreplicated database do not meet a whole-journey zonal objective."
+    },
+    {
+      "claim": "No isolated minority may present itself as a new authoritative writer without fencing or election.",
+      "section_key": "tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims",
+      "note": "Observed: 'an isolated minority must not present itself as a new authoritative writer without correct fencing/election'."
+    },
+    {
+      "claim": "A test that checks only replica count can pass while users cannot access correct data.",
+      "section_key": "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+      "note": "Observed: 'A test that checks only desired replica count can pass while users cannot access correct data.'"
+    },
+    {
+      "claim": "The claim must be expressed as a named user capability under a declared failure class, with RTO/RPO as targets until a timed drill.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+      "note": "Observed: RTO is 'the approved maximum period a named user capability can be unavailable for the declared disaster class'; a number is 'a target, not an observed result' until a performed and timed drill."
+    },
+    {
+      "claim": "Before claiming zonal recovery, evidence must include load under loss, data owner/quorum, latency, errors and correct completions; dependence on failed management is a do-not-proceed condition.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+      "note": "Observed table row 'Single instance/zone' lists those evidence needs and the condition 'Remaining zones lack capacity or are dependent on failed management'."
+    },
+    {
+      "claim": "Degraded read-only operation is valid only if explicitly promised; a 200 OK from an obsolete cache is not a healthy booking service.",
+      "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+      "note": "Observed: 'Such degraded operation is valid if explicitly promised; counting 200 OK responses from an obsolete cache as healthy booking service is not.'"
+    },
+    {
+      "claim": "Health, readiness and liveness answer different questions; external journey monitoring is the alternative when probes cannot observe the user-visible contract.",
+      "section_key": "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+      "note": "Observed pattern: probes must not conflate failure meanings; the competing alternative is external journey monitoring when probes cannot observe the user-visible contract."
+    },
+    {
+      "claim": "Static stability requires pre-existing capacity and locally available state; unavailable authentication invalidates a zone-failure capacity premise.",
+      "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability",
+      "note": "Observed: a data plane can depend on control-plane services for credentials; 'authentication unavailable' or a shared database limit invalidates the premise."
+    },
+    {
+      "claim": "Active/passive with demonstrated failover may be safer than nominal active/active without state fencing.",
+      "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+      "note": "Observed: 'A simpler active/passive topology with demonstrated failover may be safer than nominal active/active without state fencing.'"
+    },
+    {
+      "claim": "Overall availability is bounded by the weakest shared dependency; replica count cannot compensate for a zone-local identity or writer.",
+      "section_key": "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+      "note": "Inference: the section treats failure domains as dependency sets and says zonal workers with one unreplicated database do not satisfy a whole-journey zonal objective."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

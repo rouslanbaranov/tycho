@@ -1,0 +1,75 @@
+{
+  "task_id": "Q181",
+  "answer": "A commit position is only an order within one log lineage. After a leadership change the new leader reconciles divergent uncommitted suffixes, so a replica can report an applied position that is numerically higher while its branch never contained the client's acknowledged write: applied is not committed, and an older-term entry is not committed merely because a majority stores it. Comparing bare numbers across terms therefore admits an ineligible replica and returns an older state without signalling it. It can also be scoped wrongly: a token is partition-bound, while a node-level applied counter spans partitions.\n\nThe token must carry epoch or lineage with the position (a comparable term/generation plus commit index, or explicit log lineage), scoped to the partition or dataset and, for delete-and-recreate, the object incarnation. A resetting counter or bare scalar is insufficient; multiwriter dependencies need a frontier.\n\nThe routing decision must carry the requirement itself, not only a number: the named guarantee, an epoch-aware sufficiency test against committed rather than merely applied state, the dataset scope, and the permitted outcomes - bounded wait, reroute to an authoritative replica with term checks, or a retryable failure that preserves the token. Serving an older snapshot to hit latency is the failure mode. Confidence is moderate: the token design cited is a proposal, not an executed test.",
+  "citations": [
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#6-failure-and-negative-experiment-matrix",
+    "tycho.page.d664f65295644726ae1234a982f81fa8#2-agreement-linearizability-and-availability-solve-different-problems",
+    "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#where-the-dependency-must-travel",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes"
+  ],
+  "evidence": [
+    {
+      "claim": "A bare commit counter is not comparable across a leadership change; comparison must be epoch-aware and distinguish an established commit from a divergent suffix.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+      "note": "Observed text: 'This token algorithm assumes positions remain meaningful across leadership changes. A bare counter that resets on a new leader is insufficient. A stable log lineage or epoch-aware comparison must distinguish an established commit from a divergent suffix.'"
+    },
+    {
+      "claim": "A newly elected leader may reconcile followers with divergent uncommitted suffixes, so locally applied entries are not necessarily committed history.",
+      "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+      "note": "Observed Raft-style rule 3 in the leader-change list; committed entries carry a leader-completeness/durability guarantee, uncommitted suffixes may be replaced."
+    },
+    {
+      "claim": "A delayed follower must not treat an uncommitted suffix as truth; doing so produces incorrect applied business effects.",
+      "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#6-failure-and-negative-experiment-matrix",
+      "note": "Proposed failure matrix row: 'Delayed follower - Can it catch up without treating uncommitted suffix as truth? - Duplicate/incorrect applied business effect.' Proposed test, not an executed result."
+    },
+    {
+      "claim": "Commit rules are term-scoped: older-term entries are not committed merely because a majority holds them.",
+      "section_key": "tycho.page.d664f65295644726ae1234a982f81fa8#2-agreement-linearizability-and-availability-solve-different-problems",
+      "note": "Observed: 'The paper distinguishes a current-term majority commit rule from blindly declaring older-term entries committed on majority presence alone.' Also: client-visible linearizability needs read-path and leader/term checks."
+    },
+    {
+      "claim": "Epoch or lineage is required before a token may cross a leadership change; a token is validated only where its epoch is comparable.",
+      "section_key": "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+      "note": "Observed atlas contraindication and recovery rule: 'an epoch or lineage field is required before a token may cross a leadership change'; 'Validate and preserve the token only when its epoch or lineage is comparable'."
+    },
+    {
+      "claim": "The router must pick a replica whose applied position is sufficient under the requirement, otherwise wait bounded, reroute to an authoritative replica, or return a retryable failure preserving the token.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+      "note": "Observed router algorithm text; also 'Do not silently serve an older snapshot to keep a latency target.'"
+    },
+    {
+      "claim": "A token is partition-bound, bound to a dataset, bounded and validated; it is an observation requirement, not permission.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+      "note": "Observed: 'A token proves an observation requirement, not permission to read its contents'; per-partition maximum requirement; bound token size, wait and dataset scope."
+    },
+    {
+      "claim": "Delete and recreate require object identity as well as a position, or the token appears satisfied for a different incarnation.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#where-the-dependency-must-travel",
+      "note": "Observed: 'Delete and recreate require object identity as well as a position. Retaining an old numeric version for a new incarnation can make a token appear satisfied while the application refers to a different object.'"
+    },
+    {
+      "claim": "A quorum intersection alone does not make a read fresh; the version selector must be defined, and a latency budget does not excuse a stale response.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Observed: 'The arithmetic is a consistency contract: a latency budget does not make a stale response correct.' A read intersecting the write quorum can still be stale when the selector ignores the newest replica."
+    },
+    {
+      "claim": "In a multiwriter system one scalar may not represent causal dependencies; use a frontier or narrow the guarantee.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+      "note": "Observed: 'In a genuinely multiwriter system, one scalar may not represent causal dependencies; use an appropriate frontier or narrow the guarantee.'"
+    },
+    {
+      "claim": "An acknowledged write can be lost or reversed under weak write concern, so a numerically higher replica may not contain it.",
+      "section_key": "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+      "note": "Observed: MongoDB causal consistency needs majority reads and writes; weaker write concern may roll back. Inference: numeric position therefore overstates what is durable."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

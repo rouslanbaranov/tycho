@@ -1,0 +1,56 @@
+{
+  "task_id": "Q186",
+  "answer": "A per-client backend (BFF) can improve the contract because a shared API cannot usually delegate query shape: field filtering, sorting and pagination make callers over-fetch, join in memory and issue several calls. A BFF owned by each client team selects only the fields that experience needs and composes the owner calls server-side into one response, so the two clients evolve independently and neither pays for the other's view. It remains a composition layer, not a second domain authority, because business rules and shared invariants stay with the owning service, cross-cutting concerns stay outside the BFF, and duplicated client-specific logic is an explicit trade-off. It crosses the line if it caches or authorizes domain objects or hides a domain workflow.\n\nThe release risk is alignment. The BFF is tightly coupled to its client but composes services with independent lifecycles, so releasing it independently of those services can leave its composition pointing at a changed or mismatched domain-API version or shape - version skew and drift that surface as broken or partially degraded client responses. Version the composition and contract-test the client on every release; prefer a shared API with client-side selection when differences are small. The evidence is pattern guidance, not a measured drift incident; confidence is medium.",
+  "citations": [
+    "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+    "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation"
+  ],
+  "evidence": [
+    {
+      "claim": "A shared API forces callers to shape their own queries: field filtering, sorting and pagination cannot generally be delegated to owners, so a composer over-fetches, joins in memory and issues several calls.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+      "note": "Observed in the API Composition subsection: 'Filtering, sorting and pagination cannot generally be delegated to owners; the composer over-fetches, joins in memory...' The same subsection names a client-specific backend for frontend as the alternative. The notes label themselves synthetic design guidance."
+    },
+    {
+      "claim": "A BFF is a separate backend for one client experience, owned by the frontend team; it customizes the client API and may compose several service calls.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+      "note": "Observed source-supported mechanism: the owner section quotes AWS 'having one backend per user experience' and Microsoft 'Create a separate backend service for each frontend interface', plus aggregation of multiple downstream calls."
+    },
+    {
+      "claim": "Domain authority stays with the service that owns the business rule, so the BFF does not become a second domain authority; cross-cutting concerns remain outside, and duplicated client-specific logic is an evaluated trade-off.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+      "note": "Explicit Tycho guidance, not a source claim: 'domain authority stays with the service that owns the business rule, so the BFF does not become a second domain authority'; cross-cutting features abstracted; code duplication is a probable outcome to evaluate."
+    },
+    {
+      "claim": "A BFF that caches or authorizes objects becomes another authority.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+      "note": "Observed Tycho guidance in the Limits subsection: 'a BFF that caches or authorizes objects becomes another authority.'"
+    },
+    {
+      "claim": "A composition that hides a domain workflow should not be aggregated; a BFF or narrow-contract API composition is preferable, owning composition logic while the gateway stays transport and trust boundary.",
+      "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+      "note": "Observed: 'Do not aggregate when ... the composition is a hidden domain workflow'; 'Client-side composition, a backend for frontend or an API Composition layer with a narrow contract may be preferable.'"
+    },
+    {
+      "claim": "The BFF is tightly coupled to one client experience, while the services it composes have independent lifecycles; deploying it independently creates release-alignment and version-skew risk.",
+      "section_key": "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+      "note": "Card: 'independent BFF and domain-service lifecycles create release-alignment risk.' The owner section adds the BFF is released with its client while composed services have independent lifecycles."
+    },
+    {
+      "claim": "Treat divergence between the BFF composition and the domain API as drift; version the composition and test the client contract on every release, with per-BFF observability and client matrix.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+      "note": "Explicit Tycho guidance, not a source claim: 'treat divergence ... as drift, version the composition and test the client contract on every release'; with several BFFs each composition needs its own version, observability and client matrix. The sources support independent lifecycles but document no drift incident."
+    },
+    {
+      "claim": "A shared API with client-side selection is the alternative when differences are small; reject the split when deployments multiply without measured client benefit.",
+      "section_key": "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+      "note": "Card: competing alternative is a shared API with client-side selection; hard contraindications include a split that multiplies deployments without a measured client benefit."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

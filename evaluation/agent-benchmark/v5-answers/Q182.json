@@ -1,0 +1,87 @@
+{
+  "task_id": "Q182",
+  "snapshot": "9e9194e512330b211cede713c01f143b6e96b937439a6ff0ecf04872f77c5404",
+  "answer": "Majority quorum is floor(N/2)+1, so three voters need two acknowledgements and tolerate one loss, while four need three and still tolerate only one: the fourth voter enlarges the commit quorum without widening the failure budget, and commits now wait on three of four voters. Five voters, the next odd size, tolerate two; a non-voting learner adds capacity without that cost.\n\nR+W>N is a per-configuration intersection proof. It assumes reader and writer share the same member set (\"membership is correctly configured\"). During the change, a write may commit under the old three-voter configuration with W=2 (say A and B), while a read under the new four-voter configuration with R=2 (W=3 still satisfies 2+3>4) contacts C and D. The sets can be disjoint: 2+2 is not greater than the four distinct voters. R+W>N held in both configurations, yet the read returns the pre-commit value. The new voter may still be catching up, and follower reads are stale without lease or read-index semantics.\n\nFix: make membership a committed state-machine decision with joint or overlapping old and new quorums, catch the node up as a non-voting learner, then promote; select the highest version and repair. Limits: confidence is high on the counts, lower on product-specific reconfiguration, and the book's arithmetic is conditional, not an implementation test. Evidence: quorum-envelope sections 2-3; leader-recovery sections 4-6.",
+  "citations": [
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#5-reconfiguration-and-restoration-are-different-actions",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#6-failure-and-negative-experiment-matrix",
+    "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview"
+  ],
+  "evidence": [
+    {
+      "claim": "Majority quorum of N voters is floor(N/2)+1; a 3-voter cluster needs 2 votes, and adding a fourth voter raises the required votes from 2 to 3 without increasing tolerated failures.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+      "note": "Observed: 'In a simplified majority-voting cluster of N eligible voters, a quorum is floor(N/2)+1. A 3-voter cluster requires 2 votes... Adding an extra voting member can actually increase the quorum without increasing tolerated failures - for example 3 voters -> 4 voters raises required votes from 2 to 3.'",
+      "status": "observed"
+    },
+    {
+      "claim": "A 3-voter group tolerates one failure; a 4-voter group requires three votes and still tolerates one; a replica added in an existing failure domain raises quorum without adding a failure domain.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+      "note": "Observed under 'Quorum placement and failure domains': 'A 3-voter group tolerates one failure; a 4-voter group requires three votes and still tolerates one; a 6-voter group requires four and tolerates two... Adding a replica in an existing domain can raise the quorum without adding a new failure domain.'",
+      "status": "observed"
+    },
+    {
+      "claim": "R+W>N gives intersecting sets only when membership is correctly configured; every membership change must preserve that intersection; a read with too small R can return stale data.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+      "note": "Observed: 'when R + W > N and membership is correctly configured, the sets intersect, but the reader must select the highest version and repair stale replicas... every membership change must preserve that intersection... A read with too small R can return stale data, and an unsafe membership edit can remove progress.'",
+      "status": "observed"
+    },
+    {
+      "claim": "Overlap is necessary but not sufficient for freshness; membership changes that move replicas can violate consistency; a strict system must require the old and new quorums to overlap; a read that intersects a write quorum can still be stale if the selector ignores the newest replica.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Observed in the page's 'Quorum-Based Reads-Writes' ownership notes, which also record Cassandra's warning that simultaneous range movements can violate monotonic consistency and Dynamo/Riak sloppy-quorum fallbacks.",
+      "status": "observed"
+    },
+    {
+      "claim": "Safe reconfiguration accounts for current voters, reachable quorum, catch-up state, target network identity, eligible leader placement and whether the reconfiguration itself can commit.",
+      "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#5-reconfiguration-and-restoration-are-different-actions",
+      "note": "Observed: 'A safe reconfiguration accounts for current voters, reachable quorum, catch-up state, target network identity, eligible leader placement, and whether the reconfiguration itself can commit.'",
+      "status": "observed"
+    },
+    {
+      "claim": "Read consistency is a separately defined policy: local follower reads can be stale; linearizable reads require valid confirmation, lease or read-index semantics; a leader that cannot confirm quorum must stop serving authoritative writes and linearizable reads.",
+      "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+      "note": "Observed: item 5 of the Raft-style list and the failure paragraph ('local follower reads can be stale; linearizable reads require valid confirmation/lease/read-index semantics').",
+      "status": "observed"
+    },
+    {
+      "claim": "A membership addition while degraded can create an unsafe quorum requirement increase if the newcomer never starts; a delayed follower must catch up without treating an uncommitted suffix as truth.",
+      "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#6-failure-and-negative-experiment-matrix",
+      "note": "Observed as proposed negative test rows ('Membership addition while degraded', 'Delayed follower'); the page states these are proposed test cases, not results.",
+      "status": "observed"
+    },
+    {
+      "claim": "A non-voting learner can receive state before safe promotion under implementation-specific rules; a dangerous membership addition can remove progress when the new member cannot join; membership changes are state-machine decisions needing supported joint/overlapping quorum safeguards, not a simple configuration count update.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+      "note": "Observed: 'A dangerous membership addition can remove progress when the new member cannot join. A non-voting learner can receive state before safe promotion under implementation-specific rules. Changes to membership are themselves state-machine decisions that need supported joint/overlapping quorum safeguards, not a simple count update in a config file.'",
+      "status": "observed"
+    },
+    {
+      "claim": "The quorum pattern card states that a membership change needs the old and new quorums to overlap, or an explicit sloppy-quorum trade-off.",
+      "section_key": "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+      "note": "Observed in 'Failure and recovery' on the Quorum-Based Reads / Writes card.",
+      "status": "observed"
+    },
+    {
+      "claim": "Failure tolerance is N minus quorum: N=3 and N=4 both tolerate one failed voter, while N=5 tolerates two; a non-voting learner adds capacity without raising the quorum.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+      "note": "Inference from the observed quorum arithmetic. The book prints the 3->4 example, the 3-voter and 4-voter tolerances, and says a 5-voter cluster requires 3 votes; it does not print a closed-form tolerance formula or an explicit 5-voter tolerance sentence.",
+      "status": "inference"
+    },
+    {
+      "claim": "A write committed under the old three-voter configuration with W=2 on A,B and a read under the new four-voter configuration with R=2 on C,D can be disjoint (2+2 is not greater than the four distinct voters), so R+W>N holds per configuration while the read misses the committed value; the fourth voter can also lag while catching up.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Constructed example and arithmetic are inference from the overlap requirement plus the catch-up statements; the book states the hazard (membership changes can violate consistency; old and new quorums must overlap) but does not print this A/B, C/D example.",
+      "status": "inference"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

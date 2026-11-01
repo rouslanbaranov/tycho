@@ -1,0 +1,48 @@
+{
+  "task_id": "Q191",
+  "answer": "Not a contradiction: the V12 checkout comparison treats p95 latency as a declared constraint, not the objective. C5 makes p95 <= 1.5 s a hard ceiling, and both A (0.870 s) and B (1.206 s) pass; C fails C5 (1.769 s) and C4 (3.63 > 3.0) and is eliminated. Among survivors B wins on success rate (0.9996 vs 0.9218) and cost per 1,000 successes (1.34 vs 1.81). A's latency advantage is headroom inside an already-satisfied ceiling; the contract calls it \"a tradeoff rather than a failed constraint\" and applies no undeclared success threshold.\n\nThe value judgment is the priority ordering, not the simulated metrics: the record \"prioritizes successful completions and cost per success over the latency difference inside the 1.5-second ceiling,\" and states \"That prioritization is a decision, not a fact produced by the simulation.\" The weights are declared, not simulated; the contract warns a weighted score can hide them.\n\nBoundaries: the workload is synthetic - narrow intervals \"do not make the inputs measured.\" The recommendation is conditional because operability (C3) is untested, and it reverses if a measured cost weight makes B lose to A, B's measured p95 tail exceeds 1.5 s, or the operability review fails. Confidence is high for this reading, not for production behavior.",
+  "citations": [
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation"
+  ],
+  "evidence": [
+    {
+      "claim": "A's p95 (0.870 s) beats B's (1.206 s), but both satisfy the hard C5 ceiling of 1.5 s; C is eliminated by C4 (3.63 > 3.0) and C5 (1.769 > 1.5).",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+      "note": "Observed: C1/C2 hold for all three; C4 and C5 eliminate C; A and B pass both hard constraints."
+    },
+    {
+      "claim": "B beats A on success rate (0.9996 vs 0.9218) and cost per 1000 successes (1.34 vs 1.81).",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+      "note": "Observed run table: synthetic Poisson workload, 30 replications, seed base 20261029; converged at 0.02 relative error."
+    },
+    {
+      "claim": "The V12 contract classifies A's lower p95 as a tradeoff rather than a failed constraint and applies no undeclared success threshold.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+      "note": "Observed: hard, soft and non-quantitative constraints are separated; operability remains unverified, so the recommendation is conditional."
+    },
+    {
+      "claim": "The recommendation's priority ordering is a value judgment rather than a simulated fact.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+      "note": "Observed quote: 'That prioritization is a decision, not a fact produced by the simulation.'"
+    },
+    {
+      "claim": "A weighted score can hide its weights, which is why declared priorities matter for reading the recommendation.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+      "note": "Observed contract rationale for keeping constraints, evidence statuses and unknowns in separate fields."
+    },
+    {
+      "claim": "The recommendation is conditional and reversible; synthetic precision does not make inputs measured.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+      "note": "Observed reversal triggers include a cost weight under which B no longer beats A and a measured p95 tail pushing B above 1.5 s; narrower synthetic CIs are explicitly not a reversal."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

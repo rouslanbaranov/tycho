@@ -1,0 +1,64 @@
+{
+  "task_id": "Q152",
+  "answer": "Recall@k is scored against fixed judgments: the denominator is the judged-relevant documents, and an unjudged document adds nothing. A pool built from earlier systems' top-k therefore contains only what those systems returned. The new retriever's extra relevant documents lie outside the pool, so they earn no credit; worse, they occupy top-k slots and displace judged-relevant documents. Its measured Recall@k can drop below the pool-builder's even when it retrieves more genuinely relevant material: a selection bias favoring whoever defined the pool. The book names the matching misuses: treating unjudged results as definitely irrelevant and assuming judgments include every relevant item.\n\nRe-running the metric alone is not enough. Re-run the judgment cycle: extend the pool with the new retriever's top-k results, obtain independent judgments for every newly surfaced document, then recompute Recall@k and nDCG@k for all systems against the same expanded qrels, on the same frozen corpus revision, filters and query set, declaring how unjudged items were handled. Keep old and new numbers side by side so the bias magnitude stays visible.\n\nBoundaries: unjudged is not irrelevant; recall against known judgments is not absolute relevance; a small question set cannot generalize. Confidence is high on the mechanism, moderate on the remedy steps.",
+  "citations": [
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+    "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality",
+    "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design",
+    "tycho.page.5f1fe7b87ce443889dd4662fe845794a#6-evaluate-the-end-to-end-information-task",
+    "tycho.chapter.e3cf27f8212a455bb53e135ee18bbaa9#decision-and-worked-result"
+  ],
+  "evidence": [
+    {
+      "claim": "Recall@k's denominator is the set of judged-relevant items under the chosen qrels, not every relevant document that exists.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+      "note": "Observed: 'Recall@k uses a denominator of all judged relevant items under the chosen qrels.'"
+    },
+    {
+      "claim": "Treating unjudged results as irrelevant and assuming judgments are complete are named metric misuses; an evaluation pool affects nDCG too.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+      "note": "Observed table: Precision@k misuse 'Treating unjudged as definitely irrelevant'; Recall@k misuse 'Assuming judgments include every relevant item'; nDCG misuse includes 'ignoring evaluation pool'."
+    },
+    {
+      "claim": "Pooled judgments are assumptions or approximations for a particular collection, not a complete relevance map.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+      "note": "Observed: 'NIST TREC documentation makes clear that pooled judgments are assumptions/approximations for a particular collection, not an eternal complete map of relevance.'"
+    },
+    {
+      "claim": "Unjudged results stay uncertain rather than becoming false; disagreements are not resolved by the metric.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+      "note": "Observed: 'Label questions and their relevant documents/sections with reviewer context and snapshot/version identity; disagreements and unjudged results remain uncertain.'"
+    },
+    {
+      "claim": "Recall@k is the fraction of independently judged relevant items found in the top k.",
+      "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality",
+      "note": "Observed metric-contract row: 'Recall@k - Fraction of independently judged relevant items found among top k'."
+    },
+    {
+      "claim": "A defensible comparison uses the same corpus revision, eligible filters, query set and measurement environment.",
+      "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design",
+      "note": "Observed: 'Use the same underlying corpus/revision, exact eligible filters, query set and measurement environment.'"
+    },
+    {
+      "claim": "Recall must be reported with unjudged handling declared; without a complete pool it is recall against known judgments, not absolute relevance.",
+      "section_key": "tycho.page.5f1fe7b87ce443889dd4662fe845794a#6-evaluate-the-end-to-end-information-task",
+      "note": "Observed: 'report Recall@k and nDCG@k with unjudged handling declared' and 'Without a complete judgment pool one must disclose that this is recall against known judgments, not absolute relevance.'"
+    },
+    {
+      "claim": "Corpus, indexing configuration, queries and judgments must be versioned together so quality changes are reproducible.",
+      "section_key": "tycho.chapter.e3cf27f8212a455bb53e135ee18bbaa9#decision-and-worked-result",
+      "note": "Observed: 'Version corpus, indexing configuration, queries and judgments together so quality changes can be explained and reproduced.'"
+    },
+    {
+      "claim": "Extending the judgment pool with the new retriever's results, re-judging them, then recomputing all systems' metrics on the expanded qrels is the required remedy before comparison.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+      "note": "Inference: the book states the precondition (matched qrels, complete pool, declared unjudged handling) but does not prescribe a pooling/re-judging procedure."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

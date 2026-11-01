@@ -1,0 +1,52 @@
+{
+  "task_id": "Q164",
+  "answer": "R + W > N guarantees intersection, not freshness. Every read quorum of R replicas must share at least one replica with the W replicas that acknowledged the newest write, so that version is present among the responses — provided both operations use the same replica set and the write actually reached W replicas. Intersection is necessary: with R + W ≤ N the sets can be disjoint and no respondent can supply the value. It is not sufficient, because a replica holding the newest copy does not force the response that copy.\n\nSufficiency needs more. The write must really be durable on W replicas; a failed or partial write leaves only older versions to intersect. Membership must be strict: Dynamo and Riak sloppy quorums route to fallback nodes, so the R respondents and W acknowledgers can be different sets. The reader must select the newest version: Cassandra's last-write-wins timestamps assume a total order, Dynamo and Riak can return concurrent siblings, and clock skew can invert that order. Replica movement during membership change can also break old/new overlap. Read repair and hinted handoff are best-effort; anti-entropy converges only eventually. A leader simplifies ordering but still needs a majority; per-session read-your-writes is a separate obligation. Evidence is documentation and a 2007 paper, not an implementation test.",
+  "citations": [
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+    "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#worked-history-and-counterexample"
+  ],
+  "evidence": [
+    {
+      "claim": "R + W > N gives set intersection only; the reader must still select the highest version and repair stale replicas.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+      "note": "Observed: 'when R + W > N and membership is correctly configured, the sets intersect, but the reader must select the highest version and repair stale replicas'; 'A read with too small R can return stale data.' Hence necessity."
+    },
+    {
+      "claim": "Overlap is necessary but not sufficient for freshness; a read intersecting the write quorum can still return stale data when the write failed, membership was sloppy, or the selector ignores the newest replica.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Observed, near-verbatim: 'Overlap is necessary but not sufficient for freshness' and the three stale-return conditions listed in Failure and recovery."
+    },
+    {
+      "claim": "Sloppy quorum in Dynamo and Riak sends requests to fallback nodes instead of enforcing strict membership, so acknowledged and read sets need not be the same replica set.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Observed; book labels it summarized from cited sections, not quoted verbatim. Riak documents sloppy quorum as failover mode, strict quorum as an option."
+    },
+    {
+      "claim": "Version selection is separate policy: Cassandra last-write-wins timestamps need a total order, Dynamo and Riak can expose concurrent siblings, and a highest-version selector is Tycho guidance rather than a source guarantee.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Observed. Boundary: no source tests the selector; clock skew is the mechanism by which timestamps can misorder."
+    },
+    {
+      "claim": "Read repair and hinted handoff are best-effort; durability of freshness depends on anti-entropy, which is eventual.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Observed: Cassandra calls read repair and hinted handoff 'only best-effort' and relies on anti-entropy for eventual consistency."
+    },
+    {
+      "claim": "Atlas card states intersection alone does not guarantee freshness and lists an application-defined version selector and repair path as preconditions; sloppy quorum is the availability fallback.",
+      "section_key": "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+      "note": "Observed in v11 pattern atlas card: Good-fit conditions, Failure and recovery, Decision state applicable-under-conditions."
+    },
+    {
+      "claim": "Per-session read-your-writes is a weaker, separate obligation: the acknowledgement supplies a position the reader must enforce, and other sessions may still see older values.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#worked-history-and-counterexample",
+      "note": "Observed: write commits at 81, read at position 77 returns older title A; 'Another session can still observe 77 under this contract.' Boundary, not the quorum claim."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

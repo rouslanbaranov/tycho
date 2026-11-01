@@ -1,0 +1,1413 @@
+{
+  "status": "ai-judge-not-human",
+  "summary": {
+    "n": 50,
+    "pass": 16,
+    "pass_rate": 0.32,
+    "agreement": 0.92,
+    "support2": 50,
+    "coverage2": 16,
+    "citation": 40,
+    "mean_calls": 30.58,
+    "mean_words": 209.7,
+    "mean_citations": 6.92,
+    "layers": {
+      "book": {
+        "n": 25,
+        "pass": 8,
+        "support2": 25,
+        "coverage2": 8,
+        "citation": 20
+      },
+      "atlas": {
+        "n": 12,
+        "pass": 1,
+        "support2": 12,
+        "coverage2": 1,
+        "citation": 9
+      },
+      "modeling-and-simulation": {
+        "n": 13,
+        "pass": 7,
+        "support2": 13,
+        "coverage2": 7,
+        "citation": 11
+      }
+    },
+    "failed": [
+      "Q150",
+      "Q151",
+      "Q152",
+      "Q154",
+      "Q155",
+      "Q156",
+      "Q158",
+      "Q161",
+      "Q162",
+      "Q164",
+      "Q166",
+      "Q167",
+      "Q169",
+      "Q170",
+      "Q171",
+      "Q172",
+      "Q174",
+      "Q176",
+      "Q177",
+      "Q178",
+      "Q179",
+      "Q180",
+      "Q181",
+      "Q182",
+      "Q183",
+      "Q184",
+      "Q185",
+      "Q186",
+      "Q190",
+      "Q191",
+      "Q195",
+      "Q196",
+      "Q198",
+      "Q199"
+    ],
+    "disagreements": [
+      "Q154",
+      "Q164",
+      "Q170",
+      "Q186"
+    ],
+    "adjudicated": 4,
+    "adjudicated_pass": 0,
+    "post_adjudication_pass": 16
+  },
+  "rows": [
+    {
+      "id": "Q150",
+      "layer": "book",
+      "a": {
+        "task_id": "Q150",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Missing the core claim that Kubernetes topology-spread only influences placement and cannot guarantee post-removal balance or database consistency, so placement must be paired with an isolated fault test of compute, identity and storage loss; the required evidence anchor for that claim is uncited."
+      },
+      "b": {
+        "task_id": "Q150",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: Kubernetes topology-spread placement guarantees neither balance after node removal nor database consistency, so placement must be paired with an isolated compute, identity and storage fault test."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q151",
+      "layer": "book",
+      "a": {
+        "task_id": "Q151",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Misses the core claim that recurring manual work is a capacity constraint and that automation introduced to remove it is itself a maintained system needing ownership, tests, monitoring and rollback."
+      },
+      "b": {
+        "task_id": "Q151",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that recurring manual work is a capacity constraint and that automation introduced to remove it is itself a maintained system needing ownership, tests, monitoring and rollback."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q152",
+      "layer": "book",
+      "a": {
+        "task_id": "Q152",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Core claim 5 is missing: the answer never compares lexical, vector and hybrid retrieval on one evidence base, nor warns that semantic similarity or a top result does not certify support."
+      },
+      "b": {
+        "task_id": "Q152",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that lexical, vector and hybrid retrieval must be compared on the same evidence base, including fusion and reranking complexity."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q153",
+      "layer": "book",
+      "a": {
+        "task_id": "Q153",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is substantively missing; the change-feed variant and cursor restart semantics are the only claim details left implicit."
+      },
+      "b": {
+        "task_id": "Q153",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; the answer distinguishes position stability from snapshot semantics and covers cursor binding, expiry and per-request authorization."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q154",
+      "layer": "book",
+      "a": {
+        "task_id": "Q154",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": false,
+        "pass": true,
+        "notes": "All five core claims are substantively covered, with the only residual gap being the claim that out-of-order fixtures and measured output freshness are needed to test the declared lateness and correction policy; the failure-recovery-experiments anchor is uncited."
+      },
+      "b": {
+        "task_id": "Q154",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: the declared lateness and correction policy must be tested with out-of-order fixtures and measured output freshness, which the answer never states."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false,
+      "adjudicated": {
+        "task_id": "Q154",
+        "pass": false,
+        "core_claims_met": 3,
+        "core_claims_total": 5,
+        "notes": "Independent re-read. Claims 1-3 are substantively covered: the watermark is a stated lateness expectation rather than proof of completeness, including event-time versus arrival order; late-event options include drop with an explicit metric, side output, update/retraction and deferred finalization via reopening; and the sink contract calls for idempotent upsert or transactional replay deduplication. Claim 4 is only partial: the separate-adjustment half is present and a restored checkpoint is named only as a double-apply hazard, but the answer never states that a consistent checkpoint restores operator state and source positions while not deciding whether a late business correction is discarded, emitted as an update or routed to reconciliation. Claim 5 is incomplete: the policy dimensions are listed (event-time source, daily boundary, allowed lateness, idle partitions, state retention/TTL, correction form, sink support), but the required out-of-order fixtures and measured output freshness are never stated; 'needs release evidence' is not a test plan. Prior judge split noted; no prior label adopted."
+      },
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q155",
+      "layer": "book",
+      "a": {
+        "task_id": "Q155",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Misses the controlled-acceptance core claim (with and without the index under fixed version, SQL parameters, dataset, resources and concurrency, reporting writes, maintenance, lock waits, storage and client p95/p99) and never discusses EXPLAIN ANALYZE."
+      },
+      "b": {
+        "task_id": "Q155",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the EXPLAIN ANALYZE core claim that it executes the statement, adds instrumentation overhead and is unsafe on a data-changing statement against uncontrolled state."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q156",
+      "layer": "book",
+      "a": {
+        "task_id": "Q156",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Core claims 4 and 5 are missing: there is no treatment of redaction occurring only after sensitive bytes have traversed intermediate paths, and nothing on retained agent-interaction records; per-copy access enforcement and revocation are only gestured at."
+      },
+      "b": {
+        "task_id": "Q156",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that redaction at a central collector occurs after sensitive bytes have traversed intermediate paths, so exposure must be limited at emission and the whole ingestion chain verified."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q157",
+      "layer": "book",
+      "a": {
+        "task_id": "Q157",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is substantively missing; the active/passive alternative and the zone-A compute plus independent database/identity injection steps are only implicit."
+      },
+      "b": {
+        "task_id": "Q157",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; shared failure domains, degraded-mode honesty, journey-level drill evidence and single-writer fencing are all stated."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q158",
+      "layer": "book",
+      "a": {
+        "task_id": "Q158",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Missing the core claim distinguishing logical operation, transport attempt, resource, event and consumer-effect identities at their own durability boundaries, and the five-identities and retry-policy anchors are uncited."
+      },
+      "b": {
+        "task_id": "Q158",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: the five distinct identities (operation, transport attempt, resource, event, consumer effect) and the ban on minting a new operation ID per retry are absent."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q159",
+      "layer": "book",
+      "a": {
+        "task_id": "Q159",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing; the answer declares the late-event policy, checkpoint limits, sink idempotency, settled-invoice adjustment events and the jointly chosen event-time contract."
+      },
+      "b": {
+        "task_id": "Q159",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No missing core claim: the late-event policy options, checkpoint limits, sink idempotency, adjustment-event fallback and coupled processing contract are all stated."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q160",
+      "layer": "book",
+      "a": {
+        "task_id": "Q160",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: the synthetic 60 percent closed-record case and the pinned comparison conditions are covered, with extended statistics only implicit."
+      },
+      "b": {
+        "task_id": "Q160",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: the answer covers access-pattern fit, planner choice, the 60 percent tenant distribution, pinned comparison conditions and correlated-predicate estimation limits."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q161",
+      "layer": "book",
+      "a": {
+        "task_id": "Q161",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The evaluation-set composition claim is missing: exact identifiers, conceptual and multi-part questions, false friends, unanswerable and renamed or deleted content, and permission scopes."
+      },
+      "b": {
+        "task_id": "Q161",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that the evaluation set must span exact identifiers, conceptual and multi-part questions, false friends, unanswerable items, renamed or deleted content and permission scopes, so generated keyword queries cannot establish expert search quality."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q162",
+      "layer": "book",
+      "a": {
+        "task_id": "Q162",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that search results leak through metadata such as counts, titles, snippets, related links and citations that must be filtered against the authorized subject and object, along with the no-mutation baseline for a read-only search surface."
+      },
+      "b": {
+        "task_id": "Q162",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claims: separating transport, data and effect control (with a no-mutation baseline for a read-only service) and filtering metadata such as counts, titles, snippets and citations."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q163",
+      "layer": "book",
+      "a": {
+        "task_id": "Q163",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All core claims covered; the write-speculation claim is brief, naming the idempotency identity but not the reconciliation path for a committed canceled loser."
+      },
+      "b": {
+        "task_id": "Q163",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No missing core claim: the measured-percentile trigger, bounding preconditions, shared-capacity load effect and write idempotency requirement are all stated."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q164",
+      "layer": "book",
+      "a": {
+        "task_id": "Q164",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Core claim 5 is missing: quorum arithmetic on a misconfigured voter set, where adding a voter raises the required majority without increasing tolerated failures, is never discussed."
+      },
+      "b": {
+        "task_id": "Q164",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: intersection, version selection and repair, concurrent siblings, membership overlap with sloppy quorums and voter-set configuration are all addressed."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "adjudicated": {
+        "task_id": "Q164",
+        "pass": false,
+        "core_claims_met": 4,
+        "core_claims_total": 5,
+        "notes": "Independent re-read. Claims 1-4 are substantively covered: R + W > N forces voter-set intersection so the read consults an acknowledging replica; intersection yields only a candidate because the reader must select the newest version and repair stale replicas; concurrent siblings require a total order before last-write-wins applies, with the clock-skew caveat; and a membership change must preserve old/new overlap while sloppy quorums trade intersection for availability. Claim 5 is absent: the answer never states that quorum arithmetic depends on a correctly configured voter set, nor that adding a voter can raise the required majority without increasing tolerated failures. 'Provided both operations use the same replica set' and the membership-overlap discussion address set identity, not the majority arithmetic of an enlarged or misconfigured voter set. Prior judge split noted; no prior label adopted."
+      },
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q165",
+      "layer": "book",
+      "a": {
+        "task_id": "Q165",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is substantively missing; the operator/ordering support limit of an index family and the EXPLAIN-not-a-p99-report caution are left implicit."
+      },
+      "b": {
+        "task_id": "Q165",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; the answer ties the regression to per-parameter selectivity and plan estimates and limits the evidence to unexecuted synthetic plans."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q166",
+      "layer": "book",
+      "a": {
+        "task_id": "Q166",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Missing the core claim that backend errors or unknown failures must not be cached as absence and that the authorization path must fail closed and recheck changed state; the discriminating-failure-experiment and authority/data-contract anchors are uncited."
+      },
+      "b": {
+        "task_id": "Q166",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: a backend error or unknown failure must not be cached as absence, and the authorization path must fail closed and recheck on state change."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q167",
+      "layer": "book",
+      "a": {
+        "task_id": "Q167",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Misses the core claim that head sampling decides near the start of a request and can exclude a request before a later severe error or slow completion makes it interesting."
+      },
+      "b": {
+        "task_id": "Q167",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that head sampling decides near the start of a request and can exclude it before a later severe error or slow completion makes it interesting."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q168",
+      "layer": "book",
+      "a": {
+        "task_id": "Q168",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: locked prepared state, commit-point logging, vote-as-input, contraindication and the saga trade-off are covered, though recovery authority is only lightly specified."
+      },
+      "b": {
+        "task_id": "Q168",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: prepared locks, the durable commit-point decision and in-doubt state, the bar on unilateral resolution, the contraindication and saga trade-offs are all addressed."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q169",
+      "layer": "book",
+      "a": {
+        "task_id": "Q169",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The ANN index trade-off claim is missing: HNSW, IVF and quantization costs, duplicate vectors, cluster shape and deletion behavior changing achieved accuracy."
+      },
+      "b": {
+        "task_id": "Q169",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that HNSW, IVF and quantized indexes trade recall against latency, memory and build or update cost and that duplicate vectors, cluster shape and deletion behavior change achieved accuracy."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q170",
+      "layer": "book",
+      "a": {
+        "task_id": "Q170",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: ranking and provenance are separate, so a well-scored hit or cached snippet must be bound to the index generation and source revision that produced it."
+      },
+      "b": {
+        "task_id": "Q170",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; the answer covers analyzer-term identity, symbol-eroding tokenization, exact fields, generation pinning, and provenance, though hit-level provenance is implicit."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "adjudicated": {
+        "task_id": "Q170",
+        "pass": false,
+        "core_claims_met": 4,
+        "core_claims_total": 5,
+        "notes": "Independent re-read. Claims 1-4 are substantively covered: the index stores index-time analyzer output terms, so a query matches only when query analysis maps onto them; CamelCase or punctuation splitting and stemming can leave an API identifier unmatched as a term; a keyword/exact-term field beside analyzed prose preserves symbol lookup; and the analyzer name/version belongs to index-generation identity, so a mismatch silently maps the same query text to old postings. Claim 5 is absent: ranking and provenance are never separated, no well-scored hit is bound to the index generation and source revision that produced it, and the cached-snippet-citing-a-removed-revision case is missing. Pinning generation and source revision for the index as a whole is not hit-level provenance. Prior judge split noted; no prior label adopted."
+      },
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q171",
+      "layer": "book",
+      "a": {
+        "task_id": "Q171",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the Amdahl core claim: the answer never states that a model with no coherency term approaches a plateau rather than declining, so a measured decline is not explained by a serial share alone."
+      },
+      "b": {
+        "task_id": "Q171",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The answer omits the Amdahl conditional-bound contrast (no coherency term, plateau rather than decline), so it does not explain why a measured decline cannot come from a serial share alone."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q172",
+      "layer": "book",
+      "a": {
+        "task_id": "Q172",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that a write whose reply was lost is an unknown outcome rather than a failed write, so a stale read is not proof that the commit never happened."
+      },
+      "b": {
+        "task_id": "Q172",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: a write whose reply was lost is an unknown outcome rather than a failed write, so a stale read does not prove the commit never happened."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q173",
+      "layer": "book",
+      "a": {
+        "task_id": "Q173",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: the answer states the structural defect of merging retrieved data into the instruction channel, the unreliability of natural-language filters, and the effect-authority boundary with default-deny capabilities, schema validation and re-checked entitlement."
+      },
+      "b": {
+        "task_id": "Q173",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing outright; the thinnest part is claim 1's data-classification metadata (source identity, revision and access classification), which appears only as advisory provenance labels."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q174",
+      "layer": "book",
+      "a": {
+        "task_id": "Q174",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: a large estimate-versus-actual gap only shows that a cardinality assumption may be wrong and does not by itself show another index is the fix, and the acceptance step also omits the frozen version, dataset and parameter set."
+      },
+      "b": {
+        "task_id": "Q174",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Omits the core claim that a large estimate-versus-actual gap shows only that a cardinality assumption may be wrong, not that another index is the fix, and the extended-statistics and ANALYZE guidance is left without the provided acceptance evidence."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q175",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q175",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All five core claims covered; prepared-lock blocking and the durable commit point are explicit, though the saga alternative does not mention that compensation can itself fail."
+      },
+      "b": {
+        "task_id": "Q175",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; all five are addressed, though the saga branch is compressed and omits compensating actions and the possibility that compensation itself fails."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q176",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q176",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: session tokens are partition-bound, so a token cannot order reads that land on another partition."
+      },
+      "b": {
+        "task_id": "Q176",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The partition-bound token claim is missing: the answer never states that a session token cannot order reads that land on another partition."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q177",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q177",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the RFC 9111 core claim that negative results may be stored only within its storage rules and that a shared cache must not reuse an authorization-bearing response without a permitting directive."
+      },
+      "b": {
+        "task_id": "Q177",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The answer omits the RFC 9111 constraint that a shared cache may not reuse an authorization-bearing response unless a response directive permits storage."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q178",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q178",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that the BFF is tightly coupled to and released with one client while the composed services have independent lifecycles, so the composition contract must be versioned and the client contract tested."
+      },
+      "b": {
+        "task_id": "Q178",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: the composition contract must be versioned and the client contract tested because the BFF is released with one client while the composed services have independent lifecycles."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q179",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q179",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the fifth core claim's contraindications that responses may not be comparable and that fan-out tail latency or cost growth beyond the caller's budget rules the pattern out, which the answer replaces with an atomicity-only boundary."
+      },
+      "b": {
+        "task_id": "Q179",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Core claim 5 is missing: the answer gives an atomicity boundary but never names the stated contraindications (a single answering authority, non-comparable responses, fan-out tail latency beyond the caller's budget) or that cost and tail latency grow with participant count."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q180",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q180",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: a route can stay stale or point at an isolated region because DNS answers persist, the router cannot move existing connections and geographic routing returns an endpoint whether healthy or not, while the probe is authoritative for reachability rather than data freshness."
+      },
+      "b": {
+        "task_id": "Q180",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Omits the core claims that each geode is a self-contained geo-replicated deployment and that stale DNS, unmovable connections and health-blind geographic routing can leave a client on an isolated region whose probe says nothing about replication freshness."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q181",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q181",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that a database token cannot assert that an external search index applied an event, as well as the session-context and lost-token/timed-out-write claims."
+      },
+      "b": {
+        "task_id": "Q181",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: a database token cannot assert that an external search index has applied an event, so a qualifying database snapshot combined with an older index needs a publication watermark, a pending-changes overlay, or an explicit delayed-search label."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q182",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q182",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: overlap can still return a stale value after a failed write, sloppy membership or a selector that ignores the newest replica, and sloppy quorum trades that overlap for availability."
+      },
+      "b": {
+        "task_id": "Q182",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The residual-staleness claim is missing: the answer never covers failed writes, sloppy membership, an ignored newest replica, or the sloppy-quorum availability trade-off."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q183",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q183",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that a cached negative must be distinguishable from no entry and from a tombstone and that an unknown backend error must never be cached as absence; the proposed discriminating tests are also absent."
+      },
+      "b": {
+        "task_id": "Q183",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The answer omits the no-entry/tombstone/backend-error distinction and the page's proposed (not performed) discriminating tests."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q184",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q184",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that adding an index is a data-lifecycle change whose end-to-end cost in write latency, WAL volume, storage, vacuum and planning must be compared with the scan it removes."
+      },
+      "b": {
+        "task_id": "Q184",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claims: the covering path fails quietly when plan shape changes (a filter can raise table access, estimated cost is not elapsed time, EXPLAIN ANALYZE adds overhead) and an index is a data-lifecycle change whose end-to-end workload cost must be compared."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q185",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q185",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the fifth core claim's selection rule that two-phase commit is contraindicated when participants cannot prepare or coordinator failure would block critical resources, since only the saga alternative and its isolation loss are stated."
+      },
+      "b": {
+        "task_id": "Q185",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Core claim 5 is only partly covered: the answer gives the saga alternative and its loss of isolation but never states that two-phase commit is contraindicated when participants cannot prepare or coordinator failure would block critical resources."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q186",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q186",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: BFF ownership and composition, the fit condition with client-side selection as the alternative, policy and domain logic staying outside, release-alignment risk and non-authority are covered, though per-client failure isolation is only implicit."
+      },
+      "b": {
+        "task_id": "Q186",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Omits the core claim that per-client failure isolation does not make the backend authoritative or license a silent change to shared domain behavior, and covers the unowned-lifecycle and deployment-multiplication contraindications only in passing."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "adjudicated": {
+        "task_id": "Q186",
+        "pass": false,
+        "core_claims_met": 3,
+        "core_claims_total": 5,
+        "notes": "Independent re-read. Claims 1, 2 and 4 are covered: a client-team-owned BFF customizes the experience and composes owner-service calls while domain services stay authoritative; the fit condition includes materially different client needs, duplicated client-specific composition as a trade-off, and a shared API with client-side selection when differences are small; and independent lifecycles create release-alignment/version-skew risk, requiring composition versioning and client-contract tests. Claim 3 is only partial: cross-cutting concerns and business rules stay outside the BFF, but the named contraindications are missing - duplicated domain logic, an unowned lifecycle, and deployment multiplication without measured client benefit are not stated as boundaries ('duplicated client-specific logic is an explicit trade-off' is a different, optional point). Claim 5 is not met: non-authority is stated, but per-client failure isolation and the limit that isolation does not license a silent change to shared domain behavior are absent. Prior judge split noted; no prior label adopted."
+      },
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q187",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q187",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All five core claims covered; decision-scoped boundaries, the decision-reversal test and the verification/validation distinction are present."
+      },
+      "b": {
+        "task_id": "Q187",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; all five are addressed, though the stock-and-flow/discrete-event/hybrid resolution taxonomy and the explicit conceptual-versus-operational validity distinction remain implicit."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q188",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q188",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: the one-way rule, link fields, derived-index provenance, non-promotion and validator limits are all covered."
+      },
+      "b": {
+        "task_id": "Q188",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; the answer covers the one-way rule, link contents, the derived reverse index, non-promotion, and validator limits."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q189",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q189",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; the insufficient-evidence record's owner and review-trigger detail is the thinnest element."
+      },
+      "b": {
+        "task_id": "Q189",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "The only missing core-claim elements are that the screen assumes meaningful input standardization and that a useful insufficient-evidence record must name the owner and the review trigger."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q190",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q190",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that a 95% interval covers the true mean only under the model's assumptions and does not cover the production value or a single future request."
+      },
+      "b": {
+        "task_id": "Q190",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: a 95% interval's repeated-sampling coverage, its failure under a biased model or mis-specified inputs, and its inapplicability to a single future request are not stated."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q191",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q191",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the first core claim's controlled-comparison basis of an identical 20 requests-per-second Poisson workload for 1,800 seconds after a 300-second warmup with the same seed scheme, and the reversal triggers are narrowed to three."
+      },
+      "b": {
+        "task_id": "Q191",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Core claim 1 is missing: the answer never states the shared 20 rps Poisson workload, 1,800-second run with 300-second warmup, identical seed scheme and metric definitions that make the candidates comparable."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q192",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q192",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: the finite-window edge effect, warmup leakage, the identical scenario contract, engine-enforced warmup and convergence-as-precision are all covered."
+      },
+      "b": {
+        "task_id": "Q192",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: window and edge bias, warmup leakage, identical-workload drift, engine-enforced warmup and the precision-versus-accuracy limit of convergence are all covered."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q193",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q193",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All five core claims covered; full jitter, synchronized retry waves, the A/B/C policy comparison and jitter-policy reproducibility are present."
+      },
+      "b": {
+        "task_id": "Q193",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; all five are addressed, though the exponential-backoff growth rule and the no/full/equal jitter variant list remain implicit."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q194",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q194",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: one-way linking, backlink harm, link fields, reverse-index provenance and the limits on what a link establishes are covered."
+      },
+      "b": {
+        "task_id": "Q194",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; the answer covers the one-way rationale, backlink harm, link contents, the derived index, and non-establishment."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q195",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q195",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the V12 order-intake core claim that the model checks the accounting identity at every step, refuses a negative backlog, and treats its fixed 0.1-second step and non-negativity assertion as part of the model contract."
+      },
+      "b": {
+        "task_id": "Q195",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The answer omits the V12 order-intake model's per-step offered = completed + rejected + backlog identity, its refusal of negative backlog, and its fixed 0.1-second step and non-negativity contract."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q196",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q196",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that the main sensitivity scenario converges at 0.00016 relative error under a quadratic screening approximation rather than a full Sobol analysis."
+      },
+      "b": {
+        "task_id": "Q196",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: the sensitivity scenario's own convergence at a 0.00016 relative error, which is only a quadratic screening approximation and not a full Sobol analysis, is not reported."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q197",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q197",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: the answer separates the structural validator from the independent V12-F review, its verbatim SHA-256-indexed report and the gates' limits, though the pass-with-findings exception detail is only summarized."
+      },
+      "b": {
+        "task_id": "Q197",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": false,
+        "pass": true,
+        "notes": "No core claim is missing outright; claim 4's recorded outcome stops at pass-with-findings and omits the single raw-report line-length exception and the absence of blocking, high or medium findings."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": false,
+      "post_adjudication_pass": true
+    },
+    {
+      "id": "Q198",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q198",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: metric identifiers and units belong to the scenario contract and a decision that uses a metric not declared in the scenario is a validation failure."
+      },
+      "b": {
+        "task_id": "Q198",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Omits the core claim that V12 keeps metric identifiers and units in the scenario contract and treats a decision based on an undeclared metric as a validation failure."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    },
+    {
+      "id": "Q199",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q199",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that both the checkout record being decision-supported under its declared constraints and the modernization record being insufficient evidence are valid outcomes."
+      },
+      "b": {
+        "task_id": "Q199",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: the answer never states that both the checkout record being decision-supported under its declared constraints and the modernization record being insufficient evidence are valid outcomes."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "post_adjudication_pass": false
+    }
+  ]
+}

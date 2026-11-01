@@ -1,0 +1,159 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "modeling-and-simulation",
+  "items": [
+    {
+      "question": "Why does full jitter reduce synchronized retry waves, and why must a model record its jitter policy to be reproducible?",
+      "required_evidence": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure"
+      ],
+      "core_claims": [
+        "Exponential backoff increases the delay after each attempt, while full jitter replaces the computed delay with a uniform draw between zero and that delay.",
+        "Without jitter, clients that failed at the same time retry at the same time, producing a load spike when the service is least able to absorb it.",
+        "V12 implements no jitter, full jitter and equal jitter, and the scenario declares which is used; a model that uses jitter without recording it is not reproducible.",
+        "The A/B/C runs compare whole retry policies rather than jitter alone: B with three attempts, exponential backoff and full jitter has retry amplification 1.004 and timeout rate 0.0041, while C with two attempts and linear backoff has amplification 1.079 and timeout rate 0.111.",
+        "Jitter spreads retry timing but does not bound total retry load, so a bounded retry budget remains necessary."
+      ],
+      "optional_claims": [
+        "Retry amplification is total attempts divided by offered requests and is reported for every V12 discrete-event run.",
+        "A request that times out with attempts remaining waits for its backoff and re-enters the queue; otherwise it fails."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why does a V12 decision record link one way to existing pattern identifiers instead of writing a backlink into the pattern card, and what does such a link not establish?",
+      "required_evidence": [
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-iron-rule",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-pattern-link-contains",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural"
+      ],
+      "core_claims": [
+        "The volume's iron rule is that V12 references existing patterns while existing patterns do not reference V12.",
+        "A backlink would change a canonical card or page, stale its review and source records, and can invalidate an existing promotion hash; the one-way rule keeps existing evidence reproducible.",
+        "A link records a stable pattern identifier, the canonical owner document identifier and path, and a relation such as candidate, constraint, mechanism or reversal trigger; the relation is a V12 statement, not a change to coverage, review or promotion state.",
+        "The reverse index is generated from V12 records and maps pattern identifiers to V12 models, scenarios, runs and decisions; it is a lookup table with provenance, not a semantic graph, and it is not hand-edited.",
+        "A link does not promote the pattern, re-review its source evidence, create a second canonical explanation, or establish production applicability."
+      ],
+      "optional_claims": [
+        "The V12-A structural gate resolves each linked pattern identifier and requires the owner document identifier and owner path to match the registry entry, so a link to another pattern's valid owner page fails.",
+        "The reverse index is regenerated when V12 records change, while the existing pattern corpus remains read-only."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a visible backlog look stable while total work grows, and what must a stock-and-flow model do about stocks that sit outside its boundary?",
+      "required_evidence": [
+        "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+        "tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits"
+      ],
+      "core_claims": [
+        "A stock is an accumulation at a point in time, while a flow is a rate over an interval; only the stock carries memory and inertia, so a queue can remain long after the arrival rate falls.",
+        "Work waiting in a database, a client retry buffer or an operator queue is a stock too; if it is omitted, the visible backlog can look stable while total work grows elsewhere.",
+        "The accounting identity offered = completed + rejected + backlog must hold at every integration step, and a persistent gap means the model is creating or destroying work rather than merely accumulating floating-point error.",
+        "The V12 order-intake model checks that identity at every step and refuses a negative backlog; its fixed 0.1-second step and non-negativity assertion are part of the model contract, not private implementation details.",
+        "If a stock that can change the decision is outside the declared boundary, the model's output is outside its validity domain for that decision, so the omission must be recorded rather than hidden."
+      ],
+      "optional_claims": [
+        "A large integration step can admit a whole interval of arrivals at once, serve more than the available backlog and produce a negative stock.",
+        "The baseline order-intake run offers 20 requests per second for 3,600 seconds with a 300-second warmup and reports zero backlog, while the saturation run reports a 77.6-request average backlog; both results are synthetic."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why does V12 keep a two-replication convergence-stress run that fails the 0.02 relative-error threshold instead of discarding it or reporting it as converged?",
+      "required_evidence": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes"
+      ],
+      "core_claims": [
+        "The sensitivity scenario itself converges at a 0.00016 relative error, but that only makes its sampling error small under the declared quadratic screening approximation, not a full Sobol analysis.",
+        "A separate two-replication convergence-stress run has a 0.032 relative error, above the 0.02 threshold, and is marked insufficient-sample.",
+        "Its wide input draws and small replication budget exhibit the failure mode: a ranking from an unstable sample can reverse, so the instability is recorded instead of hidden.",
+        "V12-C treats a run that fails the 0.02 relative-error threshold as not converged evidence, while convergence itself does not establish model validity, measured inputs or decision correctness."
+      ],
+      "optional_claims": [
+        "Convergence means the sampling error of the reported metric is small under the declared model, not that the confidence interval contains the production value.",
+        "The stress run is deliberately separate from the converged sensitivity run so that the screen's precision is not overstated."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why can a locally passing V12 validator not substitute for the V12-F review gate, and what does that gate still not establish?",
+      "required_evidence": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural"
+      ],
+      "core_claims": [
+        "The validator checks the structural gates while the engine tests check the model and statistical gates, and neither claims the independent review gate.",
+        "V12-F requires a fresh read-only reviewer outside the authoring session; the reviewer checks the artifacts and does not rerun the test suite.",
+        "The review report is stored verbatim, indexed with a SHA-256 and linked from the review record; a pass is not owner acceptance and does not promote a pattern.",
+        "The recorded outcome is pass-with-findings with one raw-report line-length exception and no blocking, high or medium finding, while owner acceptance remains open.",
+        "The gates do not establish that source claims are true, that models match a real system, that decisions are owner-accepted, or that CI, deployment or production behavior occurred."
+      ],
+      "optional_claims": [
+        "V12-A through V12-E are implemented and checked locally, while V12-F is recorded as a separate gate.",
+        "A review pass does not close the question of whether the decision should be adopted."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why is 'twenty requests per second of backlog' not a coherent state description, and what must be true before backlog divided by throughput can be read as a time?",
+      "required_evidence": [
+        "tycho.page.870e64da1f925c52109a602440048603#the-stock-to-flow-shorthand-error",
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics"
+      ],
+      "core_claims": [
+        "A backlog is a stock measured in requests, while an arrival or service rate is a flow measured in requests per second; the phrase mixes a level with a rate and loses its units.",
+        "A ratio of backlog to throughput has a time unit only when the numerator is a stock and the denominator is a flow in the same unit, as in the approximate time in system under Little's law.",
+        "Comparing raw backlog numbers across candidates can reverse a ranking when one candidate has a smaller backlog but a larger arrival rate and another has a larger backlog but a smaller arrival rate.",
+        "V12 keeps metric identifiers and units in the scenario contract and computes ratios only after the units are explicit, and a decision that uses a metric not declared in the scenario is a validation failure."
+      ],
+      "optional_claims": [
+        "A large integration step can serve more than the available backlog and produce a negative stock, so the step belongs to the model contract rather than a private implementation detail.",
+        "The order-intake model reports 20 requests per second of throughput with zero backlog in the baseline and a 77.6-request average backlog under saturation; these values are synthetic."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can the V12 decision-validity gate not compensate for a failed statistical gate, and what outcome follows for a recommendation built on an unconverged run?",
+      "required_evidence": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+      ],
+      "core_claims": [
+        "The gate flow is ordered V12-A structure, V12-B model, V12-C statistical, V12-D calibration, V12-E decision and V12-F review, and a later gate cannot substitute for an earlier one.",
+        "V12-C requires seeds, replications, standard errors, confidence intervals and a convergence status, and it does not treat a run that fails the 0.02 relative-error threshold as converged evidence.",
+        "V12-E requires candidates and runs, hard, soft and non-quantitative constraints, business-comparable metrics with units, evidence statuses, an explicit recommendation or no-recommendation outcome, and reversal triggers and limitations.",
+        "A decision record cannot repair an unconverged or missing run by passing the decision gate; the defensible outcomes are a conditional decision or an insufficient-evidence decision.",
+        "Both the checkout record being decision-supported under its declared constraints and the modernization record being insufficient evidence are valid outcomes."
+      ],
+      "optional_claims": [
+        "A passing decision gate still does not establish that the model matches a real system or that the owner accepted the decision.",
+        "Every V12 model is uncalibrated, so calibration claims remain conditional even when the later decision gate passes."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "task_id": "Q157",
+  "answer": "Three replicas in two zones are not three independent failure domains. If they form a three-voter group, one zone holds at least two, so losing that zone leaves too few votes to commit; a surviving process can still pass health checks while unable to reach quorum. Placement also hides shared dependencies: in the book's fictional deployment all three API replicas use one identity endpoint and a database writer reachable only through zone A, plus shared gateway and egress paths. When zone A fails, those fail together, so a zone-spread label did not create isolation. A read-only catalogue can be an honest degraded mode; 200 OK from a stale cache is not a recovered booking service.\n\nA recovery test must prove the booking journey and authoritative truth recover, not merely that processes are healthy. It should inject one declared failure class in an isolated environment and verify the exact journey—authorization, commit, visible confirmation, readback, and dependent index/notification effects—yields correct outcomes or explicit rejections. It must demonstrate business invariants (no double booking; every acknowledged reservation present or accounted as declared RPO loss; ambiguous outcomes reconciled), fencing to exactly one writer, dependency recovery, detection-to-routing time, actual measured RTO/RPO and operator interventions. Failback needs separate validation. Without that evidence, the honest result is insufficient evidence and writes stay paused.",
+  "citations": [
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+    "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+    "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+    "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#6-falsifiable-drill-protocol"
+  ],
+  "evidence": [
+    {
+      "claim": "Three copies in two zones cannot guarantee survival of a zone loss: one zone holds at least two, and a three-voter group needs two votes.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+      "note": "Observed: a 3-voter group tolerates one failure, a single domain loss can remove a larger share, and adding a replica in an existing domain raises quorum without adding a failure domain. The 2+1 zone arithmetic is inference from those rules."
+    },
+    {
+      "claim": "Surviving replicas can be process-healthy but unable to authorize or commit reservations when identity and the database writer depend on the failed zone.",
+      "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+      "note": "Observed in the fictional deployment: 'replicas in B may remain healthy at process level but cannot authorize or commit reservations'; the identity endpoint and database writer are reachable only through zone A."
+    },
+    {
+      "claim": "A zone-spread label does not eliminate shared failure domains: replicas share gateway/control, identity, booking writer and egress dependencies.",
+      "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+      "note": "Observed hidden-coupling table: both compute zones need one regional load-balancing/control endpoint; booking data has no safely promoted writer; identity/signing keys are only in zone A; payment egress uses a shared NAT path."
+    },
+    {
+      "claim": "Health checks do not prove transaction, identity or user-contract correctness; processes may run without quorum.",
+      "section_key": "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+      "note": "Observed: 'a successful process-health check does not prove a transaction, identity or user contract is correct. A cluster may keep processes running when it cannot reach a quorum.'"
+    },
+    {
+      "claim": "A recovery drill must show the exact user journey reaches correct outcomes in time, not that the service merely looks healthy.",
+      "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+      "note": "Observed availability gate: 'exact user journey reaches acceptable correct outcomes in time'; the negative case is 'service healthy while requests are semantically wrong.'"
+    },
+    {
+      "claim": "Recovery must prove business invariants and reconciliation, not just restore data: acknowledged reservations are present or bounded as loss, with no duplicates.",
+      "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+      "note": "Observed safe sequence: restore to an isolated target, verify logical reservation invariants and selected accepted operation IDs, reconcile external accepted effects, then fence old writers and re-enable writes under one authority."
+    },
+    {
+      "claim": "Acceptance requires client-level correct outcomes, explicit rejections and timeouts, state reconciliation, dependency recovery and no competing writers.",
+      "section_key": "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+      "note": "Observed proposed experiments measure client-level correct outcomes, explicit rejections, timeouts, state reconciliation, routed traffic, dependency recovery and cost; a test that checks only desired replica count can pass while users cannot reach correct data."
+    },
+    {
+      "claim": "The drill must fence one writer, publish measured RTO and actual RPO, and hold writes if evidence is missing.",
+      "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+      "note": "Observed sequence: fence/isolate the old writer, reconcile accepted/rejected/unknown operation IDs, verify authorization and exclusive reservations, measure RTO from impact to correct capability and RPO against acknowledged operations; hold writes when fencing or historical evidence is unavailable. Failback is treated as a new migration requiring quarantine, reconciliation and user-journey checks, not a DNS reversal."
+    },
+    {
+      "claim": "A green health endpoint or replica process alone does not prove a recovered booking journey; the drill must inject specific failure variants and check user-level outcomes.",
+      "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#6-falsifiable-drill-protocol",
+      "note": "Observed: 'A green health endpoint or replica process alone does not prove a recovered booking journey and restored authoritative truth.' The protocol requires user-level checks plus specific injections: link partition with a late old primary, missing replica data and delayed WAL, corrupted standby, lost acknowledgment, redelivery, credential loss and incompatible rollback."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

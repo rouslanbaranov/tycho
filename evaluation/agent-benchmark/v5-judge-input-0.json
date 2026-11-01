@@ -1,0 +1,162 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q150",
+      "question": "Three API replicas are spread across zones A and B, but every replica authorizes through one zone-A identity endpoint and commits through one zone-A database writer. After zone A fails, why can the zone-B replicas report healthy processes yet complete no bookings, and what must the availability claim state instead?",
+      "layer_expected": "book",
+      "answer": "Zone-B replicas stay healthy because their probes observe process liveness, not the booking journey. Authorization depends on the zone-A identity endpoint (token validation or signing keys), and commit depends on the single zone-A database writer. When A fails, B processes keep running, but requests cannot be authenticated and no safely fenced authoritative writer exists outside A, so no booking completes; spreading replicas did not remove either shared dependency. A successful health response cannot prove identity or a transaction, and processes can stay up while quorum is unreachable.\n\nInstead, the availability claim must be failure-scoped and capability-scoped, not topology-scoped. It must state the user capability (completed bookings), the declared failure class (loss of zone A or any one zone), the dependencies assumed to survive (identity/signing keys, routing, a promotable writer or quorum), the authority-transfer and fencing rule, the promised degraded mode (read-only catalogue; new bookings refused until one writer is safely promoted), RTO/RPO targets, and drill evidence of correct completed journeys with no dual writer. Without that evidence, record insufficient evidence rather than claim success; replica count is not availability. Active/passive with demonstrated failover may be safer, and the claim is bounded by the weakest shared dependency. Confidence is high on the mechanism. Unknowns: whether a safe writer promotion or identity fallback works; no drill is reported.",
+      "citations": [
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#purpose-and-mission",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+        "tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims",
+        "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+        "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+        "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability"
+      ],
+      "core_claims": [
+        "Failure domains are dependency sets rather than geographical labels, so two replicas in different zones can still share one identity endpoint, gateway, control plane, DNS, quota or authoritative database primary.",
+        "In the walkthrough, zone-B replicas remain process-healthy after zone A fails but cannot authorize or commit reservations because their identity and writer paths exist only in zone A, so the surviving user capability is narrower than the replica count suggests.",
+        "A running process or a successful readiness probe proves neither transaction correctness nor the ability to reach authoritative state, and counting 200 responses from an obsolete cache as healthy booking service is not a valid availability result.",
+        "Kubernetes topology-spread constraints influence placement but do not guarantee balance after later node removal and provide no database consistency or regional recovery, so placement policy must be paired with an isolated fault test of compute, identity and storage loss.",
+        "Recovery after a zone loss must avoid promoting two booking writers, and an active/passive topology with demonstrated failover can be safer than nominal active/active without state fencing."
+      ],
+      "optional_claims": [
+        "Replica redundancy is not equivalent to point-in-time recovery, which is why a separate historical recovery source is shown in the topology.",
+        "Degraded operation such as refusing new reservations while serving a read-only public catalogue is legitimate only when it is explicitly promised and verified."
+      ],
+      "required_evidence": [
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#3-kubernetes-placement-as-an-illustrative-mechanism",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation"
+      ]
+    },
+    {
+      "task_id": "Q154",
+      "question": "A daily booking total is computed in event time; event E5 arrives after the watermark has closed its window, and a later cancellation must change the total. Why is finalization at the watermark not proof that earlier events are complete, and what must the lateness and correction contract decide before the total is treated as settled?",
+      "layer_expected": "book",
+      "answer": "Watermark finalization is a stated lateness expectation, not proof of completeness. A watermark tells operators how much lateness they expect and when to finalize; it asserts \"nothing older is expected\", not \"everything older has arrived\". Arrival order differs from event-time order: E5 carries event time 10:01 but reaches the operator after its watermark advanced beyond that window, so the window closes with a valid event still in flight. A later cancellation is stronger still: it is a legitimate business correction that must change the total, and no watermark anticipates it.\n\nBefore the daily total is settled, the lateness and correction contract must decide the event-time source and daily boundary (clock, time zone); allowed lateness and idle-partition handling; whether finalized windows may be reopened, and for how long state is retained; the correction form (update or retraction, side output, compensating adjustment event, or drop with an explicit metric); and the sink contract (idempotent upsert or transaction with replay deduplication), so a restored checkpoint cannot double-apply the correction. Otherwise the number is \"best known now\", not settled; a business forbidding revisions needs separate adjustments. The book's scenario is synthetic, so version-specific watermark behavior still needs release evidence.",
+      "citations": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "Event time differs from the time at which data is observed, and a watermark states how much lateness the operator expects and when a window will be finalized rather than proving that every earlier event has arrived.",
+        "A late event that misses finalization must follow a declared policy such as drop with an explicit metric, side output, update or retraction, or deferred finalization, and none of these is universally correct.",
+        "The correction policy must match the external output, because a sink that cannot accept corrections or idempotent upserts cannot publish revised totals even when operator state is restored correctly.",
+        "A consistent checkpoint restores operator state and source positions but does not decide whether a late business correction is discarded, emitted as an update or routed to reconciliation, and a business that forbids revising settled totals needs a separate adjustment event.",
+        "The declared policy dimensions include event-time source, window boundaries, handling of delayed or idle partitions, retained state and TTL, and output correction support, and out-of-order fixtures plus measured output freshness are needed to test them."
+      ],
+      "optional_claims": [
+        "A checkpoint is not automatically a migration artifact, since serializer, operator identity or topology changes can make restored state incompatible.",
+        "Exactly-once processing inside the stream processor does not extend to an independently acknowledged external effect."
+      ],
+      "required_evidence": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+        "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#6-failure-recovery-experiments"
+      ]
+    },
+    {
+      "task_id": "Q158",
+      "question": "When two simultaneous submissions reuse one idempotency key and the first commits while its response is lost, why is a read-then-insert check insufficient, and what must happen when the key returns with different parameters or after retention ends?",
+      "layer_expected": "book",
+      "answer": "A read-then-insert check is a check-then-act race: two simultaneous first attempts can both read \"no key\" before either writes, so both execute and commit duplicate effects. Identity resolution and creation must be one atomic durable operation\u2014a uniqueness constraint, insert-on-conflict, or compare-and-set\u2014so only one attempt wins; the other sees in-progress (409), waits, or resolves the committed outcome, but must not execute independently. Because the first attempt may commit and then lose its response, the outcome record and business effect must commit together, and a same-key, same-payload retry must return that recorded outcome (including saved failures), not re-execute; status lookup or reconciliation resolves ambiguous acknowledgments.\n\nA key returning with different parameters is a conflict, not a replay: compare normalized fingerprint inputs and reject it (for example 422, distinct from 400 missing key and 409 in-progress). After retention ends, historical deduplication is no longer guaranteed: the key no longer proves sameness, so the owner must publish what happens to late arrivals\u2014treat them as new requests that may duplicate the effect, or route them to operator reconciliation\u2014rather than silently claiming idempotence. Retention must cover the client retry/reconciliation horizon; expired, in-progress, and mismatch are distinct states. Evidence: identity contract, synthetic double-submit sequence, and atomic-authority sections. Unknown: no executed concurrency test; confidence high on mechanism, moderate on exact status-code mappings.",
+      "citations": [
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+        "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#bounded-pattern-ownership-notes",
+        "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+        "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview",
+        "tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests"
+      ],
+      "core_claims": [
+        "A logical operation identifier names one authorized intent with defined parameters, while transport attempt, resource, event and consumer-effect identifiers name different things; creating a new operation ID per retry or counting attempts as effects breaks deduplication.",
+        "Two concurrent first attempts can both observe the key as absent and commit different bookings unless one atomic key-and-payload decision is made across all replicas rather than a local mutex or a read-then-insert check.",
+        "When the first attempt commits R7 but its response is lost, a retry with the same key and equivalent parameters must resolve to R7 instead of creating a second reservation.",
+        "A replay of the key with different dates or units is a parameter conflict that must be rejected or explicitly handled, not answered with the earlier result.",
+        "A finite retention window cannot promise deduplication forever; after expiry, reconciliation must rely on durable business identity, and a downstream consumer effect needs identity at that effect's own durability boundary."
+      ],
+      "optional_claims": [
+        "An independent fixture should count logical intents, transmitted attempts, accepted effects, duplicate observable effects and unresolved outcomes separately.",
+        "If the original operation is still executing, the service needs a concurrency-safe in-progress, wait, conflict or result-lookup protocol."
+      ],
+      "required_evidence": [
+        "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+        "tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking"
+      ]
+    },
+    {
+      "task_id": "Q162",
+      "question": "Why does filtering a malicious instruction out of retrieved text not make an assistant's later tool call authorized, and where must the authorization check occur?",
+      "layer_expected": "book",
+      "answer": "Filtering changes what the assistant read; it cannot change what the caller may do. Authorization is a relation between an authenticated principal, a specific action and a specific object, decided against policy - not a property of text. The principal table lists a retrieved document as untrusted data, not executable instruction or approval to call another tool, so neither the sentence's presence nor its removal confers authority.\n\nFiltering is also unsound as a gate: there is \"no foolproof natural-language filter\", and the risk is structural once retrieved text is merged into high-priority instructions or read as a tool command. Paraphrase, encoding, citations and titles evade any text check, so filtering is depth in defense, never enforcement.\n\nThe check belongs at the authority that protects the effect: a separate action API whose server-side enforcement point evaluates subject-action-resource entitlement, validates arguments against a narrow schema and allowed IDs, and rechecks entitlement \"even if the agent previously searched successfully\". Deny by default, re-evaluate at execution including delayed jobs, fail closed when authority cannot be established. Human confirmation suits irreversible effects but is not a substitute for ACLs; model confidence never replaces deterministic checks.\n\nEvidence map: principal-tools sections 1-3; security-architecture section 2; decision gates section 7.",
+      "citations": [
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+        "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture",
+        "tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract"
+      ],
+      "core_claims": [
+        "A retrieved document is untrusted data with a source, revision and access classification, not an executable instruction or approval to call another tool, and merging it into high-priority instructions creates a structural trust-boundary failure.",
+        "No natural-language filter is foolproof, so unacceptable effects must be prevented by server-side boundaries that do not depend on how the model interprets retrieved prose.",
+        "The search surface should separate transport control, data control and effect control; the safest baseline for a read-only reference service is no mutation or execution tools at all, with any legitimate write tool isolated behind its own permissions.",
+        "Every action's arguments must be validated against a narrow schema, allowed identifiers, resource permissions and a known business contract, and entitlement must be checked again at the authority that protects the effect.",
+        "Search results can leak through metadata as well as body text, so counts, titles, snippets, related links and citations must be filtered against the authorized subject and object."
+      ],
+      "optional_claims": [
+        "Explicit human confirmation for irreversible actions is useful but is not a substitute for access control.",
+        "Malicious-looking retrieved text, fabricated citation identifiers, mixed entitlements and unexpected cross-document links belong in negative tests."
+      ],
+      "required_evidence": [
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure"
+      ]
+    },
+    {
+      "task_id": "Q166",
+      "question": "Why must a cached absence or denial be scoped to a principal and a policy revision rather than to an object identifier alone?",
+      "layer_expected": "book",
+      "answer": "A cached absence or denial is not a fact about the object; it is a decision about a subject acting under one policy state. An object-ID key universalizes one principal's miss or refusal. Visibility and existence vary by tenant and principal, so a shared negative can confirm a protected object's existence to an unauthorized caller or deny a permitted user because another principal was refused. It can hide a later create or grant.\n\nPolicy is mutable, so the key needs revision. A cached denial can outlive a grant; a cached permit can outlive revocation. Without a revision component, invalidating entries after a policy edit requires finding them; a revision bump makes them unreachable. A key covering tenant, principal or scope, operation, resource and policy revision mirrors OWASP's bound tuple; it also bounds denial by the shorter of TTL and revocation deadline. RFC 9111's storage rules constrain HTTP caches but do not define application authorization semantics.\n\nTrade-offs: per-principal keys multiply cardinality and reduce hit rate; short TTLs make staleness explicit; bypass is safer when revocation deadlines are short. For global public existence checks, object ID plus a short TTL suffices. Unknown: no measured revocation latency; sources are guidance, not tests, so confidence is high on mechanism, low on timing. Evidence: negative-cache \u00a74; identity/authorization \u00a71\u20133, \u00a75, \u00a77; security-tests \u00a76.",
+      "citations": [
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests",
+        "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+        "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview"
+      ],
+      "core_claims": [
+        "Caching an absent result protects the source from repeated misses for nonexistent IDs, but the entry can outlive a create and hide an object that now exists.",
+        "An authorization answer must be keyed by subject, action, resource, tenant and relevant policy or input state, so a key that omits the principal or tenant can be reused for a different caller.",
+        "A cached permit must not outlive a required revocation deadline, and the authorization path must fail closed and recheck when the relevant state changes.",
+        "A cached denial must be bounded by the shorter of its TTL and the revocation deadline, and deleted or versioned on create, grant, revoke and delete.",
+        "A backend error or unknown failure must not be cached as absence, and a negative entry must not become a universal statement of nonexistence across principals or tenants."
+      ],
+      "optional_claims": [
+        "A stale allow or deny decision can have more serious authorization consequences than an old description, which is why per-principal keying, a short TTL or bypass are the bounded alternatives.",
+        "CloudFront caches a 403 only when the origin marks it cacheable, while Cloudflare gives 404 and 410 a three-minute default Edge TTL and does not cache other status codes by default."
+      ],
+      "required_evidence": [
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#6-a-discriminating-failure-experiment",
+        "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview",
+        "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "task_id": "Q156",
+  "answer": "Deleting the record from the primary audit store closes one representation; it does not erase the data. The obligation follows every copy and derivation. The backup archive, search index and incident export are separately owned stores with their own access paths and lifetimes: a derived index keeps obsolete entries until deletion is applied, a versioned or immutable backup may retain the record until expiry and can resurrect it on restore, and the export sits outside the primary deletion path. Until each copy is suppressed, expired or isolated under a declared retention policy, the team can show only that one read path is closed, not that retention or erasure is satisfied.\n\nThe retention design must inventory authoritative rows and blobs, replicas, change logs and outbox entries, search and vector projections, caches, exports, operational logs and historical backups. For each it must govern owner, permitted content and access, retention policy, deletion mechanism and propagation, and completion evidence. It needs a durable, minimized retirement record that survives independently of backups, tombstone retention coordinated with backup age, offline-consumer windows, log retention and rebuild policy, and an isolated restore gate that reapplies retirements before exposure. If copies cannot be bounded, retain an exclusion mechanism or record the requirement as unresolved. Physical erasure remains provider-specific, and this is engineering evidence, not a legal determination.",
+  "citations": [
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+    "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions"
+  ],
+  "evidence": [
+    {
+      "claim": "A primary-row delete is local: copies and derivations remain in scope and must all be accounted for.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+      "note": "Observed: copy inventory covers authoritative rows/blobs, read replicas, change logs/outbox, search/vector projections, caches, exports, operational logs and historical backups; 'Removing one database row cannot itself prove removal of all copies.'"
+    },
+    {
+      "claim": "Backup archives and search indexes can retain data after the primary record is removed, so retention must balance deletion, minimization and incident needs.",
+      "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+      "note": "Observed: 'A backup archive or search index can retain data after a primary record is removed.'"
+    },
+    {
+      "claim": "A deletion inventory must include all retained versions, replication targets, caches, search references and backups.",
+      "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+      "note": "Observed: inventory list covers current and noncurrent versions, previews, transcodes, temporary parts, replication targets, edge caches, search references and backups; a current-name delete differs from removing all versions."
+    },
+    {
+      "claim": "Denying current reads or hiding an entry is not removal; address, access and retention are separate properties.",
+      "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+      "note": "Observed: retirement may require separate decisions about versions, derived objects and retained copies; hiding a catalogue entry is application behavior, not removal."
+    },
+    {
+      "claim": "The search index is a derived artifact; source deletion or revocation must remove searchable entries and invalidate caches.",
+      "section_key": "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+      "note": "Observed: 'Deletions and permission changes must remove obsolete results'; the index is derived from canonical sources and rebuildable."
+    },
+    {
+      "claim": "Each copy needs an owner plus an explicit allowed-content and access policy.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+      "note": "Observed: 'Define the allowed retained content and access for each owner.'"
+    },
+    {
+      "claim": "Restore can resurrect retired data unless durable retirement knowledge survives independently and is reapplied before exposure.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+      "note": "Observed: restore of an older snapshot passes through an isolated reconciliation gate informed by retirement knowledge; a consumer replaying revision 103 after retirement 108 must not recreate the document."
+    },
+    {
+      "claim": "Retirement/tombstone lifetime must be coordinated with backup age, offline-consumer windows, log retention and rebuild policy.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+      "note": "Observed: 'Coordinate tombstone retention with backup age, offline-consumer windows, log retention and source rebuild policy'; if horizons cannot be bounded, retain another exclusion mechanism or accept an explicit unresolved requirement."
+    },
+    {
+      "claim": "Retained-but-isolated historical copies are not an erasure claim; completion is multidimensional.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+      "note": "Observed table: new reads denied, derived owners acknowledge removal, historical copies retained but isolated, provider removal completed, restored service reconciled are distinct states."
+    },
+    {
+      "claim": "The retirement ledger itself must be minimized and governed for retention and access.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+      "note": "Observed: 'The retirement ledger itself must have an appropriate retention, access and minimization policy'; if that knowledge is lost with the same backup, the architecture cannot claim restored data respects later retirements."
+    },
+    {
+      "claim": "Indefinite duplication is unacceptable where deletion or retention obligations apply.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions",
+      "note": "Observed: counterexample to retaining an old representation longer is 'Deletion/retention obligations forbid indefinite duplication.'"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

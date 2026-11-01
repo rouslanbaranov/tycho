@@ -1,0 +1,56 @@
+{
+  "task_id": "Q168",
+  "answer": "Every participant voting prepare does not decide the outcome by itself. The coordinator collects the votes, then records exactly one commit-or-abort decision, and participants apply that decision while holding prepared state; the decision must survive coordinator failure. If the coordinator or commit-point site fails after the prepares but before that decision is durably recorded or delivered, no participant learns the outcome and the transaction becomes in-doubt. The documentation quoted in the owner section says prepared nodes \"wait until a COMMIT or ROLLBACK request is received from the global coordinator\", and that until resolution \"the data is locked for both reads and writes\".\n\nA prepared participant cannot resolve it alone because its yes vote is only an input, not the outcome: it does not know the other votes, and atomicity requires one authoritative decision applied everywhere. Committing early could contradict a later abort; aborting early could contradict a commit others applied — either breaks all-or-nothing (inference). Its locks and redo/undo state are exactly what let it apply either outcome, so waiting is the deliberate price of atomicity.\n\nBoundaries: prepared locks block resources, coordinator recovery is a single point, and heterogeneous participants add cost. 2PC is contraindicated when coordinator failure would block critical resources; saga trades atomicity for availability but adds compensation and loses isolation.",
+  "citations": [
+    "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+    "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+    "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension"
+  ],
+  "evidence": [
+    {
+      "claim": "All prepare votes are not themselves a decision: the coordinator records one commit-or-abort decision that participants apply while holding prepared state, and that decision must survive coordinator failure.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "observed: 'A coordinator asks every participant to prepare, collects the votes, then records one commit or abort decision that the participants apply while holding prepared state. No participant may commit before the coordinator's durable decision, and the decision must survive coordinator failure for prepared participants to recover.'"
+    },
+    {
+      "claim": "A failure during two-phase commit leaves the transaction in doubt, and prepared nodes wait for the global coordinator's COMMIT or ROLLBACK.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "observed, quoting Oracle Distributed Transactions Concepts: 'A transaction becomes in-doubt if the two-phase commit mechanism fails'; prepared nodes 'wait until a COMMIT or ROLLBACK request is received from the global coordinator'."
+    },
+    {
+      "claim": "Until resolution, prepared data is locked for reads and writes, so waiting blocks resources.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "observed: 'the data is locked for both reads and writes'; limits state 'Prepared locks block resources, coordinator recovery is a single point and participant heterogeneity is costly'."
+    },
+    {
+      "claim": "Prepared state is durable so the participant can still commit or roll back after failures; the commit point is logged.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "observed: prepared state in redo logs 'so that it can subsequently either commit or roll back the transaction, regardless of intervening failures'; 'the commit point log contains a record of the commit'."
+    },
+    {
+      "claim": "PostgreSQL keeps a prepared transaction's locks and expects an external transaction manager to close prepared transactions out.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "observed: prepared state stored on disk; the transaction 'continues to hold whatever locks it held'; an external transaction manager tracks and closes out prepared transactions."
+    },
+    {
+      "claim": "Coordinator or participant failure and locks may affect progress, so participants and coordinator need documented recovery behavior.",
+      "section_key": "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension",
+      "note": "observed: 'participants and the coordinator need documented recovery behavior; coordinator/participant failure and locks may affect progress'."
+    },
+    {
+      "claim": "Two-phase commit is contraindicated when coordinator failure would block critical resources; saga is the compensating alternative but lacks automatic rollback and isolation.",
+      "section_key": "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+      "note": "observed card: reject when 'coordinator failure would block critical resources'; 'A failure after prepare leaves the transaction in doubt while prepared data stays locked'; saga 'is not an option' there, with 'Lack of automatic rollback' and 'Lack of isolation'."
+    },
+    {
+      "claim": "A prepared participant cannot unilaterally settle because its yes vote is one input, it cannot see the other votes, and atomicity requires one authoritative decision applied by all.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "inference: the section states the normative rule (no commit before the durable decision) and the single-decision mechanism, but does not enumerate unilateral-outcome consequences."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

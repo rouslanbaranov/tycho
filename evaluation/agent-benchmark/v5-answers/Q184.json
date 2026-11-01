@@ -1,0 +1,78 @@
+{
+  "task_id": "Q184",
+  "answer": "The lookup row is derived state, not authority. A covering column is a snapshot copy of base values, and an index-only path can answer \"from an index alone without any heap access\", so nothing at read time re-checks the base row and divergence is silent. The base table stays correct while the copy drifts: the base commit and the lookup-row commit are two effects, so a crash or ambiguous retry between them leaves the base committed and the copy stale, missing, or duplicated; an older in-flight snapshot can repopulate the row after a newer write (the stale-fill race); a partial backfill leaves gaps; and duplicates survive because uniqueness covers the key column only, not the payload.\n\nThe write path must preserve: one local transaction for base row plus mapping, or a durable repair intent; idempotent, per-key-ordered apply with a monotonic source version so older applies cannot regress; delete-plus-insert on key change, never in-place mutation; and reconciliation, bounded rebuild, and plan re-check after shape changes.\n\nThe key must be exactly one, immutable lookup key defining row identity and duplicate meaning; payload columns must never become a second key or second source of truth. Otherwise a native covering index, materialized view, or query-time join is cheaper.",
+  "citations": [
+    "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes",
+    "tycho.page.41daaaaf1b34f0d26e3346804ac0e85e#overview",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+    "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes"
+  ],
+  "evidence": [
+    {
+      "claim": "The lookup row is application-maintained derived state; the base row stays authoritative and every lookup row must resolve to the current base row.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes",
+      "note": "Observed: 'the base row stays authoritative and the lookup row is derived state that the write path maintains'."
+    },
+    {
+      "claim": "Covering payload is a copy: index-only scans answer 'from an index alone without any heap access'; non-key columns live only in leaf nodes and cannot be access predicates.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes",
+      "note": "Observed (source quotation of PostgreSQL and Use The Index, Luke inside Tycho synthesis). Explains why drift is invisible at read time."
+    },
+    {
+      "claim": "Mapping and base write must commit in one local transaction, or the write path must publish a durable repair intent; exactly one lookup key is allowed.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes",
+      "note": "Observed Tycho rule: 'keep exactly one lookup key; payload columns must never become a second key or a second source of truth'."
+    },
+    {
+      "claim": "Dual-write ambiguity, partial backfill, duplicate lookup keys and stale rows are the named failure modes; recovery is a repair job plus immutable lookup key and bounded rebuild.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes",
+      "note": "Observed runbook sentence; guidance is labelled synthetic, not measured."
+    },
+    {
+      "claim": "Uniqueness covers the key column only, not key plus payload, so duplicate live mappings are not prevented by the store.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes",
+      "note": "Observed: PostgreSQL unique index with included columns applies 'to just column x, not to the combination of x and y'."
+    },
+    {
+      "claim": "Contraindication: reject an index table when dual-write consistency cannot be maintained or payload columns would become a second key.",
+      "section_key": "tycho.page.41daaaaf1b34f0d26e3346804ac0e85e#overview",
+      "note": "Observed pattern-card hard contraindications; also 'a covering path fails quietly when its shape changes'."
+    },
+    {
+      "claim": "Without cross-system atomicity a failure between the two effects leaves one committed and the other absent; neither acknowledgement proves the pair.",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+      "note": "Observed; synthetic failure timeline explicitly not an observed defect."
+    },
+    {
+      "claim": "Retries need distinct request, entity and event identities; reusing a key with changed intent is a conflict, not idempotency.",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+      "note": "Observed; applies to replaying a lookup-row apply."
+    },
+    {
+      "claim": "An older in-flight read can repopulate a derived copy after a newer commit; only monotonic source versions or version-guarded writes prevent regression, TTL does not.",
+      "section_key": "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+      "note": "Observed stale-fill race and mitigations; cache-aside structure is the same shape as a read-repair path."
+    },
+    {
+      "claim": "A local copy of another owner's state is a cache, not a second authority; give it an owner, source version, reconciliation, and let a stale copy reject rather than overwrite.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+      "note": "Observed bounded pattern notes."
+    },
+    {
+      "claim": "Derived representations may lag; freshness, rebuild, deduplication and recovery must be defined explicitly.",
+      "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+      "note": "Observed; view may return stale results until the projection applies."
+    },
+    {
+      "claim": "Ordering is defined by where it is enforced; per-key ordering is a distinct contract from global order.",
+      "section_key": "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#3-ordering-scopes-per-key-versus-global",
+      "note": "Observed; supports per-key apply order for a lookup table."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

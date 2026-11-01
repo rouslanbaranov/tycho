@@ -1,0 +1,137 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "Why is an exact nearest-neighbor scan insufficient to certify an approximate index after the embedding model changes?",
+      "required_evidence": [
+        "tycho.page.66d2977575264168a8616e09d0900af6#2-exact-nearest-neighbors-are-the-reference-baseline",
+        "tycho.page.66d2977575264168a8616e09d0900af6#1-the-retrieval-contract-begins-before-embeddings",
+        "tycho.page.66d2977575264168a8616e09d0900af6#3-ann-index-types-and-their-trade-offs",
+        "tycho.page.9145b7ce81d4461b90d3c6285128c18a#4-metadata-filtering-creates-a-subtle-recall-and-security-boundary"
+      ],
+      "core_claims": [
+        "An exact scan is a recall reference only within the same embedding model and version, distance metric, normalization, filter scope and corpus revision that produced the approximate index.",
+        "Changing the embedding model redefines the vector space, so rankings and recall figures computed against the previous model no longer describe the new index even when the document IDs are unchanged.",
+        "Agreement with exact neighbors measures traversal fidelity rather than relevance, because the exact ranking is not evidence that the embedding ordering matches human judgments.",
+        "HNSW, IVF and quantized indexes trade recall against latency, memory and build or update cost, and duplicate vectors, cluster shape and deletion behavior can change achieved accuracy without any configuration edit.",
+        "Neither HNSW nor IVF guarantees a particular recall percentage across data distributions, so a single headline number cannot be carried to a different corpus or query population."
+      ],
+      "optional_claims": [
+        "Exact search remains the better production choice when it fits the latency budget, because it removes approximation from the ranking step entirely.",
+        "Vector distance expresses representation proximity, so every returned neighbor still needs canonical source, revision and access verification before it supports an answer."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a full-text index that contains a document still fail to match the exact API identifier the document contains, and what must be pinned so matching does not drift?",
+      "required_evidence": [
+        "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+        "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#2-postgresql-17-full-text-search-is-a-real-candidate",
+        "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+        "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem"
+      ],
+      "core_claims": [
+        "An inverted index stores the terms an index-time analyzer produced, so a query matches only when the query-time analysis maps onto those stored terms.",
+        "Tokenizers that split CamelCase or punctuation and stemmers that merge morphological variants can erase the distinction between an API symbol and ordinary prose, leaving the identifier unsearchable as a term.",
+        "A dedicated keyword or exact-term field alongside analyzed prose preserves symbol lookup that a language analyzer would destroy.",
+        "The analyzer name and version belong to the index generation's identity, because changing them makes the same query text map to different terms while the posting lists still hold the old ones.",
+        "Ranking and provenance are separate: a well-scored hit still has to be bound to the index generation and source revision that produced it, since a cached snippet can cite a revision the rebuild already removed."
+      ],
+      "optional_claims": [
+        "PostgreSQL full-text search over tsvector and GIN is a workable lexical option for a modest transactional corpus, while Lucene-style analyzers fit cases where per-field tokenization must be tuned.",
+        "A BM25 score is calibrated only within one index, analyzer and corpus, so scores from two generations or two products are not directly comparable."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can adding more workers past some point reduce throughput under the Universal Scalability Law, and why do the fitted coefficients not identify the cause?",
+      "required_evidence": [
+        "tycho.page.6d571f3069e847408a5f1f7d45c797c1#3-universal-scalability-law",
+        "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#2-amdahl-s-conditional-bound",
+        "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead"
+      ],
+      "core_claims": [
+        "The normalized form C(N) = N / (1 + alpha(N-1) + beta N(N-1)) adds a coherency term that grows quadratically with N, while the contention term grows only linearly.",
+        "When beta is positive, added concurrency eventually costs more coordination than it contributes, so capacity peaks and then declines into retrograde throughput.",
+        "Amdahl's model has no coherency term and approaches a plateau rather than a decline, so a measured decline is not explained by a serial share alone.",
+        "Alpha and beta are empirical fitting parameters, and a good fit does not demonstrate that any particular lock, connection pool or invalidation flow is responsible for the loss.",
+        "The curve is usable only when fitted to comparable measured points under one workload mix and checked against withheld observations, so a few points do not justify a claim that more replicas will help."
+      ],
+      "optional_claims": [
+        "Horizontal scaling adds independently serving instances while multiplying shared downstream connections and coordination, so a per-node curve can shift as the fleet grows.",
+        "A vertical change can relieve one measured resource bottleneck but does not remove single-node availability limits."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a read that contacts a quorum of replicas still return a stale value after a write was acknowledged?",
+      "required_evidence": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties"
+      ],
+      "core_claims": [
+        "R + W > N makes the read and write sets intersect only while membership is correctly configured and the responding voters are the ones the protocol considers eligible.",
+        "Overlap is necessary but not sufficient: the reader must select the newest version among the responses and repair replicas that missed the write, or the intersecting set can still yield an older value.",
+        "A sloppy quorum that sends requests to fallback nodes abandons strict overlap, and hinted handoff, read repair and anti-entropy repair are best-effort mechanisms that lag.",
+        "Where replicas can hold concurrent versions, the application must define the version order in advance, because a highest-version selector is a policy rather than a protocol property.",
+        "A write whose reply was lost is an unknown outcome rather than a failed write, so a stale read is not proof that the commit never happened."
+      ],
+      "optional_claims": [
+        "Membership change is itself a replicated decision, so the old and new quorums must overlap and a plain configuration edit can remove progress or violate consistency.",
+        "Consensus protects a replicated log under its assumptions but not against a software defect or a correlated loss of every voter, so an independent recovery path is still required."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why is telling an assistant to ignore instructions found in retrieved documents insufficient, and where must the boundary be enforced instead?",
+      "required_evidence": [
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+        "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#5-privacy-audit-and-retention-boundaries"
+      ],
+      "core_claims": [
+        "Retrieved prose is untrusted data carrying a source identity, revision and access classification, and merging it into the trusted instruction channel is the structural defect rather than a wording problem.",
+        "No natural-language filter reliably separates injected directives from legitimate content, so a guard that asks the model to ignore malicious text cannot be the control that protects an effect.",
+        "The enforceable boundary sits at the effect authority, where capabilities are denied by default, arguments are validated against a narrow schema and allowed identifiers, and entitlement is checked again where the side effect occurs.",
+        "A read-only reference service should expose no mutation or execution surface at all, keeping any legitimate action system's permissions isolated from search.",
+        "Human confirmation for irreversible actions supplements deterministic authorization, and neither model confidence nor reasoning text substitutes for an access check on the actual subject and object."
+      ],
+      "optional_claims": [
+        "The same boundary governs retained telemetry, which should carry minimally necessary principal and object identifiers instead of copied document content.",
+        "Negative tests with forged citation identifiers, mixed entitlements and injected tool directives are needed before ranked retrieval is treated as correct."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why can a query be badly costed when both correlated columns have current statistics, and what has to happen before new extended statistics change the plan?",
+      "required_evidence": [
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#7-controlled-acceptance-method"
+      ],
+      "core_claims": [
+        "The planner combines per-column selectivities as though the predicates were independent, so a predicate pair whose values co-vary produces a row estimate that no single-column histogram corrects.",
+        "An estimate wrong by orders of magnitude changes join order and access-path choice, so the resulting plan can be poor even though every column's statistics are current.",
+        "A large estimate-versus-actual gap shows that a cardinality assumption may be wrong; it does not by itself show that another index is the fix.",
+        "Extended multivariate statistics can represent cross-column dependence where the predicate pair is supported, but the statistics object collects no representative sample until ANALYZE runs, and later growth, skew or schema change can invalidate it.",
+        "The change must be accepted with EXPLAIN or EXPLAIN ANALYZE against a frozen version, dataset and parameter set, because a cheaper-looking estimate is not evidence of a faster plan."
+      ],
+      "optional_claims": [
+        "The planner may correctly prefer a sequential scan when a large fraction of rows qualifies, so the existence of an index is not a plan requirement.",
+        "Index families support different operators, so the access method must be matched to the predicate before any plan comparison is meaningful."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

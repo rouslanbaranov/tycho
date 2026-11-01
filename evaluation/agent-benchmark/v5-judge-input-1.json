@@ -1,0 +1,166 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q151",
+      "question": "A team proposes replacing a small self-managed deployment with a managed service because its monthly instance fee is lower. Why can total lifecycle cost still rise, and what must be compared on the same horizon before treating the cheaper fee as evidence?",
+      "layer_expected": "book",
+      "answer": "Because the fee prices one resource for one period, while lifecycle cost prices the whole obligation. A managed service shifts work rather than removing it: recovery, retention, access and lifecycle duties remain, and are repriced through storage and egress, retained logs and traces, backup and restore drills, support tiers, incident response and staffed on-call. Migration adds double-running, data copy and rollback or forward-repair cost the monthly fee never shows. A fixed instance fee also hides idle redundancy and state growth, while a consumption fee hides traffic growth; either can rise after the pilot month.\n\nBefore treating the fee as evidence, compare both options on the same horizon, workload mix and mandatory service levels, using one cost-category list: compute and idle headroom, storage, IOPS, backup and restore, egress, telemetry retention, CI and security, operator time, migration coexistence, decommissioning. Rank by cost per correct user journey, report break-even under sensitivity, and exclude any candidate failing a hard gate first: an option that misses availability or restore targets is not cheaper. The book supplies no vendor prices, so quantities and ranges must come from the team's own measurements.",
+      "citations": [
+        "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#4-operating-cost-is-a-lifecycle-not-a-monthly-instance-fee",
+        "tycho.page.32a5de3daa2d4f74b879165a4119f63a#2-cost-must-include-more-than-infrastructure-instance-prices",
+        "tycho.page.32a5de3daa2d4f74b879165a4119f63a#3-original-synthetic-comparison",
+        "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#purpose-and-mission",
+        "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#4-unit-cost-and-sensitivity",
+        "tycho.page.76244dbe2bd44035b7154f821191f6f2#engineering-walkthrough-hard-constraints-before-weighted-cost-scoring",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#overview",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think"
+      ],
+      "core_claims": [
+        "Lifecycle cost includes recurring compute, storage, network, replication and idle redundancy, event and trace retention and transfer, CI and security scanning, test environments, scheduled release effort, old-client support, drills, credential rotation, migration double-running, training and decommissioning, not only the monthly instance fee.",
+        "A credible comparison fixes the same horizon, workload mix and mandatory service levels, because a managed service shifts responsibilities but does not remove recovery, access or lifecycle obligations.",
+        "Recurring manual work such as reconciliation, exception handling, rotation, triage and manual failover is a capacity constraint, and automation introduced to remove it is itself a maintained system that needs ownership, tests, monitoring and rollback.",
+        "A financial or effort constraint is a typed gate with an owner, and while its total operating and transition budget is unknown the honest result is unknown or measure-first rather than a preference for the cheaper-looking option.",
+        "Operational readiness must name owners, runbook and recovery evidence, access restrictions, budget and revisit triggers, and an untested restore claim remains a plan rather than evidence."
+      ],
+      "optional_claims": [
+        "A product can pay less for idle resources and still incur more cost from outages or manual maintenance.",
+        "Preference scoring cannot override a hard gate whose evidence is missing, so equal unknown cells do not justify selecting the candidate with the lower per-unit price."
+      ],
+      "required_evidence": [
+        "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#3-original-synthetic-case-a-community-plant-catalogue",
+        "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#4-operating-cost-is-a-lifecycle-not-a-monthly-instance-fee",
+        "tycho.page.8284605817fc48dba499425b0d908df0#1-constraints-must-be-typed-and-owned",
+        "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance"
+      ]
+    },
+    {
+      "task_id": "Q155",
+      "question": "A proposed index lowers a query's estimated plan cost and the planner chooses an index scan. Why does that not establish lower user latency, and which lifecycle costs decide whether the index is a net improvement?",
+      "layer_expected": "book",
+      "answer": "A lower estimated cost only proves the planner's cost model now prefers that path. Cost values are internal units over estimated rows and selectivity, not milliseconds; row counts come from sampled statistics, so skew or staleness can make an index look cheaper than its real execution. The chosen scan still spends heap access, buffer cache, locks, pool wait, network and client serialization before a user sees a response, and queueing can absorb a real server-side saving. A server-side improvement is therefore neither user latency nor p99.\n\nNet benefit is decided by whole-workload lifecycle costs: write/update latency and WAL volume on every base-table write; storage and backup/restore size; vacuum, bloat and cache pressure; build time and lock exposure during rollout; extra planning time; and multiplication across replicas or tenants. Weigh those against the scan or drift cost the index removes. In a write-heavy workload, an index saving milliseconds per read is a net loss if it raises every update or checkpoint.\n\nBoundaries: covering index-only scans need visibility-map bits, otherwise heap visits resume and the gain disappears; a sequential scan, partition pruning or materialized view may win instead. Unknowns: no representative workload was executed here, so this is design reasoning, not measurement.",
+      "citations": [
+        "tycho.page.9176c39f97f544f884666e291ae38b90#4-explain-estimated-plan-costs-are-not-milliseconds",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+        "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes",
+        "tycho.page.41daaaaf1b34f0d26e3346804ac0e85e#overview",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#7-controlled-acceptance-method"
+      ],
+      "core_claims": [
+        "EXPLAIN's estimated cost is expressed in planner units rather than elapsed milliseconds, and an estimated plan identifies a candidate access path instead of measured user latency.",
+        "EXPLAIN ANALYZE executes the query and reports actual rows and timings with instrumentation overhead and the side effects of non-read-only commands, so running it on a data-changing statement against uncontrolled state is unsafe.",
+        "Adding an index can change write and update latency, WAL volume, storage and backup or restore size, vacuum and bloat maintenance, planning time and lock exposure during creation, and a concurrent build reduces some write blocking while carrying its own phases, constraints and resource cost.",
+        "A planner can choose differently across parameter values, row distributions and minor releases, and a large estimate-versus-actual gap points first to statistics, skew or query shape rather than automatically to another index.",
+        "Acceptance compares with and without the index under fixed version, SQL parameters, dataset, resources and concurrency, and includes writes, maintenance, lock waits, storage and client-level p95 or p99 in the result rather than scan cost alone."
+      ],
+      "optional_claims": [
+        "An index-only scan still depends on the visibility map, so heap reads do not always disappear.",
+        "More parallel workers can shorten one query while lowering overall throughput under a fixed resource budget."
+      ],
+      "required_evidence": [
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#7-controlled-acceptance-method"
+      ]
+    },
+    {
+      "task_id": "Q159",
+      "question": "Why does advancing a watermark past a window not make its published total final, and what must the processing contract declare before a late booking correction is applied?",
+      "layer_expected": "book",
+      "answer": "Advancing a watermark declares expected lateness; it does not prove input is complete. The book treats a watermark as the policy saying how much lateness the operator expects and when to finalize a result. Finalization is a chosen boundary, not evidence that no earlier event can arrive: a booking stamped 10:01 can still arrive after the watermark passed its 10:00 window. The published total is therefore a version computed from the state available then; neither the watermark nor a checkpoint recovers an expired input or reverses a committed external effect.\n\nBefore applying the correction, the processing contract must declare the event-time source; window shape, boundaries and time zone; how delayed and idle partitions affect the watermark; the correction mode (drop with a metric, update/retract, side output, or deferral); which finalized windows may reopen and who owns restatement; sink idempotency, upsert or transaction semantics with checkpoint coordination; retained state, TTL and replay; and stable change identity for deduplication. It must also state downstream acknowledgment and reconciliation duties. If settled invoices may not change, use a separate adjustment event rather than silently revising the total; if that policy cannot meet reconciliation, a batch backfill is safer. Confidence is moderate: the model is synthetic, not an executed test.\n\n(Evidence: checkpoints-time \u00a74; late-correction walkthrough; chapter decision.)",
+      "citations": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+        "tycho.chapter.566e576a945b44628386d520214d6c4a#decision-and-worked-result"
+      ],
+      "core_claims": [
+        "An event can arrive after the watermark has passed its window, so the operator needs a declared late-event policy: drop with an explicit metric, update or retract the earlier result, route to a side output, or defer finalization.",
+        "A checkpoint captures operator state and source positions but does not decide whether a late business correction should be discarded, sent as an update or routed to a reconciliation stream.",
+        "Replay after a sink commit can produce a duplicate correction unless the sink provides an idempotent, upsert or transactional contract, and reopening a finalized window must be an explicit policy.",
+        "A business that prohibits changing settled invoices may need a separate adjustment event rather than a silent revision of published totals.",
+        "The event-time source, window boundary, watermark and idle-partition handling, correction mode, retained state size and external output semantics must be chosen together rather than as independent settings."
+      ],
+      "optional_claims": [
+        "A scheduled batch backfill may be safer than the streaming path when its lateness and retraction policy cannot satisfy the reconciliation requirement.",
+        "Snapshotting processor state cannot retroactively cancel an irreversible external effect such as an email already sent."
+      ],
+      "required_evidence": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route"
+      ]
+    },
+    {
+      "task_id": "Q163",
+      "question": "Why can a duplicate read sent to a second replica shorten the tail while increasing the load that produced the tail?",
+      "layer_expected": "book",
+      "answer": "Because the duplicate acts on two different quantities. On the per-request distribution it helps: the client keeps the first acceptable reply and cancels the loser, so when slowness is independent the caller waits for the minimum of two draws. Under the chapter's independent-latency model, a threshold each attempt exceeds with probability p is exceeded by both with probability p-squared (model inference, not measurement); the Tail at Scale example reports a 99.9th-percentile effect, with a p95 trigger holding the paper's extra load near 5%. On offered load it hurts: each hedge is a second copy of work on the same finite capacity, and layered fan-out or retries compound it. The tail is often queueing-built, so extra copies lengthen the queue that produced the tail, and higher latency triggers still more hedges - positive feedback at the worst moment. The hedge therefore wins only when the tail is independent per-replica straggling and capacity is slack; where replicas share a database, network path or GC pause, the draws are correlated and the added load is pure cost. Bounding it requires a measured percentile, an attempt cap, loser cancellation, and equivalent, fresh replicas; speculative writes need an idempotency identity. The crossover point is workload-specific and unmeasured here; no benchmark is reported.",
+      "citations": [
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#4-hedging-replication-and-selective-degradation",
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+        "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+        "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#6-worked-decision-retain-hedge-or-split",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback"
+      ],
+      "core_claims": [
+        "A hedge re-sends the same read to an equivalent replica only after the first attempt has been outstanding beyond a measured latency percentile; the first acceptable response wins and the other copies are canceled.",
+        "The hedge stays bounded only when replica equivalence, an attempt cap, working cancellation and a delay taken from that request class's measured distribution all hold together.",
+        "Each extra copy consumes capacity on the same dependency, so when replicas share a bottleneck the hedge can raise offered load and delay recovery instead of shortening the tail.",
+        "A hedged write can still commit an effect from a canceled loser even though the client accepts one response, so speculation over writes needs an idempotency identity and a reconciliation path."
+      ],
+      "optional_claims": [
+        "Deferring the second request to the 95th-percentile point limited the added load to about five percent in the cited Tail at Scale example.",
+        "gRPC makes maxAttempts mandatory, caps values above five at five, and throttles further hedges when its token count falls to a threshold."
+      ],
+      "required_evidence": [
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#4-hedging-replication-and-selective-degradation",
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+        "tycho.page.667f60a8c7d146809d4e3b98efe02213#overview",
+        "tycho.page.364e2c08af2a47249d9d3431346f046c#overview"
+      ]
+    },
+    {
+      "task_id": "Q167",
+      "question": "Why can a trace set be adequate for diagnosing one slow request yet invalid for estimating how often requests are slow?",
+      "layer_expected": "book",
+      "answer": "A trace set is a selected sample of execution stories, not a census, so its fitness depends on the inference, not on the data alone.\n\nDiagnosis works because a trace is internally complete: spans, parent relationships and timestamps show where one request spent time. The conditions \u2014 instrumentation covering the suspected operation, interpretable clocks, recorded errors and retries \u2014 describe that single case. Even a sparse sample can yield one slow trace that explains why that request was slow, because explaining one case needs a witness, not a representative sample.\n\nFrequency fails because a proportion needs a defined population, observation window and inclusion probability. Sampling can select on the outcome: tail sampling prefers slow/error traces, and adaptive sampling fits selected diagnostic objectives while biasing populations. The retained set over-represents exactly the slow requests being counted, and the unsampled denominator is unknown, so the slow share is biased rather than merely noisy, with no defensible error bar.\n\nBoundary: consistent-probability head sampling with a recorded rate permits reweighting and uncertainty; estimation is valid only when 'the sampling design supports that inference and uncertainty is disclosed.' Otherwise count requests, use histograms, or use unsampled SLIs.\n\nUnknowns: no production measurement here; bias magnitude is policy-dependent.\n\nEvidence map: trace purpose; causal interpretation; sampling limits; SLI population; aggregate-metrics choice rule.",
+      "citations": [
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#purpose-and-mission",
+        "tycho.page.aac0f46189b74948bedfc30a81ec80e5#2-causal-and-temporal-interpretation",
+        "tycho.page.f921597aae854c6996459fc025a9bca3#bounded-pattern-ownership-notes",
+        "tycho.page.bc30179a9cda4c12b9deb383e8751d47#4-sampling-limits-what-the-trace-can-support",
+        "tycho.page.bc30179a9cda4c12b9deb383e8751d47#5-context-async-messages-and-retries",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+        "tycho.page.ff387baa8697be02afec1be6807b858f#overview",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#overview"
+      ],
+      "core_claims": [
+        "A trace can show where a request spent time only when context crosses the boundaries, instrumentation covers the suspected operation, and sampling and export failures are disclosed.",
+        "Head sampling decides near the start of a request, so it can exclude a request before a later severe error or slow completion makes it interesting.",
+        "Tail and adaptive sampling can retain slow or failed traces, but they require buffered state and collector resources, decide late, and bias the retained population.",
+        "A trace is a sampled, propagated observation rather than a complete transaction log, so a selected set cannot estimate every service success ratio unless the design supports that inference and the uncertainty is disclosed.",
+        "Metrics are the appropriate aggregate signal for fleet latency or error rate, and a missing span remains ambiguous until instrumentation coverage and sampling policy are known."
+      ],
+      "optional_claims": [
+        "A successful span status does not prove that the database commit or a downstream external effect was correct.",
+        "When observability data is used only in aggregate and can be pre-aggregated, sampling may not be appropriate, and metrics can aggregate measurements instead."
+      ],
+      "required_evidence": [
+        "tycho.page.bc30179a9cda4c12b9deb383e8751d47#4-sampling-limits-what-the-trace-can-support",
+        "tycho.page.aac0f46189b74948bedfc30a81ec80e5#2-causal-and-temporal-interpretation",
+        "tycho.page.f921597aae854c6996459fc025a9bca3#bounded-pattern-ownership-notes",
+        "tycho.page.ff387baa8697be02afec1be6807b858f#overview"
+      ]
+    }
+  ]
+}

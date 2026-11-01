@@ -1,0 +1,67 @@
+{
+  "task_id": "Q187",
+  "answer": "Detail buys resolution, not accuracy. Scope the model from the decision: the smallest model that distinguishes the alternatives within a declared validity domain, omitting what cannot change the comparison. Adding cache, database and deployment models is named scope creep: the comparison becomes hard to review, the question is lost, and new parameters arrive assumed or unknown. Precision rises, accuracy does not—a discrete-event model can be wrong at a finer resolution. Verification cost grows too; the test matrix covers units, conservation, event order and replay, never operational validity, so a verified engine is not a validated decision.\n\nEach addition must pass a decision-reversal test: would it move a decision-relevant metric across a hard constraint or reverse the candidate ranking? If not, it is not worth the verification burden: exclude it and record the omission. If yes, accept the burden only if the parameter is measured, assumed or marked unknown; units and conservation hold; the new failure mode has a test; the contract shows the boundary; and cost is proportionate to the consequence of error. Detail cannot rescue an assumed hard input whose range spans the boundary; that stays insufficient evidence.\n\nEvidence: V12/C01 scope and resolution sections; V12/C07 calibration sections; V12/C05 insufficient-evidence checklist. Confidence: high on mechanism; the reversal threshold remains a judgement.",
+  "citations": [
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence"
+  ],
+  "evidence": [
+    {
+      "claim": "The gate for a proposed addition is whether it changes a metric that can reverse the decision; if not, it is not worth the verification burden.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail",
+      "note": "Observed: checklist asks 'Does the added detail change a metric that can reverse the decision?' and adds companion checks (measurable/assumed/unknown, units, new failure mode, visible boundary, proportionate cost). Then: if the answer is no, 'the detail is probably not worth the verification burden'; if yes, 'add it and record the new validity limit.'"
+    },
+    {
+      "claim": "More resolution is not more accuracy: model families are a choice, not a maturity ladder, and a discrete-event model can be wrong at a finer resolution.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+      "note": "Observed: 'The choice is not a maturity ladder... A discrete-event model is not automatically more accurate; it can be wrong at a finer resolution.' Stock-and-flow is not inferior; it answers a different question."
+    },
+    {
+      "claim": "Scope creep (growing a cache, database and deployment model) makes the comparison hard to review and loses the original question.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+      "note": "Observed: 'Model scope creep. A queue model quietly grows a database, a cache and a deployment model. The comparison becomes hard to review and the original question is lost.' Same section lists false precision and omitted-dependency failure modes."
+    },
+    {
+      "claim": "Omitting parts is acceptable only if they cannot change the comparison under the declared conditions; boundary and validity must be explicit.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+      "note": "Observed: 'That is acceptable only if the omitted parts cannot change the comparison under the declared conditions.' Five-part boundary statement: purpose, alternatives, observable, excluded, validity."
+    },
+    {
+      "claim": "When the coarser model already settles the question, a detailed model adds cost and verification burden without changing the answer.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+      "note": "Observed: 'Running a detailed event model would add cost and verification burden without changing the answer.' Conversely, events are required only when the decision depends on a distribution the coarser model lacks."
+    },
+    {
+      "claim": "Added detail multiplies assumed parameters and buys false precision; assumed values are not measurements.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+      "note": "Observed: 'Precision without accuracy. A value is reported to four decimals from a one-significant-figure assumption'; also 'assumed as measured', extrapolation and 'uncertainty theater'. Page states every V12 model is uncalibrated."
+    },
+    {
+      "claim": "A validity limit is a condition on use, not a disclaimer; if the decision needs the omitted mechanism, the model is outside its domain.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+      "note": "Observed: 'A validity limit is not a disclaimer appended to a result. It is a condition on the result's use. If a decision needs the omitted mechanism, the model is outside its domain.'"
+    },
+    {
+      "claim": "Verification covers implementation checks, not operational validity; a verified engine is not a validated decision.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+      "note": "Observed: verification covers units, conservation, non-negativity, boundaries, event ordering, timeouts, retry conservation, replay; 'A model can be verified and still be invalid for a decision'; 'A verified engine is not a validated system.'"
+    },
+    {
+      "claim": "If an assumed hard input's range spans the decision boundary, the outcome is insufficient evidence regardless of model resolution.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+      "note": "Observed: return insufficient evidence when 'a hard input is assumed and its range spans the decision boundary', when a hard constraint cannot be evaluated, or when two candidates are indistinguishable on declared metrics."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q175",
+      "question": "Why does a failed coordinator leave prepared participants holding locks, and why must one durable decision exist before any participant applies the outcome?",
+      "layer_expected": "atlas",
+      "answer": "Two-phase commit separates a reversible prepare from an irreversible apply. A participant that votes yes has durably recorded prepared state and keeps every lock it took; Oracle notes that until resolution \"the data is locked for both reads and writes\", and PostgreSQL warns it \"continues to hold whatever locks it held\". Acting alone, it could contradict peers that commit or abort. So when the coordinator fails before the outcome is known, the transaction is in doubt and prepared participants must wait for COMMIT or ROLLBACK while their locks stall other work \u2014 the blocking cost the atlas calls a hard contraindication.\n\nThe single durable decision is the commit point. It fixes one outcome that every participant applies, and because it is logged it can be replayed after a coordinator restart or re-read by a participant that crashed mid-apply. Applying before that record exists would let a crash erase the decision after irreversible changes, leaving a split result; hence \"No participant may commit before the coordinator's durable decision\".\n\nBoundaries: coordinator recovery is a single point, heterogeneity costly, and an external transaction manager must close prepared transactions. Sagas avoid prepared locks but lack isolation and automatic rollback. Unknowns: presumed-abort and heuristic policies are absent from the corpus, and the evidence is documented product behavior, not a portable recovery algorithm or runtime test.",
+      "citations": [
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+        "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension",
+        "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+        "tycho.page.db64c44e7af846f9b54a524a37a1b9dd#6-alternatives-boundaries-and-unanswered-questions"
+      ],
+      "core_claims": [
+        "A coordinator asks every participant to prepare, collects the votes, and then records one commit or abort decision that participants apply while still holding prepared state; no participant may commit before that durable decision exists.",
+        "A failure after the prepare phase leaves the transaction in doubt: prepared nodes wait for a commit or rollback from the global coordinator, and until resolution the data stays locked for both reads and writes.",
+        "The prepared state and the commit-point record are written to durable logs so recovery can resolve the transaction after a coordinator failure; PostgreSQL stores prepared state on disk and expects an external transaction manager to track and close prepared transactions.",
+        "Because a participant that has voted to prepare cannot safely decide alone, a coordinator outage blocks the resources it touched instead of letting participants commit independently and diverge.",
+        "Saga is the alternative when that blocking is unacceptable: it sequences local transactions and compensating actions, avoiding prepared locks but accepting visible intermediate states, no automatic rollback, and compensation that can itself fail."
+      ],
+      "optional_claims": [
+        "A single local transaction is preferable when every resource participating in the invariant shares one database.",
+        "Coordinator recovery is a single point of failure and participant heterogeneity makes the protocol costly, so its decision boundary covers prepared locks rather than a portable recovery algorithm."
+      ],
+      "required_evidence": [
+        "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#1-define-the-invariant-before-naming-consistency",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example"
+      ]
+    },
+    {
+      "task_id": "Q181",
+      "question": "A client sends only the highest commit position it has observed to whichever replica answers. After a leader change, why can a replica whose applied position is numerically higher still return a state that violates read-your-writes, and what must the token and the routing decision carry instead?",
+      "layer_expected": "atlas",
+      "answer": "A commit position is only an order within one log lineage. After a leadership change the new leader reconciles divergent uncommitted suffixes, so a replica can report an applied position that is numerically higher while its branch never contained the client's acknowledged write: applied is not committed, and an older-term entry is not committed merely because a majority stores it. Comparing bare numbers across terms therefore admits an ineligible replica and returns an older state without signalling it. It can also be scoped wrongly: a token is partition-bound, while a node-level applied counter spans partitions.\n\nThe token must carry epoch or lineage with the position (a comparable term/generation plus commit index, or explicit log lineage), scoped to the partition or dataset and, for delete-and-recreate, the object incarnation. A resetting counter or bare scalar is insufficient; multiwriter dependencies need a frontier.\n\nThe routing decision must carry the requirement itself, not only a number: the named guarantee, an epoch-aware sufficiency test against committed rather than merely applied state, the dataset scope, and the permitted outcomes - bounded wait, reroute to an authoritative replica with term checks, or a retryable failure that preserves the token. Serving an older snapshot to hit latency is the failure mode. Confidence is moderate: the token design cited is a proposal, not an executed test.",
+      "citations": [
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#6-failure-and-negative-experiment-matrix",
+        "tycho.page.d664f65295644726ae1234a982f81fa8#2-agreement-linearizability-and-availability-solve-different-problems",
+        "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#where-the-dependency-must-travel",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "A session is an application-defined sequence of operations rather than a browser, connection or human identity, so requests without its context cannot inherit read-your-writes or monotonic-read guarantees by accident.",
+        "A commit position is meaningful only while positions share a lineage: a bare counter that resets on a new leader can make a higher number name a divergent suffix rather than a later state, so epoch or stable-lineage comparison is required before treating the token as satisfied.",
+        "The token must be bound to the relevant dataset or partition and to the guarantee being preserved; the router may wait within a bounded deadline, choose a replica whose applied position qualifies, or return a retryable failure that preserves the token, but must not silently serve an older snapshot to protect a latency target.",
+        "A database token cannot assert that an external search index has applied an event, so a page combining a qualifying database snapshot with an older index needs a propagated publication watermark, an overlay of the session's pending changes, or an explicit label that the search view is separately delayed.",
+        "Replica failure or a lost client token must not erase the session requirement, and a timed-out write may have committed, so reconciliation by operation identity is needed before presenting it as absent; sticky routing reduces movement but is not a failover proof."
+      ],
+      "optional_claims": [
+        "Metadata propagation, possible frontier growth, extra routing decisions and tail latency during lag are continuing costs, and causal consistency with a frontier is the stronger alternative when cross-client dependencies travel.",
+        "A session token records an observation requirement, not permission to read the contents, so client-supplied positions must be authenticated or scoped and their size and waiting time bounded."
+      ],
+      "required_evidence": [
+        "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#where-the-dependency-must-travel",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#failure-cost-and-alternatives"
+      ]
+    },
+    {
+      "task_id": "Q187",
+      "question": "A checkout team keeps enlarging its simulation by adding a cache model, a database model and a deployment model, because it assumes that a more detailed model is a more accurate one. Why can the added detail fail to improve the decision, and what test should each proposed addition pass before its verification burden is accepted?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Detail buys resolution, not accuracy. Scope the model from the decision: the smallest model that distinguishes the alternatives within a declared validity domain, omitting what cannot change the comparison. Adding cache, database and deployment models is named scope creep: the comparison becomes hard to review, the question is lost, and new parameters arrive assumed or unknown. Precision rises, accuracy does not\u2014a discrete-event model can be wrong at a finer resolution. Verification cost grows too; the test matrix covers units, conservation, event order and replay, never operational validity, so a verified engine is not a validated decision.\n\nEach addition must pass a decision-reversal test: would it move a decision-relevant metric across a hard constraint or reverse the candidate ranking? If not, it is not worth the verification burden: exclude it and record the omission. If yes, accept the burden only if the parameter is measured, assumed or marked unknown; units and conservation hold; the new failure mode has a test; the contract shows the boundary; and cost is proportionate to the consequence of error. Detail cannot rescue an assumed hard input whose range spans the boundary; that stays insufficient evidence.\n\nEvidence: V12/C01 scope and resolution sections; V12/C07 calibration sections; V12/C05 insufficient-evidence checklist. Confidence: high on mechanism; the reversal threshold remains a judgement.",
+      "citations": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence"
+      ],
+      "core_claims": [
+        "A model boundary is chosen from the decision, including purpose, alternatives, the distinguishing observable, exclusions and validity domain, rather than from the full structure of the system, and the smallest model that can separate the alternatives is preferred.",
+        "Stock-and-flow, discrete-event and hybrid models are choices about resolution that answer different questions rather than stages on a maturity ladder, and a discrete-event model is not automatically more accurate because it can be wrong at a finer resolution.",
+        "An addition is justified only when it can change a metric that could reverse the decision; otherwise it adds verification and run cost without changing the answer.",
+        "Each added parameter or state must be measurable, assumed or marked unknown, preserve units and conservation, and be covered by tests and a new validity limit, or it introduces an untested failure mode.",
+        "Conceptual validity, meaning a reasonable structure for the purpose, and operational validity, meaning output that matches the problem entity over the intended domain, are separate, so a detailed model can be conceptually reasonable yet operationally unvalidated."
+      ],
+      "optional_claims": [
+        "A stock-and-flow model can show stable or growing backlog at a stated utilization, but it cannot produce the p95 latency of successful requests because it contains no individual requests.",
+        "Model scope creep can lose the original question and make the comparison hard to review."
+      ],
+      "required_evidence": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope"
+      ]
+    },
+    {
+      "task_id": "Q193",
+      "question": "Why does full jitter reduce synchronized retry waves, and why must a model record its jitter policy to be reproducible?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Full jitter replaces the computed backoff delay with a uniform draw between zero and that delay, spreading retries that would otherwise share a deadline. Without it, clients that failed together retry together, so a synchronized wave arrives when the service is least able to absorb load. Randomizing each delay decorrelates arrivals; the book's retry-storm failure mode calls the unjittered case an immediate load spike. Jitter alone is insufficient: retry budgets, backpressure and timeouts also bound amplification. A synthetic A/B/C run reported amplification 1.004 and 0.41% timeouts for three attempts, exponential backoff and full jitter, versus 1.079 and 11.1% for two attempts with linear backoff; differing parameters mean this illustrates the combination, not jitter alone.\n\nRecording is required because the policy is an input. V12 scenarios declare backoff and jitter, use a base seed with deterministic per-replication seeds, and run provenance stores model and scenario hashes plus the seed base; replay recomputes the result hash and fails on drift. If jitter is omitted, the scenario hash does not bind it; replay may draw under a different policy and metrics no longer match the recorded configuration. Confidence is high for mechanism and contracts; the run is synthetic, and replication does not validate assumed distributions.",
+      "citations": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#overview",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields"
+      ],
+      "core_claims": [
+        "Exponential backoff increases the delay after each attempt, while full jitter replaces the computed delay with a uniform draw between zero and that delay.",
+        "Without jitter, clients that failed at the same time retry at the same time, producing a load spike when the service is least able to absorb it.",
+        "V12 implements no jitter, full jitter and equal jitter, and the scenario declares which is used; a model that uses jitter without recording it is not reproducible.",
+        "The A/B/C runs compare whole retry policies rather than jitter alone: B with three attempts, exponential backoff and full jitter has retry amplification 1.004 and timeout rate 0.0041, while C with two attempts and linear backoff has amplification 1.079 and timeout rate 0.111.",
+        "Jitter spreads retry timing but does not bound total retry load, so a bounded retry budget remains necessary."
+      ],
+      "optional_claims": [
+        "Retry amplification is total attempts divided by offered requests and is reported for every V12 discrete-event run.",
+        "A request that times out with attempts remaining waits for its backoff and re-enters the queue; otherwise it fails."
+      ],
+      "required_evidence": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure"
+      ]
+    },
+    {
+      "task_id": "Q199",
+      "question": "Why can the V12 decision-validity gate not compensate for a failed statistical gate, and what outcome follows for a recommendation built on an unconverged run?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The V12 gates are ordered, scope-local checks over separate evidence layers, so passing one cannot repair another. V12-C owns sampling precision: seeds, replications, standard error and the 0.02 relative-error rule that marks a run insufficient-sample. V12-E only validates the decision record: candidates, constraints, declared evidence statuses and an explicit recommendation or no-recommendation outcome. The book states that a later gate cannot substitute for an earlier one, and that the layers are not a ladder, since a later layer never upgrades an earlier one. V12-E reads the recorded convergence status; it cannot add replications or shrink a standard error, and V12-F does not rerun the suite.\n\nA recommendation built on an unconverged run therefore has no valid evidence basis: that run is not used as converged evidence, so the record cannot be decision-supported. The correct outcome is insufficient-evidence with recommendation none, plus what would change it: replications until relative error is at most 0.02, then a fresh decision. Keeping the recommendation is forced recommendation and evidence inflation, which decision validity should reject rather than rescue. Calibration gaps can be handled by an explicitly conditional recommendation; an unstable estimate cannot, because conditionality does not stabilise the number. Confidence is high on the gate rule; individual JSON artifact statuses were not inspected.",
+      "citations": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records"
+      ],
+      "core_claims": [
+        "The gate flow is ordered V12-A structure, V12-B model, V12-C statistical, V12-D calibration, V12-E decision and V12-F review, and a later gate cannot substitute for an earlier one.",
+        "V12-C requires seeds, replications, standard errors, confidence intervals and a convergence status, and it does not treat a run that fails the 0.02 relative-error threshold as converged evidence.",
+        "V12-E requires candidates and runs, hard, soft and non-quantitative constraints, business-comparable metrics with units, evidence statuses, an explicit recommendation or no-recommendation outcome, and reversal triggers and limitations.",
+        "A decision record cannot repair an unconverged or missing run by passing the decision gate; the defensible outcomes are a conditional decision or an insufficient-evidence decision.",
+        "Both the checkout record being decision-supported under its declared constraints and the modernization record being insufficient evidence are valid outcomes."
+      ],
+      "optional_claims": [
+        "A passing decision gate still does not establish that the model matches a real system or that the owner accepted the decision.",
+        "Every V12 model is uncalibrated, so calibration claims remain conditional even when the later decision gate passes."
+      ],
+      "required_evidence": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+      ]
+    }
+  ]
+}

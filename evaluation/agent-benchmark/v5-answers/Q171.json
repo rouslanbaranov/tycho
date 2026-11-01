@@ -1,0 +1,59 @@
+{
+  "task_id": "Q171",
+  "answer": "Under the Universal Scalability Law, relative capacity is C(N) = N / [1 + α(N−1) + βN(N−1)]. The numerator rises linearly with N, but the denominator contains a βN(N−1) coherency term that rises roughly quadratically. Once coordination work — shared locks, cache invalidation, cross-worker messaging — grows faster than the useful work each new worker adds, aggregate throughput peaks and then turns retrograde. Contention alone produces diminishing returns; positive β is what can make extra workers counterproductive.\n\nThe fitted α and β cannot identify the cause. They are aggregate empirical parameters for contention and coherence, and the expression is not a mechanism detector: a particular lock, link or invalidation flow cannot be proven from the coefficients. Different mechanisms can produce similar curves, especially when the fit spans few points, a changing workload mix or confounded resource limits; warm-up, retries and generator limits add further ambiguity. Fitted coefficients support prediction inside the observed envelope, not causal diagnosis.\n\nDistinguishing causes requires controlled experiments: hold fixture, skew, versions and backend ceiling fixed, vary replicas, then inspect lock wait/hold time, per-key contention, pool acquisition, invalidation work and queue age. Confidence is conceptual: the source ledger records no fitted Tycho curve or benchmark.\n\nEvidence map: workload-shape-and-scalability-laws §3; scaling-models §3; measurement-model; contention-response §§5–6.",
+  "citations": [
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#3-universal-scalability-law",
+    "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#measurement-model",
+    "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+    "tycho.page.61c621bfa9a04a738e937416cec15e78#6-a-discriminating-scalability-experiment",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#source-to-claim-ledger"
+  ],
+  "evidence": [
+    {
+      "claim": "USL normalizes relative capacity as C(N)=N/[1+α(N−1)+βN(N−1)], with α contention and β coherency overhead; fit comparable measured points because the equation is not proof of a particular bottleneck.",
+      "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#3-universal-scalability-law",
+      "note": "Observed in section text. The linear-vs-quadratic explanation of the peak is my derivation from the stated formula (inference)."
+    },
+    {
+      "claim": "The curve shows diminishing returns when shared-resource contention dominates and retrograde throughput at higher N when coordination work increases faster than useful work.",
+      "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+      "note": "Observed bullets in the canonical scaling-models section."
+    },
+    {
+      "claim": "α and β are empirical fitting parameters; the expression is not a mechanism detector, and fitted coefficients cannot prove that a particular lock, network link or cache-invalidation flow is the cause.",
+      "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+      "note": "Observed, nearly verbatim; the key boundary for the second half of the question."
+    },
+    {
+      "claim": "A fit needs enough observations with the same workload mix and bounded resource costs; compare withheld test points, retain uncertainty and investigate bottleneck signals rather than trusting a pretty sparse curve.",
+      "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+      "note": "Observed guidance in the same section."
+    },
+    {
+      "claim": "The USL is a model fitted against observations, not a law that identifies contention or coherence costs from a single data point; fitting coefficients to too few samples is not mechanism evidence.",
+      "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#measurement-model",
+      "note": "Observed in the measurement-model section."
+    },
+    {
+      "claim": "Discriminating mechanisms requires freezing fixture, skew, versions and dependency limits, varying replicas at a constant backend ceiling, observing bottleneck shifts, and fitting only after enough stable comparable observations.",
+      "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#6-a-discriminating-scalability-experiment",
+      "note": "Observed as a proposed experiment, explicitly not reported outcomes."
+    },
+    {
+      "claim": "Useful discriminators include lock wait/hold time, per-key contention, pool acquisition, cache invalidation work and queue age, not aggregate request rate alone.",
+      "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+      "note": "Observed candidate-constraint table; metrics are conceptual discriminators, not measurements from this source."
+    },
+    {
+      "claim": "The source ledger records no fitted Tycho USL curve or benchmark; the cited paper supports an analytical capacity model only.",
+      "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#source-to-claim-ledger",
+      "note": "Observed ledger row E01 and review note; grounds the confidence boundary."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

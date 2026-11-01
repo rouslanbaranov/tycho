@@ -1,0 +1,134 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "Why can three replicas spread across two zones still lose the booking journey together, and what must a recovery test demonstrate beyond healthy processes?",
+      "required_evidence": [
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#purpose-and-mission",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "A replica can remain healthy at process level while the user journey is unavailable, because replicas in different zones can still share one datastore, identity endpoint, routing plane or egress path.",
+        "In the book's synthetic deployment, zone-B replicas stay up after zone A fails but cannot authorize or commit reservations, so a zone-spread label did not remove the shared failure domain.",
+        "Degraded operation such as read-only catalogue access with new reservations refused is valid only when explicitly promised, and 200 OK responses from an obsolete cache do not demonstrate booking health.",
+        "The proposed test removes zone A's compute and selected network services, then independently injects database and identity loss while recording completed journeys, unauthorized or stale responses, detection-to-routing time, RPO/RTO and required operator interventions.",
+        "Recovery must avoid promoting two booking writers, and a simpler active/passive topology with demonstrated failover may be safer than nominal active/active without state fencing."
+      ],
+      "optional_claims": [
+        "Running more replicas does not guarantee isolation unless their placement and dependency sets are modeled.",
+        "Kubernetes topology-spread guidance and provider recovery guidance support placement controls and failure-scoped objectives, but neither certifies this hypothetical architecture."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "When two simultaneous submissions reuse one idempotency key and the first commits while its response is lost, why is a read-then-insert check insufficient, and what must happen when the key returns with different parameters or after retention ends?",
+      "required_evidence": [
+        "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+        "tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking"
+      ],
+      "core_claims": [
+        "A logical operation identifier names one authorized intent with defined parameters, while transport attempt, resource, event and consumer-effect identifiers name different things; creating a new operation ID per retry or counting attempts as effects breaks deduplication.",
+        "Two concurrent first attempts can both observe the key as absent and commit different bookings unless one atomic key-and-payload decision is made across all replicas rather than a local mutex or a read-then-insert check.",
+        "When the first attempt commits R7 but its response is lost, a retry with the same key and equivalent parameters must resolve to R7 instead of creating a second reservation.",
+        "A replay of the key with different dates or units is a parameter conflict that must be rejected or explicitly handled, not answered with the earlier result.",
+        "A finite retention window cannot promise deduplication forever; after expiry, reconciliation must rely on durable business identity, and a downstream consumer effect needs identity at that effect's own durability boundary."
+      ],
+      "optional_claims": [
+        "An independent fixture should count logical intents, transmitted attempts, accepted effects, duplicate observable effects and unresolved outcomes separately.",
+        "If the original operation is still executing, the service needs a concurrency-safe in-progress, wait, conflict or result-lookup protocol."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why does advancing a watermark past a window not make its published total final, and what must the processing contract declare before a late booking correction is applied?",
+      "required_evidence": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "An event can arrive after the watermark has passed its window, so the operator needs a declared late-event policy: drop with an explicit metric, update or retract the earlier result, route to a side output, or defer finalization.",
+        "A checkpoint captures operator state and source positions but does not decide whether a late business correction should be discarded, sent as an update or routed to a reconciliation stream.",
+        "Replay after a sink commit can produce a duplicate correction unless the sink provides an idempotent, upsert or transactional contract, and reopening a finalized window must be an explicit policy.",
+        "A business that prohibits changing settled invoices may need a separate adjustment event rather than a silent revision of published totals.",
+        "The event-time source, window boundary, watermark and idle-partition handling, correction mode, retained state size and external output semantics must be chosen together rather than as independent settings."
+      ],
+      "optional_claims": [
+        "A scheduled batch backfill may be safer than the streaming path when its lateness and retraction policy cannot satisfy the reconciliation requirement.",
+        "Snapshotting processor state cannot retroactively cancel an irreversible external effect such as an email already sent."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can an index that helped one tenant make the same query slower for another, and which conditions must be fixed before the two access paths are compared?",
+      "required_evidence": [
+        "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#2-compare-access-methods-by-the-supported-operator-workload",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents"
+      ],
+      "core_claims": [
+        "A primary-key lookup, a range filter, a full-text search and ordered pagination impose different access patterns, so the presence of an index does not show that it serves the workload.",
+        "The planner may correctly choose a sequential scan when a large fraction of rows qualifies or when the index path is more expensive under its estimates.",
+        "In the synthetic case one tenant owns 60 percent of the rows and most records are closed, so stored statistics can change the estimated selectivity even though the index and total row count are unchanged.",
+        "A controlled comparison pins query parameters, data shape, planner settings, statistics collection, available memory and cache state, then checks estimated versus actual rows, buffer reads, index-only eligibility and user-visible latency.",
+        "Correlated predicates can defeat independence assumptions; extended statistics and ANALYZE may improve estimates, but an EXPLAIN and a controlled workload test are still required."
+      ],
+      "optional_claims": [
+        "Exact operator support belongs to the index method, operator class and database version, not to the index family name alone.",
+        "A materialized read model may fit a different analytic query but adds freshness and rebuild cost; repairing statistics is preferable when measured against the actual distribution."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why can a higher Recall@5 fail to justify a retrieval change, and what must lexical, vector or hybrid candidates share before their ranking metrics are comparable?",
+      "required_evidence": [
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons"
+      ],
+      "core_claims": [
+        "Precision@k, Recall@k, MRR@k and nDCG@k answer different questions, and their common misuses include treating unjudged items as irrelevant, assuming the judgments contain every relevant item, and treating graded relevance as a probability.",
+        "Recall@k divides by all judged relevant items under the chosen relevance judgments, so pooled judgments are an assumption for a particular collection rather than a complete and permanent relevance map.",
+        "In the book's fictional example, systems A and B score 1.0 and 0.5 Recall@5 under complete judgments, which says nothing by itself about trustworthiness, freshness, citations or the total user outcome.",
+        "A defensible comparison holds the source snapshot, chunk or section boundaries, relevance judgments, permission filters and evaluation queries fixed, and reports index build time, size, latency percentiles, freshness and deletion lag, cost and citation recoverability beside the ranking scores.",
+        "The evaluation set must include exact identifiers, conceptual and multi-part questions, false friends, unanswerable questions, renamed or deleted content and permission scopes; automatically generated keyword queries cannot establish expert search quality."
+      ],
+      "optional_claims": [
+        "Lexical retrieval may excel on exact identifiers, vector retrieval on vocabulary mismatch, and hybrid fusion adds complexity that must itself be benchmarked.",
+        "Semantic similarity or a top result found does not certify that a source supports the requested claim."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why does filtering a malicious instruction out of retrieved text not make an assistant's later tool call authorized, and where must the authorization check occur?",
+      "required_evidence": [
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure"
+      ],
+      "core_claims": [
+        "A retrieved document is untrusted data with a source, revision and access classification, not an executable instruction or approval to call another tool, and merging it into high-priority instructions creates a structural trust-boundary failure.",
+        "No natural-language filter is foolproof, so unacceptable effects must be prevented by server-side boundaries that do not depend on how the model interprets retrieved prose.",
+        "The search surface should separate transport control, data control and effect control; the safest baseline for a read-only reference service is no mutation or execution tools at all, with any legitimate write tool isolated behind its own permissions.",
+        "Every action's arguments must be validated against a narrow schema, allowed identifiers, resource permissions and a known business contract, and entitlement must be checked again at the authority that protects the effect.",
+        "Search results can leak through metadata as well as body text, so counts, titles, snippets, related links and citations must be filtered against the authorized subject and object."
+      ],
+      "optional_claims": [
+        "Explicit human confirmation for irreversible actions is useful but is not a substitute for access control.",
+        "Malicious-looking retrieved text, fabricated citation identifiers, mixed entitlements and unexpected cross-document links belong in negative tests."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "task_id": "Q154",
+  "answer": "Watermark finalization is a stated lateness expectation, not proof of completeness. A watermark tells operators how much lateness they expect and when to finalize; it asserts \"nothing older is expected\", not \"everything older has arrived\". Arrival order differs from event-time order: E5 carries event time 10:01 but reaches the operator after its watermark advanced beyond that window, so the window closes with a valid event still in flight. A later cancellation is stronger still: it is a legitimate business correction that must change the total, and no watermark anticipates it.\n\nBefore the daily total is settled, the lateness and correction contract must decide the event-time source and daily boundary (clock, time zone); allowed lateness and idle-partition handling; whether finalized windows may be reopened, and for how long state is retained; the correction form (update or retraction, side output, compensating adjustment event, or drop with an explicit metric); and the sink contract (idempotent upsert or transaction with replay deduplication), so a restored checkpoint cannot double-apply the correction. Otherwise the number is \"best known now\", not settled; a business forbidding revisions needs separate adjustments. The book's scenario is synthetic, so version-specific watermark behavior still needs release evidence.",
+  "citations": [
+    "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+    "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+    "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route"
+  ],
+  "evidence": [
+    {
+      "claim": "A watermark declares the lateness the operator expects and when to finalize a result; it is a policy, not an observation that all earlier events have arrived.",
+      "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+      "note": "Observed: 'A watermark or event-time windowing policy tells operators how much lateness they expect and when to finalize a result.'"
+    },
+    {
+      "claim": "Arrival order can differ from event-time order, so a window can be finalized while an older event (E5, event time 10:01) is still in flight.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Observed: 'Event E5 reports a booking at event time 10:01 but arrives after the operator has advanced its watermark beyond that window.'"
+    },
+    {
+      "claim": "The failure mode is a window silently closing before a valid late correction arrives.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Observed boundary row: 'Event time/watermark | Operator's chosen lateness policy | Window silently closes before valid late correction arrives.'"
+    },
+    {
+      "claim": "A later cancellation is a business correction whose treatment (discard, update, or reconciliation stream) is not decided by the checkpoint or watermark.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Observed: 'Another event cancels the booking later... a checkpoint alone does not decide whether a late business correction should be discarded, sent as an update or routed to a reconciliation stream.'"
+    },
+    {
+      "claim": "The late-event policy must choose among drop-with-metric, update/retraction, side output, or deferred finalization; none is universally correct.",
+      "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+      "note": "Observed: operator 'must follow a declared late-event policy: drop with an explicit metric, update/retract a prior result, send to a side output, or defer finalization. None is universally correct.'"
+    },
+    {
+      "claim": "The contract must also fix event-time source, window/day boundary and time zone, lateness/idle-partition handling, and state retention.",
+      "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+      "note": "Observed table rows: event-time source, window boundary, watermark/lateness, state size (number of keys/windows retained, TTL, replay)."
+    },
+    {
+      "claim": "Stability under replay requires a sink idempotency/upsert or transaction contract plus a declared policy for reopening finalized windows.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Observed: 'Correctness depends on the sink's idempotent/upsert or transaction contract, plus a declared policy for reopening finalized windows.'"
+    },
+    {
+      "claim": "A business that forbids changing settled totals needs a separate adjustment event rather than silent revision.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Observed: 'A business that prohibits changing settled invoices may need a separate adjustment event rather than silently revising totals.'"
+    },
+    {
+      "claim": "Event time, watermarks, retained state, checkpointing and replay must be treated as one declared processing contract, and a checkpoint cannot recover an expired input or reverse an external effect.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route",
+      "note": "Observed: 'Treat event time, watermarks, retained state, checkpointing and replay as one declared processing contract.' Also: 'A consistent processor checkpoint cannot recover an expired input or reverse an independently committed external effect.'"
+    },
+    {
+      "claim": "Limit: the walkthrough is an original synthetic scenario and its crash-plus-correction experiment is proposed, not executed, so it is not production proof.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Observed: 'Original synthetic event-time scenario' and 'Proposed, not executed: crash after a sink commit...'. Confidence: conceptual, medium."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

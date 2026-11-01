@@ -1,0 +1,70 @@
+{
+  "task_id": "Q163",
+  "answer": "Because the duplicate acts on two different quantities. On the per-request distribution it helps: the client keeps the first acceptable reply and cancels the loser, so when slowness is independent the caller waits for the minimum of two draws. Under the chapter's independent-latency model, a threshold each attempt exceeds with probability p is exceeded by both with probability p-squared (model inference, not measurement); the Tail at Scale example reports a 99.9th-percentile effect, with a p95 trigger holding the paper's extra load near 5%. On offered load it hurts: each hedge is a second copy of work on the same finite capacity, and layered fan-out or retries compound it. The tail is often queueing-built, so extra copies lengthen the queue that produced the tail, and higher latency triggers still more hedges - positive feedback at the worst moment. The hedge therefore wins only when the tail is independent per-replica straggling and capacity is slack; where replicas share a database, network path or GC pause, the draws are correlated and the added load is pure cost. Bounding it requires a measured percentile, an attempt cap, loser cancellation, and equivalent, fresh replicas; speculative writes need an idempotency identity. The crossover point is workload-specific and unmeasured here; no benchmark is reported.",
+  "citations": [
+    "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#4-hedging-replication-and-selective-degradation",
+    "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+    "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+    "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#6-worked-decision-retain-hedge-or-split",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback"
+  ],
+  "evidence": [
+    {
+      "claim": "A hedge sends the same read to another equivalent replica, takes the first acceptable response, and cancels remaining attempts; that first-success rule is why the caller's tail can fall.",
+      "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#4-hedging-replication-and-selective-degradation",
+      "note": "Observed: 'sends the same read to another replica or service instance when the first attempt is slow, uses the first acceptable response, and cancels the remaining attempts.'"
+    },
+    {
+      "claim": "Deferring the duplicate until the first attempt passes the 95th percentile limited the paper's extra load to about 5% and reports a 99.9th-percentile effect.",
+      "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#4-hedging-replication-and-selective-degradation",
+      "note": "Observed: Tail at Scale p95 trigger, 'limited the extra load to about 5% in its example', and 'reports a 99.9th-percentile effect in its benchmark'."
+    },
+    {
+      "claim": "A hedge adds a second copy of the work, can raise load when a shared dependency is saturated, and should be disabled when replicas share a bottleneck or tails are not independent.",
+      "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#4-hedging-replication-and-selective-degradation",
+      "note": "Observed: 'adds a second copy of the work and can raise load'; paper warns naive implementations 'add unacceptable additional load'; 'Disable the hedge when replicas share a bottleneck... when cancellation cannot stop the duplicate.'"
+    },
+    {
+      "claim": "First-success among replicas is conditional: the replicas must be fresh and consistent enough to interchange for the operation.",
+      "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+      "note": "Observed table row: 'First successful response among replicas - Wait for first acceptable result; cancel remaining speculative work - Are replicas fresh/consistent enough to interchange?'"
+    },
+    {
+      "claim": "Tail-composition arithmetic is conditional on independent draws; correlated delays from a shared database, GC event, network congestion or regional fault break it.",
+      "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+      "note": "Observed: P(max <= t) = F(t)^N under identical independent CDFs; 'Real dependencies can be correlated through a shared database, GC event, network congestion, regional fault or request mix.' The min-of-two p-squared step is my model inference, not a measurement here."
+    },
+    {
+      "claim": "Hedging a read can improve its tail while multiplying dependency work and possibly worsening shared saturation.",
+      "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#6-worked-decision-retain-hedge-or-split",
+      "note": "Observed: 'A hedge to a second replica can sometimes improve a read tail, but it multiplies dependency work and may exacerbate shared saturation.'"
+    },
+    {
+      "claim": "Retries and duplicate attempts compound across layers, and can multiply load during an outage.",
+      "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+      "note": "Observed: nested retries can create 'up to 27 downstream attempts per logical intent' in a deliberately simplified model; retry budget 'Dangerous misuse: Multiply load during outage'."
+    },
+    {
+      "claim": "Under overload, offered attempts exceed unique business operations after timeouts, and backlog grows whenever arrivals exceed completions.",
+      "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+      "note": "Observed: 'Retries after timeout - More offered attempts than unique business operations'; 'if offered work exceeds drain rate, backlog and age grow even while every worker is busy'."
+    },
+    {
+      "claim": "A duplicate read served by an asynchronous second replica may not include a committed effect; the read route needs an explicit visibility condition.",
+      "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+      "note": "Observed: 'A successful SELECT on a reachable replica is not sufficient evidence'; route must meet an explicit replication/application visibility condition or return a declared stale outcome."
+    },
+    {
+      "claim": "The chapter classifies the independence-based CDF arithmetic and example calculations as author-owned inference, not observed results.",
+      "section_key": "tycho.chapter.2ad010c2b29c4390b83bbdadeb346289#7-source-to-claim-ledger-and-review-boundary",
+      "note": "Observed: 'the independent-max CDF and example calculations follow the stated probability model'; correlated distributions, real hedging effectiveness and throughput under overload 'remain unverified'."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

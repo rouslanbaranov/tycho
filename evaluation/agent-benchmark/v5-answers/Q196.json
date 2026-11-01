@@ -1,0 +1,59 @@
+{
+  "task_id": "Q196",
+  "answer": "V12 keeps the two-replication convergence-stress run because it is a deliberate stress case that records a failure mode, not a usable estimate. The convergence rule defines relative error as standard error divided by the absolute mean and marks a run converged only when that value is at most 0.02. The stress run's 0.909 success rate yields 0.032, so its recorded status is insufficient-sample. Calling it converged would contradict the rule and the run record, whose convergence status is a substantive field covered by the result hash, so relabelling it would break replay and provenance.\n\nDiscarding it would hide the instability the case exists to show. V12 gave it wide input draws and a small replication budget; a ranking from such a sample can reverse, and the run records that instability instead of hiding it. V12-C states that a run failing the 0.02 threshold is not used as converged evidence, while V12-E treats an insufficient-evidence decision record as a valid outcome. The run therefore remains auditable evidence that the gate rejects an underpowered result, but it cannot support a converged claim or count as converged evidence for a decision. Confidence is high for the recorded status; no broader retention policy appears in these sections.\n\nEvidence map: convergence-and-error#relative-error, uncertainty-and-sensitivity#a-separate-insufficient-sample-case, validation-gates#v12-c-statistical-validity.",
+  "citations": [
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule"
+  ],
+  "evidence": [
+    {
+      "claim": "V12's convergence rule is relative error = se / |mean|; a run is converged only when relative error is at most 0.02 and is insufficient-sample otherwise.",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+      "note": "Direct rule statement on the convergence page, immediately before the stress-run example."
+    },
+    {
+      "claim": "The two-replication convergence-stress run has success rate 0.909 and relative error 0.032, so V12 marks it insufficient-sample while the other three runs are converged.",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+      "note": "Observed numbers and status: 'so it is marked insufficient-sample. The first three are converged; the stress run is not.'"
+    },
+    {
+      "claim": "The stress case is deliberate: wide input draws and a small replication budget expose the failure mode, and the record keeps the instability rather than hiding it.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+      "note": "Quote: 'This is deliberate. A ranking from an unstable sample can reverse; the stress run records the instability instead of hiding it.'"
+    },
+    {
+      "claim": "V12-C records seeds, replications, standard errors, confidence intervals and convergence status, and a run failing the 0.02 threshold is not used as converged evidence.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+      "note": "Observed gate text; the stress run is named as insufficient-sample in the same section."
+    },
+    {
+      "claim": "Convergence status belongs to the substantive run record covered by the result hash, so relabelling the run converged would invalidate the hash and replay.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+      "note": "Observed: 'A changed metric, limitation or convergence status does' invalidate the result; required fields include convergence status, relative error, threshold and replications."
+    },
+    {
+      "claim": "V12-E treats insufficient evidence as a valid decision outcome, so an unconverged run need not be suppressed to keep the decision process valid.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+      "note": "Observed: 'The modernization record is insufficient evidence. Both are valid outcomes.'"
+    },
+    {
+      "claim": "The stopping rule requires recording the achieved error and whether the target was met; V12 does not adapt n during a run.",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule",
+      "note": "Observed: step 5 records achieved error and target compliance; scenario declares replication count."
+    },
+    {
+      "claim": "No separate policy on deleting failed runs was found in the retrieved sections; the retention rationale is stated for this deliberate stress case.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+      "note": "Inference from retrieved evidence and search gaps; not a claim that no such policy exists outside the index."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

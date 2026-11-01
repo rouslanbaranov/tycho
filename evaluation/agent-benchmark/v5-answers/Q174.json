@@ -1,0 +1,64 @@
+{
+  "task_id": "Q174",
+  "answer": "Both columns can have current, freshly analyzed statistics and the query can still be badly costed, because per-column statistics are marginals: they describe each column separately, not how values co-occur. The planner combines predicates by multiplying separate selectivities, assuming independence. When the columns are correlated that product is wrong, and every cost derived from the row estimate - scan choice, join order, join algorithm - inherits the error. The book's synthetic case: one location has 90% of devices tagged \"portable\" while other locations rarely use the tag, so a combined location-and-tag predicate is underestimated.\n\nNew extended statistics change the plan only after the object exists and is populated. Creating the extended-statistics object over the column combination is necessary but not sufficient: it gathers no representative sample until ANALYZE runs. Only then does the planner have joint-distribution evidence (functional dependencies, multivariate n-distinct or MCV lists, where the predicate form is supported), and only a newly planned query can use it - re-run EXPLAIN with representative parameters and verify under a controlled workload.\n\nBoundaries: extended statistics do not cover every predicate form; growth, skew and schema changes can invalidate samples; planner cost units are not latency. A cached plan must also be re-planned, which is inference beyond the book's text. Confidence: high on mechanism, medium on the replan boundary.",
+  "citations": [
+    "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+    "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+    "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution"
+  ],
+  "evidence": [
+    {
+      "claim": "Per-column statistics do not encode co-occurrence; correlated predicates defeat the independence assumption and yield bad join or scan estimates.",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+      "note": "Observed: 'Correlated predicates can fool naive independence assumptions, producing badly estimated joins or scan plans.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "A synthetic location-and-tag predicate is underestimated when tag prevalence depends on location.",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+      "note": "Observed: 'one location has 90% of devices tagged as portable, while other locations rarely use the tag'; a planner relying on approximate independent selectivities 'may underestimate rows for a combined location-and-tag predicate.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "Creating an extended-statistics object gathers no representative sample by itself.",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+      "note": "Observed: 'creating extended statistics does not itself gather representative samples until ANALYZE runs.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "Extended statistics plus ANALYZE may improve estimates, but still require an actual EXPLAIN and controlled workload test.",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+      "note": "Observed: 'A suitable extended-statistics object ... and ANALYZE may improve estimates; the design still requires an actual EXPLAIN and controlled workload test.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "Data growth, skew and schema changes can invalidate prior statistical assumptions.",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+      "note": "Observed: 'Samples, data growth, skew and schema changes can invalidate prior assumptions.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "Plans are generated from fresh table statistics and checked by comparing estimated with actual rows; cost units are not elapsed time.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+      "note": "Observed: flow 'Fresh relevant table statistics -> EXPLAIN candidate plan -> Controlled EXPLAIN ANALYZE'; 'estimated cost is in planner units; it should not be read as elapsed milliseconds.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "Under tenant skew with correlated state values, stored statistics are a plausible cause of incorrect row estimates.",
+      "section_key": "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+      "note": "Observed: 'Later one tenant holds 60% of rows and most records are closed'; table row 'Stale histogram or correlation stats | A plausible cause of incorrect row estimates'.",
+      "kind": "observed"
+    },
+    {
+      "claim": "An existing or cached plan must be regenerated after ANALYZE before new extended statistics can affect execution.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+      "note": "Inference: the book shows statistics feeding plan generation but does not state plan-cache invalidation; treat as mechanism inference, not a measured claim.",
+      "kind": "inference"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

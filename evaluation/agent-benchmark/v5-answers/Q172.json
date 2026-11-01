@@ -1,0 +1,61 @@
+{
+  "task_id": "Q172",
+  "answer": "Quorum overlap is necessary, not sufficient. With R read responses and W write acknowledgements over N replicas, R + W > N guarantees only that the two sets intersect when membership is correct; Tycho states overlap \"is necessary but not sufficient for freshness.\"\n\nFour mechanisms explain a stale quorum read. (1) Acknowledgement scope: an acknowledged write means W voters accepted it, not that every replica applied it; async acknowledgement can reply before a standby catches up, and weak write concerns can roll back. (2) Version selection: the reader must pick the highest version among responses and repair lagging replicas; a selector that takes the first or fastest reply, ignores the newest replica, or cannot order concurrent versions serves old data. (3) Membership and sloppiness: sloppy quorum with hinted handoff stores writes on fallback nodes outside the strict preference list, and range movement can leave old and new quorums non-overlapping. (4) Read routing: follower reads are stale by default; linearizable reads need valid lease, read-index or quorum confirmation, and a leader that cannot confirm quorum must refuse.\n\nRead repair and hinted handoff are \"only best-effort\"; convergence depends on anti-entropy. A highest-version selector, strict membership overlap and token- or lease-aware routing close these gaps. Evidence is documentary and synthetic, not production measurement.",
+  "citations": [
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+    "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#2-acknowledgments-and-replication-are-not-one-binary-switch",
+    "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+    "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+    "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result",
+    "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction"
+  ],
+  "evidence": [
+    {
+      "claim": "Quorum intersection is necessary but not sufficient for a fresh read; a read intersecting a write quorum can still be stale.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Observed: 'Overlap is necessary but not sufficient for freshness' and 'A read that intersects a write quorum can still return a stale value when the write failed, membership was sloppy, or the selector ignores the newest replica.'"
+    },
+    {
+      "claim": "R + W > N makes read and write sets intersect, but the reader must select the highest version and repair stale replicas.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+      "note": "Observed: 'when R + W > N and membership is correctly configured, the sets intersect, but the reader must select the highest version and repair stale replicas'; also 'a read with too small R can return stale data'."
+    },
+    {
+      "claim": "Write acknowledgement is configured and staged: the client may be answered before a standby receives, flushes or applies the change.",
+      "section_key": "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#2-acknowledgments-and-replication-are-not-one-binary-switch",
+      "note": "Observed: synchronous replication distinguishes the stage at which a standby has written/flushed/applied changes; 'Async mode can reply before standby catches up.'"
+    },
+    {
+      "claim": "Weaker write concern can roll back, so durability requires majority reads and writes; a replica count is not a durability guarantee.",
+      "section_key": "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+      "note": "Observed: '`{ w: 1 }` can roll back, so durability needs majority reads and writes'; token-less or rerouted reads may hit a replica lacking the session's data."
+    },
+    {
+      "claim": "Sloppy quorum sends requests to fallback nodes instead of enforcing strict membership; read repair and hinted handoff are best-effort.",
+      "section_key": "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+      "note": "Observed: 'Intersection alone does not guarantee freshness'; Dynamo/Riak sloppy quorum, hinted handoff and Merkle-tree anti-entropy are named as availability/recovery mechanisms, with Cassandra calling read repair and hinted handoff 'only best-effort'."
+    },
+    {
+      "claim": "Reads need a separately defined freshness policy: follower reads can be stale, and linearizable reads need lease, read-index or quorum confirmation.",
+      "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+      "note": "Observed: 'local follower reads can be stale; linearizable reads require valid confirmation/lease/read-index semantics as implemented'; a leader that cannot confirm quorum must stop serving authoritative writes and linearizable reads."
+    },
+    {
+      "claim": "Clock-based last-write-wins ordering is not reliable evidence of recency or intent.",
+      "section_key": "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result",
+      "note": "Observed: 'clock order is not evidence of user intent'; a clock adjustment must not accidentally make a future update permanently dominant; ties need a deterministic tie-breaker."
+    },
+    {
+      "claim": "Boundary: cross-region asynchronous replication can acknowledge a write in one region that is not yet visible in another.",
+      "section_key": "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction",
+      "note": "Observed synthetic case staging 'a write acknowledged in A but not visible in B when the failover begins'; no production measurement is claimed."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

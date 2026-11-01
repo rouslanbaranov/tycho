@@ -1,0 +1,136 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "atlas",
+  "items": [
+    {
+      "question": "A client sends only the highest commit position it has observed to whichever replica answers. After a leader change, why can a replica whose applied position is numerically higher still return a state that violates read-your-writes, and what must the token and the routing decision carry instead?",
+      "required_evidence": [
+        "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#where-the-dependency-must-travel",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#failure-cost-and-alternatives"
+      ],
+      "core_claims": [
+        "A session is an application-defined sequence of operations rather than a browser, connection or human identity, so requests without its context cannot inherit read-your-writes or monotonic-read guarantees by accident.",
+        "A commit position is meaningful only while positions share a lineage: a bare counter that resets on a new leader can make a higher number name a divergent suffix rather than a later state, so epoch or stable-lineage comparison is required before treating the token as satisfied.",
+        "The token must be bound to the relevant dataset or partition and to the guarantee being preserved; the router may wait within a bounded deadline, choose a replica whose applied position qualifies, or return a retryable failure that preserves the token, but must not silently serve an older snapshot to protect a latency target.",
+        "A database token cannot assert that an external search index has applied an event, so a page combining a qualifying database snapshot with an older index needs a propagated publication watermark, an overlay of the session's pending changes, or an explicit label that the search view is separately delayed.",
+        "Replica failure or a lost client token must not erase the session requirement, and a timed-out write may have committed, so reconciliation by operation identity is needed before presenting it as absent; sticky routing reduces movement but is not a failover proof."
+      ],
+      "optional_claims": [
+        "Metadata propagation, possible frontier growth, extra routing decisions and tail latency during lag are continuing costs, and causal consistency with a frontier is the stronger alternative when cross-client dependencies travel.",
+        "A session token records an observation requirement, not permission to read the contents, so client-supplied positions must be authenticated or scoped and their size and waiting time bounded."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A three-voter metadata store is expanded to four voters to improve resilience, and reads and writes continue to use R + W > N. Why does the fourth voter add no failure tolerance while raising the commit quorum, and why can a read still be stale during the membership change?",
+      "required_evidence": [
+        "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "Majority quorum is floor(N/2)+1, so a three-voter cluster requires two votes and tolerates one unavailable voter while a four-voter cluster requires three votes and still tolerates only one, meaning the extra voter can raise the commit threshold without increasing tolerated failures.",
+        "Quorum arithmetic is a conditional contract rather than a safety proof: it assumes the quorum protocol and membership-change rules are correct and the remaining voters can communicate with the necessary log state.",
+        "R + W > N makes the read and write sets intersect when membership is correctly configured, but intersection is necessary and not sufficient for freshness because the reader must also select the highest version and repair stale replicas.",
+        "A membership change that moves replicas can violate the intersection that reads depended on, so old and new quorums must overlap through supported joint or overlapping safeguards rather than a simple count update in configuration.",
+        "Overlap can still return a stale value when the write failed, membership was sloppy, or the selector ignores the newest replica, and a latency budget does not make a stale response correct; sloppy quorum deliberately trades strict membership overlap for availability."
+      ],
+      "optional_claims": [
+        "A non-voting learner can receive state before safe promotion under implementation-specific rules, and election and log commitment also require a quorum under the protocol's term rules.",
+        "A leader-based protocol or a single-writer partition is the alternative when quorum latency and availability cost exceed the safety benefit, although the leader still needs a majority for election and commit."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A shared cache stores a 404 for a document lookup and a 403 for a caller who lacked access. The document is later created and shared with that caller, and the policy revision changes. Why can both cached negatives remain wrong after the change, and what must each key and lifetime bind?",
+      "required_evidence": [
+        "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#6-a-discriminating-failure-experiment"
+      ],
+      "core_claims": [
+        "Negative caching protects against repeated misses for absent values, but it creates a freshness question because a cached not-found can hide a later created object, and a stale allow or deny can outlive a grant or revocation.",
+        "A cached negative must be distinguishable from no entry and from an actual deletion or tombstone, and an unknown backend error must never be cached as absent, or a transient failure becomes a durable claim that the object does not exist.",
+        "An authorization-sensitive negative key must bind the authenticated subject or scope, tenant, checked operation and policy revision; a key that omits one of these is not shared, and a shared cache must not reuse an authorization-bearing response unless a response directive permits storage.",
+        "The denial lifetime must be the shorter of its TTL and the revocation deadline, with the key deleted or versioned on create, grant, revoke and delete, because a cached permit must not outlive a required revocation deadline and the service must fail closed when relevant state changes.",
+        "The page's proposed discriminating tests mutate an authorization-sensitive value during a permitted TTL and separately confirm that a backend read error returning no result is not negatively cached as absence; these tests are proposed, not reported as performed."
+      ],
+      "optional_claims": [
+        "Per-principal keying is preferred for authorization decisions, a short TTL for public existence checks, and bypass when the revocation deadline is shorter than any useful TTL.",
+        "CloudFront caches a 403 only when the origin explicitly marks it cacheable, while Cloudflare gives 404 and 410 a three-minute default edge TTL and does not cache other status codes by default."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team replaces a join with an application-maintained index table and adds a covering column so the lookup avoids the base table. Why can the lookup return a stale or wrong row even though the base table is correct, and what must the write path and key preserve?",
+      "required_evidence": [
+        "tycho.page.41daaaaf1b34f0d26e3346804ac0e85e#overview",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "An index table is application-owned derived state that maps one query key to a primary key or row locator, while the base row remains authoritative and the application maintains the lookup on the write path because the query shape, sort order or cross-store join is not served by the primary store.",
+        "The mapping and the base write must commit in one local transaction or the write path must publish a durable repair intent, otherwise a crash or dual write leaves a lookup row pointing at an old or missing base row.",
+        "Exactly one lookup key defines what a row locates and what a duplicate means; payload or included columns must not become a second key or a second source of truth, the key should stay immutable, and stale or duplicate lookup rows need explicit reconciliation.",
+        "A covering path fails quietly when its shape changes: adding a filter can increase table access even though fewer rows are selected, and a plan's estimated cost is in planner units rather than elapsed milliseconds, while EXPLAIN ANALYZE executes the query and adds instrumentation overhead and side effects.",
+        "Adding an index is a data-lifecycle change that can raise write latency and WAL volume, storage and restore size, vacuum and cache pressure, planning time and lock exposure during creation, so its end-to-end workload cost must be compared with the scan or drift it removes."
+      ],
+      "optional_claims": [
+        "A native covering index, materialized view, query-time join or overloaded managed secondary index is the competing mechanism, and an application-owned table is justified only when those cannot serve the access path.",
+        "A concurrent index build reduces some write blocking but has its own phases, constraints and resource cost, so it is not a free online operation."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Every participant votes yes, then the coordinator crashes before recording its decision. Why can no participant safely commit or abort on its own, and what must the recovery decision be based on?",
+      "required_evidence": [
+        "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#1-define-the-invariant-before-naming-consistency",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "In prepare/commit the coordinator asks every participant to prepare, collects the votes, then records one durable commit or abort decision that participants apply while holding prepared state; no participant may commit before that decision exists.",
+        "A failure after prepare leaves the transaction in doubt, prepared data stays locked for reads and writes until resolution, and the decision must survive coordinator failure for prepared participants to recover.",
+        "Neither a participant's yes vote nor its local locks prove that the global transaction committed or aborted, so a unilateral commit or abort can violate the cross-resource invariant that two-phase commit was chosen to preserve.",
+        "Recovery must find the coordinator's durable decision through a commit-point log or an external transaction manager; resolution may be automatic or forced, but it cannot be fabricated from one participant's local state when the decision is unavailable.",
+        "Two-phase commit is contraindicated when participants cannot prepare or coordinator failure would block critical resources, and a saga of local transactions with compensation or one local transaction is the alternative when global atomicity is not required."
+      ],
+      "optional_claims": [
+        "Even correct two-phase commit covers only participating resource managers, so a broker or external service outside the protocol still needs an outbox, idempotency or repair contract.",
+        "Local serializable transactions can abort and retry, so a business decision must be safe to re-execute and external irreversible effects must not leak during an attempt that may later roll back."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Two client applications share one general-purpose API, and each filters fields and makes several calls. Why can a per-client backend improve the contract without becoming a second domain authority, and what release risk appears when it deploys independently?",
+      "required_evidence": [
+        "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#integrated-decision-and-reading-route",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "A backend for frontend is a separate backend for one client experience, owned by the frontend team, that customizes the client API and may compose several owner service calls while the shared domain services remain authoritative.",
+        "It fits when client populations have materially different interaction needs and duplicated client-specific composition is acceptable; one shared API with client-side selection is the alternative when the differences are small.",
+        "Cross-cutting policy such as monitoring and authorization and domain logic stay outside the backend for frontend, and duplicated domain logic, an unowned lifecycle, or deployment multiplication without measured client benefit are contraindications.",
+        "Independent backend-for-frontend and domain-service lifecycles create release-alignment risk because the documented sources describe per-client malfunction isolation but not drift, composition versioning or client-contract tests, so the composition must be versioned and the client contract tested.",
+        "A per-client failure can be isolated to that client population, but that isolation does not make the backend authoritative or license its release to change shared domain behavior silently."
+      ],
+      "optional_claims": [
+        "Code duplication is a probable outcome of the pattern and must be traded against the better-tailored experience rather than assumed away.",
+        "The composition record should state which domain API versions the backend expects so an independently deployed domain change is detected before users encounter it."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

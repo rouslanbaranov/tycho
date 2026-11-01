@@ -1,0 +1,85 @@
+{
+  "task_id": "Q190",
+  "answer": "Overlapping 95% intervals show that this sample did not detect a difference; they do not show that none exists. Overlap is inconclusive at best: the data stay compatible with real differences, the per-candidate intervals are not an interval for the difference, and without a pre-declared equivalence margin the study cannot separate \"no effect\" from \"an effect too small for this sample to resolve\". Recording \"no difference\" converts absence of evidence into evidence of absence and quietly adopts an unstated margin.\n\nThe record must instead report insufficient evidence with no recommendation — a complete outcome, not a failed model — or a provisional cost tie-break explicitly labeled as such, not a performance finding. It must state: both success-rate estimates with intervals and units, and the outcome and denominator accounting behind \"success\"; the interval for the difference and which differences it fails to exclude; the decision criterion and equivalence margin, and that it was fixed before the result; trial count, observed noise and the smallest difference the design could detect; that a narrower interval would add precision, not representativeness; reversal triggers; and the measurement, its owner, the supporting range, the cost of the status quo and the next review trigger. Inconclusive results should reopen scoping, not close the question.",
+  "citations": [
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+    "tycho.page.dff5d6affea243cca3c426d04d290802#5-negative-evidence-and-the-stopping-condition",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+  ],
+  "evidence": [
+    {
+      "claim": "Indistinguishable candidates on declared metrics, or an interval spanning both pass and fail, are listed conditions for insufficient evidence.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+      "note": "Observed: checklist includes 'the confidence interval includes both a pass and a fail on a decision-relevant metric' and 'two candidates are indistinguishable on the declared metrics'. Inference: a per-candidate interval is not the interval for the difference, so overlap cannot bound the difference or establish equivalence."
+    },
+    {
+      "claim": "Insufficient evidence is a result about missing observation, not a failed model, and must be paired with what would change it.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+      "note": "Observed: a model can be verified, converged and executable and still fail to support a decision; 'The correct outcome is insufficient evidence plus a list of what would change it.'"
+    },
+    {
+      "claim": "The record must name the measurement, the supporting or rejecting range, the owner, the cost of staying, and the next review trigger.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+      "note": "Observed: 'A useful insufficient-evidence record is actionable. It names: the measurement; the range that would support or reject the decision; the owner of the measurement; the consequence of staying in the current state; the next review trigger.'"
+    },
+    {
+      "claim": "Status includes insufficient-evidence with recommendation none, which is a valid record, and reversal triggers and limitations are required fields.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+      "note": "Observed: 'The status is one of proposed, decision-supported, insufficient-evidence or rejected. A record with recommendation none can still be insufficient-evidence; it is not an invalid record.' Required structure includes reversal triggers and limitations."
+    },
+    {
+      "claim": "Recording no difference and defaulting to a candidate is a named failure mode; missing reversal triggers are another.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+      "note": "Observed: 'Recommendation by default. A record with no recommendation is treated as incomplete, so an analyst invents one' and 'Missing reversal trigger'."
+    },
+    {
+      "claim": "A cost-based prioritization is a decision, not a fact produced by the comparison.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+      "note": "Observed: 'That prioritization is a decision, not a fact produced by the simulation.' Cost is declared as hard constraint C4, so retaining a cheaper candidate needs that declared constraint, not an equivalence claim."
+    },
+    {
+      "claim": "More precision is not more representativeness; a narrower interval would not justify the conclusion.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+      "note": "Observed: the record says what would not reverse it: 'a narrower confidence interval on the synthetic workload. More replications would make the synthetic estimate more precise, not more representative.' Generalizing to any sampling-only interval is inference."
+    },
+    {
+      "claim": "The decision criterion and acceptable range must be fixed before the result.",
+      "section_key": "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+      "note": "Observed: 'Pre-registering a decision criterion avoids adjusting the threshold until a preferred candidate wins'; item 7 requires 'Repetition and uncertainty: trials, warm/cold state, random order, noise and acceptable range'. Equivalence-margin and detectable-difference wording is inference from 'acceptable range'."
+    },
+    {
+      "claim": "Inconclusive results are valuable evidence for a better-scoped experiment, not a stronger conclusion.",
+      "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+      "note": "Observed: 'A result can be inconclusive because variance is high, samples are insufficient, the generator saturated, or the system differs too much from the target environment. That is valuable evidence and should lead to a better scoped experiment, not a stronger conclusion.'"
+    },
+    {
+      "claim": "Success rate needs explicit outcome and denominator accounting across candidates.",
+      "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+      "note": "Observed: 'Collect per-operation/tenant successes and side effects, not just aggregate bandwidth'; section 6 of the same page lists offered, transmitted, admitted, completed, rejected and unsent rates. Two success rates with different denominators are not comparable."
+    },
+    {
+      "claim": "MEASURE_FIRST and INSUFFICIENT_EVIDENCE are legitimate conclusions, including when the benefit is below measurement noise.",
+      "section_key": "tycho.page.dff5d6affea243cca3c426d04d290802#5-negative-evidence-and-the-stopping-condition",
+      "note": "Observed: 'The outcomes MEASURE_FIRST, INSUFFICIENT_EVIDENCE, and REJECTED_BY_GATE are legitimate engineering conclusions'; stopping conditions include 'the expected benefit is smaller than documented measurement noise'; 'record the narrowest next source, measurement or owner decision needed.'"
+    },
+    {
+      "claim": "Decision records declare an explicit recommendation or a no-recommendation outcome, and both are valid.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+      "note": "Observed: V12-E requires 'an explicit recommendation or a no-recommendation outcome'; 'The checkout record is decision-supported under its declared constraints. The modernization record is insufficient evidence. Both are valid outcomes.'"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

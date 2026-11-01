@@ -1,0 +1,66 @@
+{
+  "task_id": "Q195",
+  "answer": "A visible backlog is one stock inside a chosen boundary, so a flat queue means only that local inflow equals local outflow. Work can keep accumulating in omitted stocks—retry buffers, operator queues, database tables—while the reported queue stays flat. The identity backlog(t+dt) = backlog(t) + arrivals(dt) - completions(dt) conserves work only inside the declared boundary; retries or entity redefinitions crossing it make attempts, unique operations and outcomes diverge. Rejecting work before the boundary can also flatten the internal queue while user-level success falls.\n\nA stock-and-flow model must therefore make the boundary and excluded stocks explicit: state purpose, alternatives, observable metric, exclusions and validity domain; record included and excluded stocks, units, evidence status and assumptions in the model contract; and justify that omitted stocks cannot reverse the comparison. If they can, enlarge the boundary, represent them as explicit exogenous stocks or flows, or add a sensitivity case. Count offered, admitted, exited, rejected and abandoned work consistently, and record start and end backlog plus residence-time cohorts so finite-window edge effects are visible. Silently omitted stocks are a conceptual-validity defect, not a rounding error.\n\nEvidence: V12 stock-and-flow/where-the-model-fails; V12 model-scope/from-decision-to-boundary and failure-modes-of-scope; V12 model-contract/required-structure; V07 measurement-boundary/orientation; V07 finite-window/counterexample. Confidence is high for the mechanism; whether a specific backlog is affected remains unknown because this is method evidence, not production measurement.",
+  "citations": [
+    "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+    "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#orientation-four-numbers-that-are-not-interchangeable",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#evidence-based-counterexample-a-short-finite-window",
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery"
+  ],
+  "evidence": [
+    {
+      "claim": "Backlog is a stock and arrivals/completions are flows; change in backlog is their difference.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+      "note": "Observed: page gives backlog(t+dt)=backlog(t)+arrivals(dt)-completions(dt) and warns that mixing stock and flow units destroys meaning."
+    },
+    {
+      "claim": "Hidden stocks in databases, retry buffers or operator queues let a visible backlog look stable while total work grows elsewhere.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+      "note": "Observed: 'Hidden stock' failure mode; the quoted textbook sentence states the visible/stable versus total-growth divergence."
+    },
+    {
+      "claim": "A hidden stock or omitted boundary is a conceptual-model validity problem, distinct from verification and data-validity failures.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+      "note": "Observed: the page maps unit/conservation to verification, hidden stock/omitted boundary to conceptual validity, rate mismatch to data validity, citing Sargent."
+    },
+    {
+      "claim": "A model boundary separates model state from the rest of the world; omitted parts are acceptable only if they cannot change the comparison, and scope must state excluded actors, dependencies, failures and validity.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+      "note": "Observed: five-question boundary statement (purpose, alternatives, observable, excluded, validity)."
+    },
+    {
+      "claim": "Boundary mismatch and omitted dependency are scope failure modes that can reverse a decision.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+      "note": "Observed: failure-mode list; boundary starting after admission is the named example."
+    },
+    {
+      "claim": "The model contract requires explicit scope (included and excluded), boundary, units, parameter evidence status, validity limits, assumptions and unknowns.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+      "note": "Observed: contract top-level fields include scope, abstraction boundary, state units, evidence status, validity_limits and unknowns."
+    },
+    {
+      "claim": "Conservation needs one boundary and consistent entity counts, with no hidden transfers, recycled jobs or redefinitions; offered, admitted and exit rates are distinct.",
+      "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#orientation-four-numbers-that-are-not-interchangeable",
+      "note": "Observed: exact count balance N(t1)=N(t0)+A-D holds only under those conditions, and rejection may occur before the measured boundary."
+    },
+    {
+      "claim": "A finite observation window ending with unfinished work outside the boundary invalidates naive occupancy estimates; start/end backlog and cohorts must be recorded.",
+      "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#evidence-based-counterexample-a-short-finite-window",
+      "note": "Observed: 1-request/5-second counterexample where full residence time extends beyond the window; engineering consequence is explicit accounting."
+    },
+    {
+      "claim": "Rejecting work before the boundary can keep internal backlog flat while user-level success falls, and retries make offered attempts exceed unique business operations.",
+      "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+      "note": "Observed: synthetic 200/s offered versus 150/s completed example plus admission and retry caveats."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

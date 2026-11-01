@@ -1,0 +1,84 @@
+{
+  "task_id": "Q167",
+  "answer": "A trace set is a selected sample of execution stories, not a census, so its fitness depends on the inference, not on the data alone.\n\nDiagnosis works because a trace is internally complete: spans, parent relationships and timestamps show where one request spent time. The conditions — instrumentation covering the suspected operation, interpretable clocks, recorded errors and retries — describe that single case. Even a sparse sample can yield one slow trace that explains why that request was slow, because explaining one case needs a witness, not a representative sample.\n\nFrequency fails because a proportion needs a defined population, observation window and inclusion probability. Sampling can select on the outcome: tail sampling prefers slow/error traces, and adaptive sampling fits selected diagnostic objectives while biasing populations. The retained set over-represents exactly the slow requests being counted, and the unsampled denominator is unknown, so the slow share is biased rather than merely noisy, with no defensible error bar.\n\nBoundary: consistent-probability head sampling with a recorded rate permits reweighting and uncertainty; estimation is valid only when 'the sampling design supports that inference and uncertainty is disclosed.' Otherwise count requests, use histograms, or use unsampled SLIs.\n\nUnknowns: no production measurement here; bias magnitude is policy-dependent.\n\nEvidence map: trace purpose; causal interpretation; sampling limits; SLI population; aggregate-metrics choice rule.",
+  "citations": [
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#purpose-and-mission",
+    "tycho.page.aac0f46189b74948bedfc30a81ec80e5#2-causal-and-temporal-interpretation",
+    "tycho.page.f921597aae854c6996459fc025a9bca3#bounded-pattern-ownership-notes",
+    "tycho.page.bc30179a9cda4c12b9deb383e8751d47#4-sampling-limits-what-the-trace-can-support",
+    "tycho.page.bc30179a9cda4c12b9deb383e8751d47#5-context-async-messages-and-retries",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+    "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+    "tycho.page.ff387baa8697be02afec1be6807b858f#overview",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#overview"
+  ],
+  "evidence": [
+    {
+      "claim": "A trace answers how one request progressed, where time was spent and which operations were sampled; it is a different record from logs, lineage and audit.",
+      "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#purpose-and-mission",
+      "note": "Observed: 'Trace: how one distributed request or causal activity progressed across spans, where time was spent and which operations were sampled.' Four records 'answer different questions'."
+    },
+    {
+      "claim": "Locating a delay in one request requires within-trace causal and timing detail plus instrumentation coverage, not a representative sample.",
+      "section_key": "tycho.page.aac0f46189b74948bedfc30a81ec80e5#2-causal-and-temporal-interpretation",
+      "note": "Observed list: clocks and parent relationships interpreted at correct boundaries; instrumentation covers the suspected operation; spans carry errors, retries, concurrency and dependency context; attempts versus logical operations; sampling and export failures disclosed."
+    },
+    {
+      "claim": "The Dapper report itself accepts that traces can sometimes suffice to identify a performance anomaly's source, while denying that tracing replaces other tools.",
+      "section_key": "tycho.page.f921597aae854c6996459fc025a9bca3#bounded-pattern-ownership-notes",
+      "note": "Observed quote: 'Dapper alone is sometimes sufficient for a developer to identify the source of a performance anomaly', but 'it is not intended to replace all other tools.' Same section warns low-traffic workloads 'may miss important events at such low sampling rates'."
+    },
+    {
+      "claim": "Sampling policy can condition selection on the outcome: tail sampling prefers slow/error traces, and adaptive sampling biases populations instead of censusing them.",
+      "section_key": "tycho.page.bc30179a9cda4c12b9deb383e8751d47#4-sampling-limits-what-the-trace-can-support",
+      "note": "Observed table rows: tail sampling 'Can prefer slow/error traces using fuller context'; adaptive/service-specific 'Fits selected cost/diagnostic objectives' but 'Biases populations; not a statistical census'. Head sampling may 'miss' a later severe error."
+    },
+    {
+      "claim": "A small selected trace set cannot estimate a service success ratio unless the sampling design supports that inference and uncertainty is disclosed.",
+      "section_key": "tycho.page.bc30179a9cda4c12b9deb383e8751d47#4-sampling-limits-what-the-trace-can-support",
+      "note": "Observed: 'A small selected trace set cannot accurately estimate every service success ratio unless the sampling design supports that inference and uncertainty is disclosed.' Inference drawn from it: consistent-probability head sampling with a recorded rate permits reweighting; convenience or outcome-selected retention does not."
+    },
+    {
+      "claim": "Estimating a rate requires a defined denominator, eligible population, clock boundary and observation window.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+      "note": "Observed: 'An indicator needs a denominator'; the table fixes one eligible operation, clock start, good outcomes, pending/unknown treatment, window and represented population before measuring."
+    },
+    {
+      "claim": "An objective without a specified event population can be meaningless, and the counted unit must stay consistent.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+      "note": "Observed: 'A target without a specified event population can be meaningless.' The 500,000-decision arithmetic holds only 'assuming the unit, population and boundary are consistently counted'."
+    },
+    {
+      "claim": "Counters and histograms can support SLI computation; a recorded percentile without cancelled populations cannot prove user experience.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+      "note": "Observed: attempted-request counters are 'not the same denominator' as unique decisions under retries; a histogram can support latency SLOs under bucket/exemplar resolution; 'One recorded p99 without rejected/timed-out populations cannot prove user experience.'"
+    },
+    {
+      "claim": "A percentile describes a distribution, not one request; window, timeout inclusion, sampling and population composition must be defined.",
+      "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+      "note": "Observed: 'A percentile is a value of a distribution, not a single request's maximum. Define the observation window, whether timed-out requests are included, how sampling works, and whether successful, rejected and failed requests share the same population.'"
+    },
+    {
+      "claim": "The pattern-level choice rule assigns aggregate latency and error rate to metrics, and traces to cross-component path questions.",
+      "section_key": "tycho.page.ff387baa8697be02afec1be6807b858f#overview",
+      "note": "Observed: 'metrics for aggregate latency or error rate; structured logs or audit for a discrete event; tracing when the cross-component path is the question.' Also notes OpenTelemetry's point that aggregate-only use may make sampling inappropriate."
+    },
+    {
+      "claim": "When trace data is incomplete, population impact should be detected with request counts and unsampled user-level SLIs.",
+      "section_key": "tycho.page.bc30179a9cda4c12b9deb383e8751d47#5-context-async-messages-and-retries",
+      "note": "Observed: 'when trace data is incomplete, use request counts and unsampled user-level SLIs to detect population impact. Missing spans cannot be treated as missing work.'"
+    },
+    {
+      "claim": "An estimate is usable only when its standard error is small relative to the decision-relevant effect and sampling assumptions hold.",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#overview",
+      "note": "Observed (modeling layer): 'A result is stable when its estimated standard error is small relative to the decision-relevant effect and the sampling assumptions hold.' Used as the cross-layer test for when a weighted trace estimate could be defensible."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

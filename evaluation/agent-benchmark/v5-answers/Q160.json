@@ -1,0 +1,54 @@
+{
+  "task_id": "Q160",
+  "answer": "An index serves a predicate shape and a data distribution, not a SQL string. For one tenant the filter may match a few rows, so a B-tree lookup is cheap. For another tenant the identical statement may match a large slice — the walkthrough's hot tenant holds 60% of rows and most records are closed, with correlated state values — where many index entries and heap fetches can cost more than a sequential scan. Statistics are sampled and approximate; correlated predicates can defeat independence assumptions, so the planner may misestimate the second tenant's rows and keep a path that suited the first. The index also adds planning time, cache pressure, WAL and maintenance work that may slow the second tenant even when its read does not benefit.\n\nBefore comparing the indexed and non-indexed paths, fix: PostgreSQL major/minor version; SQL text and pinned parameter values; schema and index set; a representative dataset reflecting the tenant's cardinality, correlation and skew; planner settings; freshly gathered statistics; memory and CPU/IO/concurrency limits; and identical cold/warm cache state. Compare estimated versus actual rows, buffer reads, index-only eligibility, client-visible p95/p99 and write/storage cost. Do not generalize from one parameter value or a non-representative sample. Confidence: moderate; the cases are synthetic and unexecuted, and plan-cache effects are not covered.",
+  "citations": [
+    "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#purpose-and-mission",
+    "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+    "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+    "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+    "tycho.page.045713bc4f054663b676e4e1b6fe9725#7-controlled-acceptance-method",
+    "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change"
+  ],
+  "evidence": [
+    {
+      "claim": "An index can make selective reads faster but adds storage, maintenance and write overhead; the planner chooses by predicate, estimated rows and cost, so index presence does not guarantee use.",
+      "section_key": "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#purpose-and-mission",
+      "note": "Observed: page states index choice turns on SQL predicate, physical access paths, estimated rows and system cost; an index can speed selective reads but adds storage, maintenance and write overhead."
+    },
+    {
+      "claim": "The same tenant-scoped statement can behave differently: one tenant holding 60% of rows with correlated, mostly-closed state changes selectivities, so the index may be neither chosen nor useful.",
+      "section_key": "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+      "note": "Observed in an explicitly synthetic, unexecuted example: query selects by tenant_id and state; uniform distribution suggests a compound index, hot-tenant skew and correlated state make planner selectivity estimates differ."
+    },
+    {
+      "claim": "A large qualifying fraction can make a sequential scan correct, and the index path can be more expensive under the planner's assumptions.",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+      "note": "Observed: page says the planner may correctly choose a sequential scan when a large fraction of rows qualifies or the index path is more expensive; index design must include table size, estimated rows and skew."
+    },
+    {
+      "claim": "Planner estimates are hypotheses from sampled statistics; correlated predicates can defeat independence assumptions and produce badly wrong row estimates.",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+      "note": "Observed: estimates are not measured data; samples, growth, skew and schema changes invalidate assumptions; extended statistics do not help until ANALYZE runs."
+    },
+    {
+      "claim": "Before comparing paths, pin query parameters, data shape, planner settings, statistics, memory and cold/warm cache, then compare index-only eligibility, buffer reads, estimated versus actual rows and user-visible latency.",
+      "section_key": "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+      "note": "Observed: the two controlled cases specify these controls; the page states a plan change may improve B and worsen A, a decision condition rather than a universal index rule."
+    },
+    {
+      "claim": "A controlled acceptance method fixes version, SQL/parameters, schema, dataset, resource envelope and statistics, and includes writes, storage, p95/p99 and skew edge cases.",
+      "section_key": "tycho.page.045713bc4f054663b676e4e1b6fe9725#7-controlled-acceptance-method",
+      "note": "Observed: nine-step method fixes PostgreSQL major/minor version, input SQL/parameters and schema; admitted dataset; CPU/memory/IO/concurrency; statistics; with/without index; writes, waits, storage; client p95/p99; rejects non-representative samples."
+    },
+    {
+      "claim": "An index is a data-lifecycle change: it adds WAL, storage, cache pressure, planning time and maintenance cost, so a small read win can be a net loss.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+      "note": "Observed: listed effects include write latency, WAL, storage, backup, vacuum, cache pressure, planning time and per-tenant repetition. Inference: these shared costs can slow another tenant whose read does not improve."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "task_id": "Q173",
+  "answer": "Telling an assistant to ignore instructions in retrieved text is insufficient because the control sits inside the same probabilistic interpreter that must separate data from commands. Once retrieved text enters context, a hostile document can paraphrase, split, or out-rank the warning, and the book states there is no foolproof natural-language filter; the risk is structural when retrieved text is merged into high-priority instructions or read as a tool command. Provenance labels and channel separation reduce ambiguity but remain advisory.\n\nThe boundary must therefore sit outside the model, at the authority protecting each effect. Retrieval is a data pipeline: server-side, per-object authorization gates every document, section, snippet, title, and count. The agent gets a minimal capability set, ideally read-only, with no arbitrary filesystem or network tools. Any separate action API enforces its own ACL and effect contract, validates arguments against a narrow schema and allowed IDs, and re-checks entitlement at the executing authority rather than trusting an earlier search. Independent confirmation covers irreversible effects but never substitutes for ACLs.\n\nResidual failure modes: filters, model confidence, and chain-of-thought cannot replace deterministic checks; caches, related links, and cross-collection citations are views, not permissions. Evidence map: principal-tools sections 1-3, collection-privacy section 5, agent-negative-tests section 6. Limits: examples are synthetic and no malicious-input exercise was executed; moderate confidence.",
+  "citations": [
+    "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+    "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+    "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+    "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#5-privacy-audit-and-retention-boundaries",
+    "tycho.page.b38397b1d9fe456dbdb30e5b2ec2f3c8#6-a-synthetic-negative-test-matrix",
+    "tycho.page.0ae1aabac3b64c2f924cc427684bdbab#integrated-decision-and-reading-route"
+  ],
+  "evidence": [
+    {
+      "claim": "An 'ignore malicious text' guard alone is fragile because retrieved text can merge into high-priority instructions or be read as a tool command.",
+      "section_key": "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+      "note": "Observed: 'A guard based only on \"ignore malicious text\" is fragile: the risk is structural when retrieved text is merged into high-priority instructions or interpreted as a tool command.'"
+    },
+    {
+      "claim": "There is no foolproof natural-language filter; unacceptable effects must be prevented by server-side boundaries independent of model prose interpretation.",
+      "section_key": "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+      "note": "Observed: 'There is no foolproof natural-language filter; preventing unacceptable effects requires server-side boundaries that do not depend solely on how the language model interprets prose.'"
+    },
+    {
+      "claim": "A retrieved document is an untrusted principal and is not an executable instruction or approval to call another tool.",
+      "section_key": "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+      "note": "Observed table row: retrieved document/search result is 'Untrusted data, source ID, revision and access classification', not 'Executable instruction or approval to call another tool'."
+    },
+    {
+      "claim": "Effect control belongs in a separate action API passing its own authorization, schema, risk and confirmation gate; model confidence or chain-of-thought never replaces deterministic access checks.",
+      "section_key": "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+      "note": "Observed: 'Any separately allowed action must pass its own authorization, schema, risk and confirmation gate—not inherit authority from a retrieved paragraph'; 'A model's confidence or chain-of-thought is never a replacement for deterministic access checks.'"
+    },
+    {
+      "claim": "Merely telling the language model to ignore injection is insufficient; every document/section-level read must pass deterministic authorization however the agent reached it.",
+      "section_key": "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#5-privacy-audit-and-retention-boundaries",
+      "note": "Observed: 'Merely telling the language model to ignore injection is insufficient. Every document/section-level read must pass deterministic authorization, regardless of how the agent reached it.'"
+    },
+    {
+      "claim": "A write attempt needs an independent action authority with its own ACL and explicit effect contract, because note text must not induce a privileged tool invocation.",
+      "section_key": "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#5-privacy-audit-and-retention-boundaries",
+      "note": "Observed table: 'Agent asks to perform a write | An independent action authority requires its own ACL and explicit effect contract | Text inside B's note induces a privileged tool invocation.'"
+    },
+    {
+      "claim": "Negative tests must show an adversarial note changes no tool privilege, and malformed action arguments are rejected by deterministic schema and access-policy checks.",
+      "section_key": "tycho.page.b38397b1d9fe456dbdb30e5b2ec2f3c8#6-a-synthetic-negative-test-matrix",
+      "note": "Observed rows: adversarial note 'Treat as untrusted document content; no change in tool privilege' (a mere 'do not obey' instruction is not proof); malformed arguments 'Reject by deterministic schema and access-policy checks', not a model promise."
+    },
+    {
+      "claim": "The chapter's integrated decision is to enforce caller permissions, collection boundaries and bounded tool effects independently of retrieved text.",
+      "section_key": "tycho.page.0ae1aabac3b64c2f924cc427684bdbab#integrated-decision-and-reading-route",
+      "note": "Observed: 'Enforce caller permissions, collection boundaries and bounded tool effects independently of retrieved text.' Inference: this is the boundary location, outside the model."
+    },
+    {
+      "claim": "Confirmation is not a substitute for ACLs, and capabilities exposed to an agent should be minimized by default.",
+      "section_key": "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+      "note": "Observed defense list: 'Limit capabilities exposed to an agent by default; deny broad filesystem/network endpoints unless necessary'; confirmation for irreversible impact 'is not a substitute for ACLs'."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

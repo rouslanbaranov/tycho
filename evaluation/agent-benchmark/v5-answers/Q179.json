@@ -1,0 +1,53 @@
+{
+  "task_id": "Q179",
+  "answer": "Scatter-gather returns a composed claim about a participant set, not an answer from one authority. Fixing the completeness rule first - all replies, quorum, first-best, or a fixed cutoff - tells the aggregator when an answer exists and whether it is complete or partial; that choice is a business invariant, and only after it is fixed can anyone say whether the slowest participant is on the critical path. The straggler policy then enforces the rule inside the caller's budget: per-recipient deadlines, at most one reply per recipient under a correlation key, ignoring or evicting late replies, cancelling outstanding work, and either failing or returning a bounded partial result. Without both, the caller cannot distinguish no data from no reply yet, and waiting for all participants lets the slowest one consume the budget.\n\nWhen participants do not reply, the response must disclose it: state that the result is incomplete and, for a quorum result, name which participants answered and which did not; mark missing parts in a versioned partial-response shape instead of silently omitting them; gateway-style aggregation should also expose which dependency failed. This is a correctness obligation, not cosmetic.\n\nBoundary: when atomicity or global consistency is required, scatter-gather is contraindicated. Confidence is high on this guidance; the cited source binds timeout and incomplete-response behavior, not measured results.",
+  "citations": [
+    "tycho.page.b864f32bd58a4f7b8eaaa223cdecfea7#overview",
+    "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+    "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+    "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation"
+  ],
+  "evidence": [
+    {
+      "claim": "Scatter-gather needs a response contract, a quorum or completeness rule and an owner-assigned straggler policy.",
+      "section_key": "tycho.page.b864f32bd58a4f7b8eaaa223cdecfea7#overview",
+      "note": "Atlas page: 'define a response contract and a quorum or completeness rule, and assign a straggler policy to an owner'; good fit requires partial responses and per-recipient deadlines."
+    },
+    {
+      "claim": "The completion rule is a business invariant; only after choosing it can one tell whether the slowest participant is on the critical path.",
+      "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+      "note": "'Which of these is correct is a business invariant; only after choosing that correctness condition can we tell whether the slowest shard is on the critical path.' Optional enrichments return partial at a cutoff; the table asks whether the client understands missing information."
+    },
+    {
+      "claim": "The gather contract fixes the expected participant set, an all-or-quorum completion rule, per-recipient deadlines, a correlation key, at most one reply per recipient and eviction of late responses.",
+      "section_key": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+      "note": "Owner note: scatter-gather 'needs a completeness condition and a deadline'; source names wait-for-all, first-best and fixed-timeout strategies; Tycho guidance adds response contract, quorum rule and straggler policy."
+    },
+    {
+      "claim": "Timeout handling must communicate to the client that the response is incomplete; timed-out responses are ignored and partial responses combined into the returned result.",
+      "section_key": "tycho.page.b864f32bd58a4f7b8eaaa223cdecfea7#overview",
+      "note": "Quotes AWS Prescriptive Guidance: 'should communicate to the client that the response is incomplete'; 'The responses that time out are ignored'; aggregator combines partial responses. Tycho guidance adds bounded partial result or declared failure and cancellation."
+    },
+    {
+      "claim": "Deadline design must define how late replies are drained or ignored and how partial results are represented to the caller.",
+      "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+      "note": "Item 5: 'How late replies are drained/ignored, how resources are released, and how partial results are represented to the caller'; deadlines are described as a resource and correctness contract."
+    },
+    {
+      "claim": "A quorum result must name which participants answered and which did not, and a partial result needs a versioned schema with a caller-visible completeness marker.",
+      "section_key": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+      "note": "Limits: 'a quorum result must name which participants answered and which did not'; 'a partial result needs a versioned schema and a caller-visible completeness marker.'"
+    },
+    {
+      "claim": "A partial aggregate must mark missing parts rather than omit them silently and should expose which dependency failed.",
+      "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+      "note": "'expose which dependency failed'; 'A partial response needs a versioned shape that marks missing parts rather than silently omitting them.' Do not aggregate where partial results cannot be represented honestly."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

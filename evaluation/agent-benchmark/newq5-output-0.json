@@ -1,0 +1,157 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "Three API replicas are spread across zones A and B, but every replica authorizes through one zone-A identity endpoint and commits through one zone-A database writer. After zone A fails, why can the zone-B replicas report healthy processes yet complete no bookings, and what must the availability claim state instead?",
+      "required_evidence": [
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#3-kubernetes-placement-as-an-illustrative-mechanism",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation"
+      ],
+      "core_claims": [
+        "Failure domains are dependency sets rather than geographical labels, so two replicas in different zones can still share one identity endpoint, gateway, control plane, DNS, quota or authoritative database primary.",
+        "In the walkthrough, zone-B replicas remain process-healthy after zone A fails but cannot authorize or commit reservations because their identity and writer paths exist only in zone A, so the surviving user capability is narrower than the replica count suggests.",
+        "A running process or a successful readiness probe proves neither transaction correctness nor the ability to reach authoritative state, and counting 200 responses from an obsolete cache as healthy booking service is not a valid availability result.",
+        "Kubernetes topology-spread constraints influence placement but do not guarantee balance after later node removal and provide no database consistency or regional recovery, so placement policy must be paired with an isolated fault test of compute, identity and storage loss.",
+        "Recovery after a zone loss must avoid promoting two booking writers, and an active/passive topology with demonstrated failover can be safer than nominal active/active without state fencing."
+      ],
+      "optional_claims": [
+        "Replica redundancy is not equivalent to point-in-time recovery, which is why a separate historical recovery source is shown in the topology.",
+        "Degraded operation such as refusing new reservations while serving a read-only public catalogue is legitimate only when it is explicitly promised and verified."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team proposes replacing a small self-managed deployment with a managed service because its monthly instance fee is lower. Why can total lifecycle cost still rise, and what must be compared on the same horizon before treating the cheaper fee as evidence?",
+      "required_evidence": [
+        "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#3-original-synthetic-case-a-community-plant-catalogue",
+        "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#4-operating-cost-is-a-lifecycle-not-a-monthly-instance-fee",
+        "tycho.page.8284605817fc48dba499425b0d908df0#1-constraints-must-be-typed-and-owned",
+        "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance"
+      ],
+      "core_claims": [
+        "Lifecycle cost includes recurring compute, storage, network, replication and idle redundancy, event and trace retention and transfer, CI and security scanning, test environments, scheduled release effort, old-client support, drills, credential rotation, migration double-running, training and decommissioning, not only the monthly instance fee.",
+        "A credible comparison fixes the same horizon, workload mix and mandatory service levels, because a managed service shifts responsibilities but does not remove recovery, access or lifecycle obligations.",
+        "Recurring manual work such as reconciliation, exception handling, rotation, triage and manual failover is a capacity constraint, and automation introduced to remove it is itself a maintained system that needs ownership, tests, monitoring and rollback.",
+        "A financial or effort constraint is a typed gate with an owner, and while its total operating and transition budget is unknown the honest result is unknown or measure-first rather than a preference for the cheaper-looking option.",
+        "Operational readiness must name owners, runbook and recovery evidence, access restrictions, budget and revisit triggers, and an untested restore claim remains a plan rather than evidence."
+      ],
+      "optional_claims": [
+        "A product can pay less for idle resources and still incur more cost from outages or manual maintenance.",
+        "Preference scoring cannot override a hard gate whose evidence is missing, so equal unknown cells do not justify selecting the candidate with the lower per-unit price."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A new retriever returns several relevant documents that no earlier system retrieved and that the judgment pool never judged. Why can its Recall@k look worse than the system whose results built the pool, and what must be re-run before the two are compared?",
+      "required_evidence": [
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons"
+      ],
+      "core_claims": [
+        "Pooled judgments are an assumption and approximation for a particular collection, not a complete map of relevance, so a document that no pooling system retrieved may never be judged and unjudged does not mean irrelevant.",
+        "Recall@k uses a denominator of all judged relevant items under the chosen qrels, so a retriever whose novel relevant results were never pooled is penalized by the denominator instead of credited for finding them.",
+        "Precision@k that counts unjudged results as definitely irrelevant, and comparisons that change source snapshots, chunk boundaries, qrels, permission filters or query populations, can reverse the apparent ranking.",
+        "A defensible comparison re-pools with the candidate's results and re-judges the union, or reports the judgment-pool limitation explicitly, while keeping the same snapshot and query set and reporting freshness, cost and maintenance alongside relevance.",
+        "Lexical, vector and hybrid retrieval must be compared on that same evidence base because fusion and reranking add complexity, and semantic similarity or a top result does not certify that a source supports the requested claim."
+      ],
+      "optional_claims": [
+        "A test set built only from automatically generated simple keyword queries cannot establish real expert search quality.",
+        "Graded nDCG values are relevance judgments under a pool, not probabilities, and negative or unanswerable queries need their own expected no-result behavior."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A client pages through a list ordered by creation time with a keyset cursor while rows are inserted and one caller's access to a row is revoked. Why does the keyset cursor avoid offset drift without giving a stable snapshot, and what must the cursor bind so a stale page cannot expose the revoked row?",
+      "required_evidence": [
+        "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+        "tycho.page.de9c5bc478ba44718fcb731e69109dce#6-testable-acceptance-and-negative-evidence",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#purpose-and-mission"
+      ],
+      "core_claims": [
+        "An offset can shift when earlier items are inserted or removed, while a keyset cursor avoids that specific position shift when the ordering key is stable but does not by itself create a snapshot.",
+        "Rows that change the sort key or become invisible can still move across page boundaries, so the contract must state the concurrent insert and update policy and whether omissions or repetition are possible.",
+        "Best-effort live lists, stable-key traversal, snapshot exports and change feeds promise different membership and completeness, and each pays a different price in retained state, expiry and authorization work.",
+        "An opaque cursor must bind the query, filter, order, snapshot and relevant access scope, be validated on every request, and define expiry and restart semantics rather than silently restarting from the beginning.",
+        "A cursor is a continuation hint and not authorization, so permission must be rechecked even when a snapshot retains previously visible rows and a revoked row must not be returned from a stale page."
+      ],
+      "optional_claims": [
+        "A cursor bound only to the last seen key can be replayed across tenants when effective access scope is not part of the bound state.",
+        "A list whose ordering key is not stable cannot deliver stable-key traversal even if the cursor itself is opaque and signed."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A daily booking total is computed in event time; event E5 arrives after the watermark has closed its window, and a later cancellation must change the total. Why is finalization at the watermark not proof that earlier events are complete, and what must the lateness and correction contract decide before the total is treated as settled?",
+      "required_evidence": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+        "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#6-failure-recovery-experiments"
+      ],
+      "core_claims": [
+        "Event time differs from the time at which data is observed, and a watermark states how much lateness the operator expects and when a window will be finalized rather than proving that every earlier event has arrived.",
+        "A late event that misses finalization must follow a declared policy such as drop with an explicit metric, side output, update or retraction, or deferred finalization, and none of these is universally correct.",
+        "The correction policy must match the external output, because a sink that cannot accept corrections or idempotent upserts cannot publish revised totals even when operator state is restored correctly.",
+        "A consistent checkpoint restores operator state and source positions but does not decide whether a late business correction is discarded, emitted as an update or routed to reconciliation, and a business that forbids revising settled totals needs a separate adjustment event.",
+        "The declared policy dimensions include event-time source, window boundaries, handling of delayed or idle partitions, retained state and TTL, and output correction support, and out-of-order fixtures plus measured output freshness are needed to test them."
+      ],
+      "optional_claims": [
+        "A checkpoint is not automatically a migration artifact, since serializer, operator identity or topology changes can make restored state incompatible.",
+        "Exactly-once processing inside the stream processor does not extend to an independently acknowledged external effect."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A proposed index lowers a query's estimated plan cost and the planner chooses an index scan. Why does that not establish lower user latency, and which lifecycle costs decide whether the index is a net improvement?",
+      "required_evidence": [
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#7-controlled-acceptance-method"
+      ],
+      "core_claims": [
+        "EXPLAIN's estimated cost is expressed in planner units rather than elapsed milliseconds, and an estimated plan identifies a candidate access path instead of measured user latency.",
+        "EXPLAIN ANALYZE executes the query and reports actual rows and timings with instrumentation overhead and the side effects of non-read-only commands, so running it on a data-changing statement against uncontrolled state is unsafe.",
+        "Adding an index can change write and update latency, WAL volume, storage and backup or restore size, vacuum and bloat maintenance, planning time and lock exposure during creation, and a concurrent build reduces some write blocking while carrying its own phases, constraints and resource cost.",
+        "A planner can choose differently across parameter values, row distributions and minor releases, and a large estimate-versus-actual gap points first to statistics, skew or query shape rather than automatically to another index.",
+        "Acceptance compares with and without the index under fixed version, SQL parameters, dataset, resources and concurrency, and includes writes, maintenance, lock waits, storage and client-level p95 or p99 in the result rather than scan cost alone."
+      ],
+      "optional_claims": [
+        "An index-only scan still depends on the visibility map, so heap reads do not always disappear.",
+        "More parallel workers can shorten one query while lowering overall throughput under a fixed resource budget."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A team deletes retired customer records from its primary audit store, but a backup archive, a search index and an old incident export still contain them. Why does the primary deletion not satisfy the retention or erasure obligation, and what must the retention design inventory and govern?",
+      "required_evidence": [
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test",
+        "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#5-privacy-audit-and-retention-boundaries",
+        "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission"
+      ],
+      "core_claims": [
+        "Deleting a record from the primary store leaves copies in backups, search indexes, caches, derived analytics and old incident exports, so a retention or erasure claim must inventory every derived copy that can outlive the primary record.",
+        "Retention must balance actual business and legal requirements against minimization, deletion and incident needs, and a backup archive or search index can retain data after a primary record is removed.",
+        "Access control must follow each copy, so a shared audit service or cache enforces subject, object and tenant permissions and a derived index respects revocation instead of continuing to serve an old scope.",
+        "Redaction at a central collector occurs after sensitive bytes have already traversed intermediate paths, so exposure must be limited at emission and the whole ingestion chain verified.",
+        "Agent interactions add retained records such as questions, snippets, filters, result identifiers and tool arguments that can reveal sensitive content even when the underlying prose is public, so audit access and retention must be limited and separated from operational telemetry."
+      ],
+      "optional_claims": [
+        "Encrypting storage at rest does not by itself provide tamper evidence or prove integrity.",
+        "A log record containing an embedded instruction or fabricated identity is untrusted content rather than a privileged command to a downstream agent."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

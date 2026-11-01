@@ -1,0 +1,166 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q174",
+      "question": "Why can a query be badly costed when both correlated columns have current statistics, and what has to happen before new extended statistics change the plan?",
+      "layer_expected": "book",
+      "answer": "Both columns can have current, freshly analyzed statistics and the query can still be badly costed, because per-column statistics are marginals: they describe each column separately, not how values co-occur. The planner combines predicates by multiplying separate selectivities, assuming independence. When the columns are correlated that product is wrong, and every cost derived from the row estimate - scan choice, join order, join algorithm - inherits the error. The book's synthetic case: one location has 90% of devices tagged \"portable\" while other locations rarely use the tag, so a combined location-and-tag predicate is underestimated.\n\nNew extended statistics change the plan only after the object exists and is populated. Creating the extended-statistics object over the column combination is necessary but not sufficient: it gathers no representative sample until ANALYZE runs. Only then does the planner have joint-distribution evidence (functional dependencies, multivariate n-distinct or MCV lists, where the predicate form is supported), and only a newly planned query can use it - re-run EXPLAIN with representative parameters and verify under a controlled workload.\n\nBoundaries: extended statistics do not cover every predicate form; growth, skew and schema changes can invalidate samples; planner cost units are not latency. A cached plan must also be re-planned, which is inference beyond the book's text. Confidence: high on mechanism, medium on the replan boundary.",
+      "citations": [
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+        "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution"
+      ],
+      "core_claims": [
+        "The planner combines per-column selectivities as though the predicates were independent, so a predicate pair whose values co-vary produces a row estimate that no single-column histogram corrects.",
+        "An estimate wrong by orders of magnitude changes join order and access-path choice, so the resulting plan can be poor even though every column's statistics are current.",
+        "A large estimate-versus-actual gap shows that a cardinality assumption may be wrong; it does not by itself show that another index is the fix.",
+        "Extended multivariate statistics can represent cross-column dependence where the predicate pair is supported, but the statistics object collects no representative sample until ANALYZE runs, and later growth, skew or schema change can invalidate it.",
+        "The change must be accepted with EXPLAIN or EXPLAIN ANALYZE against a frozen version, dataset and parameter set, because a cheaper-looking estimate is not evidence of a faster plan."
+      ],
+      "optional_claims": [
+        "The planner may correctly prefer a sequential scan when a large fraction of rows qualifies, so the existence of an index is not a plan requirement.",
+        "Index families support different operators, so the access method must be matched to the predicate before any plan comparison is meaningful."
+      ],
+      "required_evidence": [
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#7-controlled-acceptance-method"
+      ]
+    },
+    {
+      "task_id": "Q180",
+      "question": "Why does placing a service copy in every region not remove the failover problem, and what must be established before the old regional writer is replaced?",
+      "layer_expected": "atlas",
+      "answer": "Because failover is a question of exclusive write authority and recoverable state, not process placement. A copy in every region is a candidate authority: it may serve degraded reads, but durable state, exclusive reservations and accepted effects still need one enforceable owner. Active/active does not abolish failover; it relocates the problem to cross-region authority, conflict handling and reconciliation. Two disconnected regions can independently accept the same exclusive allocation, while healthy endpoints or a completed replica copy of inconsistent state prove neither write authority nor a valid recovery point. Conflict rules must match domain semantics; last-write-wins is sometimes unacceptable. Active-active fits independently partitioned ownership with explicit conflict rules, not one authoritative invariant.\n\nBefore replacing the old regional writer, establish: a declared failure scope (a missing heartbeat is not proof of death); one authorized writer, with every old writer that can return fenced or isolated; a monotonically increasing authority epoch enforced atomically at the destination, not merely by a lease holder; a chosen recovery point and its data-loss consequence; reconciliation of acknowledged, in-flight and unknown operations; verified authorization, exclusive reservations, idempotent retries and user journeys; an abort/forward-repair plan; and measured RTO/RPO. Failback is a new migration, not DNS reversal. Confidence is high on the mechanism; no drill or production measurement backs these gates.",
+      "citations": [
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss",
+        "tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks",
+        "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+        "tycho.chapter.30e63461f024419ab87cd012b140c600#decision-and-worked-result",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#5-recovery-is-a-state-machine-with-abort-conditions",
+        "tycho.page.36bfc8635514db33025afd706a6b4c85#overview",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract"
+      ],
+      "core_claims": [
+        "A geode places a regional node in each geography behind a global routing layer so clients use a nearby healthy region, and each geode is a self-contained regional deployment with a geo-replicated read-write service.",
+        "Geodes do not exist in isolation and any geode can take over after a regional outage, which requires a data replication and consistency contract, a regional health signal, a routing rule and an explicit failover authority.",
+        "A route can stay stale or point at an isolated region: DNS answers persist until the client's cache expires, the routing service cannot move existing connections, and geographic routing returns an endpoint whether it is healthy or not.",
+        "The routing probe is authoritative for reachability rather than data freshness, because inter-region replication is asynchronous; replication lag must be monitored and a 200 response does not prove that a region's writes are current.",
+        "Before failover the old writer must be fenced, and the global router remains a critical dependency even though it is not a proven regional single point of failure; stale DNS, long-lived connections and a health signal that ignores freshness are the residual risks."
+      ],
+      "optional_claims": [
+        "Active-passive recovery is the alternative when writes must stay in one region, state cannot be replicated cheaply, cost prevents full active-active capacity, or the RTO tolerance allows activation time.",
+        "When every eligible endpoint is degraded, the routing service makes a best-effort attempt and answers as if the endpoints were online, so a probe bounds detection but not correctness."
+      ],
+      "required_evidence": [
+        "tycho.page.6f2a9c4e1b7d4a8f9e3c5b0d2a6f8e1c#overview",
+        "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+        "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#integrated-decision-and-reading-route"
+      ]
+    },
+    {
+      "task_id": "Q186",
+      "question": "Two client applications share one general-purpose API, and each filters fields and makes several calls. Why can a per-client backend improve the contract without becoming a second domain authority, and what release risk appears when it deploys independently?",
+      "layer_expected": "atlas",
+      "answer": "A per-client backend (BFF) can improve the contract because a shared API cannot usually delegate query shape: field filtering, sorting and pagination make callers over-fetch, join in memory and issue several calls. A BFF owned by each client team selects only the fields that experience needs and composes the owner calls server-side into one response, so the two clients evolve independently and neither pays for the other's view. It remains a composition layer, not a second domain authority, because business rules and shared invariants stay with the owning service, cross-cutting concerns stay outside the BFF, and duplicated client-specific logic is an explicit trade-off. It crosses the line if it caches or authorizes domain objects or hides a domain workflow.\n\nThe release risk is alignment. The BFF is tightly coupled to its client but composes services with independent lifecycles, so releasing it independently of those services can leave its composition pointing at a changed or mismatched domain-API version or shape - version skew and drift that surface as broken or partially degraded client responses. Version the composition and contract-test the client on every release; prefer a shared API with client-side selection when differences are small. The evidence is pattern guidance, not a measured drift incident; confidence is medium.",
+      "citations": [
+        "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+        "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation"
+      ],
+      "core_claims": [
+        "A backend for frontend is a separate backend for one client experience, owned by the frontend team, that customizes the client API and may compose several owner service calls while the shared domain services remain authoritative.",
+        "It fits when client populations have materially different interaction needs and duplicated client-specific composition is acceptable; one shared API with client-side selection is the alternative when the differences are small.",
+        "Cross-cutting policy such as monitoring and authorization and domain logic stay outside the backend for frontend, and duplicated domain logic, an unowned lifecycle, or deployment multiplication without measured client benefit are contraindications.",
+        "Independent backend-for-frontend and domain-service lifecycles create release-alignment risk because the documented sources describe per-client malfunction isolation but not drift, composition versioning or client-contract tests, so the composition must be versioned and the client contract tested.",
+        "A per-client failure can be isolated to that client population, but that isolation does not make the backend authoritative or license its release to change shared domain behavior silently."
+      ],
+      "optional_claims": [
+        "Code duplication is a probable outcome of the pattern and must be traded against the better-tailored experience rather than assumed away.",
+        "The composition record should state which domain API versions the backend expects so an independently deployed domain change is detected before users encounter it."
+      ],
+      "required_evidence": [
+        "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#integrated-decision-and-reading-route",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "task_id": "Q192",
+      "question": "A simulation measures a steady-state p95 from a window that starts at time zero, although the model starts empty and its queue fills during the first minutes. Why does that window bias the estimate, what must the scenario declare and the engine enforce about warmup, and why does convergence not repair the bias?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The window [0,T) includes the startup transient, not steady state. An empty start keeps early waits below long-run levels; pooling them with the filled-queue regime makes p95 a quantile of a non-stationary mixture, biased downward here. The window may also end with unfinished work.\n\nA V12 scenario must declare warmup in its workload, with duration, time unit and arrival process; the schema requires every field. Candidates share horizon and warmup (1,800 s with 300 s in A/B/C); a shorter warmup is workload drift and invalidates comparison. Warmed, cold and recovery phases are declared, not silently discarded.\n\nThe engine must begin metric accumulation only after the declared warmup, stop at the declared duration, and use scenario time rather than the process clock. Pre-warmup completions must not enter metrics (warmup leakage); failed invariants abort the run rather than write a partial record.\n\nConvergence measures precision, not accuracy: V12's 0.02 relative-error rule and confidence intervals describe sampling error across replications of one scenario. Each replication repeats the same t=0 transient, so more replications converge on the same biased estimand; a stable biased estimate is still biased. Only correcting the window or edge bias removes it.\n\nEvidence map: queue/warmup caveat, scenario contract, engine determinism, convergence limits. Confidence: inferred; V12 is uncalibrated.",
+      "citations": [
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+        "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+        "tycho.page.687d2196433c3b076d00c73144dad431#components",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration"
+      ],
+      "core_claims": [
+        "A measurement over a finite window is neither a long-run average nor a stationary expectation, and edge effects matter when the system does not start and end empty, so the model must report the window, the warmup and the uncertainty.",
+        "Counting completions that occur before the warmup expires in the measurement window is warmup leakage, which mixes the initial transient into the steady-state estimate and biases it.",
+        "The scenario contract fixes the workload, duration, warmup, metric definitions and seed scheme identically across candidates, so giving one candidate a shorter warmup is workload drift that invalidates the comparison.",
+        "The engine applies the declared warmup and duration rather than the process clock, so the warmup is part of the reproducible contract and not an analyst's post-hoc filter.",
+        "Convergence means only that sampling error is small under the declared model, which does not make a biased window valid, so a narrow interval around a contaminated estimate does not repair the bias."
+      ],
+      "optional_claims": [
+        "Little's law is a relation among long-run averages, not a per-request identity or a short-window guarantee, so the stock-flow estimate of time in system is labeled derived and carries the finite-window warning.",
+        "The stock-flow model can report backlog and utilization but has no individual p95, so the checkout comparison requires the event-level model for latency."
+      ],
+      "required_evidence": [
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+        "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean"
+      ]
+    },
+    {
+      "task_id": "Q198",
+      "question": "Why is 'twenty requests per second of backlog' not a coherent state description, and what must be true before backlog divided by throughput can be read as a time?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "'Twenty requests per second of backlog' mixes a flow with a stock: 'twenty requests per second' is a rate (arrivals or throughput), while a backlog is a level in requests at an instant. Because both are labelled 'requests', a reader cannot tell whether 20 means waiting work or arrivals per second; the phrase describes neither a state nor a rate, and comparing such numbers across candidates can reverse the conclusion. Backlog divided by throughput has a time unit only when the numerator is a stock and the denominator a flow in the same unit. Reading it as a time needs Little's-law conditions: one admission-to-exit boundary; every accepted item counted once and every exit (success, error, cancellation) represented; throughput equal to the admitted or exit rate over a stable, non-growing population; long-run or steady-state averages, not a short window with edge effects; and conservation offered = completed + rejected + backlog. The stock must match the claimed interval: waiting-only backlog yields wait, in-system count yields residence. Then it approximates mean time in system, not per-request latency or p99. Growth or drainage breaks it, as do warmup bias, hidden stocks and retries. Evidence: V12 stock-and-flow and queue-model pages; V07 boundary, finite-window and recovery pages. Confidence is high on units and conditions; the numbers are synthetic, not production evidence.",
+      "citations": [
+        "tycho.page.870e64da1f925c52109a602440048603#the-stock-to-flow-shorthand-error",
+        "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+        "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+        "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window"
+      ],
+      "core_claims": [
+        "A backlog is a stock measured in requests, while an arrival or service rate is a flow measured in requests per second; the phrase mixes a level with a rate and loses its units.",
+        "A ratio of backlog to throughput has a time unit only when the numerator is a stock and the denominator is a flow in the same unit, as in the approximate time in system under Little's law.",
+        "Comparing raw backlog numbers across candidates can reverse a ranking when one candidate has a smaller backlog but a larger arrival rate and another has a larger backlog but a smaller arrival rate.",
+        "V12 keeps metric identifiers and units in the scenario contract and computes ratios only after the units are explicit, and a decision that uses a metric not declared in the scenario is a validation failure."
+      ],
+      "optional_claims": [
+        "A large integration step can serve more than the available backlog and produce a negative stock, so the step belongs to the model contract rather than a private implementation detail.",
+        "The order-intake model reports 20 requests per second of throughput with zero backlog in the baseline and a 77.6-request average backlog under saturation; these values are synthetic."
+      ],
+      "required_evidence": [
+        "tycho.page.870e64da1f925c52109a602440048603#the-stock-to-flow-shorthand-error",
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics"
+      ]
+    }
+  ]
+}

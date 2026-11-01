@@ -1,0 +1,77 @@
+{
+  "task_id": "Q180",
+  "answer": "Because failover is a question of exclusive write authority and recoverable state, not process placement. A copy in every region is a candidate authority: it may serve degraded reads, but durable state, exclusive reservations and accepted effects still need one enforceable owner. Active/active does not abolish failover; it relocates the problem to cross-region authority, conflict handling and reconciliation. Two disconnected regions can independently accept the same exclusive allocation, while healthy endpoints or a completed replica copy of inconsistent state prove neither write authority nor a valid recovery point. Conflict rules must match domain semantics; last-write-wins is sometimes unacceptable. Active-active fits independently partitioned ownership with explicit conflict rules, not one authoritative invariant.\n\nBefore replacing the old regional writer, establish: a declared failure scope (a missing heartbeat is not proof of death); one authorized writer, with every old writer that can return fenced or isolated; a monotonically increasing authority epoch enforced atomically at the destination, not merely by a lease holder; a chosen recovery point and its data-loss consequence; reconciliation of acknowledged, in-flight and unknown operations; verified authorization, exclusive reservations, idempotent retries and user journeys; an abort/forward-repair plan; and measured RTO/RPO. Failback is a new migration, not DNS reversal. Confidence is high on the mechanism; no drill or production measurement backs these gates.",
+  "citations": [
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss",
+    "tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks",
+    "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+    "tycho.chapter.30e63461f024419ab87cd012b140c600#decision-and-worked-result",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#5-recovery-is-a-state-machine-with-abort-conditions",
+    "tycho.page.36bfc8635514db33025afd706a6b4c85#overview",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract"
+  ],
+  "evidence": [
+    {
+      "claim": "A service can survive a failed process yet lose all user state when its database fails; a cross-region copy of inconsistent state is not a valid recovery point just because replication completed.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss",
+      "note": "Observed: the section states both limits and separates high availability from disaster recovery."
+    },
+    {
+      "claim": "Active/active still needs cross-region authority and consistency, conflict handling and higher cost; independently allocating the same exclusive resource in two disconnected regions can violate correctness.",
+      "section_key": "tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks",
+      "note": "Observed: the strategy table lists cross-region authority/consistency and conflict handling as needed proof, and warns that both regions serving requests is not correctness."
+    },
+    {
+      "claim": "A secondary region can serve degraded read traffic before it can safely become a writer; promotion requires a policy for in-flight acknowledgments, replica lag, ordering, unique IDs, replay idempotency and the former primary's return.",
+      "section_key": "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction",
+      "note": "Observed: the section also says active-active needs conflict rules matching domain semantics; last-write-wins may be unacceptable."
+    },
+    {
+      "claim": "A missing heartbeat does not prove the old region is dead; it may still accept writes, so the new writer must verify the old one is fenced or isolated before receiving write authority.",
+      "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+      "note": "Observed: the state table says not to declare A dead solely because a heartbeat is missing and requires fencing before granting B write authority."
+    },
+    {
+      "claim": "Fencing old writes and recovering historical acknowledged effects are separate conditions; active-active requires conflict-free data ownership and is not a safe default for one authoritative invariant.",
+      "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+      "note": "Observed: the critical-distinction paragraph and alternative; the negative counterexample shows isolated A and promoted B accepting the same exclusive resource."
+    },
+    {
+      "claim": "The replacement authority epoch must be enforced atomically at the destination; a lease or token that the destination has not accepted does not prove the old writer stopped.",
+      "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+      "note": "Observed: the section requires destination rejection of stale epochs and defines the takeover linearization point; a lock alone cannot make a paused process disappear."
+    },
+    {
+      "claim": "The chapter decision is to fence the former writer, define acceptable loss and reconcile state before directing recovered traffic to a new authority.",
+      "section_key": "tycho.chapter.30e63461f024419ab87cd012b140c600#decision-and-worked-result",
+      "note": "Observed: the section warns that promoting a second region without exclusive authority can create divergent accepted effects."
+    },
+    {
+      "claim": "Cutover gates include fencing evidence, a validated recovery source and timeline, authorization, exclusive reservations, idempotent retries, user-journey checks, delayed-message and replay treatment, abort conditions and actual RTO/RPO.",
+      "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#5-recovery-is-a-state-machine-with-abort-conditions",
+      "note": "Observed: the runbook section lists these prerequisites; the page states no such drill was executed."
+    },
+    {
+      "claim": "Failback is a new migration, not a DNS switch; when fencing or reconciliation evidence is incomplete, stay on the promoted region and rebuild the old one as a standby.",
+      "section_key": "tycho.page.36bfc8635514db33025afd706a6b4c85#overview",
+      "note": "Observed: the atlas card rejects a DNS-only return while the old authority can accept writes and requires an authority epoch, a reconciliation owner and a verified user journey."
+    },
+    {
+      "claim": "Regional distribution fits independently partitioned ownership with explicit conflict rules when correctness gates permit; an application with a single correct writer may prefer warm standby.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract",
+      "note": "Observed: the section says the outcome depends on evidence, not technology popularity."
+    },
+    {
+      "claim": "Synthesis: a copy in every region changes where serving happens, not who owns writes, so failover remains an authority-and-reconciliation problem.",
+      "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+      "note": "Inference from the observed statements above; no drill or production measurement was performed, and the chapter disclaims independent technical review."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
