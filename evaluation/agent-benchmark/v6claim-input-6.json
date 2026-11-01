@@ -1,0 +1,94 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q206",
+      "question": "A team resharding from 16 to 17 modulo buckets finds that nearly every key remaps, so it adopts a consistent-hashing ring and raises virtual nodes per node from 64 to 512. Why does the ring bound movement, and why can more tokens still worsen failure and repair outcomes rather than making ownership safer?",
+      "required_evidence": [
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+        "tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition"
+      ],
+      "preliminary_claims": [
+        "Modulo hashing assigns a key to hash(key) mod N, so adding a node can invalidate almost all mappings; a consistent-hashing ring places keys and nodes in one circular space and a membership change should move about the departing or joining node's share, an expectation that random tokens, unequal vnode counts and hot keys can exceed.",
+        "Each token adds failure combinations and raises outage probability, uneven token ranges produce uneven request load, and hinted handoff spreads a lost node's load only as temporary protection until anti-entropy repair, so token counts must be bounded against repair and outage cost.",
+        "A membership change must record an ownership epoch and fence stale ownership, because a ring without epoch fencing can route one key to two owners during the change, and the actual moved fraction should be measured rather than assumed."
+      ]
+    },
+    {
+      "task_id": "Q214",
+      "question": "An alerting policy pages on a five-minute error-budget burn-rate window during normal traffic noise, but a one-hour window misses a slow and severe budget drain. Why can neither window alone support the alert, and what must the policy establish before its threshold is treated as evidence?",
+      "required_evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target"
+      ],
+      "preliminary_claims": [
+        "Short burn-rate windows are noisy while long windows delay detection of severe faults, so one window trades false alarms against detection delay.",
+        "A burn-rate threshold is not portable without enough valid eligible events, especially for intermittent traffic or operations whose single error is intolerable.",
+        "Before acting, the policy must confirm the event population and observation window, and a hard correctness failure can stop a rollout even while budget remains."
+      ]
+    },
+    {
+      "task_id": "Q222",
+      "question": "A device-status stream drops after the server sends sequence 41 but before the consumer acknowledges it, and the client reconnects with the last sequence it durably processed. Why can the resumed stream still contain duplicates or a gap, and what must the stream contract define before resume is a supported guarantee?",
+      "required_evidence": [
+        "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay",
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#6-proposed-negative-experiments",
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#5-which-architecture-is-justified"
+      ],
+      "preliminary_claims": [
+        "Transport flow control and a received sequence do not create a durable log: after the disconnect, sequence 41 may be missing or duplicated, and only a subscription that resumes from the last durably processed sequence with deduplication and replay can close that gap.",
+        "A resumable stream must define a cursor or stable event identifier, the ordering scope, the delivery mode with gap and duplicate handling, a retention or expiry bound, and whether an acknowledgment means transport receipt, consumer processing or a committed business effect.",
+        "Cancellation of a receive loop cannot roll back a posting another system committed, so reconnect is not replay and consumer effects must be idempotent; recovery tests must cover duplicates, gaps and cursor expiry at message boundaries."
+      ]
+    },
+    {
+      "task_id": "Q230",
+      "question": "A team replicates its full stack into six regional stamps and routes tenants through a directory; the stamps share one identity service and one primary database, and each stamp is upgraded by hand. Why does the replication not satisfy the stamp invariant, what must be enumerated and owned before isolation is claimed, and when is a cell-based design the better comparison?",
+      "required_evidence": [
+        "tycho.page.30d7c7363ec26491f644977876c16ea4#overview",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph"
+      ],
+      "preliminary_claims": [
+        "A stamp is an independently operated deployment unit for scale, isolation or locality, and its routing key and state authority are one ownership decision: state follows the split, so the tenant-to-stamp routing map and the data's authoritative home must be designed together.",
+        "Each stamp needs a versioned definition, an ordered rollout and a tested rollback path, and every shared global dependency must be enumerated with the failures that cross the stamp boundary, because an unowned shared dependency that dominates the isolation benefit defeats the design.",
+        "A cell-based design is the alternative when isolation is the primary goal and scale is secondary, but a cell is a boundary in the dependency graph: naming a group of stateless workers a cell does not isolate a shared database, queue, cache or configuration publisher, and every dependency a tenant can exhaust must be traced."
+      ]
+    },
+    {
+      "task_id": "Q238",
+      "question": "A V12 discrete-event run satisfies offered = completed + rejected + failed + in_system after every replication. Why does that identity still not prove each request was assigned the correct outcome, and which checks cover the outcome path instead?",
+      "required_evidence": [
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation"
+      ],
+      "preliminary_claims": [
+        "The conservation identity is a balance over outcome counts, so swapping a completed request with a failed one leaves it satisfied.",
+        "Correct outcome attribution is checked by the timeout, retry and event-order tests, not by the conservation check.",
+        "A conservation failure aborts the run, which makes a pass necessary but not sufficient for a correct outcome model."
+      ]
+    },
+    {
+      "task_id": "Q246",
+      "question": "A scenario overrides the server count declared by its model, and the model's calibration note still records the original assumed value. The run executes and the structural checks pass. Why is the run's evidence status ambiguous rather than invalid?",
+      "required_evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses"
+      ],
+      "preliminary_claims": [
+        "The model contract carries parameter values with evidence status, the scenario contract carries configuration values, and a scenario override is executable without changing the model file.",
+        "The unupdated calibration note continues to describe the model's value, so the run's metrics and the recorded status no longer clearly refer to the same input.",
+        "The failure is ambiguity rather than invalidity: the validator sees schema-valid files while a reader cannot tell which declared status belongs to the value used."
+      ]
+    }
+  ]
+}

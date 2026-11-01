@@ -1,0 +1,375 @@
+{
+  "task_id": "Q262",
+  "answer": "# Why hiding the catalogue entry neither revokes the link nor deletes the bytes, and what each decision must own\n\n## 1. Facet matrix\n\n| Facet | Query formulations actually used | Evidence section keys |\n|---|---|---|\n| F1 Capability and revocation semantics | \"bearer link capability expires signed URL\"; \"signed URL expiry leaked link referrer logs telemetry\"; conceptual: what does a bearer link validate against on each request? | tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties; tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities |\n| F2 Catalogue authority versus object bytes | \"retire catalogue entry delete object version\"; \"unpublish hide content takedown catalogue visibility\"; conceptual: which system owns publication state? | tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol; tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant |\n| F3 Retained versions and derived copies | \"deletion inventory scope records\"; \"delete marker noncurrent version object lock retention\"; \"deletion across derived state and restored backups\" | tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain; tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups |\n| F4 Edge cache copy, purge and propagation | \"edge cache purge copy invalidation\"; \"cache purge TTL edge copy remains after origin delete\"; conceptual: when is a cached private copy gone? | tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example; tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract |\n| F5 Decision ownership and handoffs | \"retirement crashes and recovery\"; \"revocation propagation bound key rotation authority\"; conceptual: who decides access, retirement and deletion? | tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol; tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison; tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities; tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery |\n| F6 Verification, cost and boundary conditions | \"original cost failure comparison\"; \"provider versioning object lock documentation\"; \"no deletion restore exercise\" | tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain; tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison; tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups |\n\nVolume: `book` was requested and used for every retrieval; the required anchors all resolve inside volume v05, with corroboration from v05, v08, v09 and v10 book pages. Snapshot: 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a.\n\n## 2. Direct answer\n\nThe catalogue row, the issued capability and the stored bytes are three different objects governed by three different decisions. Hiding the catalogue entry mutates one visibility/reference record. It does not reach the bearer token that was already minted, and it does not reach the immutable object version or the edge's reusable copy. That is why the next-day retirement neither revokes the seven-day link nor removes the bytes.\n\nThe bearer link is a capability: possession plus validity under the issuing service's validation rules. Once handed out, it is honoured until expiry unless an enforcement point on the download path rechecks current permission. Catalogue retirement is not that enforcement point for a direct object download. The requirement as stated (seven days of access plus immediate retirement) is internally contradictory: \"A temporary bearer link valid for the whole seven days cannot satisfy immediate retirement unless another enforcement point rechecks current permission\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties).\n\nThe bytes survive for a parallel reason. A catalogue entry is a published reference into object storage, not the storage itself: \"The metadata database owns publication state. Object existence alone does not authorize exposure, and committing a metadata row does not atomically commit a remote object write\" (tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant). Hiding the entry changes application behavior immediately, while \"removal may require separate decisions about versions, derived objects and retained copies\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol). The prior version is a retained object version, and the edge copy is a cached representation; each must be enumerated and removed by a deletion decision with its own evidence. Neither is an automatic consequence of hiding a catalogue row.\n\nDecision ownership in one line each:\n\n- Access owns who may fetch, for how long, and through which enforcement point; it owns revocation scope and propagation bound.\n- Retirement owns what the catalogue shows and which generation is authoritative, including a durable retirement record and a fence against delayed or restored older state.\n- Deletion owns which bytes and copies are physically removed, across versions, derived objects, caches and backups, and what evidence proves completion.\n\n## 3. Mechanism: why hiding does not revoke the issued capability\n\n**Different properties.** \"An object key names a storage location. An unguessable key is not a complete authorization design\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties). Address (where the bytes are), access (who may fetch them now) and retention (what must be kept) are separate properties with separate owners. A catalogue entry carries the first and part of the presentation of the second; it is not the authority for the capability's lifetime.\n\n**The link is validated as a token, not as a catalogue lookup.** \"A temporary download capability may permit use until its expiry under the service's validation rules; revoking a catalogue permission does not automatically invalidate every issued capability\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties). For a bare bearer link, the validation path sees signature, scope and expiry. It does not see that the owner hid the entry yesterday. If the serving path does consult metadata, the hide can take effect at the next request; but that recheck is a separate design element, not a property of hiding.\n\n**The stated requirement is a contradiction that must be resolved explicitly.** Seven-day validity plus immediate retirement cannot both hold for a direct bearer link unless one of these is added: a serving-path authorization gate (\"if immediate revocation is mandatory, place an authorization gate on the serving path rather than relying on a long-lived capability\", tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery), short-lived capabilities with renewal, an authorizing proxy, or \"a documented revocation mechanism with an acceptable propagation bound\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties). Shorter validity is not free: \"Shorter validity increases renewal traffic and dependence on the issuer\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties). The design must first \"state whether immediate revocation, bounded exposure or public distribution is required\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties).\n\n**Revocation is scoped and cached.** \"Revocation of a user, a session, a key and one object are separate scopes; their blast radii differ\" (tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities). \"A cryptographically valid token can still outlive a revoked session or object permission\" (tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities), and the resource-side rule is \"Recheck at the resource; token signature alone does not restore permission\" (tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities). If an allow decision is cached anywhere, \"define maximum stale permission, invalidation delivery and policy-service outage behavior\" (tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities). A catalogue hide that only invalidates a display cache satisfies none of these.\n\n## 4. Mechanism: why the bytes remain\n\n**The entry is a reference, the object is a version.** Publication is a metadata transaction that points at an immutable object version; the object write is not part of that transaction (tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant). Hiding flips the reference's visibility. It cannot delete a version, and it cannot delete an older version that the reference no longer names. \"A current-name delete may have different semantics from removal of all retained versions\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain); provider versioning and object-lock rules decide what a delete of the current name actually does to the prior version.\n\n**A complete removal is an inventory, not a single call.** \"Account for current and noncurrent versions, previews, transcodes, temporary parts, replication targets, edge caches, search references and backups\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain). The prior version and the edge cache copy are named members of that inventory, not edge cases. The same point appears in the deletion protocol: \"Begin with a copy inventory: authoritative rows and blobs; read replicas; change logs and outbox entries; search/vector projections; caches; exports; operational logs; and historical backups\" (tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups), and \"Removing one database row cannot itself prove removal of all copies\" (tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups).\n\n**The edge copy has its own contract and its own lag.** A shared cache may reuse a representation only when its reuse rules permit it: \"The cache key, freshness policy and authorization boundary must agree\" (tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract). Purging is not proof: \"A purge request without completion evidence is not a proven revocation bound\" (tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example). \"Incomplete purge, stale deletion and a cold-cache miss storm are common. Prewarm critical assets, verify propagation, keep an origin failover\" (tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract). For restricted content, the edge contract must be chosen deliberately: \"A restricted object may require authorization on every access, a capability with bounded lifetime, or an edge policy whose propagation bound is acceptable\" (tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example). The worked example is explicit that \"Changing visibility from public to private is a revocation problem: removing the database's public flag does not erase every distributed copy already served\" (tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example).\n\n**Deletion completion is multidimensional, so a UI state cannot stand in for it.** The stages distinguish new reads denied, derived owners acknowledging removal, historical copies retained but isolated, provider removal completed, and restored service reconciled. A prior version and an edge copy sit in different rows of that table. In particular, isolated retention is \"not an erasure claim\", and provider removal establishes \"only what the selected provider's documented scope and evidence establish\" (tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups).\n\n**Cost and failure make the distinction operationally visible.** The illustrative arithmetic is \"1,000 GiB of authoritative recordings and three equally large derived renditions\" for \"4,000 GiB before replication, versions, incomplete parts or backups\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison). A failed cleanup \"can accumulate cost while the UI reports success\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison). The metrics must therefore be separate: \"retired references, pending physical deletion, orphan candidates and inaccessible-but-retained payloads\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison).\n\n## 5. What the access, retirement and deletion decisions each own\n\n| Decision | Owns | Must not assume | Evidence |\n|---|---|---|---|\n| Access | Caller resolution before minting; object and action scope; lifetime; revocation mechanism and propagation bound; the enforcement point on the serving path; token hygiene; the downstream cache exposure contract; incident response for a leaked capability | That a catalogue permission change reaches an already-issued token; that a purge is a revocation; that a cached allow decision is current | tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties; tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol; tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison; tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities; tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery |\n| Retirement | Authoritative publication status, object version, owner and lifecycle policy; generation advance and hidden-state event; durable retirement record with scope and revision; a fence so delayed publishes and restored backups cannot resurrect the entry; bounded grace; explicit statement of what retirement means for exposure | That hiding removes bytes; that removal is immediate; that a secondary index's absence is authority; that retirement is an erasure claim | tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol; tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain; tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups; tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery |\n| Deletion | Authorization of irreversible removal; the full copy inventory; per-copy removal and verification; provider-scoped completion evidence; repair when copy or key evidence is missing; independent survival of retirement knowledge; separate pending-physical-deletion metrics | That one delete call removes versions, replicas, caches and backups; that an index miss is deletion; that a healthy replica means the data is readable; that a successful response proves completion | tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain; tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison; tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups; tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery |\n\nThe handoff contract between them matters as much as the split:\n\n1. One object-version identity is shared by all three decisions, so the catalogue reference, the capability scope and the deletion inventory name the same immutable version.\n2. Retirement publishes a durable hidden-state event and generation; deletion consumes that record rather than inferring removal from a lagging projection.\n3. Access rechecks at the resource when the exposure contract requires immediate revocation; otherwise the contract must state the accepted propagation bound, and the token lifetime is the bound.\n4. Deletion returns evidence, not merely success: which copies were removed, which are retained in isolation, and which could not be verified. \"Deleting\" that ends in \"RepairRequired\" is a correct outcome when copy or key evidence is missing.\n5. The retirement ledger must not be stored only inside the backup it fences: \"If that knowledge is lost with the same backup, the architecture cannot claim restored data respects later retirements\" (tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups).\n\n## 6. Boundaries and failure modes\n\n- The source model is an original policy model, \"not a universal provider lifecycle guarantee\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol). Versioning, object-lock, expiry and capability rules are provider-specific and \"require exact additional documentation before an implementation recipe is selected\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain).\n- A leaked capability is a security event, not a cache miss (tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison); it needs its own detection and response path, separate from cache metrics.\n- A missing key can make encrypted data unavailable \"even when every byte replica is healthy\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison); availability and removal are orthogonal, so neither proves the other.\n- Cleanup must not act on an eventually consistent index: \"do not delete on an eventually consistent secondary index's absence alone\" (tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain), and a cleanup worker \"does not delete a version simply because a delayed search index omits it\" (tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery).\n- Hiding is immediate application behavior; removal is a staged process with its own no-return point. No deletion or restore exercise was executed for this model (tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups), and the storage arithmetic is illustrative rather than measured (tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison).\n\n## 7. Unknowns and contradictions recorded honestly\n\n1. **Apparent contradiction, resolved by placement of enforcement.** One section says revoking a catalogue permission does not automatically invalidate issued capabilities; another says readers follow the published reference and enforce current permission. Both hold if the only enforcement point is the catalogue read path: a direct object fetch with a valid token bypasses it. If the download path itself rechecks metadata, hiding takes effect within the chosen propagation bound. The book does not prescribe which placement an owner must choose; it requires the choice to be stated.\n2. **Provider behavior is unknown here.** Whether the prior version is retained, whether object-lock applies, whether expiry is enforced at the edge, and how a purge completes are all provider- and configuration-specific. The corpus does not document a particular provider's semantics, and this answer does not invent them.\n3. **The acceptable revocation bound is a policy decision, not a book fact.** The book names the need for \"an acceptable propagation bound\" but does not set a number; the seven-day lifetime in the question is the exposure window if no other enforcement point exists.\n4. **Retention and consent obligations for a workshop recording are outside the inspected evidence.** The page calls its model engineering requirements analysis, not a legal retention determination; applicable obligations would need separate review.\n5. **No production observations or measurements.** The book's claims are design reasoning; the 1,000 GiB arithmetic and the proposed tests were not executed. Semantic support of each quote is not machine-checked; the mechanical validator checks only contract coherence.\n\n## 8. Evidence map\n\n| Claim | Short form | Section keys |\n|---|---|---|\n| C1 | address, access, retention are separate properties | tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties |\n| C2 | seven-day link versus immediate retirement | tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties; tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol; tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery |\n| C3 | serving-path gate, short-lived capabilities, revocation bound | tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties |\n| C4 | metadata owns publication state; hide is not a byte operation | tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol; tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant |\n| C5 | reference and distributed copies survive a visibility change | tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant; tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example |\n| C6 | current-name delete differs from all-version removal | tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain; tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups |\n| C7 | cache contract, purge evidence, propagation | tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example; tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract |\n| C8 | revocation scopes and resource-side recheck | tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities |\n| C9 | access decision ownership | tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol; tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison |\n| C10 | retirement decision ownership and generation fence | tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol; tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups; tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery |\n| C11 | deletion decision ownership and completion evidence | tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain; tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups; tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery |\n| C12 | no deletion inference from a secondary index | tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain; tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#garbage-collection-races |\n| C13 | original model, provider-specific rules, no executed exercise | tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol; tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain; tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups |\n| C14 | inaccessibility and cost are not deletion proof | tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison; tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups |\n\n## 9. Method, search breadth and saturation\n\n`describe` was run first (collection `tycho`, 555 documents, 3132 sections, coverage complete, ranker `tycho-section-fts5-bm25-v5`, citation scheme `tycho.section-key.v2`). The question was decomposed into the six facets above. Each facet received two to three formulations, including exact terms, synonyms and a conceptual query; `outline` was used to locate the object-storage chapter. All required anchors resolved to one page (object capabilities, versions and lifecycle cleanup), and the surrounding pages were read fully rather than cited from snippets: publication consistency, edge cache and origin, key rotation and revocation, deletion across derived state, and the large-file catalogue worked example. Saturation was reached when two further queries (“signed URL expiry leaked link referrer logs telemetry” and “unpublish hide content takedown catalogue visibility”) returned only one already-read retirement section and one unrelated observability section; no new decision-relevant evidence appeared.\n\nRequired-anchor coverage: 4 of 4. Citations equal the unique section keys in the ledger. A PASS on the mechanical contract does not prove semantic support; the quotes above were checked against the sections as read.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Address, access and retention are three separate properties: an object key names a storage location, unguessability is not authorization, and a temporary capability is honoured only under the issuing service's validation rules until its expiry.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+          "quote": "An object key names a storage location. An unguessable key is not a complete authorization design.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+          "quote": "A temporary download capability may permit use until its expiry under the service's validation rules; revoking a catalogue permission does not automatically invalidate every issued capability.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "A seven-day bearer link conflicts with immediate retirement: the link keeps working until expiry unless another enforcement point rechecks current permission, because withdrawing a catalogue permission does not retroactively invalidate capabilities that were already issued.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+          "quote": "A temporary bearer link valid for the whole seven days cannot satisfy immediate retirement unless another enforcement point rechecks current permission.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+          "quote": "Resolve the current caller before minting a capability; restrict its object/action scope and lifetime.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery",
+          "quote": "Existing direct-download capabilities have an explicit maximum lifetime: if immediate revocation is mandatory, place an authorization gate on the serving path rather than relying on a long-lived capability.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The design alternatives are a serving-path authorization gate, short-lived capabilities with renewal, an authorizing proxy, or a documented revocation mechanism with an acceptable propagation bound; shorter validity trades exposure for renewal traffic and dependence on the issuer.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+          "quote": "Options include short-lived capabilities, an authorizing proxy or a documented revocation mechanism with an acceptable propagation bound.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+          "quote": "Shorter validity increases renewal traffic and dependence on the issuer.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+          "quote": "State whether immediate revocation, bounded exposure or public distribution is required.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Publication state is owned by authoritative metadata rather than by the object store: object existence does not authorize exposure and a metadata commit does not atomically commit a remote object write, so hiding the catalogue entry changes a reference and visibility state, not the stored bytes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+          "quote": "The metadata database owns publication state. Object existence alone does not authorize exposure, and committing a metadata row does not atomically commit a remote object write.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+          "quote": "hiding a catalogue entry is immediate application behavior; removal may require separate decisions about versions, derived objects and retained copies.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The catalogue entry is a published reference that readers follow while enforcing current permission, so retiring it stops new catalogue-mediated access but cannot by itself reach capabilities already issued or copies already served.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+          "quote": "Readers only follow the published reference and enforce current permission.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example",
+          "quote": "Changing visibility from public to private is a revocation problem: removing the database's public flag does not erase every distributed copy already served.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Removal of bytes is a separate and multidimensional act: a current-name delete can differ from removal of all retained versions, and a complete inventory must account for current and noncurrent versions, previews, transcodes, parts, replication targets, edge caches, search references and backups.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+          "quote": "A current-name delete may have different semantics from removal of all retained versions.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+          "quote": "Account for current and noncurrent versions, previews, transcodes, temporary parts, replication targets, edge caches, search references and backups.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "Begin with a copy inventory: authoritative rows and blobs; read replicas; change logs and outbox entries; search/vector projections; caches; exports; operational logs; and historical backups.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "An edge cache keeps a reusable representation under its own cache key, freshness and authorization contract; a purge request without completion evidence is not a revocation bound, and incomplete purge or stale deletion is a normal failure mode that must be tested and its propagation verified.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example",
+          "quote": "A purge request without completion evidence is not a proven revocation bound.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example",
+          "quote": "A restricted object may require authorization on every access, a capability with bounded lifetime, or an edge policy whose propagation bound is acceptable.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+          "quote": "The cache key, freshness policy and authorization boundary must agree.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+          "quote": "Prewarm critical assets, verify propagation, keep an origin failover",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+          "quote": "incomplete purge, stale deletion",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Revocation has separate scopes: revoking a user, a session, a key and one object have different blast radii, and a cryptographically valid token can outlive a revoked session or object permission, so permission must be rechecked at the resource and cached allow decisions need a maximum stale-permission and invalidation-delivery policy.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Revocation of a user, a session, a key and one object are separate scopes; their blast radii differ.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "a cryptographically valid token can still outlive a revoked session or object permission",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Recheck at the resource; token signature alone does not restore permission",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "If a service caches an allow decision, define maximum stale permission, invalidation delivery and policy-service outage behavior.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The access decision owns issuance and enforcement: resolving the current caller before minting, object and action scope, lifetime, the revocation mechanism and its propagation bound, the enforcement point on the serving path, token hygiene, the downstream cache exposure contract, and incident response with its own metric for a leaked capability.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+          "quote": "Resolve the current caller before minting a capability; restrict its object/action scope and lifetime.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+          "quote": "Do not place tokens in general telemetry. Downstream caches must follow the same exposure contract.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison",
+          "quote": "A leaked capability is a security event, not a cache miss.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison",
+          "quote": "Define separate metrics for retired references, pending physical deletion, orphan candidates and inaccessible-but-retained payloads.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The retirement decision owns visibility and lifecycle state: it stores the object version, owner, publication status and lifecycle policy in authoritative metadata, advances the authoritative generation and emits a hidden-state event, keeps a durable retirement record naming scope and revision, and fences older representations so a delayed event or restored backup cannot resurrect the entry.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+          "quote": "Store the object version, authorized owner, publication status and lifecycle policy in authoritative metadata.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery",
+          "quote": "Retirement advances the authoritative generation and emits a hidden-state event in one transaction. The search consumer retains the retirement generation as a fence.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "A durable retirement record names D, its scope and revision.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "A consumer processing revision 103 after 108 must not recreate the visible document.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The deletion decision owns physical bytes and evidence of completion: authorizing irreversible removal, covering every copy, reporting only provider-scoped completion, preserving retirement knowledge independently of the backup it fences, and entering repair when copy or key evidence is missing rather than claiming success.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+          "quote": "Provider-specific versioning, object-lock, expiry and capability rules require exact additional documentation before an implementation recipe is selected.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "Current application exposure is blocked under the tested access paths",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "Recovery/access policy still permits physical retention; not an erasure claim",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "If that knowledge is lost with the same backup, the architecture cannot claim restored data respects later retirements.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery",
+          "quote": "A cleanup worker does not delete a version simply because a delayed search index omits it.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Retirement and deletion must not be inferred from a secondary index: absence from an eventually consistent index is not deletion evidence, so cleanup uses metadata-owned retirement with a bounded grace process and does not remove a version that a visible entry references.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+          "quote": "Use metadata-owned retirement and a bounded grace process; do not delete on an eventually consistent secondary index's absence alone.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#garbage-collection-races",
+          "quote": "Use a metadata-owned retirement decision, a grace/state protocol and immutable object identities.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "The book's model is an original requirements analysis, not a universal provider lifecycle guarantee, and it records that no deletion or restore exercise was executed; exact versioning, object-lock, expiry and capability semantics therefore remain provider-specific and unverified here.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+          "quote": "This original policy model is not a universal provider lifecycle guarantee.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "No deletion or restore exercise was executed.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+          "quote": "Provider-specific versioning, object-lock, expiry and capability rules require exact additional documentation before an implementation recipe is selected.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Deletion, inaccessibility and cost are different failure modes: a missing key can make encrypted data unreadable while every byte replica is healthy, and a failed cleanup can accumulate cost while the interface reports success, so observable state alone cannot prove removal.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison",
+          "quote": "A missing key can make encrypted data unavailable even when every byte replica is healthy.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison",
+          "quote": "A failed cleanup can accumulate cost while the UI reports success.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "Removing one database row cannot itself prove removal of all copies.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+    "tycho.page.ae25f40712b658ecfb9d617ca977ad35#retirement-crashes-and-recovery",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#garbage-collection-races"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

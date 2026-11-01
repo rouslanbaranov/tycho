@@ -1,0 +1,97 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q203",
+      "core_claims": [
+        "Marking an instance ineligible for new work through the actual selector does not end established connections or cached membership, and a DNS TTL bounds record caching rather than the life of a connection or an application deadline; a DNS change alone is neither a drain procedure nor a failover protocol.",
+        "Readiness answers whether an instance may receive new work while liveness answers whether the process must be restarted, so the two must not be collapsed into one endpoint; a cached healthy answer can keep sending traffic to a draining instance, which is why drain must precede removal.",
+        "On an HTTP/2 shutdown the GOAWAY last-stream identifier bounds only that peer's processing: streams above it were not processed, streams at or below it may have been processed, and a missing response is not evidence that the application rolled back or that a downstream effect did not commit.",
+        "The operator must require the bounded drain sequence: mark the instance ineligible through the actual selector, start protocol-appropriate graceful shutdown with enough time for route caches and active work, let admitted work finish within its declared budget while cancelling only where cancellation semantics permit, record unresolved operation IDs and expose a reconciliation path, then remove the instance after the drain condition or an explicit bounded timeout.",
+        "Because a hard shutdown deadline can leave effects unknown rather than atomically cancelled, a publish reported as failed must be resolved through the same logical operation identity on a usable route, not retried blindly and not read from the connection reset as a rollback."
+      ],
+      "optional_claims": [
+        "The bounded drain procedure is proposed rather than a product API, and the exact signal ordering, propagation and stream behavior depend on the chosen proxy and runtime.",
+        "Connection pooling couples many requests to one transport failure, and HTTP/2 multiplexing does not remove TCP-level loss effects or permit unlimited application buffering.",
+        "External monitoring should observe user-level success and dependency state, because a green liveness probe does not prove readiness, correct routing or a healthy dependency."
+      ]
+    },
+    {
+      "task_id": "Q211",
+      "core_claims": [
+        "A completed initial snapshot and a running change stream do not prove the derived state is complete: the snapshot reads a log position and then streams from it, and a snapshot that fails before completion restarts as a new snapshot, so a healthy stream does not establish that an earlier snapshot completed.",
+        "Slot retention bounds recoverability: confirmed_flush_lsn and restart_lsn bound the WAL still available, a restart_lsn behind max_slot_wal_keep_size invalidates the slot, and dropping the slot loses changes that cannot be reconstructed from the removed WAL.",
+        "A rebuild must be pinned to a recorded consistent snapshot position and an explicit recovery point, because a missing or expired slot can require resnapshotting the source rather than replaying the existing stream.",
+        "The record must carry the slot, the key and partition policy, the snapshot position and the idempotency identity, and must distinguish the database WAL position, the Kafka partition offset, the state-store checkpoint and the external sink commit, documenting where their alignment is guaranteed and where duplicates or gaps may be replayed.",
+        "Delivery is at least once and a fault can emit duplicate change events, so consumers apply changes idempotently by row key and log position, with key scope, fingerprint and retention covering the retry window."
+      ],
+      "optional_claims": [
+        "Logical decoding does not include DDL, so schema changes stay governed outside the change stream rather than appearing as replayable events.",
+        "A replication slot left behind prevents removal of required resources even when no connection uses it and can fill storage, independently of the invalidation risk.",
+        "Do not assume exactly-once delivery across the database and downstream systems; duplicates must be expected and resolved by the recorded idempotency identity."
+      ]
+    },
+    {
+      "task_id": "Q219",
+      "core_claims": [
+        "An additive schema change can still be a semantic breaking change: copying asset_code into both model_id and unit_id preserves row counts while making a shared model look like one reservable physical unit, which can create collisions, incorrect reservations and misleading history.",
+        "The migration must run a totality analysis that classifies which old codes identify a unique physical unit, which represent a model or type, which mappings are many-to-one, one-to-many or unknown, how historical reservations convert, and which source revision proves each mapping.",
+        "Mappings it cannot prove must be marked unresolved as UNKNOWN for domain review and quarantined rather than silently defaulted or invented, and the versioned mapping from tenant, old ID and mapping revision to model and unit IDs, or to UNKNOWN, is reviewed before backfill, with no two authoritative physical identities mapped to one unit without an approved merge rule.",
+        "Equal source and target row counts are not acceptance: backfill acceptance must check stable identity and tenant scope, field-level semantic equivalence and unknown mappings, concurrent writes, deletes and timestamps, checkpoint durability on crash and retry, event or CDC offset and replay horizon, history, authorization and referential integrity, and the exact source snapshot and migration code version.",
+        "Because the backfill can run for hours while new writes arrive, the migration must keep one authoritative writer, treat the new tables as projections rather than independent authorities, run bounded resumable batches with durable checkpoints, and reconcile post-snapshot changes before authority moves.",
+        "Read authority must not move to the new columns before semantic reconciliation and a fenced cutover with exactly one authorized writer pass mixed-version reads, old event replay, authorization and reservation invariants; a green source and target comparison at one instant proves nothing about a later instant when two writers can accept the same reservation."
+      ],
+      "optional_claims": [
+        "A database schema is a contract between stored historical state and every reader and writer able to interpret it, so the transition must preserve business meaning, versioned provenance and recoverability.",
+        "A smaller change may retain the existing schema and add an explicit mapping layer instead of migrating authority, and the reversible point ends when new-only writes or deletion break old-reader expectations.",
+        "A delete-and-recreate event arriving while an older snapshot is processed can resurrect a deleted unit, so events need a source-authoritative version or checkpoint ordering rule rather than receipt order."
+      ]
+    },
+    {
+      "task_id": "Q227",
+      "core_claims": [
+        "The atlas rejects this use of SOA because SOA's fit requires independently governed services, explicit contracts and mediation across ownership boundaries; it lists as hard contraindications the claim for one team and one deployable, absent service governance, SOA used as a synonym for an enterprise bus, and contracts that cannot be versioned and owned.",
+        "A central bus that applies transformations and business rules is mediation implemented as a shared bottleneck: Microsoft reports that large central brokers, organization-level orchestrators and the Enterprise Service Bus are typical SOA features and in most cases anti-patterns in the microservice community, so the path must be sized, observed and failed over with a fallback that does not depend on it.",
+        "A governed service contract must declare its capability, message semantics, version and consumer obligations with a maintained consumer inventory; OASIS expects the description to state the function, applicable policies and constraints, the format and content of exchanged information and the expected sequences, and Microsoft adds that each service is maintained, developed, deployed and versioned independently and that services share contracts and schemas rather than internal classes.",
+        "Microservices are the better comparison when capabilities map to independent product teams that can release without coordinating another service's schedule and each publishes its contract, version policy and supported consumers, while a modular monolith is better when one team owns every invariant within one ownership boundary.",
+        "Justifying a remote boundary requires independent ownership or deployment need while accounting for communication and recovery cost: separate containers can still require synchronized releases and share one fragile datastore, so deployment count does not demonstrate independence, and the choice reverses when governance and mediation overhead exceeds the integration benefit."
+      ],
+      "optional_claims": [
+        "The OASIS SOA Reference Model is technology-neutral and does not prescribe an interface language, a registry protocol, a bus topology or a service size, so the presence of a bus does not by itself establish SOA.",
+        "Consumer-driven contracts and cohesive service boundaries aid independent evolution, and a shared client library does not make contract changes independent.",
+        "SOA remains a fit when many independent owners must integrate through stable contracts and mediation is a real, owned capability rather than an assumed one."
+      ]
+    },
+    {
+      "task_id": "Q235",
+      "core_claims": [
+        "A kill switch is an asynchronous distributed transition: processes fetch at different times and disconnected workers retain old snapshots, so some replicas can keep serving the old value, and staying there is a deliberate policy rather than evidence of convergence.",
+        "Each reader must install a complete versioned snapshot atomically, with a monotonically increasing revision, payload digest, activation policy and minimum compatible binary version, instead of assembling a request's limits from several revisions, and it must report its observed revision and snapshot age.",
+        "Evaluation failure must return a documented default that fails safe; a fallback to an enabled default defeats the kill switch, and a process that cannot refresh must report its revision and snapshot age rather than have its old value read as convergence.",
+        "A permission or irreversible action is a separate decision class that needs an authoritative decision or an explicit short-lived capability and must reject when authority cannot be established; it cannot inherit the optional-behavior cache policy, because a flag is not a substitute for an authorization check.",
+        "The flag lifecycle must guarantee an owner, expiry, defined scope and kill switch, observable evaluation with an audit trail for overrides, bounded snapshot age, and removal after rollout, because permanent flags become configuration debt and a flag that hides a broken deployment should be rejected in favor of a canary or branch by abstraction.",
+        "Publication must validate schema and cross-field constraints, record an immutable revision and select a stable exposure cohort, and promotion must require evidence: absent telemetry pauses promotion rather than counting as success, and a request pins its snapshot until completion while a long workflow states whether each step pins the original behavior or re-evaluates, surviving retries."
+      ],
+      "optional_claims": [
+        "Operational gates should include error rate, latency, resource use, data correctness signals, cohort sample size and the share of processes actually on the intended revision, and recovery may require draining jobs, dual-format readers or data repair in addition to a flag change.",
+        "A lost publication response is retried using the publication identifier and a digest comparison, and a failed publisher must not sit on the critical request path for ordinary cached behavior.",
+        "Exposure percentage measures eligibility rather than traffic or risk, and a small cohort can contain the most expensive tenant."
+      ]
+    },
+    {
+      "task_id": "Q243",
+      "core_claims": [
+        "The model contract records calibration as a status with per-parameter evidence and limits, and a calibration status of uncalibrated is a complete declared value rather than a missing field.",
+        "The order-intake contract states that no production data were used, marks each of its five parameters assumed with an empty source list or a method-only source, and records a calibration status of uncalibrated, so the declaration is internally complete.",
+        "A validity limit is a condition on the result's use rather than a disclaimer: the order-intake model is valid only for the synthetic workload recorded in its scenario, and a production claim would be outside its domain.",
+        "The run remains licensed to support the synthetic-workload comparison and verification because its invariants hold and its three recorded cases name and replay their tests, but being verified, converged and executable does not make it decision-supporting evidence about the world.",
+        "The reviewer's demand for a measured calibration is a demand for new evidence, and the correct outcome is insufficient evidence plus a list of what would change it rather than a forced recommendation or a finding that the model failed."
+      ],
+      "optional_claims": [
+        "Items such as an unfitted service-time distribution, an untested arrival process, FIFO-only discipline and untested confidence-interval coverage are recorded limits rather than completed checks, so a reader who needs one must commission the evidence instead of inferring it from the passing matrix.",
+        "An assumed parameter cannot claim a measured source, while a measured parameter must name its source and measurement method, sample size and period, and a verification case must name the test that exercised it.",
+        "A model can be verified, converged and executable and still fail to support a decision when the missing evidence concerns the world rather than the code."
+      ]
+    }
+  ]
+}

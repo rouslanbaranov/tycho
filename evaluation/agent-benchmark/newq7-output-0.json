@@ -1,0 +1,169 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "A storage team replaces a per-caller quota in its stateless query tier with admission control inside the stateful storage nodes. The old quota priced a full scan that returned one row like a point lookup, shared counters through Redis, and kept limits static while hotspots moved. Why did that cost model and placement fail, why must the replacement separate system-wide shedding, tenant fairness and hot-resource protection, and what must it do when feedback is delayed or the controller itself fails?",
+      "required_evidence": [
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production",
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable",
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately",
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests",
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback"
+      ],
+      "core_claims": [
+        "Returned-byte count was a bad proxy for consumed work, so a full scan returning one row looked as cheap as a point lookup, and static quotas could not follow later skew or hotspot changes.",
+        "Placing the quota in the stateless query tier also added a Redis round trip on every request and left query nodes without current health signals for every storage partition, so the failure concerned placement and measurability of pressure rather than rate limiting in general.",
+        "System-wide overload shedding, per-tenant fairness and protection of one hot resource are separate jobs: aggregate shedding can preserve the process while one tenant monopolizes slots, and a low-QPS high-byte write or hot partition can still exhaust local disk, memory or replica capacity.",
+        "Admission should count completed useful operations and critical-class success rather than ingress QPS or aggregate reject rate, because a deadline shorter than the predicted queue wait means accepting a request only consumes resources after its caller has abandoned it.",
+        "A controller that raises total throughput while starving an essential tenant fails, and delayed, stale or missing observations require bounded output, a safe low-confidence behavior and an operator-visible rollout with shadow mode, a kill switch and explicit stop conditions."
+      ],
+      "optional_claims": [
+        "In the publisher's overload comparison the replacement reported roughly 3,000 to 5,400 QPS and upsert p99 from about 3.1 seconds to about 1.0 second, scoped to that comparison rather than guaranteed for another store.",
+        "Static request limits can still complement a feedback controller for API contract policing, but they cannot replace workload capacity measurement."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team wants to replace ad-hoc SQL joins with a two-tier cached association API: typed object and association reads, creation-time-ordered link ranges, maintained counts, one primary region per shard, and follower caches. Why is this a workload-scoped serving product rather than a general graph database, why do counts, inverse links and stale follower reads each need an explicit contract, and what must a pilot compare before adoption?",
+      "required_evidence": [
+        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#adopt-only-for-matching-access-patterns-tycho-original",
+        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#outcomes-and-negative-lessons",
+        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#migration-mechanics-and-reliability"
+      ],
+      "core_claims": [
+        "The API exposes typed objects, directed associations, optional inverse associations, point reads, creation-time-ordered range reads with a cursor and optional maintained counts, while deliberately refusing generic joins, arbitrary pattern matching and multi-hop traversal.",
+        "Range reads are optimized for time-ordered activity rather than spatial locality, inverse links must preserve the intended relationship semantics, and a maintained count is a separate consistency obligation rather than a free by-product of the cache.",
+        "Durable state stays in sharded MySQL, a follower-cache miss is served by a leader cache that can fetch MySQL, a write travels through the follower to the leader, and successful responses update caches along the path, with one primary region owning each shard's durable updates.",
+        "Default reads are eventually consistent and read-your-writes is only a high-probability aim; a stronger per-client mode costs processing and availability, and switching the primary region still requires fencing the old primary and verifying stale follower reads.",
+        "Serving a directed multigraph through this facade does not make it a general graph product, and its default consistency can be unacceptable for money movement or regulatory records, so a specialized cache fleet needs explicit operational ownership.",
+        "A pilot should count positive and negative lookups, returned elements, cache churn, hot-item skew, ordering and freshness needs, compare user-visible results and invalidation under bursts, exercise deleted and inverse associations, and inject cache loss, stale replicas, partition and primary failover before adopting."
+      ],
+      "optional_claims": [
+        "The 2013 report's billion-plus reads per second describe that deployment and are not a portable capacity guarantee for another shard layout.",
+        "A general graph database remains an option only where arbitrary traversal is genuinely required, and the source does not claim it evaluated every alternative."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A time-series service chose Cassandra partition keys from a provisioning estimate and simulations; a year later a few high-volume IDs return multi-second reads while some slices hold under 10 KB. The team proposes splitting every partition. Why is that the wrong lever, how do future-slice reconfiguration and per-ID splits differ, and what must stay stable about query identity and read routing before a split partition serves traffic?",
+      "required_evidence": [
+        "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#from-a-correct-provisioning-estimate-to-an-incorrect-future",
+        "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#why-over-partitioning-and-wide-partitions-can-both-harm-the-same-system",
+        "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#two-different-levers-for-different-skew-shapes",
+        "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+        "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#shadow-read-parity-and-additional-safeguards"
+      ],
+      "core_claims": [
+        "A partitioning choice derived from workload estimates and simulations is correct only while traffic distribution, retention and high-volume IDs resemble those inputs; wide partitions then magnify read cost, garbage collection, queues and worst-case latency, with averages in single-digit milliseconds but outlier reads taking seconds.",
+        "Aggressive splitting is equally wrong: buckets under 10 KB force a read to fan out, one illustrative change moved future slices from 60-second to 604,800-second buckets, and a workable target density around 2 to 10 MiB is workload-dependent rather than a universal constant.",
+        "Future-slice reconfiguration adjusts the next slices' bucketing from partition histograms without rewriting history and fits many IDs that share an excessive or insufficient size, while per-ID asynchronous split targets a few anomalously wide IDs, splits immutable partitions, checkpoints progress, compares checksums and updates read routing.",
+        "The logical query identity of dataset, entity, interval, ordering and page token must stay stable while physical routing resolves it to one or many partitions; a page token issued before a split must remain interpretable or produce an explicit resumable result, because silent continuation can duplicate or skip events.",
+        "A split may serve reads only after authoritative completion state and checksums agree and shadow reads of both paths match under real predicates; the retained original is the fallback, a Bloom positive is only a hint, and a reported 500 MB+ read still taking about 41 seconds shows the change does not guarantee every pathological dataset."
+      ],
+      "optional_claims": [
+        "For selected wide partitions the company reported average latency falling from seconds to low double-digit milliseconds and tail latency to roughly 200 ms or less, a scoped before-and-after rather than a full p99 study.",
+        "Splitting mutable partitions and reprocessing previously failed splits were reported as future work, so neither should be recorded as completed."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team moves a large MySQL dataset to a compressed LSM engine because space is the bottleneck, and treats identical SQL text, matching table checksums and a completed ALTER as proof of safety. During conversion a handler commit runs out of memory and a table is missing after restart; later a replayed query returns a different result. Why do checksums and an ostensibly completed conversion not establish semantic equivalence, what must validation add, and when should the team refuse the migration?",
+      "required_evidence": [
+        "tycho.page.689c7d51faf1441caa7edfcb6152345e#situation-the-legacy-architecture-and-constraint",
+        "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+        "tycho.page.689c7d51faf1441caa7edfcb6152345e#migration-and-validation",
+        "tycho.page.689c7d51faf1441caa7edfcb6152345e#negative-evidence-costs-and-alternatives",
+        "tycho.page.689c7d51faf1441caa7edfcb6152345e#observed-results-and-temporal-validity"
+      ],
+      "core_claims": [
+        "Selecting an engine from microbenchmarks or space alone risks ignoring compaction, write amplification, range-read patterns and recovery behavior under production traffic, and LSM space savings arrive with different compaction and lookup economics rather than a universal latency or endurance gain.",
+        "Identical query text and client API did not guarantee identical semantics: a reproduced SQL request returned a different result under the two engines, so a value-level read oracle is required in addition to backup, row-count and runtime replay checks.",
+        "The conversion could be interrupted by out-of-memory during handler commit and leave a table missing after restart; before-and-after table counts and checksums detected that, whereas treating an ostensibly completed ALTER as the correctness oracle would have missed it.",
+        "A matching table checksum proves only the checked representation at its snapshot, and a query can still diverge because of engine behavior or a plan change after statistics are rebuilt.",
+        "Validation should pin the query distribution and secondary-index assumptions, shadow representative reads, check snapshot and live writes, trial write and compaction backlog, stage failover, and retain rollback before deleting the old representation.",
+        "If the organization's own bottleneck is not the one the engine addresses, or the verification gates cannot produce evidence, the honest outcome is to retain or tune the existing system or record insufficient evidence rather than copy the brand's solution."
+      ],
+      "optional_claims": [
+        "The published outcome is a company-reported historical migration whose current topology, effort, p99 and comparative cost remain unknown, so it should not be extrapolated to a different workload.",
+        "New operational knowledge and restore procedures are an explicit cost of the change, not a one-time conversion expense."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A bulk object-migration service replaces central copy workers with listing and transfer queues plus distributed workers. Its proof of concept was slower for a few hundred objects but matched or beat the old path at very large counts, and the team adopts it. Why is that negative result a workload threshold rather than a refutation, what durable state must each stage preserve, and why is a completed object count not proof that the job finished correctly?",
+      "required_evidence": [
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#pressure-legacy-baseline-and-actual-chosen-direction",
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#migration-mechanics-and-reliability",
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#outcomes-and-negative-lessons"
+      ],
+      "core_claims": [
+        "The old design concentrated copy workers in a core data center and shared bandwidth and compute with other services, and as object counts grew the bottleneck was source and destination I/O wait rather than available CPU.",
+        "The replacement separated listing and transfer work onto queues with Workers and durable coordination, created batches, and throttled production when dependencies failed, turning an I/O-heavy bulk job into explicit scheduled units.",
+        "The proof of concept lost on a few hundred objects but matched or beat the old path at very large counts, so the negative small-scale result is a workload threshold that justified focusing on high-concurrency transfer scale rather than a verdict that queues are always faster.",
+        "Each stage owns different durable state: job options and identity, listing continuation and object identifiers, per-object transfer keys, in-progress or multipart status, pending, failed and completed counts with terminal job status, and the legacy migration history that must remain reachable.",
+        "A count of completed objects alone is insufficient because delayed transfers or dead-letter work can precede a premature terminal status; idempotency by source object identity and version, checkpoint and resume, and verification of object counts and hashes are the required gates.",
+        "Adding durable objects, queues and workers creates distributed orchestration, retry and state-management costs, so a queue layer is not inherently lower latency than a local worker and the advertised speedup does not generalize to every object mix."
+      ],
+      "optional_claims": [
+        "In the published selected test 75,000 objects moved in 15 minutes 30 seconds before and 3 minutes 25 seconds after, described as up to a 5x speedup under those conditions.",
+        "The new runtime had to keep prior migration metadata reachable through Hyperdrive and shard durable-object state to stay under a 10 GB storage limit while handling billions of keys."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A service runs eight replicas, each with a local pool of 20 connections, behind a pooler capped at 60 server connections. After enabling virtual threads the team doubles the replica count, sees more waiting and fewer completed transactions per second, and concludes the database is under-provisioned. Why can the larger fleet lower useful throughput, why is pool capacity a fleet equation, and what must be measured and bounded before adding replicas or raising pool sizes?",
+      "required_evidence": [
+        "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+        "tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic",
+        "tycho.page.dc2470904e004a4aa733abcdb25517ed#purpose-and-mission",
+        "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting"
+      ],
+      "core_claims": [
+        "A pool limit bounds concurrent leases, not how long each transaction holds one; if query time or lock waits rise, the same connections stay occupied longer and request queues grow, so a larger pool cannot manufacture database capacity.",
+        "Eight replicas times twenty connections is 160 nominal client leases, but the pooler's 60 server connections are the shared execution budget, and 160 leases are not 160 simultaneous database executions.",
+        "Adding replicas multiplies the nominal lease ceiling unless the fleet budget changes, so the added replicas can increase waiting clients and retry amplification while the database connection and CPU budget stays fixed.",
+        "The idealized arithmetic of 20 connections at 0.10 seconds held gives at most 200 operations per second, falling to 80 per second at 0.25 seconds, and it is an upper bound rather than a measured SLO or a tail-latency prediction because locks, CPU, I/O and variance lower achieved throughput.",
+        "Virtual threads or a larger reactive task count do not alter the fixed connection budget; they increase the number of requests waiting for a lease and must be paired with bounded admission.",
+        "The budget must include worst-case autoscaling and failover headroom, then verify measured active, idle and pending connections and the server's actual limits, and a recovery test should remove all 60 slots and check that a bounded wait, deadline and distinct overload response prevent unbounded memory and retry storms."
+      ],
+      "optional_claims": [
+        "Transaction pooling can reuse server connections across transactions, but session-affine state and prepared statements constrain that mode and a lease held across a long transaction still consumes scarce capacity.",
+        "The arithmetic examples and eight-replica topology are synthetic; they test the budget equation rather than describe a deployed service."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A client uploads a 4 GiB object in 64 parts, times out waiting for the completion response, retries completion with the same key, finds the returned ETag differs from its local MD5, and starts a fresh upload under a new key. Why does the timeout not prove failure, why is the ETag comparison not a portable integrity check, and what identities and manifest state must a resumed transfer preserve?",
+      "required_evidence": [
+        "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+        "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+        "tycho.page.60ae29b6b2a422214c18be04cf012b6e#original-worked-transfer-budget",
+        "tycho.page.60ae29b6b2a422214c18be04cf012b6e#cancellation-cost-and-alternatives"
+      ],
+      "core_claims": [
+        "A lost completion response leaves the upload in an explicit unknown state rather than a proven failure, so the client must query the exact intended object and version and verify its metadata and checksum under the chosen API contract.",
+        "A matching key alone is insufficient if another writer may have replaced the object, and if the intended object cannot be resolved unambiguously the logical upload should be quarantined for repair rather than published from guessed bytes.",
+        "A completed multipart object's ETag is not necessarily the MD5 of its bytes, so integrity must be checked with a documented checksum algorithm against the declared byte content rather than an opaque validator.",
+        "The client must distinguish the logical upload request, object key and version, multipart session, part position and expected digest, because retrying under a new random key creates orphan copies while reusing a key without concurrency control can overwrite another upload.",
+        "A part retry also requires stable source content: if the local file changes between reading one part and retrying another, the transfer can succeed while combining unintended data, so the source version must be pinned or changes detected.",
+        "The manifest must record the authorized owner, logical operation, expected object identity, session, size and checksum contract and completed part receipts; incomplete uploads need an explicit cleanup policy, and an abort acknowledgement is not proof that concurrently sent parts have disappeared."
+      ],
+      "optional_claims": [
+        "Buffering one 64 MiB part for each of four concurrent transfers needs at least 256 MiB before protocol and application overhead, which is why bounded concurrency and backpressure matter.",
+        "For small content with a reliable request budget a single bounded upload is simpler than the resumable machinery."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

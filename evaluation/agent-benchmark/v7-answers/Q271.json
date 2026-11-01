@@ -1,0 +1,390 @@
+{
+  "task_id": "Q271",
+  "answer": "# Q271 — Why a clean start and identical SQL text do not prove storage-engine equivalence\n\n## Scope, layers and snapshot\n\nThis is a design-evidence question about a documented engine migration, so the **book** layer\ncarries it: the Uber MySQL-to-MyRocks case page, the migration-retirement owner page and the\nexpand/migrate/contract compatibility page. The **atlas** layer was used only for pattern\nidentity (Online Data Migration, decision state applicable-under-conditions) and for one\ncross-reference to its owner section; atlas cards do not replace the owner page and its\nregistry is draft. The **modeling-and-simulation** layer was searched and returned only an\nunrelated simulation chapter, so no modeled evidence is used and no claim here rests on it.\nIndex snapshot:\n4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a. Every quoted fragment\nwas read at section level through the CLI; a snippet was never treated as a section.\n\nShorthand used in tables: **case** = tycho.page.689c7d51faf1441caa7edfcb6152345e\n(book/cases/uber-mysql-to-myrocks.md); **mr** = tycho.page.7e927696162f48beaa33fc834b36ee76\n(book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md);\n**rw** = tycho.page.96a702434b714ed4906b1301bc6e0248\n(book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md);\n**atlas** = tycho.page.480477bf68a84b33b01440df8a0ccc96\n(book/volumes/v11-pattern-atlas/c06-database-storage/online-data-migration.md).\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1 — why identical text and a clean start are interface evidence, not behavioural evidence | \"storage engine migration\"; \"migrate MySQL storage engine replica\"; \"identical query text different result storage engine\" | case#chosen-architectural-change; case#exact-motivation-and-preparatory-version-dependency; case#negative-evidence-costs-and-alternatives |\n| F2 — the two observed failures and why they are different in kind | \"out-of-memory conversion missing table after restart\"; \"value-level read oracle query replay\"; \"identical query text different result storage engine\" | case#the-two-failure-findings-that-invalidate-a-purely-structural-cutover; case#two-distinct-migrations-and-their-source-reported-safety-gates |\n| F3 — what the promotion gate must observe to catch both classes | \"value-level read oracle query replay\"; \"promotion gate cutover rollback old engine\"; \"shadow traffic replay representative workload\" | case#migration-and-validation; case#the-two-failure-findings-that-invalidate-a-purely-structural-cutover; case#reversible-transfer-and-refusal-criteria |\n| F4 — what must remain before the last old-engine region is removed | \"promotion gate cutover rollback old engine\"; \"database migration rollback escape path\" (atlas); \"schema migration compatibility expand contract\" | case#reversible-transfer-and-refusal-criteria; mr#4-data-retirement-has-a-no-return-point; mr#3-expand-migrate-contract-as-gated-lifecycle; rw#2-expand-migrate-contract-includes-a-compatibility-window |\n| F5 — boundaries, counterconditions, unknowns | \"storage engine migration\" (atlas); \"backfill validation dual write reconciliation\"; \"schema migration compatibility expand contract\" | case#observed-results-and-temporal-validity; case#costs-measured-outcomes-and-historical-scope; case#applicability-to-legacy-modernization; atlas#overview |\n\n## Direct answer\n\n**1. Why a clean start and identical query text are not equivalence evidence.** Both are\nobservations about the interface and the happy path. SQL text and DDL constrain the logical\nschema and the statements the parser accepts; the client API and MySQL protocol constrain the\ntransport. Neither says anything about the storage engine's physical organisation, its\nstatistics and plans, its recovery behaviour under interruption, or the values it returns.\nHere the migration was deliberately built behind the same MySQL client protocol — in the\nbook's words, a *storage-engine replacement*, not a client API rewrite (case#exact-motivation)\n— and the book places the change at an engine/data lifecycle boundary that explicitly does not\nimply a business-API change (case#chosen). So an unchanged schema and unchanged calls are the\n*premise* of the exercise, not its proof. Under identical DDL the two engines have different\ncompaction, write-amplification, range-read and recovery economics (case#situation;\ncase#negative-evidence), and after conversion statistics are regenerated and a query may\ndiverge because of engine behaviour or plan changes (case#the-two-failure-findings). A clean\nstart proves that the binaries start and that the selected queries happen to run on one\nsnapshot with one plan; it does not exercise the interrupted-conversion, restart, leader-write\nor failover paths where the two engines actually differ. Its silence is a statement about the\ntest sample, not about the engines.\n\n**2. The two observed failures the promotion gate must catch.** (A) *Structural*: table\nconversion interrupted by out-of-memory during handler commit could leave a table missing after\nrestart; before/after table counts and checksums detected it, not the fact that an ALTER had\nostensibly completed (case#the-two-failure-findings). (B) *Semantic*: a reproduced SQL request\nproduced a different result under the two engines, the cited defect PS-7722; the case's reading\nis that identical query text and client API did not guarantee identical semantics\n(case#the-two-failure-findings). They are orthogonal: row counts and table checksums can match\nwhile a query returns a different value, and a query-value comparison cannot tell you that a\ntable is absent. The gate must catch both before promotion, not after.\n\n**3. What must remain in place before the last old-engine region is removed.** The old-engine\nescape path itself: another region on the old engine is retained until read/write, replica-lag\nand failover tests pass (case#reversible). An old-engine rollback must still be able to\nrepresent accepted new writes — a rollback whose old-engine copy can no longer represent\naccepted new writes is a stop condition (case#reversible). The authoritative old representation\nis kept until the replacement is proven (case#migration-and-validation). Only then may the last\nold-region escape path be removed, and only with a documented recovery/forward-fix procedure\n(case#reversible). Retirement also requires the recorded no-return checklist: readers/writers,\nmigration completeness with a residual-unknown policy, verified restore and replay, old/new\nbinary plans and deprecation period, retention and deletion obligations including backups, and\nauthorized acceptance (mr#4). The expand/migrate/contract page adds the coexistence condition:\nnew writers preserve enough old representation for old supported readers until a verified\ncutover, and the reversible point ends when new-only writes or deletion break old-reader\nexpectations (rw#2; mr#3).\n\n## 1. Why identical text and a clean start are not semantic-equivalence evidence\n\n### 1.1 The unchanged part is the interface, not the behaviour\n\nThe project's own framing is the cleanest statement of the trap: the early MyRocks benchmark\nreported over 30% space saving at acceptable read latency \"with the same MySQL client protocol:\na storage-engine replacement, not a client API rewrite\" (case#exact-motivation). The case page\nthen insists that this is an engine/data lifecycle boundary and does not imply that business\nAPIs changed to an unrelated database product (case#chosen). Those two sentences describe a\nmigration whose *user-visible contract* was deliberately held constant while the *implementation\ncontract* underneath it changed completely. Identical query text is what such a migration\noptimises for; it is also exactly what makes the migration dangerous, because the interface\nstops advertising the difference.\n\n### 1.2 What changes under identical DDL\n\nFour layers change even when no column, index or statement changes:\n\n- **Physical organisation.** InnoDB and a RocksDB-style LSM engine store and read rows\n  differently; the case warns that choosing an engine from microbenchmarks alone risks ignoring\n  compaction, write amplification, range-read patterns and recovery behaviour under production\n  traffic (case#situation), and that LSM savings come with different compaction/lookup\n  economics (case#negative-evidence).\n- **Statistics and plans.** The conversion procedure compares table counts and checksums,\n  *regenerates table statistics* and replays real queries (case#two-distinct); the book notes\n  that a query may diverge because of engine behaviour or plan changes after statistics are\n  rebuilt (case#the-two-failure-findings). Text equality is not a semantic guarantee across a\n  plan change.\n- **Values.** The reproduced-request failure (PS-7722) is the direct counterexample: same SQL,\n  different result (case#the-two-failure-findings).\n- **Failure and recovery.** Conversion is a data-touching operation, not a binary swap; the\n  case distinguishes it from the version upgrade precisely because it needs a newly built\n  replica and table conversion, which changes availability, data checks and rollback options\n  (case#two-distinct).\n\nThe version-upgrade prerequisite makes the same point from the other direction: before any\nengine change, MySQL 5.7 had to reach 8.0, a prerequisite upgrade that took more than a year and\nbrought changed optimizer plans, higher memory use and an InnoDB index/tablespace corruption\ndefect (case#exact-motivation). Even the *same* engine version boundary changed plans. An\nunchanged schema never meant an unchanged execution environment.\n\n### 1.3 Why a clean start is a weak oracle\n\nA clean start establishes a narrow set of facts: the converted artifacts load, the chosen\nqueries run, and the configured topology comes up. It does not establish the following, each of\nwhich the source-reported sequence treats as a separate gate:\n\n- that every table survived the conversion — the observed failure appears only *after a restart*\n  of an OOM-interrupted conversion (case#the-two-failure-findings), so a clean start can pass\n  while a table is missing;\n- that the write path matches — a successful follower check is not proof of leader/write\n  equivalence (case#two-distinct);\n- that the tested queries represent production — the method pins query distribution and\n  secondary-index assumptions and shadows representative read patterns\n  (case#migration-and-validation);\n- that values match — a matching table checksum proves only the checked representation under its\n  defined snapshot (case#the-two-failure-findings);\n- that backup/recovery works, or that statistics-driven plans after the rebuild are acceptable.\n\nThe case's remedy is explicit: test OOM during conversion and interrupted promotion, not only\nclean startups (case#reversible). A clean start is therefore not merely weak evidence; it is\nevidence about the wrong event.\n\n### 1.4 Why replaying representative queries bounds, rather than proves, the claim\n\nReplay is a sample over a query corpus chosen in advance, executed on a snapshot with whatever\nstatistics existed then. Three limits follow: the sample is the pinned distribution, not the\nproduction distribution (case#migration-and-validation); a follower's query results do not\ncertify the leader's write path (case#two-distinct); and a snapshot checksum certifies the\nrepresentation at that snapshot, not the engine's behaviour after statistics are regenerated or\nafter a failover (case#the-two-failure-findings). The book's generic migration owner page makes\nthe same point without the engine context: row and hash totals can miss semantic corruption,\nand a green source/target comparison at T0 proves nothing about T1 (mr#3).\n\n## 2. The two observed failures the promotion gate must catch\n\n### Failure A — structural: the table that was not there after restart\n\nTable conversion interrupted by out-of-memory during handler commit could leave a table missing\nafter restart. The detection method matters as much as the failure: before/after table counts\nand checksums found it, rather than treating an ostensibly completed ALTER as the only\ncorrectness oracle (case#the-two-failure-findings). The source-reported sequence lists the same\nfailure under engine conversion — out-of-memory interruption, with the source authors finding\nmissing tables after restart (case#two-distinct).\n\nWhat this failure teaches: completion of a DDL statement is a log/status fact, not a\npost-condition. The gate has to re-enumerate the schema against the pre-conversion inventory\nand compare counts and checksums, and it has to do so after a restart, because that is when the\ndefect becomes visible. A gate that only checks the clean conversion path misses it by\nconstruction.\n\n### Failure B — semantic: the same statement, a different answer\n\nIn another case a reproduced SQL request produced a different result under the two engines, the\ncited defect PS-7722 (case#the-two-failure-findings). The case treats this as stronger negative\nevidence than generic performance concern, and states it explicitly: identical query text and\nclient API did not guarantee identical semantics (case#the-two-failure-findings). The\nsource-reported gate table records it under post-conversion evidence as a changed optimizer\nplan/performance where \"one issue yielded a different result for the same SQL across engines\"\n(case#two-distinct).\n\nWhat this failure teaches: the oracle must be a *value* comparison. A text comparison, a plan\ncomparison, a row count or a table checksum can all be satisfied while the returned value\ndiffers. The book's consequence is an explicit value-level read oracle in addition to\nbackup/row-count validation and runtime query replay (case#the-two-failure-findings).\n\n### Why the two are orthogonal and both mandatory\n\nFailure A is presence/structure (a relation is absent); Failure B is value semantics (a relation\nexists and answers differently). A gate instrumented only for A (counts, checksums, enumeration)\nreturns green on B; a value-level oracle over a fixed query corpus does not enumerate the\nschema, so a table outside the corpus can be absent without any compared query noticing. The\npromotion gate has to catch both before the node is promoted, exactly as the case's\nfirst-partition and leader-handoff rows require promotion correctness and new-engine read/write\nbehaviour under real traffic (case#two-distinct).\n\nNote the evidential status: the two failures are source-reported; the generalisation that a\nvalue-level read oracle is required is the book's analytical consequence, stated as Tycho's\nclaim rather than as a description of Uber's unpublished complete formal-verification procedure\n(case#the-two-failure-findings).\n\n## 3. What the promotion gate must observe\n\nThe case page's reversible-transfer section gives the compact gate specification: pin\nbinary/client/backup revisions; capture representative SQL, query plans, object identity,\nchecksums and per-class p95/p99; promote a converted follower only after backup recovery,\ncomplete table enumeration, query-value comparisons and plan/capacity checks; keep another\nregion on the old engine until read/write, replica-lag and failover tests pass; test OOM during\nconversion and interrupted promotion, not only clean startups (case#reversible).\n\n| Gate | What it must produce | Failure it targets | What it still cannot prove |\n|---|---|---|---|\n| Backup recovery | a successful restore from the new node's backup | A (recovery precondition) | that the restored data is semantically identical |\n| Complete table enumeration + before/after counts and checksums | every table present, counts equal, representation checksums equal | A | value-level equality for any query |\n| Statistics regeneration + value-level read oracle | same inputs compared by value across engines | B | correctness outside the query corpus |\n| Plan and capacity checks | plans captured, per-class p95/p99, CPU/compaction I/O compared | B and performance regression | unobserved tails and future plans |\n| Leader read/write + replica-lag + failover | writes accepted, lag bounded, failover exercised | A and B under real traffic | workload outside the exercised classes |\n| Interrupted-conversion/OOM test with restart | conversion killed mid-flight, then restarted and re-enumerated | A specifically | multi-fault sequences |\n\nThe case's stop conditions bound the gate: missing table after ALTER, different query result on\nreplay, backup incompatibility, unsustainable CPU or compaction I/O, unexplained read tail, or a\nrollback that can no longer represent accepted new writes (case#reversible). The gate is not a\none-time checklist; it is the set of observations that can force a stop.\n\n## 4. What must remain in place before the last old-engine region is removed\n\nFour things have to remain, and they are layered:\n\n1. **The old-engine escape path — another region still on the old engine.** It is retained until\n   read/write, replica-lag and failover tests pass (case#reversible). The source-reported\n   sequence keeps a remote MySQL region as a failover option (case#two-distinct), so the\n   retention unit in the source-reported method is a whole region. Region roll-out itself pauses to\n   compare latency, errors, CPU and I/O across regions before other partitions follow, because\n   earlier validation may not represent regional workload differences (case#two-distinct).\n2. **A rollback that still represents accepted writes.** An old-engine copy that can no longer\n   represent accepted new writes is a stop condition (case#reversible), and the authoritative\n   old representation is kept until the replacement is proven (case#migration-and-validation).\n   An escape path that can no longer represent accepted writes is not a rollback.\n3. **The compatibility window for readers.** New writers preserve enough old representation for\n   old supported readers until a verified cutover, and the reversible point ends when new-only\n   writes or deletion break old-reader expectations (rw#2; mr#3). Removing the last old-engine\n   region also removes the ability to serve old readers; the window is what makes the removal\n   safe.\n4. **The documented recovery/forward-fix procedure.** Only remove the last old-region escape\n   path with a documented recovery/forward-fix procedure (case#reversible). That document is\n   the precondition for the removal, not an artefact produced afterwards.\n\nBefore *contract* in the wider sense, the retirement page requires recording: all active and\nrequired historical readers/writers; migration completeness and an approved residual-unknown\npolicy; verified state restoration and event replay; supported old/new binary plans and\ndeprecation period; data retention and deletion obligations including backups and projections;\nand authorized acceptance of an irreversible change (mr#4). Retirement also requires a verified\nreplay horizon and explicit no-return approval (mr#3). The question's phrase \"the last\nold-engine region\" is precisely the moment these records must already exist, because deletion\nis the point at which an old client's ability to read history or replay effects can be\ndestroyed (mr#4).\n\n## 5. Boundaries, counterconditions and unknowns\n\n- **Evidence class.** The migration is a company-reported historical result, not an\n  independently reproduced benchmark (case#observed). The publisher reports over 30% less disk\n  usage but higher CPU and disk I/O on some instances (case#costs), so the disk saving is not a\n  total-cost claim.\n- **Temporal scope.** As of the 2022 publication, Uber reported all Schemaless migrated and only\n  some Docstore instances (case#costs); the article must not be read as a current all-fleet\n  state or a controlled p99 improvement.\n- **Analytical status of the gates.** The verification table and the recommended tests are\n  Tycho's analytical adaptation, not a reproduced Uber deployment script\n  (case#migration-and-validation), and the value-level read oracle is Tycho's consequence of\n  the two failures (case#the-two-failure-findings), not a claim about Uber's internal process.\n- **Counterconditions.** Keep a familiar engine when read behaviour, licensing, replication or\n  troubleshooting costs dominate; move the engine behind unchanged SQL APIs only where engine\n  parity can be proven for the actual query mix; otherwise return insufficient evidence rather\n  than copying a public percentage (case#applicability; case#costs; case#negative-evidence).\n- **Pattern framing.** The atlas classifies the situation as Online Data Migration,\n  applicable-under-conditions, with validation and cutover gated and a reconciliation path\n  required; the pattern is rejected when no reconciliation path exists (atlas#overview). This is\n  a draft registry entry and does not replace the owner page or independent review.\n\n## Evidence map\n\n| Claim | Section key(s) | What it establishes |\n|---|---|---|\n| C1 | case#exact-motivation-and-preparatory-version-dependency; case#chosen-architectural-change | the unchanged client protocol was the premise; the boundary is engine/data lifecycle |\n| C2 | case#chosen-architectural-change; case#situation-the-legacy-architecture-and-constraint; case#negative-evidence-costs-and-alternatives | physical and recovery economics differ under identical DDL |\n| C3 | case#two-distinct-migrations-and-their-source-reported-safety-gates; case#the-two-failure-findings-that-invalidate-a-purely-structural-cutover | statistics/plans are regenerated; queries may diverge after rebuild |\n| C4 | case#the-two-failure-findings-that-invalidate-a-purely-structural-cutover | failure A: missing table after OOM-interrupted conversion; counts/checksums caught it |\n| C5 | case#the-two-failure-findings-that-invalidate-a-purely-structural-cutover | failure B: PS-7722 same SQL, different result |\n| C6 | case#two-distinct-migrations-and-their-source-reported-safety-gates | the two failures are separate rows in the source-reported gate table |\n| C7 | case#reversible-transfer-and-refusal-criteria; case#the-two-failure-findings-that-invalidate-a-purely-structural-cutover | clean startup is not enough; interrupted conversion must be tested |\n| C8 | case#migration-and-validation; case#two-distinct-migrations-and-their-source-reported-safety-gates; case#the-two-failure-findings-that-invalidate-a-purely-structural-cutover | replay is sample-bounded; follower check and checksum are scoped |\n| C9 | case#the-two-failure-findings-that-invalidate-a-purely-structural-cutover | value-level read oracle required |\n| C10 | case#reversible-transfer-and-refusal-criteria | gate evidence before promotion; old region retained |\n| C11 | case#reversible-transfer-and-refusal-criteria | last escape path removed only with recovery/forward-fix procedure |\n| C12 | case#migration-and-validation; case#reversible-transfer-and-refusal-criteria | authoritative old representation; unusable rollback is a stop condition |\n| C13 | mr#4-data-retirement-has-a-no-return-point; mr#3-expand-migrate-contract-as-gated-lifecycle | retirement checklist and verified replay horizon |\n| C14 | rw#2-expand-migrate-contract-includes-a-compatibility-window; mr#3-expand-migrate-contract-as-gated-lifecycle | compatibility window and end of the reversible point |\n| C15 | mr#3-expand-migrate-contract-as-gated-lifecycle | hash totals miss semantic corruption; T0 does not cover T1 |\n| C16 | case#exact-motivation-and-preparatory-version-dependency | the prerequisite version upgrade changed the execution environment |\n| C17 | case#observed-results-and-temporal-validity; case#costs-measured-outcomes-and-historical-scope; case#migration-and-validation | company-reported, 2022-scoped, analytically adapted |\n| C18 | atlas#overview | pattern identity and its conditions |\n| C19 | case#two-distinct-migrations-and-their-source-reported-safety-gates | region roll-out compares across regions and keeps a remote MySQL failover region |\n\n## Unknowns and unverified claims\n\n1. **PS-7722's mechanism is unknown here.** The section names the defect and the divergence but\n   does not state a root cause, affected types, or blast radius; no independent reproduction is\n   recorded. The claim is limited to: same SQL, different result.\n2. **Uber's actual gate instrumentation is unknown.** The value-level read oracle is Tycho's\n   analytical consequence; the source does not establish that Uber compared values for every\n   table or query.\n3. **Recovery-point objectives and code revisions are missing.** The case states the article\n   does not provide a reproducible code revision or recovery point objective for every\n   intermediate state, so per-gate RPO/RTO cannot be derived.\n4. **Regional workload differences are unquantified.** The gate table warns that earlier\n   validation may not represent regional workloads; no per-region numbers are given.\n5. **How far the divergence generalises is unknown.** One cited defect is one counterexample; it\n   proves non-equivalence is possible, not how frequent or systematic it was.\n6. **The 30% disk saving and higher CPU/I/O are publisher-reported.** They are not an\n   independent measurement, and they do not establish p99 or TCO equivalence for any workload.\n7. **This answer is mechanism-level.** It does not assert that every MySQL storage-engine change\n   behaves this way; it asserts that a clean start and identical text cannot show otherwise, and\n   that the two observed failures are the minimum a promotion gate must catch.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The project was built as a storage-engine replacement behind the same MySQL client protocol, so identical SQL text and an unchanged client API were the premise of the work rather than a finding about engine behaviour; the boundary crossed is engine/data lifecycle, not the business API.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#exact-motivation-and-preparatory-version-dependency",
+          "quote": "with the same MySQL client protocol: a **storage-engine replacement**, not a client API rewrite.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#chosen-architectural-change",
+          "quote": "The change is at an engine/data lifecycle boundary: it does not imply that business APIs changed to an unrelated database product.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Beneath the unchanged logical schema, MySQL/InnoDB and a RocksDB-style LSM engine have different compaction, write-amplification, range-read and recovery economics, so the physical contract that produces query results changes even when the DDL does not.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#chosen-architectural-change",
+          "quote": "changing its distributed-datastore engine from MySQL/InnoDB to MyRocks, which uses a RocksDB-style LSM approach",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#situation-the-legacy-architecture-and-constraint",
+          "quote": "compaction, write amplification, range-read patterns and recovery behavior under production traffic",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#negative-evidence-costs-and-alternatives",
+          "quote": "LSM storage savings can come with different compaction/lookup economics.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Identical SQL can diverge in result because statistics and plans are part of behaviour: after conversion the procedure regenerates table statistics and the case states that a query may diverge due to engine behaviour or plan changes after statistics are rebuilt.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+          "quote": "regenerate table statistics",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "a query may diverge due to engine behavior or plan changes after statistics are rebuilt",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Observed failure one: table conversion interrupted by out-of-memory during handler commit could leave a table missing after restart, and before/after table counts and checksums detected it rather than treating an ostensibly completed ALTER as the correctness oracle.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "table conversion interrupted by **out-of-memory during handler commit** could leave a table missing after restart",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "Before/after table counts and checksums detected this, rather than treating an ostensibly completed ALTER as the only correctness oracle.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Observed failure two: a reproduced SQL request produced a different result under the two engines (the cited defect PS-7722), which the case reads as identical query text and client API not guaranteeing identical semantics.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "a reproduced SQL request produced a **different result** under the two engines (the cited defect **PS-7722**)",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "**identical query text and client API did not guarantee identical semantics**",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The two failures are different in kind, and both appear in the source-reported gate table: structural incompleteness (out-of-memory interruption, missing tables after restart) and semantic divergence (a different result for the same SQL under changed plans).",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+          "quote": "Out-of-memory interruption; source authors found **missing tables after restart**",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+          "quote": "Changed optimizer plan/performance; one issue yielded a **different result for the same SQL** across engines",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A clean start cannot substitute for those checks because the structural failure surfaced after a restart; the gate must test out-of-memory during conversion and interrupted promotion, not only clean startups.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria",
+          "quote": "Test OOM during conversion and interrupted promotion, not only clean startups.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "could leave a table missing after restart",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Replayed representative queries bound the evidence to the pinned query distribution, secondary-index and read-pattern sample; a successful follower check is not proof of leader/write equivalence, and a matching table checksum proves only the checked representation under its defined snapshot.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#migration-and-validation",
+          "quote": "pin query distribution and secondary-index assumptions, shadow representative read patterns",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+          "quote": "A successful follower check is not proof of leader/write equivalence",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "A matching table checksum proves only the checked representation under its defined snapshot",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The stated consequence of those failures is an explicit value-level read oracle in addition to backup/row-count validation and runtime query replay.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "Those observed problems justify an explicit **value-level read oracle** as well as backup/row-count validation and runtime query replay.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Before a converted follower is promoted, the gate requires backup recovery, complete table enumeration, query-value comparisons and plan/capacity checks; the old-engine region is retained until read/write, replica-lag and failover tests pass.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria",
+          "quote": "Promote one converted follower only after backup recovery, complete table enumeration, query-value comparisons and plan/capacity checks",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria",
+          "quote": "retain another region on the old engine until read/write, replica-lag and failover tests pass",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The last old-engine region is described as an escape path and is removed only with a documented recovery/forward-fix procedure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria",
+          "quote": "Only remove the last old-region escape path with a documented recovery/forward-fix procedure.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The gate keeps the authoritative old representation until the replacement is proven, and treats an old-engine rollback that can no longer represent accepted new writes as a stop condition.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#migration-and-validation",
+          "quote": "Keep authoritative old representation until proven",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria",
+          "quote": "a rollback whose old-engine copy can no longer represent accepted new writes",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Retirement is a no-return point that is safe only after recording active and historical readers/writers, migration completeness with an approved residual-unknown policy, verified restoration and replay, old/new binary plans and deprecation period, retention and deletion obligations including backups, and authorized acceptance of the irreversible change.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "Contract is safe only after recording:\n1. all active and required historical readers/writers;\n2. migration completeness and an approved residual-unknown policy;\n3. verified state restoration and event replay;\n4. supported old/new binary plans and deprecation period;\n5. data retention and deletion obligations, including backups and projections;\n6. authorized acceptance of an irreversible change.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "Retirement requires a verified replay horizon and explicit no-return approval",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A compatibility window must survive until a verified cutover: new writers preserve enough old representation for old supported readers, and the reversible point ends when new-only writes or deletion break old-reader expectations.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+          "quote": "New writers must preserve enough old representation for old supported readers until a verified cutover.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "The reversible point ends when new-only writes or deletion break old-reader expectations.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "The wider principle is that structural equality is not semantic equivalence: row and hash totals can miss semantic corruption, and a green source/target comparison at T0 proves nothing about T1.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "Hash totals alone would miss that semantic corruption.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "a green source/target comparison at T0 proves nothing about T1",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The environment beneath the unchanged schema also changed: the move required a MySQL 5.7 to 8.0 upgrade first, which took more than a year and brought changed optimizer plans, higher memory use and an InnoDB index/tablespace corruption defect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#exact-motivation-and-preparatory-version-dependency",
+          "quote": "Uber initially ran **MySQL 5.7** while its chosen XtraBackup tooling supported MyRocks beginning with **MySQL 8.0**",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#exact-motivation-and-preparatory-version-dependency",
+          "quote": "That prerequisite version upgrade took **more than a year**.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#exact-motivation-and-preparatory-version-dependency",
+          "quote": "Reported blockers included increased 8.0 memory use, changed optimizer plans, slow data-dictionary population on installations with many tables, stalls during resource release and an InnoDB index/tablespace corruption defect.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Boundaries: the case is a company-reported historical result, not an independent reproduction; as of 2022 all Schemaless and only some Docstore instances were migrated; the verification gates are Tycho's analytical adaptation, not a reproduced deployment script; no independent p99 or cost equivalence is claimed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#observed-results-and-temporal-validity",
+          "quote": "This is a company-reported historical result, not an independently reproduced benchmark.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#costs-measured-outcomes-and-historical-scope",
+          "quote": "As of the **2022** publication, Uber reported **all Schemaless** migrated and **only some Docstore** instances",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#migration-and-validation",
+          "quote": "These are Tycho's recommended tests, not a reproduced Uber deployment script.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The pattern layer classifies this as Online Data Migration, applicable under conditions, with validation and cutover gated and a reconciliation path required; the pattern is rejected when no reconciliation path exists.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview",
+          "quote": "**Decision state.** applicable-under-conditions.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview",
+          "quote": "validation\nand cutover are gated",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview",
+          "quote": "Reject when a maintenance window is acceptable, when no\nreconciliation path exists",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Region roll-out is gated too: after converting other partitions in the region the sequence pauses and compares latency, errors, CPU and I/O across regions, keeping a remote MySQL region as the failover option, because earlier validation may not represent regional workload differences.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+          "quote": "then pause and compare **latency, errors, CPU and I/O across regions**",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+          "quote": "remote MySQL region retained as a failover option",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+          "quote": "Earlier validation may not represent regional workload differences",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#exact-motivation-and-preparatory-version-dependency",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#chosen-architectural-change",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#situation-the-legacy-architecture-and-constraint",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#negative-evidence-costs-and-alternatives",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#migration-and-validation",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#observed-results-and-temporal-validity",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#costs-measured-outcomes-and-historical-scope",
+    "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

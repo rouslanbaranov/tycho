@@ -1,0 +1,97 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q204",
+      "core_claims": [
+        "A 100-token-per-second bucket deployed in each of six replicas creates six independent local allowances rather than one shared 100-per-second limit, so under uneven routing the tenant can exceed the sold rate and the aggregate can approach 600 admitted requests per second.",
+        "The sold 100-per-second rate is a tenant-global scope claim, while a per-instance bucket enforces only a local scope; a global quota requires atomic shared accounting, coordinated budget leases, or an explicitly documented bounded approximation.",
+        "When the quota store is unavailable, the limiter contract must either reject new work to protect the hard limit or spend only a known unused local allocation; a limiter timeout must not become permission to admit unlimited work.",
+        "The contract must state the permitted overshoot during an accounting outage and the reconciliation rule for restoring the shared budget, because fail-open and fail-closed labels do not answer that design question.",
+        "A token bucket bounds admitted cost over an interval while a concurrency semaphore bounds work resident at one time, and neither controls the other dimension without deadlines, measured downstream budgets, and a queue bounded by both item count and maximum age.",
+        "The contract must define the acceptance boundary: rejection before acceptance is not durable work, accepted-pending is not completed, and an outcome unknown after a possible commit must be reconciled by stable identity rather than retried blindly."
+      ],
+      "optional_claims": [
+        "The limiter must track offered, admitted, rejected, completed and failed work separately per tenant and class, and measure the rejection path itself, because refusals also consume parsing, authentication, logging and retry capacity.",
+        "A single shared FIFO can be filled by one tenant even when average capacity is sufficient, so admission must bound per-tenant outstanding work and maximum age and declare how spare capacity may be borrowed.",
+        "Leased local budgets must never grant overlapping spend and must account for unused or lost allocations when reconciling with the shared quota."
+      ]
+    },
+    {
+      "task_id": "Q212",
+      "core_claims": [
+        "The 0.85 operations per second is 3,050 operations divided by 3,600 seconds, a one-hour mean at one boundary that does not predict the busiest seconds, p99 latency, or synchronization cost.",
+        "The same 12,000-account population offers 1,800 attempts in a 15-second window, or 120 attempts per second, about 140 times the hourly mean, so capacity must be sized for the peak interval the service must survive rather than the hour average.",
+        "Attempts are not completed unique claims: duplicate retries inflate the 1,800 attempts, and contention on a few keys can keep successful unique claims far below 120 per second.",
+        "Registered accounts, active users, sessions or connections, logical operations, attempts, offered, admitted and completed rates, in-flight concurrency and per-operation resource demand are distinct quantities at a declared boundary, and retries belong to attempts rather than to new business demand.",
+        "Every demand quantity must record units, observation interval, measurement point, data source and confidence, and a ratio such as requests per active user also needs an observed or assumed behavioral model and time window.",
+        "Arrival shape must be declared separately from the average: baseline arrivals versus short bursts, independent arrivals versus closed-loop clients waiting on responses, retries versus new logical operations, reads versus mutations, and broad key distributions versus a few hot keys."
+      ],
+      "optional_claims": [
+        "RPS is a rate, not a storage capacity or a business correctness measure, and equal request rates do not mean equal backend cost because operations consume different resources.",
+        "A closed client loop can reduce new arrivals as service time increases, whereas arrival-rate generators schedule arrivals independently, so the generator model must be declared when interpreting a measured rate."
+      ]
+    },
+    {
+      "task_id": "Q220",
+      "core_claims": [
+        "A connection, an HTTP/2 stream, a request attempt and a logical business operation have different identities, so a GOAWAY or shutdown error must be attributed to the layer that emitted it before its meaning is inferred.",
+        "GOAWAY with last-stream ID 5 declares that the peer did not process streams above 5, so stream 7 can be retried on a replacement connection.",
+        "Stream 5 is at the boundary and may already have been processed, so its missing response is not evidence of rollback and replaying the publish can duplicate a committed effect.",
+        "The ambiguous publish must be resolved by the same logical operation identity against authoritative state on a usable route, not by treating the lost response as a failed attempt.",
+        "A bounded drain must mark the instance ineligible through the actual selector, start protocol-appropriate graceful shutdown with time for route caches and active work, let admitted work finish within its declared budget, cancel only where cancellation semantics permit, and remove the instance only after the drain condition or bounded timeout.",
+        "Before forced termination the draining instance must record unresolved operation IDs and expose a reconciliation path, because a hard shutdown deadline cannot manufacture atomic cancellation."
+      ],
+      "optional_claims": [
+        "Diagnosis should separate name resolution, connect, handshake, queue, first-byte, transfer and application-effect time, and compare connection ages, active streams, close reasons, GOAWAY code and boundary, retry volume and operation outcomes before pool settings change.",
+        "Keepalive, idle timeout and maximum connection lifetime address different contracts, so increasing all of them can hide leaked resources or retain endpoints through maintenance, while excessively short lifetimes can create setup storms.",
+        "Connection pooling couples many requests to one transport failure, and HTTP/2 multiplexing does not remove TCP-level loss effects or unbounded application buffering."
+      ]
+    },
+    {
+      "task_id": "Q228",
+      "core_claims": [
+        "Last-write-wins by timestamp is a resolver but not a sufficient conflict contract: it selects one version and silently discards the other acknowledged write, so convergence can preserve a final state while losing an acknowledged effect.",
+        "In the profile-edit and address-deletion case the timestamp rule can let reconciliation restore the deleted address or erase the edit, so the contract must record the conflicting versions, name the resolver, expose an audit trail, and define a deterministic resolution path.",
+        "Synchronous multi-master still lets any server accept writes, and PostgreSQL's comparison rates it best for mostly read workloads while heavy write activity can cause excessive locking and commit delays, so synchrony moves cost into coordination rather than removing the conflict policy.",
+        "Asynchronous multi-master identifies conflicting transactions for users or resolution rules; conflict metadata, per-key convergence and operator reconciliation remain costs, and the topology does not remove the need for one authoritative outcome.",
+        "Multi-leader must be rejected when monotonic writes are mandatory or the resolver cannot preserve causal order, and single-leader replication or quorum writes are the alternatives.",
+        "A quorum is not an escape from the conflict contract: it still needs an application-defined version selector and repair path, is contraindicated when concurrent versions cannot be ordered or repaired, and a membership change needs the old and new quorums to overlap or an explicit sloppy-quorum trade-off."
+      ],
+      "optional_claims": [
+        "Multi-leader is a good fit only when write locality or availability requires multiple leaders, the conflict policy is explicit, and versioning and reconciliation are owned.",
+        "Conflict metadata, per-key convergence and operator reconciliation are costs that must be owned, and write locality or availability must be strong enough to justify them over single-leader replication."
+      ]
+    },
+    {
+      "task_id": "Q236",
+      "core_claims": [
+        "Replacing an empty recommendation result with a response formatted exactly like a complete one silently changes correctness, because the caller cannot see that optional data is absent and may treat the partial result as authoritative and complete.",
+        "Degradation is legitimate only when essential and optional work are distinguishable, the degraded response is explicitly less accurate or contains less data, and both the reduced outcome and the caller-visible state are declared.",
+        "When no reduced result preserves the correctness contract, an explicit error or complete outage is better than a plausible but wrong response, because silent loss of correctness is worse than an explicit failure.",
+        "A degraded mode is a rarely exercised path whose unused code often does not work, and its complexity can make a service enter the mode unintentionally or enter feedback cycles, so it must be exercised under the load that triggers it.",
+        "Each mode needs an entry condition, a visible status, an owner, an audited override, a way to disable or tune it, and an alert when too many instances enter the mode.",
+        "Recovery needs hysteresis: remain degraded until the trigger metric stays below threshold for a sustained window, then permit bounded trial probes and increase flow only after stable correct responses rather than flooding on the first success."
+      ],
+      "optional_claims": [
+        "On an optional dependency timeout the service should stop admitting optional work, return core success with the recommendations explicitly absent, and not retry the stalled optional call before completing the critical booking.",
+        "A separate small bulkhead for optional calls prevents them from consuming the shared pool and starving core work, and an edge quota alone does not protect that specific scarce pool.",
+        "When work cannot be deferred and queueing would only push it past its deadline, admission should reject before enqueue rather than let backlog age or retention expire the work; shedding is the alternative when deferral has no value."
+      ]
+    },
+    {
+      "task_id": "Q244",
+      "core_claims": [
+        "The strict schema requires a unit field on each state variable and parameter, but it does not compute dimensional analysis, so a state variable declared in requests while its dynamics equation uses a rate passes the structural checks.",
+        "The validator checks only schema conformance, tycho.model identifier uniqueness, scenario resolution, and the presence of a source and measurement record for measured parameters; it cannot verify that a source supports a parameter or that the units cohere.",
+        "The unit fields make the requests-versus-rate mismatch visible to a reader and reviewer, but detecting and correcting it remains an editorial and review responsibility.",
+        "The contract claims inspectability, not proof of usefulness: it forces choices a diagram leaves hidden, such as the state unit, whether the service rate is constant or a distribution, and whether arrivals were measured or assumed, into named fields a reader can challenge.",
+        "The contract is a guardrail, not a reviewer, so a schema pass cannot detect a false verification claim, calibration laundering, or a source that does not actually support the parameter."
+      ],
+      "optional_claims": [
+        "Its documented failure modes include orphan models, parameter drift after scenario overrides, verification theater, unit mismatch and calibration laundering; the schema rejects missing fields but cannot prove the claim.",
+        "A measured parameter must name a source plus measurement method, sample size and period; an assumed value cannot claim a measured source, and uncalibrated is a complete value rather than a missing field."
+      ]
+    }
+  ]
+}

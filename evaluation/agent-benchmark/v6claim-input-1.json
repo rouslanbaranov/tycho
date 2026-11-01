@@ -1,0 +1,108 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q201",
+      "question": "A capacity review computes a fleet p99 by averaging each instance's p99, keeps only hourly rollups after seven days, and then reports that a ten-minute queue crisis did not affect the tail. Why can each step produce a false improvement, and what must be retained or recomputed before that claim is made?",
+      "required_evidence": [
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level"
+      ],
+      "preliminary_claims": [
+        "Averaging percentiles across groups is generally invalid: sums and counts can reconstruct a mean over compatible populations, but an arbitrary high percentile cannot be recovered that way, and merged histograms require compatible bucket boundaries.",
+        "Downsampling deletes resolution, so an hourly mean can hide a short queue crisis and a p99 computed from coarse buckets cannot be averaged into the day's p99; a p99 that appears improved after misconfigured downsampling is a measurement artifact.",
+        "Retention must be chosen from the question being answered, and missing or expired samples must be recorded as unknown rather than read as clean, because sampled telemetry cannot satisfy an audit obligation."
+      ]
+    },
+    {
+      "task_id": "Q209",
+      "question": "A team edits an accepted architecture decision record in place so it describes the option it eventually chose, and cites a closed documentation issue as approval. Why does that destroy the decision trail, and what must the record and any superseding record state instead?",
+      "required_evidence": [
+        "tycho.page.a5285941dcba43d5a6a7c091cb4c99f9#5-adrs-document-consequences-and-update-history",
+        "tycho.page.a5285941dcba43d5a6a7c091cb4c99f9#6-a-decision-is-also-a-stopping-rule",
+        "tycho.page.f05854fcc406435bbf38a192bc7ab2f1#engineering-walkthrough-a-hard-requirement-reverses-a-previously-preferred-adr"
+      ],
+      "preliminary_claims": [
+        "An accepted decision is superseded rather than silently rewritten: a later record must state which earlier reasoning was superseded and by which changed facts, and carry an explicit status with a review trigger and a pointer to its successor.",
+        "The record must carry its stable identity, scope and change trigger, known inputs and unknowns with source revision, alternatives including the retained design, a hard-gate table, observed versus hypothesized findings, positive, negative and neutral consequences, and transition or irreversible-effect gates.",
+        "A closed documentation issue is not business approval, and a decision may legitimately end as no feasible candidate, deferral or insufficient evidence instead of a fabricated recommendation."
+      ]
+    },
+    {
+      "task_id": "Q217",
+      "question": "A booking service replaces its limited-seat approval rule with a mergeable set so disconnected approvers can synchronize automatically. Why can the replicas converge on the same state while the approval limit is still violated, and what must happen to authority-dependent approvals?",
+      "required_evidence": [
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#start-with-the-invariant-then-choose-the-merge",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#three-original-workload-decisions",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#normal-operation-failure-and-recovery"
+      ],
+      "preliminary_claims": [
+        "Convergence means replicas reach the same state, not that the application invariant survived: the union of two locally valid offline approvals can exceed the capacity limit.",
+        "A mergeable data type does not remove transport, deduplication, or ordering obligations, and it cannot by itself enforce a finite-resource invariant.",
+        "Authority-dependent approvals must stay pending and be revalidated against an authority; a last-writer rule can conceal an over-allocation but cannot undo an external action already performed."
+      ]
+    },
+    {
+      "task_id": "Q225",
+      "question": "A catalogue serves each item from a local in-process cache in front of a shared cache, and the shared tier uses stale-while-revalidate with a 60-second stale window. A writer commits a new version and invalidates only the shared key, while a reader that began before the write repopulates that key from its older snapshot. Why can a later reader still see a value older than either tier's declared freshness bound, and what must each tier and each fill record before the design may claim that bound?",
+      "required_evidence": [
+        "tycho.page.9019c073a9804c5c99b236cd7752e78f#overview",
+        "tycho.page.37ee8969c224c7b336487c02aff9149c#overview",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes"
+      ],
+      "preliminary_claims": [
+        "Multi-level caching is admissible only when each tier has a distinct role and a named freshness bound, promotion and invalidation are owned, and a missed invalidation is detected or bounded; a local tier duplicates data, so a lost invalidation or disconnect flush leaves a stale copy that a later shared-cache read does not repair.",
+        "A fill that began before a write can complete after the invalidation and restore the older value, and a TTL is not a monotonic-version or consistency guarantee, so a fill must carry a source version and must not overwrite a newer committed value.",
+        "Stale-while-revalidate is rejected when read-after-write is mandatory: its stale window must be explicit and bounded, refresh must run in the background with a blocking fallback, and after the bound the next request must block rather than keep serving the stale entry."
+      ]
+    },
+    {
+      "task_id": "Q233",
+      "question": "A long-running durable workflow is upgraded while thousands of histories are mid-flight, and an activity that sends a confirmation email is retried after a worker crash. Why can the upgrade and the retry each corrupt the workflow's meaning, what must replay and activity idempotency guarantee, and why is a completed workflow state not proof that the external effect happened?",
+      "required_evidence": [
+        "tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+        "tycho.page.ee435fc3b8bf4b6ba35d9e6b1ee4b69c#overview"
+      ],
+      "preliminary_claims": [
+        "Activity execution and completion recording are separate steps, so a lost completion can leave an effect the engine cannot see, and the retry policy can run the activity again; the activity therefore needs an idempotent effect identity rather than an at-most-once assumption.",
+        "Recovery replays from durable history, so workflow code must remain deterministic and versioned: an upgrade that changes the branches a recorded history would take makes replay produce a different meaning, and versioned workflow state, idempotent activities and reliable timers are the conditions the guarantees depend on.",
+        "A completed workflow state records the coordinator's own bookkeeping, not proof that an external effect such as an email was delivered; an ambiguous external effect needs a repair or hold state rather than a completion flag that hides the unknown outcome."
+      ]
+    },
+    {
+      "task_id": "Q241",
+      "question": "Candidate A times out on 7.78% of offered requests, yet the checkout decision does not eliminate it, while candidate C is eliminated for cost and p95. Why is a poor success rate not a constraint failure here, and what would have to be declared to make it one?",
+      "required_evidence": [
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure"
+      ],
+      "preliminary_claims": [
+        "Only a declared hard constraint eliminates a candidate, and the checkout record declares no success-rate or timeout-rate constraint.",
+        "A satisfies the four declared hard constraints despite its 7.78% timeout rate, so B's higher success and lower cost make B preferred without making A a failed candidate.",
+        "Declaring a hard minimum success rate or a maximum timeout rate would make A a failed candidate and remove it from the survivor comparison."
+      ]
+    },
+    {
+      "task_id": "Q249",
+      "question": "A zero-server boundary case runs to completion without raising an error and is recorded as pass. Why is that record not a verification result, and what must distinguish a boundary test from a smoke test?",
+      "required_evidence": [
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure"
+      ],
+      "preliminary_claims": [
+        "Boundary cases exist to expose division by zero, negative stock or an unbounded loop, so termination alone does not exercise the intended failure.",
+        "The tests assert the outcome, not merely that the run terminates, and a case record needs an expected result, an observed result, a status and a test path.",
+        "A case marked pass without an observed result is a claim rather than evidence, and the test matrix records intended checks whose execution still depends on the named test file."
+      ]
+    }
+  ]
+}

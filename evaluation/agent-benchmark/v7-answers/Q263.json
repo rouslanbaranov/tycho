@@ -1,0 +1,549 @@
+{
+  "task_id": "Q263",
+  "answer": "# Q263 — least-active selection, fast-failing backends, and the subset/endpoint contract\n\n## 0. Onboarding and layer statement\n\n`describe` was run first (snapshot `4445fa06`, ranker `tycho-section-fts5-bm25-v5`, 555 documents /\n3132 sections, coverage complete). **Layers needed: `book` only.** The question is about client-side\nload-balancing policy, connection topology and the endpoint-change path; those are owned by book prose\n(V08/C08 *Discovery, load balancing and backend selection*, plus the routing/health, drain, retry and\nrecovery owner pages). No atlas identity lookup and no V12 model/run/decision artifact is required, so\n`atlas` and `modeling-and-simulation` were not used for evidence. All evidence below was read through\nthe CLI (search, outline, page, read); queries are recorded in\n`evaluation/agent-benchmark/v7-logs/Q263.jsonl`.\n\nRetrieval caveat, stated honestly: the CLI's strict mode applies an answerability score floor\n(15.618061) and suppressed whole result sets for some formulations (for example \"least outstanding\nrequests load balancing\", \"client-side load balancing subset of backends\" and \"outlier detection eject\nunhealthy endpoint\" returned zero results). The same index, queried directly, did return candidates;\nevery candidate cited here was then opened and read through the CLI, so the failure is a serving-gate\nlimitation, not missing evidence.\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. Why least-active over-selects a fast-failing backend | \"least outstanding requests load balancing\"; \"load balancer picks backend\"; \"backend selection error rate\"; conceptual: which signal does a sinkhole game? | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work`, `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes` |\n| F2. Fast failure vs slow dependency as different shapes | \"fast failure slow dependency\"; \"backend failure fast fail\"; \"retry amplification failing backend\" | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work` |\n| F3. Which selection signal protects the outcome | \"success rate EWMA\"; \"weighted round robin\"; \"backend selection error rate\"; conceptual: completed correct work vs raw speed | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work`, `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes` |\n| F4. Health/ejection semantics and their limits | \"health check eject backend\"; \"backend ejection\"; \"stale membership\"; \"client-side load balancing\" | `tycho.page.07904f22ca8249069cedc8c2e1140630#overview`, `tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring`, `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery` |\n| F5. What a bounded subset of 64 backends must preserve | \"subset of backends connection fan-out\"; \"connection pool subsetting\"; \"endpoint churn\" | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work` |\n| F6. What the endpoint-change path must preserve | \"service discovery update\"; \"endpoint change load balancer\"; \"endpoint churn\"; \"thundering herd\" | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#overview`, `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries`, `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery`, `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#choice-acceptance-and-evidence`, `tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure`, `tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets`, `tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate` |\n\nSaturation rule: after the first two searches, further formulations returned the same V08/C08 selection\npage as the best section, and repeated formulations added no new evidence; the facets were closed by\nreading the owner pages for health, drain, retry and recovery instead of by more query variants.\n\n## 2. Mechanism: why does least-active send *more* work to the failing backend?\n\nThe policy has one input and one assumption. The input is the number of requests a backend has\noutstanding from *this* client. The assumption is stated plainly in the book: \"A least-loaded or\nactive-request selector assumes that a backend with spare capacity will do useful work.\" The failing\nbackend is a counterexample that inverts the policy's own objective.\n\n1. **The error path is faster than the success path.** A backend whose disk has failed returns 500 in\n   about one millisecond. The selector's counter increments on dispatch and decrements on completion;\n   the completion is the 500, so the slot is released almost immediately and the counter never rises.\n   The book's sentence is the whole mechanism: \"A seriously unhealthy backend can instead return an\n   error in milliseconds, so its active-request count falls and the selector sends it more traffic. The\n   backend becomes a sinkhole.\"\n2. **The feedback is positive, not corrective.** A healthy degradation makes a backend *less*\n   attractive; this degradation makes it *more* attractive. The worse it does, the better it ranks,\n   because the only quantity being minimized is concurrency, and failure is the cheapest way to free\n   concurrency. This is why the symptom is surprising: the policy is behaving exactly as specified.\n3. **The slow backend is penalized for succeeding.** The backend that waits two seconds on a remote\n   call occupies its slot for the full two seconds. The book notes that active-request counts \"misrank\n   I/O-bound work: a request waiting on a remote response consumes little CPU but still occupies a\n   slot.\" At equal concurrency the failing backend completes roughly a thousand 500s per second while\n   the remote-call backend completes about half a successful request per second — so an accurate\n   outstanding count is an actively bad proxy for useful throughput here (inference from the stated\n   counts, not a measurement).\n4. **The count cannot price the request either.** \"An active-request count still cannot predict a\n   single unusually expensive query.\" The two-second call is exactly such a request, so the selector\n   has no way to distinguish \"busy doing expensive work\" from \"busy being slow\".\n5. **Each client sees only its own share.** \"The count also excludes work sent by other clients, so\n   each client sees only a partial view.\" With a fixed subset of 64 backends, the failing backend is\n   invisible as a fleet-wide problem: every client that holds it in its subset observes it as the idlest\n   member and independently shifts work onto it. The convergence is correlated across clients, not\n   independent sampling noise (inference); the book's per-client partial view is the premise.\n6. **Fast failure is not the same shape as slow dependency.** \"Distinguish a fast failure from a slow\n   dependency: the first can look idle, the second can look busy while making no progress.\" A policy\n   that only counts open requests cannot tell these apart, and a policy that only measures latency\n   inverts the ranking entirely: the one-millisecond 500 looks like the best performer in the fleet.\n\nThe result is the \"sinkhole\": a backend that absorbs an increasing share of traffic while returning\nnothing useful, and whose error rate rises precisely because it is being selected more.\n\n## 3. Which selection signal better protects the outcome?\n\nThe book's direct instruction is: \"Count recent errors, health signals or an explicit success rate as\npart of the load signal, not only open requests.\" Generalized: \"Choose a signal that matches the\nprotected outcome: completed correct work, not raw connection count.\" The protected outcome in this\nscenario is *completed correct work*, so the signal must be able to fall when work stops completing —\nconcurrency alone cannot, and speed alone actively misleads.\n\nThe defensible composition, in order:\n\n- **An outcome gate first.** Recent error rate, explicit success rate, or a health signal decides\n  eligibility. This is the part that removes the failing backend, because its failures are the only\n  thing it produces. Health-signal semantics are owned by the routing/health page, which insists that\n  startup, readiness, liveness and draining are not collapsed into one endpoint, and that \"a backend\n  that answers quickly but cannot do useful work\" must not be read as healthy.\n- **A cost-aware load term second, among eligible backends only.** Once a backend is eligible, its\n  outstanding count (or a weighted variant) is a legitimate tie-breaker. The book's documented composite\n  is the source's *Weighted Round Robin* example, which \"combines backend-reported query, error and\n  utilization signals into a capability score; its weights and thresholds are contextual.\" Weights are\n  a calibration decision, not a constant to copy.\n- **A cost cap where one request can dominate.** \"Cap request cost at the interface where one request\n  can dominate a backend, and test the selector under the real cost distribution.\" Without this, the\n  two-second call is invisible to every concurrency-based policy and the selector will keep treating\n  \"long\" as \"loaded\".\n- **Recovery separated from selection.** \"Keep recovery probes separate from the load signal so a\n  recovered backend can return without a thundering herd.\" A backend coming back from a failed disk\n  must not re-enter at full weight; recovery needs bounded probes and a controlled ramp.\n- **Retry budget owned at one layer.** A fast 500 is cheap to retry, which is exactly what makes retry\n  amplification dangerous next to a sinkhole. The retry page requires designating where retries are\n  owned and instrumenting actual attempt counts, and warns that a retry \"may amplify work or repeat a\n  committed effect\".\n\nWhy not latency alone: latency is a completion signal, and the book already lists its failure mode —\ncompletion and latency signals \"react after the fact; a short window is noisy\". More concretely for\nthis scenario, a latency-ranked selector would rank the one-millisecond 500 above the two-second\nsuccess, which is the same error as least-active, reached faster.\n\nWhy not success rate alone: a pure success-rate gate would keep the two-second backend eligible and\nwould also let a *slow but correct* backend absorb unbounded work until deadlines expire. The gate must\nbe paired with a load/cost term and with a deadline, or the policy merely exchanges a fast-failure\nsinkhole for a slow-success pile-up.\n\n## 4. What the bounded subset of 64 backends must preserve\n\nThe subset is a connection-topology device, not a health device. \"A client does not need a connection to\nevery backend. A bounded subset limits memory, health-check traffic and reconnect work, at the cost of a\nsmaller choice set.\" Everything it must preserve follows from that trade:\n\n1. **Uniform assignment.** \"Assign backends uniformly so one subset does not overload a backend; a\n   skewed subset forces fleet-wide overprovisioning.\" Uniformity must hold *after* every membership\n   change, not only at design time.\n2. **Minimal churn on restart and resize.** \"Handle restarts and resizes with minimal churn: replacing\n   one backend should not reconnect every client at once.\" A naive modulo recomputation over the\n   endpoint list reshuffles nearly every client on one removal and produces the reconnect storm this\n   bullet forbids.\n3. **A size that matches burstiness and cost variance.** \"Use a larger subset when clients burst or when\n   request costs vary widely; a small subset concentrates a burst on fewer backends.\" A subset of 64 is\n   a capacity choice that must be justified against the client's burst profile and the observed cost\n   distribution (the book gives the rule, not a number).\n4. **Reproducibility without permanence.** \"Keep the subset selection deterministic enough to reproduce,\n   but not so static that a failed backend remains in every client's set.\" Determinism is for\n   debuggability and for avoiding churn; it must not become a guarantee that a dead backend keeps its\n   share of every client.\n5. **Balance during and after the change.** The subset test is behavioural: \"Test a rolling restart and\n   a backend loss; measure reconnect rate, per-backend load skew and time to uniform distribution.\"\n6. **The routing invariant.** \"No request reaches an ineligible backend and no retry loop is unbounded;\n   it needs fresh health/selection signals and retry-safe callers.\"\n\nOne important interaction with F1: a *fixed* subset is what makes the sinkhole invisible per client. If\nthe subset were elastic, a client would eventually sample the rest of the fleet and observe the\nfleet-wide error rate; with a fixed 64, each client's evidence about the failing backend consists only\nof its own fast 500s, which look like prompt completions (inference).\n\n## 5. What the endpoint-change path must preserve\n\nThe owning question is the acceptance criterion: \"How does an endpoint change become a correctly balanced\nrequest rather than merely a new address?\" The path must preserve the following.\n\n1. **A publish → readiness/trust → lifetime → retire order.** \"publish the replacement endpoint,\n   establish its readiness and trust, and account for old route/connection lifetimes before retiring the\n   former endpoint. A DNS change alone is neither a drain procedure nor a database failover protocol.\"\n2. **Eligibility through the actual selector.** The drain procedure begins \"Mark the instance ineligible\n   for new work through the actual selector\", then \"Start protocol-appropriate graceful shutdown;\n   preserve enough time for route caches and active work\", then \"Remove the instance after the drain\n   condition or explicit bounded timeout.\" A route publication that never reaches the selector changes\n   nothing.\n3. **Separate lifecycle states.** Startup eligibility, readiness, draining and permanent removal are\n   distinct decisions, and a liveness endpoint \"should not restart every healthy process because one\n   shared dependency is unavailable.\"\n4. **Coordinated removal and connection shutdown.** The failure matrix names \"Removed backend still\n   cached\" with the design consequence \"Removal and connection shutdown require coordinated policy\" and\n   the discriminating observation \"Attempts to the removed endpoint after route publication\". The\n   proxy remaining healthy is not evidence that the removal worked.\n5. **Bounded staleness.** The client is part of the routing authority when it does client-side discovery:\n   it owns \"client-side load balancing, health/ejection, retry budget and stale-membership handling\".\n   \"A client that never refreshes its view can keep sending traffic to a removed instance\", so \"Bound the\n   cache age, refresh budget and stale-cache alarm, and use a last-known set only for reads with an\n   explicit freshness bound.\" A last-known set \"may serve reads but cannot grant write authority.\"\n6. **Ejection scoped to the fault.** \"Ejecting all instances can make local capacity unusable\" when\n   every backend probes a shared failed dependency; the routing page adds that readiness can remove the\n   whole fleet from traffic or liveness can drive a restart loop, after which \"the load balancer may then\n   fail open to the same unhealthy targets.\" Ejection policy must therefore distinguish instance-local\n   from shared faults, and keep probes on a path independent of what they observe.\n7. **A controlled return.** Recovery is not the inverse of ejection: \"Circuit-breaker recovery may use\n   bounded probes; admission thresholds may need stability windows and progressive recovery\", with \"fair\n   re-admission and a controlled ramp to prevent a thundering herd\" — but \"an excessive cooldown can\n   strand healthy capacity.\"\n8. **Retry safety across the change.** A retry that lands on a different backend is a new routing\n   decision: retry \"only at the layer immediately above the layer that rejected the request\", with the\n   attempt cap, backoff and deadline consuming the same budget, because a retry \"may amplify work or\n   repeat a committed effect\" and a hard shutdown \"cannot manufacture atomic cancellation.\"\n9. **Behavioural acceptance.** \"maintain requests during endpoint churn, skew costs deliberately,\n   disconnect discovery, and compare useful throughput, per-backend outstanding work and completion\n   correctness.\"\n\n## 6. Boundaries, contradictions and what the book does not claim\n\n- **The subset size 64 is the question's premise, not a book finding.** The book states the trade-off and\n  the sizing rule (\"larger subset when clients burst or when request costs vary widely\") but publishes no\n  table mapping fleet size to subset size, and no measurement of per-client correlation.\n- **No measured sinkhole rate.** The page's own acceptance section says: \"No benchmark or DNS convergence\n  bound was measured.\" The 1 ms and 2 s numbers are the question's; the book's \"Test with a backend that\n  fails in roughly 1 ms\" is a test instruction, not an observation of a failing fleet.\n- **Weights and thresholds are contextual.** The capability-score composition is the source's example;\n  the page explicitly declines to fix weights.\n- **Signal freshness is a limit, not a solved property.** A success-rate window is noisy at low request\n  rates, and each client's view is partial; the book's answer to this is to move to active signals \"only\n  when the signal is fresh and its failure mode is understood\", not to assume freshness.\n- **Two failure modes pull in opposite directions.** Ejecting too eagerly can remove the fleet on a\n  shared-dependency fault or fail open to the same unhealthy targets; ejecting too lazily leaves the\n  sinkhole in the subset. The book gives the discriminator (instance-local versus shared, readiness versus\n  liveness) rather than a universal threshold.\n- **Slow-success is not failure.** The two-second backend is explicitly the case active-request counts\n  misrank; treating it as unhealthy because it is slow would be the mirror-image error, and the page's\n  remedy is cost capping and real cost distributions, not ejection by latency.\n- **Ownership boundaries.** The retry decision after a rejection is owned by V02/C05\n  (`tycho.page.43414664520b4866929f7f006f27f59b`); the selection page owns the selection signal and the connection topology; overload shedding\n  is owned by V07/C05. Claims here stay inside that split.\n\n## 7. Evidence map\n\n| Claim | Section keys | Status |\n|---|---|---|\n| C1, C2, C3, C4, C5, C6, C10, C11 | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work`, `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes` | observed |\n| C7, C8, C9, C29 | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work` | observed |\n| C12, C33 | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery`, `tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring` | observed |\n| C13 | `tycho.page.07904f22ca8249069cedc8c2e1140630#overview`, `tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring` | observed |\n| C14–C19 | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work` | observed |\n| C20, C21 | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries`, `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes` | observed |\n| C22, C25, C28 | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes`, `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work` | observed |\n| C23, C35 | `tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure` | observed |\n| C24, C34 | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery`, `tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets` | observed |\n| C26 | `tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets` | observed |\n| C27 | `tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate` | observed |\n| C30, C36 | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#choice-acceptance-and-evidence` | observed |\n| C31 | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#overview` | observed |\n| C32 | `tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work` | observed + inference (labelled) |\n\n## 8. Unknowns\n\n1. No measurement of how fast the sinkhole forms, how much traffic a 64-backend subset diverts to a\n   1 ms failing backend, or how the two-second backend's share changes; the book provides mechanisms and\n   tests, not numbers.\n2. No published guidance on the correct subset size for a given fleet, client count or cost variance.\n3. No statement about this fleet's actual discovery propagation bound; the page says the exact\n   resolver/runtime cache and failure behavior \"remains a product-specific verification task.\"\n4. The success-rate window length, ejection threshold and recovery ramp are left as calibration\n   decisions; this answer does not invent them.\n5. No production observation, benchmark or independent review is claimed here; the evidence is\n   source-linked book prose plus original design reasoning, and one evidence entry (C32) is explicitly\n   marked as inference.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A least-active selector counts only outstanding requests, and a backend that returns an error in about one millisecond releases the request slot immediately; its outstanding count therefore stays at or near zero, it keeps ranking as the least-loaded backend, and it is sent more new work until it becomes a traffic sinkhole.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "A seriously unhealthy backend can instead return an error in milliseconds, so its active-request count falls and the selector sends it more traffic. The backend becomes a sinkhole.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes",
+          "quote": "A seriously unhealthy backend can instead return an error in milliseconds, so its active-request count falls and the selector sends it more traffic.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The failure is a broken premise, not a bug in the arithmetic: the policy assumes that a backend with spare capacity will do useful work, and the failed-disk backend has spare capacity precisely because it produces no useful work.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "A least-loaded or active-request selector assumes that a backend with spare capacity will do useful work.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The two backends in the scenario must be read as different failure shapes: a fast failure looks idle, while a slow dependency looks busy and may be making no progress; the selector must separate these rather than rank both by outstanding count.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Distinguish a fast failure from a slow dependency: the first can look idle, the second can look busy while making no progress.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Active-request counts misrank I/O-bound work: the backend waiting two seconds on a remote call holds that slot for the whole wait even though it consumes little CPU, so the honest slow backend looks worse than the fast-failing one.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "They misrank I/O-bound work: a request waiting on a remote response consumes little CPU but still occupies a slot.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The outstanding count is a per-client view that excludes work sent by other clients, so with a client-side selector every client independently measures the failing backend alone and can reach the same wrong conclusion at the same time; the resulting concentration is correlation across clients, not independent noise.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "The count also excludes work sent by other clients, so each client sees only a partial view.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Even among healthy backends an active-request count cannot price a request: a single unusually expensive request is invisible to the count, so equalizing counts does not equalize work.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "An active-request count still cannot predict a single unusually expensive query.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "The selection signal that protects the outcome is an outcome-aware one: count recent errors, health signals or an explicit success rate as part of the load signal instead of relying on open requests alone, and choose a signal that matches the protected outcome (completed correct work), not raw connection count.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Count recent errors, health signals or an explicit success rate as part of the load signal, not only open requests.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Choose a signal that matches the protected outcome: completed correct work, not raw connection count.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A composite capability score that combines backend-reported query, error and utilization signals is the documented alternative shape, but its weights and thresholds are contextual and are not transferable as fixed constants.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "combines backend-reported query, error and utilization signals into a capability score; its weights and thresholds are contextual.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Latency and completion signals react after the fact and are noisy in a short window, so a low-latency ranking is not a safe substitute for an error-aware signal: the one-millisecond 500s would look like the best performer on latency alone.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "capture useful progress but react after the fact; a short window is noisy",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The policy must be tested with a backend that fails in roughly one millisecond, checking whether new work is diverted before the error budget is exhausted rather than after the fleet has already been drained of useful capacity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Test with a backend that fails in roughly 1 ms; observe whether new work is diverted before the error budget is exhausted.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Recovery probes must be kept separate from the load signal so a recovered backend can return to service without being hit by a thundering herd of queued or retried traffic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Keep recovery probes separate from the load signal so a recovered backend can return without a thundering herd.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Eligibility is not one state: startup eligibility, readiness, draining and permanent removal must be defined separately, so that admitting or removing a backend is an explicit lifecycle decision and not an inference from a green health check.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+          "quote": "Define startup eligibility, readiness, draining and permanent removal separately.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+          "quote": "Tycho guidance: they must not be collapsed into one endpoint.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Health-driven ejection has its own failure mode: a shared dependency can fail every probe and remove the whole fleet from traffic, or drive a restart loop, after which the load balancer may fail open to the same unhealthy targets; a quick answer is explicitly not evidence of useful work.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+          "quote": "one shared dependency can fail every probe, so readiness removes the whole fleet from traffic or liveness drives a restart loop, and the load balancer may then fail open to the same unhealthy targets.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#overview",
+          "quote": "mixed readiness semantics and a backend that answers quickly but cannot do useful work.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A bounded subset exists to limit memory, health-check traffic and reconnect work, and it pays for that with a smaller choice set; the subset is a connection-topology decision, not a health decision.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "A client does not need a connection to every backend. A bounded subset limits memory, health-check traffic and reconnect work, at the cost of a smaller choice set.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Subset assignment must be uniform across clients so that one subset does not overload a backend; a skewed subset forces fleet-wide overprovisioning.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Assign backends uniformly so one subset does not overload a backend; a skewed subset forces fleet-wide overprovisioning.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Restarts and resizes must produce minimal churn: replacing one backend should not reconnect every client at once, so subset membership must be recomputed incrementally rather than globally reshuffled.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Handle restarts and resizes with minimal churn: replacing one backend should not reconnect every client at once.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Subset size is a capacity parameter: a larger subset is appropriate when clients burst or when request costs vary widely, because a small subset concentrates a burst on fewer backends.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Use a larger subset when clients burst or when request costs vary widely; a small subset concentrates a burst on fewer backends.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Subset selection must be deterministic enough to reproduce while remaining dynamic enough that a failed backend does not remain in every client's set, which is exactly the tension a fixed subset of 64 backends must resolve.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Keep the subset selection deterministic enough to reproduce, but not so static that a failed backend remains in every client's set.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The subset must be accepted by test rather than by argument: run a rolling restart and a backend loss and measure reconnect rate, per-backend load skew and time to uniform distribution.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Test a rolling restart and a backend loss; measure reconnect rate, per-backend load skew and time to uniform distribution.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The endpoint-change path must publish the replacement endpoint, establish its readiness and trust, and account for old route and connection lifetimes before retiring the former endpoint; a DNS change alone is neither a drain procedure nor a database failover protocol.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+          "quote": "publish the replacement endpoint, establish its readiness and trust, and account for old route/connection lifetimes before retiring the former endpoint. A DNS change alone is neither a drain procedure nor a database failover protocol.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Client-side discovery makes the caller the routing authority, so it owns load balancing, health/ejection, retry budget and stale-membership handling; a client that never refreshes keeps sending traffic to a removed instance, and a last-known endpoint set may serve reads but cannot grant write authority.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+          "quote": "It owns client-side load balancing, health/ejection, retry budget and stale-membership handling.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes",
+          "quote": "A client that never refreshes its view can keep sending traffic to a removed instance.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+          "quote": "a last-known set may serve reads but cannot grant write authority.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Stale membership must be bounded explicitly: cache age, refresh budget and a stale-cache alarm, with a last-known set used only for reads under an explicit freshness bound.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes",
+          "quote": "Bound the cache age, refresh budget and stale-cache alarm, and use a last-known set only for reads with an explicit freshness bound.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Removal must reach the selector that actually picks: mark the instance ineligible for new work through the actual selector, start protocol-appropriate graceful shutdown, preserve time for route caches and active work, and remove the instance only after the drain condition or a bounded timeout.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+          "quote": "Mark the instance ineligible for new work through the actual selector.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+          "quote": "Start protocol-appropriate graceful shutdown; preserve enough time for route caches and active work.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+          "quote": "Remove the instance after the drain condition or explicit bounded timeout.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "A removed backend that is still cached requires coordinated removal and connection shutdown; the discriminating observation is attempts to the removed endpoint after route publication, not the health of the proxy.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+          "quote": "Removal and connection shutdown require coordinated policy",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+          "quote": "Attempts to the removed endpoint after route publication",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "The load-balancing invariant is twofold: no request reaches an ineligible backend and no retry loop is unbounded, which requires fresh health and selection signals plus retry-safe callers.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes",
+          "quote": "The invariant is that no request reaches an ineligible backend and no retry loop is unbounded; it needs fresh health/selection signals and retry-safe callers.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "Retries must not be layered freely: avoid retry amplification across proxy, API and downstream clients, designate one layer as the retry owner, and instrument actual attempt counts; a small failing subset may justify an immediate retry elsewhere, but only under a shared budget and retry-safe semantics.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Avoid retry amplification across proxy, API and downstream clients; designate where retries are owned and instrument actual attempt counts.",
+          "supports": "C26",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "If one backend or a small fraction of instances is overloaded while other eligible instances have capacity, an immediate retry on another instance can redistribute work.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "Recovery must be deliberate rather than instantaneous: bounded probes, stability windows and a controlled ramp prevent a thundering herd, while an excessive cooldown strands healthy capacity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+          "quote": "Circuit-breaker recovery may use bounded probes; admission thresholds may need stability windows and progressive recovery.",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+          "quote": "fair re-admission and a controlled ramp to prevent a thundering herd",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+          "quote": "However, an excessive cooldown can strand healthy capacity.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "Candidate policies differ in what they ignore: round-robin, random choice, least-active requests and affinity must be compared against request cost, stale load signals and state placement, and a simple policy is preferable while the cost distribution is uniform.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Compare round-robin, random choice, least-active requests and affinity against request cost, stale load signals and state placement.",
+          "supports": "C28",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes",
+          "quote": "Prefer a simple policy when the cost distribution is uniform; move to active signals only when the signal is fresh and its failure mode is understood.",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "Cost must be capped where one request can dominate a backend, and the selector must be tested under the real cost distribution rather than under uniform unit-cost traffic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "Cap request cost at the interface where one request can dominate a backend, and test the selector under the real cost distribution.",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C30",
+      "text": "Acceptance for any endpoint-change design is behavioural: maintain requests during endpoint churn, skew costs deliberately, disconnect discovery, and compare useful throughput, per-backend outstanding work and completion correctness.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#choice-acceptance-and-evidence",
+          "quote": "maintain requests during endpoint churn, skew costs deliberately, disconnect discovery, and compare useful throughput, per-backend outstanding work and completion correctness.",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C31",
+      "text": "The owning question frames the whole design goal: an endpoint change must become a correctly balanced request rather than merely a new address.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#overview",
+          "quote": "How does an endpoint change become a correctly balanced request rather than merely a new address?",
+          "supports": "C31",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C32",
+      "text": "With 64 backends per client and the same outstanding-count rule everywhere, clients that share the failing backend in their subset converge on it together; because the failing backend completes 500s in about a millisecond, equal outstanding counts correspond to wildly different useful throughput (inference).",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "so its active-request count falls and the selector sends it more traffic",
+          "supports": "C32",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "The count also excludes work sent by other clients, so each client sees only a partial view.",
+          "supports": "C32",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C33",
+      "text": "Ejecting an unhealthy instance is only safe when the fault is instance-local: if every backend probes the same failed dependency, ejecting all instances can make local capacity unusable (observed), so ejection scope and probe independence are part of the endpoint-change contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+          "quote": "Ejecting all instances can make local capacity unusable",
+          "supports": "C33",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+          "quote": "Bound probe frequency and timeouts, keep liveness independent of shared dependencies, separate instance-local from shared faults, and drain before removal.",
+          "supports": "C33",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C34",
+      "text": "A retry that selects another replica may amplify work or repeat a committed effect, so the endpoint-change path must preserve retry safety (effect identity) and a bounded budget across the new routing decision.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+          "quote": "May amplify work or repeat a committed effect",
+          "supports": "C34",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Retry only at the layer immediately above the layer that rejected the request.",
+          "supports": "C34",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C35",
+      "text": "A hard shutdown deadline cannot manufacture atomic cancellation: losing a response after a commit leaves an unknown effect that must be reconciled, so the drain path must preserve operation identity and expose a reconciliation path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+          "quote": "A hard shutdown deadline may leave unknown effects; it cannot manufacture atomic cancellation.",
+          "supports": "C35",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C36",
+      "text": "Client-side discovery is only justified when clients can maintain and test membership, backoff, observability and upgrade behaviour; otherwise a static endpoint or one proxy is the simpler contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#choice-acceptance-and-evidence",
+          "quote": "Introduce client-side discovery only if clients can maintain and test membership, backoff, observability and upgrade behavior.",
+          "supports": "C36",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#overview",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#choice-acceptance-and-evidence",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

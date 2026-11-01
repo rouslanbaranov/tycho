@@ -1,0 +1,288 @@
+{
+  "task_id": "Q229",
+  "answer": "# Q229 — Why a vertical resize is not yet a capacity plan\n\n## 1. Direct answer\n\nThe team performed a provisioning reaction, not a capacity plan. A capacity plan is a dated, falsifiable decision that connects a demand distribution to a named bottleneck, a chosen capacity, explicit service, cost and availability bounds, and a rule for reversing or refreshing the decision. What the team has is a point forecast (\"3x traffic\"), one capacity action (double the largest instance), one aggregate throughput observation, a restart treated as a scheduling detail, and an assumption that next year repeats the same step. It contains no demand envelope, no bottleneck attribution, no cost or availability gate, and no condition that would change the decision.\n\nThe measured gain — less than half of the proportional expectation — is the strongest evidence that the plan's implicit model (throughput proportional to instance size) is wrong for this workload. It does not say why: a serial or shared authority, a resource other than the one doubled, an allocation the runtime cannot use, or a measurement artefact could each produce the same shape. Before another resize the team must measure, under an open arrival schedule, offered versus admitted versus correctly completed work and per-resource saturation across normal, peak, burst, degraded and recovery states; identify the scarce resource and show that the larger allocation relieves it; and bound headroom, the restart/maintenance window with a fallback, total cost, failure domain, latency and queue age, and a revisit trigger. The Vertical Scaling card reverses to horizontal scaling when the larger node no longer meets availability or cost constraints — and only if the work partitions, shared state can be removed or externalized, and coordination and startup cost stay below the capacity gain. A single shared authority is not a horizontal-scaling problem.\n\n## 2. Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1. What makes a decision a capacity plan rather than one resize | \"capacity planning forecast headroom\"; \"capacity envelope\"; \"capacity headroom utilization target\" | tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#overview; tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count; tycho.chapter.bbfd14751d274868b152ba431dc904c9#decision-and-worked-result |\n| F2. Why a 3x traffic forecast is not a demand model | \"traffic forecast demand growth prediction capacity\"; \"demand forecast\"; \"demand skew\" | tycho.page.fdb4ef7f69154f8c8c433591f71494f9#overview; tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs; tycho.page.59682af71a9f435680917ae5ece63088#6-workload-state-and-unknowns-a-usable-input-contract |\n| F3. Why doubling the instance did not double throughput | \"vertical scaling instance size\"; \"larger instance scale up\"; \"contention\"; \"saturation throughput plateau\" | tycho.page.71f864d85c3e4213ad053e42e2976add#overview; tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#2-amdahl-s-conditional-bound; tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority; tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes |\n| F4. What must be measured before the next resize | \"load test saturation throughput plateau\"; \"offered admitted completed\"; \"benchmark validity\" | tycho.page.bfa3a283746b42998825234aca63b101#1-write-the-experiment-claim-before-starting-a-load-generator; tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission; tycho.page.61c621bfa9a04a738e937416cec15e78#6-a-discriminating-scalability-experiment; tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior |\n| F5. What must be bounded before the next resize | \"restart downtime maintenance window resize\"; \"autoscaling headroom\"; \"downtime cost\" | tycho.page.71f864d85c3e4213ad053e42e2976add#overview; tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes; tycho.page.32a5de3daa2d4f74b879165a4119f63a#2-cost-must-include-more-than-infrastructure-instance-prices; tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#5-capacity-is-not-just-processing-throughput; tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#4-unit-cost-and-sensitivity |\n| F6. When the card reverses to horizontal scaling | \"horizontal scaling replicas stateless sharding\"; \"failure domain single node\"; \"vertical versus horizontal scale\" | tycho.page.71f864d85c3e4213ad053e42e2976add#overview; tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory; tycho.page.d2a71d85f3144ba395303b8432b38d37#5-vertical-versus-horizontal-scale-under-invariants; tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority |\n\n## 3. Mechanism and justification\n\n### 3.1 A capacity plan is a decision over a demand distribution, not a resize\n\nThe capacity-planning chapter states the economic question directly: \"What is the least costly configuration that satisfies correctness, user-visible service targets, recovery and operational constraints across the actual demand distribution?\" — explicitly different from \"which option has the lowest price per virtual machine?\". It also says that \"performance decisions buy capacity over time, not just a lower measured p99\", and that the owning question is \"which experiments confirm or falsify a scaling hypothesis\".\n\nThe capacity-envelope page turns that into an obligation: \"write a capacity envelope, not a magic instance count\". The envelope covers normal load, predictable peak, unexpected burst, degraded dependency, recovery (backlog catch-up) and growth; growth means \"more state/data/cardinality, not merely more registered users\". Cost is not the instance price: idle headroom, storage and IOPS, egress, observability ingestion, CI and test environments, operator and on-call time, migration effort, temporary double-running and rollback exposure all belong in the comparison. The requirements chapter adds the gate: \"reject candidates that exceed an explicit operating, recovery, staffing or total-cost constraint before ranking attractive features\", and keeps uncertain inputs uncertain rather than converting them into precise forecasts.\n\nBy that standard the team's sequence is an action and a hope. It has no stated demand distribution beyond one multiplier, no service-level target against which \"less than half\" is judged, no load-state envelope, no cost per correct journey, no failure-domain statement, and no condition under which the doubling would be judged wrong.\n\n### 3.2 The 3x forecast is not a demand model\n\n\"Ten thousand users\" — or \"3x traffic\" — is not a workload specification. The demand chapter shows two invented systems with identical account counts: one averages about 0.85 operations/s in an hour; the other receives 1,800 attempts in a 15-second publication window (120 attempts/s) and may complete far fewer successful claims because of hot-key contention. The same population implies incomparable peaks, operation mixes and synchronization costs. The chapter also insists that a \"service time\" be labelled as CPU time, wall time, DB execution or queue wait, and that joint information be recorded — operation type by key skew, retries by failure class, peak arrivals by time window — because a single global average or a uniform-key test can hide a serialized hot key.\n\nThe workload-contract page makes the consequence explicit: a workload profile is \"a versioned hypothesis, not a permanent truth\", and its fields include the arrival schedule, operation mix, data/skew, resource ceilings that are \"unknown until instrumented\", outcome SLO, cost constraints and a validation plan. A 3x forecast without those fields does not say 3x of what (requests, bytes, writes, hot-key attempts, retained data), at which percentile, over which window, or with what error. That is why it cannot justify one specific instance size.\n\n### 3.3 Why throughput rose by less than half\n\nThe capacity chapter's section 5 is titled \"Capacity cannot be extrapolated from one benchmark\": four replicas completing 1,000 operations/s does not imply 2,000 at eight, because shared database locks, network, index rebuilds, quota ceilings, connection pools and per-key serialization can cap useful throughput. Two scaling models explain the shape without proving the cause. Amdahl's conditional bound gives 1 / (s + (1-s)/N); with a serial share of 0.2 and eight processors the ideal speedup is 3.33, not 8 — and that is a model, not a theorem. The Universal Scalability Law adds contention and coherence terms, producing diminishing returns and, at high concurrency, retrograde throughput; its coefficients are not mechanism detectors, and a fit needs multiple comparable observations plus withheld test points.\n\nThe contention chapter supplies the discriminating picture: if many workers contend for one authoritative invariant (one reservation slot, one hot key), more application instances cannot create two successful allocations; sharding independent keys does not split one hot key's exclusivity. And the vertical-scaling owner section states the practical test: \"measure the resource that actually saturates, not only CPU, and verify that the operating system, runtime and dependency can use the larger allocation.\"\n\nSo the observed sub-proportional gain is consistent with at least four mechanisms: (a) a serial or shared bottleneck outside the instance; (b) the doubled resource is not the scarce one; (c) the larger allocation is not usable by the runtime, OS or dependency; (d) a measurement artefact — a closed-loop generator that reduces offered load as the system slows, omitted requests, or warm-up and confounders. The described data cannot distinguish them, and that indistinguishability is exactly why another doubling is a guess.\n\n### 3.4 What must be measured before the next resize\n\nMeasurement needs to be able to falsify the hypothesis \"the larger instance relieves the limiting resource\", not merely produce a bigger number.\n\n1. **Demand contract.** An open arrival schedule at staged offered rates; operation mix, key and tenant skew, burst duration and frequency, peak-to-mean ratio, growth in data and cardinality; the forecast's horizon and error. Freeze dataset, service versions, quotas, placement and warm/cold state.\n2. **Outcome accounting.** Scheduled versus transmitted versus admitted versus correctly completed operations, plus explicit rejections, timeouts, queue age, p95/p99, retries, duplicate or wrong effects, and generator drops. The load-test chapter is blunt: \"a timestamped statement 'we sent 1,000 RPS' is not evidence until the actual sent and unsent intended workloads are available\". A single logical operation can produce several attempts, and a timeout does not prove that nothing committed.\n3. **Resource attribution.** Per-resource saturation aligned to useful work: per-core CPU and throttling, memory, I/O, DB lock wait/hold and correct commits, pool acquisition and active/idle/pending, broker partition lag, remote quota and retry amplification, cache invalidation, and queue age. The contention page lists the misleading signal for each (for example, average node CPU without throttling or hot-core detail).\n4. **A discriminating experiment.** Freeze the fixture and versions, step offered rate and instance size while holding the backend ceiling constant, run independent keys and one hot-key scenario, and record completions, rejections, timeouts, queue age, p95/p99 and wrong effects. Reject the interpretation if dataset, warm-up, retries, denominator or correctness changed. The benchmark-controls page adds the confounders to control or declare: generator saturation, cache/JIT warmth, backend quotas, noisy neighbours, trial order.\n5. **The full envelope.** Normal, predictable peak, unexpected burst, degraded dependency, recovery/backlog catch-up and growth; warm-up and failover during the peak. A steady-state pass at eight workers does not cover a 20-second peak when a new worker needs 40 seconds to become useful.\n\n### 3.5 What must be bounded\n\n**Headroom.** Size it from measured demand variability and the time for capacity to become useful. The autoscaling owner section says to \"pre-provision headroom for the measured lag, add queueing or admission control for the gap and alert when the controller cannot converge\", and notes that scheduled or static capacity may be simpler when demand is predictable.\n\n**Restart and maintenance.** The restart is not automatically disqualifying; the card allows restart/downtime \"only when in-place resize is unavailable\". But the owner section requires bounding it: when in-place resize is unavailable, \"a resize requires restart or migration and the old capacity is unavailable during the change; bound the maintenance window and keep a fallback\". Scheduling the restart without a window, drain behaviour, in-flight-work plan and rollback is the defect.\n\n**Cost.** Use the same horizon, workload mix and mandatory service levels; include idle headroom, operations, migration, temporary double-running and rollback. Report break-even conditions and sensitivity, not one precise ranking. The capacity chapter's synthetic rule is a good discipline: if a candidate wins only when instance prices fall 90 percent, mark it fragile or inadmissible. \"Cost optimization is constrained optimization; it does not license breaking correctness or authorization.\"\n\n**Failure domain and service.** \"One larger node is still one node.\" If a single node is an unacceptable failure domain, that is itself a reversal condition. Capacity is not just throughput: latency at the busiest minute, correctness under retries or same-key contention, scale-up startup time, storage rebuild and backup windows, connection ceilings under many replicas, per-tenant fairness and operator response can each invalidate a steady-RPS result. A system can sustain a high request rate with unbounded queue age and still fail its latency SLO.\n\n**The size ceiling.** The provider must allow a larger size, the per-node resource maxima must be known, and the runtime must be able to use the allocation. The card's contraindication is explicit: reject when a single-node ceiling is near.\n\n**Time and uncertainty.** A revisit trigger tied to workload variability, dependency budget, runtime startup regression, read/write mix or cost envelope — not a calendar repeat. Preserve unknowns; report credible intervals and break-even points.\n\n### 3.6 When the card reverses to horizontal scaling\n\nThe Vertical Scaling card's decision state is applicable-under-conditions. Its reversal sentence is: \"Reverse the choice when the larger node no longer meets availability or cost constraints; those conditions are Tycho synthesis.\" Its hard contraindications name the same triggers: \"Reject when a single-node ceiling is near, when failover requires multiple nodes, or when cost grows superlinearly.\"\n\nSo the card reverses when any of these holds:\n\n1. **Availability.** The larger node is an unacceptable failure domain, failover requires multiple nodes, or the restart/resize window breaches the availability target. The owner section states: \"one larger node is still one node\", and \"horizontal scaling may be preferable when the workload partitions and a single node is an unacceptable failure domain\".\n2. **Cost.** Cost grows superlinearly with size, or cost per correct journey worsens, and the horizontal alternative's total cost is lower under the same horizon and service levels.\n3. **Ceiling.** The single-node ceiling is near, so the next doubling is unavailable, unusable or not worth its price.\n\nAnd the Horizontal Scaling card's conditions must also hold: the work can partition across instances, shared state is removable or externalizable, startup and coordination costs are bounded, and coordination cost is lower than the capacity gain. Its hard contraindications mirror this: reject when the bottleneck is a single shared resource, when instances cannot be stateless, or when coordination cost grows faster than capacity.\n\nThe crucial boundary is that a disappointing doubling does not by itself reverse the card. If the scarce resource is a shared database lock, adding replicas multiplies contention and can make correct throughput worse. The alternatives in that case are to optimize the hot path, bound admission, use domain-local serialization, or partition independent keys — not to add instances.\n\n### 3.7 What would change the answer\n\nIf the measured bottleneck is per-instance CPU and the larger allocation is demonstrably usable, vertical scaling remains the fit; the next step is to bound cost, availability and headroom and measure the next step, not to switch architectures. If the bottleneck is a shared authority, neither more size nor more replicas fixes it; the design changes. If the larger size is unavailable or the restart violates availability, the card reverses even for a CPU bottleneck — provided the partitioning, shared-state and coordination conditions hold. That last combination is an inference from the card's conditions, not a quoted rule.\n\n## 4. Boundaries and trade-offs\n\n- Vertical scaling avoids partition and routing complexity and can be the cheaper option for work that is hard to partition; horizontal scaling adds network, consistency, load-balancing and multiplied downstream usage. The controller-stability table makes the trade-off explicit: vertical risk is the node/instance ceiling, restart and resource sharing; horizontal risk is networking, distributed consistency and multiplied external usage.\n- Horizontal scaling is not a default. New replicas may start cold, contend on a shared dependency or amplify connection churn; scale-out must be tested under a burst and the work each replica can claim must be bounded.\n- The card is evidence-bounded, not a numeric model. The Kubernetes source defines horizontal versus vertical scaling but \"does not state when either is preferable\"; the card itself says the reversal conditions are Tycho synthesis. The card's frontmatter also excludes a sufficient-coverage, promotion or owner-acceptance claim for the moved page, and the atlas chapter states that no entry claims sufficient technical or decision coverage and that no independent review, benchmark or production observation is asserted.\n- No universal utilization target appears in the sections read. The modeling-layer queue page defines utilization as lambda / (c * mu) and shows saturation, but that is a model, not a target; any threshold must come from this service's measured latency and quality at its SLO.\n- The described facts are insufficient to identify the bottleneck. The answer is conditional on demand mix, provider size ladder, cost curve, availability target and restart duration.\n\n## 5. Evidence map\n\n| Claim | Section key | Type |\n|---|---|---|\n| A capacity plan is the least-cost configuration meeting correctness, SLO, recovery and operational constraints across the demand distribution, not a resize. | tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#overview | observed |\n| A capacity comparison needs an envelope across normal, peak, burst, degraded, recovery and growth; growth is state/data/cardinality, not registered users. | tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count | observed |\n| Total operating cost includes idle headroom, storage, egress, observability, CI/test, operator time, migration and double-running. | tycho.page.32a5de3daa2d4f74b879165a4119f63a#2-cost-must-include-more-than-infrastructure-instance-prices | observed |\n| Candidates exceeding explicit operating, recovery, staffing or total-cost constraints are rejected before ranking; uncertain inputs stay uncertain. | tycho.chapter.bbfd14751d274868b152ba431dc904c9#decision-and-worked-result | observed |\n| If a candidate wins only when instance prices fall 90 percent, mark it fragile or inadmissible. | tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#engineering-walkthrough-provision-shed-optimize-or-simplify-under-uncertain-prices | observed |\n| Identical account counts can produce about 0.85 operations/s or 120 attempts/s in a 15-second window. | tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs | observed |\n| Distribution and correlation matter; a uniform-key test can hide a serialized hot key. | tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter | observed |\n| A workload profile is a versioned hypothesis with arrival, mix, skew, unknown-until-instrumented ceilings, SLO, cost and validation fields. | tycho.page.59682af71a9f435680917ae5ece63088#6-workload-state-and-unknowns-a-usable-input-contract | observed |\n| Capacity cannot be extrapolated from one benchmark; four replicas at 1,000 ops/s do not imply 2,000 at eight. | tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#5-capacity-cannot-be-extrapolated-from-one-benchmark | observed |\n| Sensitivity must vary arrivals, per-operation work and skew, storage growth, replica startup and headroom, downtime cost, and utilization versus latency; decisions can reverse. | tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#4-unit-cost-and-sensitivity | observed |\n| Amdahl's bound gives 3.33x at eight processors for a 0.2 serial share; it is a model, not a theorem. | tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#2-amdahl-s-conditional-bound | observed |\n| Contention and coherence produce diminishing and possibly retrograde throughput; fits need many observations and withheld points and are not mechanism detectors. | tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead | observed |\n| One authoritative invariant for a hot key caps successful allocations regardless of CPUs; sharding a hot key does not split its exclusivity. | tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority | observed |\n| A discriminating experiment freezes the fixture, steps offered rate and replicas at constant backend ceiling, and records completions, rejections, timeouts, queue age, p95/p99 and wrong effects. | tycho.page.61c621bfa9a04a738e937416cec15e78#6-a-discriminating-scalability-experiment | observed |\n| Response options are conditional: optimize a hot query or lock, reduce dependency calls, change concurrency model, partition independent keys, add capacity at the verified scarce resource, or bound admission. | tycho.page.61c621bfa9a04a738e937416cec15e78#7-choosing-a-response-to-saturation | observed |\n| Load-test evidence needs a frozen experiment contract; \"we sent 1,000 RPS\" is not evidence without actual sent and unsent intended workload. | tycho.page.bfa3a283746b42998825234aca63b101#1-write-the-experiment-claim-before-starting-a-load-generator | observed |\n| Four denominators coexist (scheduled, transmitted, admitted, completed); one logical operation can yield several attempts, and timeouts may hide commits. | tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission | observed |\n| Confounders such as warm-up, changed distribution, backend quotas and generator saturation must be controlled or declared; local passes are bounded results. | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior | observed |\n| Vertical scaling changes resources per replica, often requires restart, and works only if the scarce resource is affected; horizontal adds network, consistency and multiplied downstream usage. | tycho.page.d2a71d85f3144ba395303b8432b38d37#5-vertical-versus-horizontal-scale-under-invariants | observed |\n| The feedback-loop test records outcomes, timings, latency/queue age, backend resources and cost across quiet, burst, sustained and recovery periods, and defines revisit triggers. | tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop | observed |\n| Capacity is not just throughput: busiest-minute latency, correctness, startup, rebuild windows, connection ceilings, fairness and operator response can each invalidate a steady-RPS result. | tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#5-capacity-is-not-just-processing-throughput | observed |\n| Operating cost is a lifecycle: migration double-running, rollback/repair and scheduled change effort, compared on the same horizon, mix and service levels. | tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#4-operating-cost-is-a-lifecycle-not-a-monthly-instance-fee | observed |\n| A bounded queue and explicit admission can be preferable to unbounded accepted RPS; queue growth and rejection must be counted honestly. | tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law | observed |\n| Utilization is offered load divided by capacity (lambda / (c * mu)); saturation means utilization reaches capacity while backlog persists. | tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities | observed |\n| The Vertical Scaling card fits one node, a provider size that allows growth, and restart only when in-place resize is unavailable; it rejects near a single-node ceiling, when failover needs multiple nodes, or when cost grows superlinearly. | tycho.page.71f864d85c3e4213ad053e42e2976add#overview | observed |\n| The card reverses when the larger node no longer meets availability or cost constraints; those conditions are Tycho synthesis. | tycho.page.71f864d85c3e4213ad053e42e2976add#overview | observed |\n| One larger node is still one node; measure the resource that actually saturates and verify the runtime can use the allocation; bound the maintenance window and keep a fallback. | tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes | observed |\n| Horizontal scaling fits partitionable work with removable shared state and bounded startup/coordination, and is contraindicated by a single shared resource, non-stateless instances or coordination cost above capacity gain. | tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory | observed |\n| Horizontal scaling may be preferable when the workload partitions and a single node is an unacceptable failure domain; vertical fits hard-to-partition work when resize can be staged safely. | tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes | observed |\n| Pre-provision headroom for measured lag, add queueing or admission, alert on non-convergence, and drain in-flight work before scale-in. | tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes | observed |\n| No entry claims sufficient technical or decision coverage; no independent editorial review, benchmark, production observation or runtime test is asserted. | tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#evidence-and-known-limits | observed |\n\n## 6. Unknowns and confidence\n\n- **Not established:** this team's actual bottleneck, demand mix, forecast method and error, provider size ladder and maximum, cost curve, availability target, restart duration and fallback. One aggregate throughput delta cannot identify any of them.\n- **Confidence:** high that the sequence is not a capacity plan (it lacks the envelope, attribution, bounds and reversal rule the sources require); high that a sub-proportional gain falsifies proportional extrapolation; medium on which mechanism produced this team's result; low on whether horizontal scaling would help, because that depends on partitionability, shared state and coordination cost.\n- **What would change the answer:** a discriminating experiment showing the bottleneck is per-instance and movable; evidence of superlinear cost or an unacceptable single-node failure domain; evidence that the work partitions with removable shared state and bounded coordination.\n- **Source limits:** the book and atlas state that their scenarios are synthetic and that no benchmark, production telemetry or independent review validates them; the Kubernetes source defines the two scaling directions but not when either is preferable. Any numeric utilization target or availability budget for this service would have to come from measurements not present in the corpus.",
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "What makes a decision a capacity plan rather than one resize",
+      "queries": [
+        "capacity planning forecast headroom",
+        "capacity envelope",
+        "capacity headroom utilization target"
+      ],
+      "evidence": [
+        "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#overview",
+        "tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count",
+        "tycho.chapter.bbfd14751d274868b152ba431dc904c9#decision-and-worked-result"
+      ]
+    },
+    {
+      "id": "F2",
+      "facet": "Why a 3x traffic forecast is not a demand model",
+      "queries": [
+        "traffic forecast demand growth prediction capacity",
+        "demand forecast",
+        "demand skew"
+      ],
+      "evidence": [
+        "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#overview",
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+        "tycho.page.59682af71a9f435680917ae5ece63088#6-workload-state-and-unknowns-a-usable-input-contract"
+      ]
+    },
+    {
+      "id": "F3",
+      "facet": "Why doubling the instance did not double throughput",
+      "queries": [
+        "vertical scaling instance size",
+        "larger instance scale up",
+        "contention",
+        "saturation throughput plateau"
+      ],
+      "evidence": [
+        "tycho.page.71f864d85c3e4213ad053e42e2976add#overview",
+        "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#2-amdahl-s-conditional-bound",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "id": "F4",
+      "facet": "What must be measured before the next resize",
+      "queries": [
+        "load test saturation throughput plateau",
+        "offered admitted completed",
+        "benchmark validity"
+      ],
+      "evidence": [
+        "tycho.page.bfa3a283746b42998825234aca63b101#1-write-the-experiment-claim-before-starting-a-load-generator",
+        "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#6-a-discriminating-scalability-experiment",
+        "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior"
+      ]
+    },
+    {
+      "id": "F5",
+      "facet": "What must be bounded before the next resize",
+      "queries": [
+        "restart downtime maintenance window resize",
+        "autoscaling headroom",
+        "downtime cost"
+      ],
+      "evidence": [
+        "tycho.page.71f864d85c3e4213ad053e42e2976add#overview",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+        "tycho.page.32a5de3daa2d4f74b879165a4119f63a#2-cost-must-include-more-than-infrastructure-instance-prices",
+        "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#5-capacity-is-not-just-processing-throughput",
+        "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#4-unit-cost-and-sensitivity"
+      ]
+    },
+    {
+      "id": "F6",
+      "facet": "When the card reverses to horizontal scaling",
+      "queries": [
+        "horizontal scaling replicas stateless sharding",
+        "failure domain single node",
+        "vertical versus horizontal scale"
+      ],
+      "evidence": [
+        "tycho.page.71f864d85c3e4213ad053e42e2976add#overview",
+        "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+        "tycho.page.d2a71d85f3144ba395303b8432b38d37#5-vertical-versus-horizontal-scale-under-invariants",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority"
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#overview",
+    "tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count",
+    "tycho.page.32a5de3daa2d4f74b879165a4119f63a#2-cost-must-include-more-than-infrastructure-instance-prices",
+    "tycho.chapter.bbfd14751d274868b152ba431dc904c9#decision-and-worked-result",
+    "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#engineering-walkthrough-provision-shed-optimize-or-simplify-under-uncertain-prices",
+    "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+    "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+    "tycho.page.59682af71a9f435680917ae5ece63088#6-workload-state-and-unknowns-a-usable-input-contract",
+    "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#5-capacity-cannot-be-extrapolated-from-one-benchmark",
+    "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#4-unit-cost-and-sensitivity",
+    "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#2-amdahl-s-conditional-bound",
+    "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+    "tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority",
+    "tycho.page.61c621bfa9a04a738e937416cec15e78#6-a-discriminating-scalability-experiment",
+    "tycho.page.61c621bfa9a04a738e937416cec15e78#7-choosing-a-response-to-saturation",
+    "tycho.page.bfa3a283746b42998825234aca63b101#1-write-the-experiment-claim-before-starting-a-load-generator",
+    "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+    "tycho.page.d2a71d85f3144ba395303b8432b38d37#5-vertical-versus-horizontal-scale-under-invariants",
+    "tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop",
+    "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#5-capacity-is-not-just-processing-throughput",
+    "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#4-operating-cost-is-a-lifecycle-not-a-monthly-instance-fee",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+    "tycho.page.71f864d85c3e4213ad053e42e2976add#overview",
+    "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+    "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+    "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#evidence-and-known-limits"
+  ],
+  "evidence": [
+    {
+      "claim": "A capacity plan is the least-cost configuration meeting correctness, SLO, recovery and operational constraints across the demand distribution, not a resize.",
+      "section_key": "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#overview",
+      "note": "Observed: the chapter states the economic question and distinguishes it from lowest price per VM."
+    },
+    {
+      "claim": "A capacity comparison needs an envelope across normal, predictable peak, unexpected burst, degraded dependency, recovery and growth.",
+      "section_key": "tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count",
+      "note": "Observed: six-row load-state table; growth is state/data/cardinality, not registered users."
+    },
+    {
+      "claim": "Total operating cost includes idle headroom, storage, egress, observability, CI/test, operator time, migration and double-running.",
+      "section_key": "tycho.page.32a5de3daa2d4f74b879165a4119f63a#2-cost-must-include-more-than-infrastructure-instance-prices",
+      "note": "Observed: cost categories list; managed service does not zero operational labor."
+    },
+    {
+      "claim": "Candidates exceeding explicit operating, recovery, staffing or total-cost constraints are rejected before ranking; uncertain inputs stay uncertain.",
+      "section_key": "tycho.chapter.bbfd14751d274868b152ba431dc904c9#decision-and-worked-result",
+      "note": "Observed: decision section says reject constraint-breaking candidates and keep uncertainty."
+    },
+    {
+      "claim": "If a candidate wins only when instance prices fall 90 percent, mark it fragile or inadmissible.",
+      "section_key": "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#engineering-walkthrough-provision-shed-optimize-or-simplify-under-uncertain-prices",
+      "note": "Observed: synthetic sensitivity rule in the walkthrough."
+    },
+    {
+      "claim": "Identical account counts can produce about 0.85 operations/s or 120 attempts/s in a 15-second window.",
+      "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+      "note": "Observed: worked arithmetic on two invented cases."
+    },
+    {
+      "claim": "Distribution and correlation matter; a uniform-key test can hide a serialized hot key.",
+      "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+      "note": "Observed: bimodal latency, key skew and synthetic counterexample."
+    },
+    {
+      "claim": "A workload profile is a versioned hypothesis with arrival, mix, skew, unknown-until-instrumented ceilings, SLO, cost and validation fields.",
+      "section_key": "tycho.page.59682af71a9f435680917ae5ece63088#6-workload-state-and-unknowns-a-usable-input-contract",
+      "note": "Observed: input-contract table and the versioned-hypothesis sentence."
+    },
+    {
+      "claim": "Capacity cannot be extrapolated from one benchmark; four replicas at 1,000 ops/s do not imply 2,000 at eight.",
+      "section_key": "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#5-capacity-cannot-be-extrapolated-from-one-benchmark",
+      "note": "Observed: explicit counterexample and seven-step study list."
+    },
+    {
+      "claim": "Sensitivity must vary arrivals, per-operation work and skew, storage growth, replica startup and headroom, downtime cost, and utilization versus latency; decisions can reverse.",
+      "section_key": "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#4-unit-cost-and-sensitivity",
+      "note": "Observed: sensitivity-input list and the reversal warning."
+    },
+    {
+      "claim": "Amdahl's bound gives 3.33x at eight processors for a 0.2 serial share; it is a model, not a theorem.",
+      "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#2-amdahl-s-conditional-bound",
+      "note": "Observed: worked example and explicit model caveat."
+    },
+    {
+      "claim": "Contention and coherence produce diminishing and possibly retrograde throughput; fits need many observations and withheld points and are not mechanism detectors.",
+      "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+      "note": "Observed: USL form, retrograde behavior and fitting caveats."
+    },
+    {
+      "claim": "One authoritative invariant for a hot key caps successful allocations regardless of CPUs; sharding a hot key does not split its exclusivity.",
+      "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority",
+      "note": "Observed: workshop-reservation scenario and sharding caveat."
+    },
+    {
+      "claim": "A discriminating experiment freezes the fixture, steps offered rate and replicas at constant backend ceiling, and records completions, rejections, timeouts, queue age, p95/p99 and wrong effects.",
+      "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#6-a-discriminating-scalability-experiment",
+      "note": "Observed: seven-step experiment contract."
+    },
+    {
+      "claim": "Response options are conditional: optimize a hot query or lock, reduce dependency calls, change concurrency model, partition independent keys, add capacity at the verified scarce resource, or bound admission.",
+      "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#7-choosing-a-response-to-saturation",
+      "note": "Observed: options list and the latency-SLO point."
+    },
+    {
+      "claim": "Load-test evidence needs a frozen experiment contract; 'we sent 1,000 RPS' is not evidence without actual sent and unsent intended workload.",
+      "section_key": "tycho.page.bfa3a283746b42998825234aca63b101#1-write-the-experiment-claim-before-starting-a-load-generator",
+      "note": "Observed: contract dimensions and the timestamped-statement caveat."
+    },
+    {
+      "claim": "Four denominators coexist (scheduled, transmitted, admitted, completed); one logical operation can yield several attempts, and timeouts may hide commits.",
+      "section_key": "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+      "note": "Observed: rate definitions and operation-identity caveat."
+    },
+    {
+      "claim": "Confounders such as warm-up, changed distribution, backend quotas and generator saturation must be controlled or declared; local passes are bounded results.",
+      "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+      "note": "Observed: controls list and the bounded-result sentence."
+    },
+    {
+      "claim": "Vertical scaling changes resources per replica, often requires restart, and works only if the scarce resource is affected; horizontal adds network, consistency and multiplied downstream usage.",
+      "section_key": "tycho.page.d2a71d85f3144ba395303b8432b38d37#5-vertical-versus-horizontal-scale-under-invariants",
+      "note": "Observed: decision table and the restart/resource caveat."
+    },
+    {
+      "claim": "The feedback-loop test records outcomes, timings, latency/queue age, backend resources and cost across quiet, burst, sustained and recovery periods, and defines revisit triggers.",
+      "section_key": "tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop",
+      "note": "Observed: test-plan list and revisit-trigger sentence."
+    },
+    {
+      "claim": "Capacity is not just throughput: busiest-minute latency, correctness, startup, rebuild windows, connection ceilings, fairness and operator response can each invalidate a steady-RPS result.",
+      "section_key": "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#5-capacity-is-not-just-processing-throughput",
+      "note": "Observed: seven failing dimensions plus the 20s/40s counterexample."
+    },
+    {
+      "claim": "Operating cost is a lifecycle: migration double-running, rollback/repair and scheduled change effort, compared on the same horizon, mix and service levels.",
+      "section_key": "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#4-operating-cost-is-a-lifecycle-not-a-monthly-instance-fee",
+      "note": "Observed: lifecycle cost list and comparison-horizon rule."
+    },
+    {
+      "claim": "A bounded queue and explicit admission can be preferable to unbounded accepted RPS; queue growth and rejection must be counted honestly.",
+      "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+      "note": "Observed: 120-vs-80 backlog arithmetic and admission conclusion."
+    },
+    {
+      "claim": "Utilization is offered load divided by capacity (lambda / (c * mu)); saturation means utilization reaches capacity while backlog persists.",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+      "note": "Observed: model definitions and worked saturation case; modeled evidence, not production."
+    },
+    {
+      "claim": "The Vertical Scaling card fits one node, a provider size that allows growth, and restart only when in-place resize is unavailable; it rejects near a single-node ceiling, when failover needs multiple nodes, or when cost grows superlinearly.",
+      "section_key": "tycho.page.71f864d85c3e4213ad053e42e2976add#overview",
+      "note": "Observed: card good-fit conditions and hard contraindications."
+    },
+    {
+      "claim": "The card reverses when the larger node no longer meets availability or cost constraints; those conditions are Tycho synthesis.",
+      "section_key": "tycho.page.71f864d85c3e4213ad053e42e2976add#overview",
+      "note": "Observed: card reversal sentence; the Kubernetes source does not state preference."
+    },
+    {
+      "claim": "One larger node is still one node; measure the resource that actually saturates and verify the runtime can use the allocation; bound the maintenance window and keep a fallback.",
+      "section_key": "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+      "note": "Observed: vertical-scaling owner subsection."
+    },
+    {
+      "claim": "Horizontal scaling fits partitionable work with removable shared state and bounded startup/coordination, and is contraindicated by a single shared resource, non-stateless instances or coordination cost above capacity gain.",
+      "section_key": "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+      "note": "Observed: Horizontal Scaling card conditions and contraindications."
+    },
+    {
+      "claim": "Horizontal scaling may be preferable when the workload partitions and a single node is an unacceptable failure domain; vertical fits hard-to-partition work when resize can be staged safely.",
+      "section_key": "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+      "note": "Observed: owner subsection conclusion."
+    },
+    {
+      "claim": "Pre-provision headroom for measured lag, add queueing or admission, alert on non-convergence, and drain in-flight work before scale-in.",
+      "section_key": "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+      "note": "Observed: autoscaling owner subsection."
+    },
+    {
+      "claim": "No entry claims sufficient technical or decision coverage; no independent editorial review, benchmark, production observation or runtime test is asserted.",
+      "section_key": "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#evidence-and-known-limits",
+      "note": "Observed: atlas chapter evidence-and-limits section."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

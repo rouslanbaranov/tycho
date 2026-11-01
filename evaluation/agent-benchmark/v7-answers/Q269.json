@@ -1,0 +1,473 @@
+{
+  "task_id": "Q269",
+  "answer": "# Q269 — an accurate profiler, a vanished slow cohort and an unsafe second fix\n\n## Direct answer\n\nThe three parts of the question are three different errors, and they share one root: each treats a **valid** observation as a **sufficient** one.\n\n**1. The profiler was accurate and still missed the cause, because it measured the right thing at the wrong layer.** Flame graphs, JFR and JIT probes report where the CPU is and which Java frames are on the stack. On fast and slow nodes that answer was the same because the program was the same. What differed was how many cycles each instruction needed: almost 3x CPI and roughly 4x machine clears on the slow nodes, caused by false sharing between writes to one HotSpot field and reads of an adjacent field when a 64-byte x86 cache line held both. A stack profile cannot see a cache-coherence penalty. It charges the extra time to whatever frame touches the line, so it reports *the same hot methods, merely slower* — exactly what the team saw. The profile was sufficient to reject 'one application method is hot'; it was never able to test 'the memory subsystem is the constraint'. A correct negative result, and an exhausted hypothesis space, are not the same thing.\n\n**2. Losing the slow cohort is not evidence that the bottleneck is gone, because the cohort was a symptom and a detector, not the constraint.** After padding, the band disappeared and per-node throughput stayed near 150 RPS against a goal of about 250. The decision quantity did not move. The band had been the visible trace of one penalty; removing it let the next penalty — true sharing on the same cache field, written by many cores — bind every node uniformly. Unimodal latency is fully compatible with 'everyone is equally slow'. The removal was also epistemically expensive: the fast/slow split had been a natural control group, and padding destroyed the contrast that made the first cause visible.\n\n**3. The second fix cannot be adopted safely because the evidence available for it is the wrong kind of evidence.** The padding changed a memory layout inside one process image; the second change alters JDK behavior in a shared runtime optimization that participates in subtype checks. Safe adoption requires knowing that the target JDK and commit still contain the defect, that correctness holds across class shapes, class loaders, generated proxy types and concurrent subtype checks, that no other workload regresses, that the runtime is supported and reversible, and that the flag has an exit plan. None of this is established: the source is one service on one hardware/JDK configuration with company-reported numbers, the status of the referenced JDK bug is unverified, and no independent re-run or exact VM image exists. The case's own gate is to refuse an automatic HotSpot patch when hardware counters are unavailable, the exact source is absent, or a production-representative correctness test cannot be executed.\n\nEverything below expands these three answers, then gives the facet matrix, the evidence map, the boundaries and the unknowns.\n\n## 1. Layers used and the case mapping\n\n**Layers.** This is a book-layer question. The mechanism, the measurement argument and the adoption argument are canonical-prose questions; the answer below is drawn from the book only. The atlas layer was searched (false sharing, profiler, hardware counters, canary rollout, benchmark validity) and returned owner pages and cards that do not own this mechanism; nothing there changed the answer, and no atlas card is cited. The modeling-and-simulation layer was searched once and returned one unrelated example page with no model, scenario, run or decision artifact, so it is not used: a synthetic run would not be evidence about this production path in any case.\n\n**Mapping.** The question does not name the service, and it should not be assumed to be the documented case. It matches the book's documented large-instance JVM regression on every observable: a CPU-intensive service moved to a larger instance, an equal-traffic canary that looked healthy, bimodal latency across nodes, flame graphs/JFR/JIT probes showing identical code paths, an internal JVM structure padded, the slow cohort disappearing, per-node throughput near 150 RPS against a goal near 250, and a second flag-gated fix. That mapping is an inference. The mechanism and the reasoning transfer only as far as the evidence does (see section 7).\n\n## 2. The mechanism, layer by layer\n\n**2.1 The hardware change was a concurrency change, not merely a capacity change.** The move to a larger instance multiplied the number of cores sharing one memory hierarchy. It did not multiply the per-request work, and it did not change the code. In the documented case the larger instance delivered only about 25% more throughput and worse average latency at the same CPU target (C1), and the equal-traffic canary that preceded it could not test the per-instance load the new shape was expected to carry (C4). When per-node capacity fails to scale with vCPU count, the correct first question is what the additional cores now contend on, not which Java method became slower (C24: a scalability curve can go retrograde when coordination work grows faster than useful work, and a fitted coherence parameter is not a mechanism detector).\n\n**2.2 The instrument chain, and where it stopped.** The team ran the conventional chain: flame graphs, JFR and JIT probes. All three agreed that fast and slow nodes executed the same code paths (C5). They then moved one layer down to Intel performance counters and VTune, which showed extra cycles per instruction, cache churn and machine clears, and localized a HotSpot secondary-superclass-lookup routine. The writes to _secondary_super_cache and the reads of the adjacent _secondary_supers could occupy one cache line, so otherwise independent memory locations invalidated each other (C6).\n\n**2.3 Why the split was structural rather than random.** A 64-byte cache line and an 8-byte pointer give a one-in-eight chance that the two fields do not overlap; the observed fast-node fraction was about 12% (C6). That is not a traffic property and not a code property. It is a property of the relative alignment of two objects in a given process image, which is why the cohorts persisted at similar request rates (C2, C3) and why the same stack appeared on both sides. The cohort boundary is invisible to a stack sampler by construction.\n\n**2.4 The first fix removed one mechanism, not the constraint.** Padding separated the fields, the persistent slow band disappeared, and per-node throughput stayed around 150 RPS against a goal of about 250 (C12). The case's phase table records the exact same transition: the band was eliminated, capacity was still only around 150 RPS per node (C12). What remained was true sharing — several cores writing one shared cache field — which had been present all along but was masked by the larger false-sharing penalty. The second change bypassed those writes behind a JVM command-line flag and, for that service, reached about 350 RPS at the same CPU target (C13, C23).\n\n## 3. Why an accurate profiler misses this cause\n\n**3.1 Accuracy and discriminating power are different properties.** A sampling profiler estimates the share of sampled CPU time attributable to each stack frame. That estimate can be unbiased and reproducible, and it still answers only one question: *where was the CPU?* The causal question here is *how much work did each cycle do?* Those are different projections of the same execution. If a penalty inflates the cost of every instruction that touches a contended line, time-on-CPU rises roughly proportionally across all frames and the **share** — the quantity a flame graph displays — barely changes. The profile is then accurate and has almost no discriminating power between the cohorts. That is exactly the reported shape: similar stack distributions, with almost 3x CPI and roughly 4x machine clears (C5, C10, C11).\n\n**3.2 The sampler cannot see a coherence stall as a stall.** A CPU sampling profile records code executing on CPU across sampled stacks and, by construction, omits waiting states and low-frequency intermittent events (C8). A cache miss or a machine clear does not create a new frame; it stretches the frame that triggered it. Moreover the interrupted program counter sits in whichever instruction was executing — often the reader of the adjacent field, not the writer that invalidated the line. So the artifact does not merely fail to reveal the cause; it can point at an innocent frame and invite you to optimize the wrong code. The book states the boundary plainly: a CPU flame graph can point to hot functions, but it cannot prove the request critical path or the cause of waiting without correlated evidence (C8).\n\n**3.3 A correct negative is not an absence of causes.** A negative result from JFR or from the GC and allocation view can correctly exclude the family of hypotheses that those events can see - a pause or allocation signal correlated with the cohort - and still say nothing about a mechanism outside their event set. The mistake is to read an exhausted hypothesis space as an exhausted cause space. The case's own countertest table makes the logic explicit: similar execution profiles across cohorts with different CPI argue against 'one application method uses excessive CPU'; they do not argue against a microarchitectural cause, and the false-sharing hypothesis is refuted only if padding fails to remove both the cohort bimodality and the coherence events (C9). In other words, 'the profile is the same' was a **prediction** of the true diagnosis, not evidence against it.\n\n**3.4 The measurement was also under-powered for cohort comparison.** Roughly 12% of nodes were fast (C2). An aggregate profile is dominated by the slow majority, and the difference between cohorts is not a new hot frame but a uniform inflation of existing frames. Comparing two aggregated flame graphs is therefore a low-sensitivity test by design; the high-sensitivity test is a per-node comparison of a quantity that actually differs, such as CPI, machine clears or cache-line invalidations (C10).\n\n**3.5 What the team should have concluded.** 'Throughput failed to scale while stack-level profiles were identical' is the signature that the constraint is below the language runtime. The case's own prescription is to collect CPU counters before rewriting Java business logic, and to challenge conventional profilers when execution profiles do not explain real CPU stalls (C7, C15). Stopping at 'profiles unchanged' converted a null result into a false closure: it made the next hypothesis (hardware or runtime internals) look exotic when it was the only remaining layer.\n\n## 4. Why the vanished slow cohort is not evidence that the bottleneck is gone\n\n**4.1 The acceptance quantity is throughput, and it did not move.** The goal was about 250 RPS per node; after padding the measurement was about 150 (C12). A fix that removes a variance signature while leaving the level below target has not removed the binding constraint — by definition of the target. The case's gate table names the error precisely: 'Declare success after removing slow band' is the failing shortcut, and the better evidence is 'Retest at original throughput target; new bottleneck can emerge' (C14).\n\n**4.2 Shape and level are different statistics.** The bimodality was a property of the *distribution across nodes*; the goal is a property of the *level per node at a fixed CPU target*. Padding could remove the band by lifting the slow majority to the previous fast level while leaving that common level below the goal (that reading is an inference from the two published numbers, not a separately reported fast-node level). That is an improvement in consistency, not in capacity, and a mean-latency chart can improve at the same time because the tail was truncated. Without the absolute goodput at the operating point, a distribution change says nothing about whether the constraint moved (C15).\n\n**4.3 Bottleneck promotion is the expected behaviour, not a surprise.** The case says explicitly that after the first fix all latency and throughput checks must be repeated because a second bottleneck can become dominant (C14). False sharing and true sharing were two different mechanisms on the same data: one was removed by layout, the other by suppressing writes. The first penalty had been large enough to dominate the second; once removed, the second set the ceiling for every node. The second fix's measured effect — up to about 350 RPS at the same CPU target — is what demonstrates that a different mechanism was binding; the disappearance of the band demonstrated only that the first mechanism was real (C13, C23).\n\n**4.4 Removing the cohort removes the natural experiment.** The fast/slow split was not only a symptom; it was the identification strategy. Two populations running the same code at similar load, differing in CPI, is about as clean a natural control as a production system offers. Padding eliminated the contrast, so the next diagnosis has no free comparison group and must manufacture one — for example by running an isolated, reversible patch and comparing flagged and unflagged nodes (C16). This is a second, independent reason why 'the band is gone' is bad news as well as good: it reduced observability at the exact moment the next question became harder.\n\n**4.5 What would count as evidence that the bottleneck is gone.** The same test at the same boundary: per-node goodput at the autoscaling CPU target with the original workload mix, per-operation-class latency and error rates, and cost per successful request (C15, C25, C26). If the ceiling moves to the goal and stays there across nodes, cold and warm JVM lifetimes, and a second observation window, the constraint has moved. A disappearance of a cohort is not that test, and a precise number drawn from the wrong population is still the wrong number (C29).\n\n## 5. What keeps the second fix from being adopted safely\n\n**5.1 It is a behaviour change in a shared runtime, not a local layout change.** Padding changed where two fields sit in one process. The second change alters what HotSpot does when subtype checks update a shared cache, and the case insists the two be treated as different interventions with separate quality gates (C17). Layout changes are cheap to reason about; behaviour changes are not.\n\n**5.2 The optimization is load-bearing elsewhere.** The superclass cache exists because it speeds up subtype checks under particular class shapes. A patch that fixes one subtype-check benchmark may regress other workloads, which is why the required test matrix spans class-loader changes, concurrent subtype checks, dynamically generated proxy types, long-running mixed workloads, end-to-end correctness and end-to-end latency (C18). A single service's benchmark cannot cover that matrix, and the more class-shape-dependent the optimization, the less a single workload's win predicts the fleet's outcome.\n\n**5.3 The patch is bound to a version and an architecture.** The evidence must be gathered for an exact JDK commit and target CPU architecture (C18). The book records that the authors referenced JDK-8180450 but that source-controlled patch identity, release inclusion and later OpenJDK status are not established, and that a 2022 blog's internal patch must not be assumed necessary or valid in a 2026 JDK (C19, C22). A modern build may already contain the fix, may have restructured the fields, or may have changed the cost balance. The same patch can be useless, neutral or harmful depending on the runtime.\n\n**5.4 Correctness is not implied by a throughput win.** Changing the write behaviour of a cache used by subtype checks puts class-loader changes, generated proxy types and concurrent subtype checks on the risk surface; that is why runtime class correctness tests are a precondition rather than a nice-to-have (C19). A benchmark that only measures RPS cannot detect a rare wrong answer, and a long-running mixed workload is the minimum instrument that can.\n\n**5.5 The safety apparatus is itself part of the fix.** Adoption requires a feature flag, a reversible JDK image and a fallback image, a canary on representative hardware and traffic, comparison of goodput, per-class latency and error behaviour rather than a single mean, and a revert path (C19, C20, C25, C27). Without those, enabling the change globally is a one-way door: a forked runtime image, a behavioural difference that only some nodes experience, and no measured way back. A flag is not a safety property by itself either; if it is never removed it becomes an untested permanent interface, so the rollout needs an exit condition as well as a gate (C27).\n\n**5.6 The evidence base is one service and one configuration.** The reported gain — up to about 350 RPS, roughly 3.5x against the initial large-instance throughput — describes one specific service and hardware/JDK configuration and is explicitly not a fleet-wide runtime update or a guaranteed multiplier (C23). The number is a reason to investigate further, not a licence to change the default runtime for everything.\n\n**5.7 The formal gate can be unsatisfiable, and then the honest answer is refusal.** The case sets an explicit refusal condition: no automatic HotSpot patch when hardware counters are unavailable, the exact problematic source is not present, or a production-representative correctness test cannot be executed (C21). At the point of decision, none of the missing items above is optional; if they cannot be produced, the correct output is 'insufficient evidence' and a retained flag, not a promoted default (C28).\n\n**5.8 Why the size of the win increases the caution rather than reducing it.** The second mechanism was worth roughly 3.5x on this service. A change with that leverage on a shared runtime optimization has a correspondingly large blast radius if the optimization matters elsewhere: the bigger the gain, the more the decision needs cross-workload evidence, not less. The published result is exactly the situation the case warns about — a large, real, single-service win that is still not sufficient grounds for a global behaviour change (C20).\n\n## 6. Decision procedure: what would make each answer safe\n\n| Step | Test | Signal that supports the claim | Signal that refutes it |\n|---|---|---|---|\n| 1 | Reproduce the split at fixed offered load and the autoscaling CPU target; keep per-node and per-operation-class histograms | Persistent cohorts at similar request rates | Cohorts track traffic, tenant or time of day instead of node identity |\n| 2 | Add hardware counters (CPI, machine clears, cache-line invalidations) per node | Large CPI and machine-clear gap between cohorts at equal stacks | No counter gap, or the gap follows a different variable |\n| 3 | Falsify the sharing hypothesis with an isolated, reversible layout patch | Band disappears and the CPI gap closes | Band persists, or coherence events persist |\n| 4 | Re-run the original acceptance test at the original target after the layout fix | Per-node goodput reaches the goal with latency and error budgets intact | Goodput stays flat well below target, so a second mechanism is binding |\n| 5 | Isolate the second mechanism with a flag on representative traffic | Flagged nodes show higher goodput at equal CPU with no correctness or tail regression | No effect, or an effect only in a synthetic benchmark |\n| 6 | Gate the behaviour change: correctness matrix, cross-workload regression, canary on representative hardware and traffic, fallback image, removal plan | All gates pass on the exact JDK build and CPU architecture | Any gate missing, or the upstream status of the defect unverified |\n\nSteps 1-2 are what the team eventually did; step 3 is what the padding tested; step 4 is the test the case says to run and the one that separates 'band gone' from 'bottleneck gone'; steps 5-6 are what the second fix still lacks (C14, C18-C21, C26-C28).\n\n## 7. Boundaries and transfer limits\n\n- **One service, one configuration.** All numbers (~25%, more than 50%, about 12%, almost 3x CPI, 150 and about 250 RPS, up to about 350 RPS, about 3.5x) come from one first-party report about one service on one hardware/JDK configuration. They are not universal constants and not a fleet-wide multiplier (C23).\n- **The one-in-eight alignment is evidence for this diagnosis, not a probability law.** It follows from a 64-byte line and an 8-byte pointer in this layout; it is not a rule about modern JVM heap layout (C6, C22).\n- **Not every high-CPI Java service has this cause.** The source attributes the incident to a specific HotSpot layout and a specific sharing pattern; the case explicitly declines to generalize (C9).\n- **The upstream status of the defect is unknown.** Whether a current JDK still contains the issue, and whether a supported fix exists, is not established here (C22).\n- **The numbers are company-reported.** No independent performance re-run, no exact VM image and no source-controlled patch identity are available (C22).\n- **The 250 RPS goal itself is unexamined.** Whether it was achievable for that workload at the stated CPU target, and with what error budget, is not part of the evidence; the goal is treated as the acceptance criterion because the case treats it that way (C25).\n- **The 'fast cohort was already at 150' reading is an inference.** The book states that the band disappeared and that throughput stayed around 150; it does not separately publish the fast cohort's level before padding. The equalization reading in section 4.2 is therefore marked as inference, not observation (C15).\n- **The mapping from the question to the case is an inference.** The question is generic; the match is on the full set of observables. A different service with the same symptom shape would need the same tests, not the same conclusion.\n\n## 8. Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1 Capacity change and canary validity | 'bimodal latency distribution after moving to larger instances'; 'canary equal traffic split validates capacity change'; 'instance type change scale up cores worse performance'; 'capacity planning throughput per instance CPU utilization target' | case#the-attractive-migration-that-regressed-performance; case#two-distinct-fixes-not-one-miracle-patch |\n| F2 Profiler validity and layer blindness | 'flame graph shows same code path slow node'; 'profiling attribution limits sampling skid hardware counters'; 'continuous profiling production overhead sampling bias'; 'cache line invalidation machine clears stall'; 'cycles per instruction cache coherence mechanical sympathy' | case#diagnose-what-conventional-profilers-miss; case#separate-the-true-causes-fixes-and-observation-windows; memory-tools#4-what-the-actual-diagnostic-tools-prove |\n| F3 Symptom removal versus constraint removal | 'throughput target not met after fix second bottleneck'; 'performance regression investigation production'; 'scaling efficiency additional cores diminishing returns'; 'cost per successful request goodput' | case#two-distinct-fixes-not-one-miracle-patch; case#reuse-criteria-and-limits; case#falsification-and-release-gates-for-a-different-architecture; scaling-models#3-a-model-for-contention-and-coordination-overhead |\n| F4 Second fix and adoption safety | 'feature flag reversible rollout JDK version gate'; 'unsafe internal change vendor support upstream patch risk'; 'JVM runtime upgrade behavior change regression'; 'depending on internal implementation detail brittle coupling'; 'rollback plan enable flag production regression' | case#why-the-two-patches-need-two-separate-quality-gates; case#reuse-criteria-and-limits; case#applicability-and-safer-modernization; configuration-rollout#publish-observe-promote; configuration-rollout#alternatives-and-decision-reversal |\n| F5 Measurement and acceptance boundaries | 'benchmark representativeness synthetic load production traffic'; 'latency percentiles tail distribution cohort comparison'; 'observability does not establish causality instrumentation'; 'queueing little's law measurement boundary utilization' | capacity#record-the-boundary-before-the-number; capacity#experiment-sequence; tails-critical-path#1-one-percentile-cannot-describe-a-distributed-request; load-testing-and-benchmark-validity#purpose-and-mission |\n| F6 Controlled comparison and refusal | 'how to design controlled comparison one variable'; 'explicit decision rejection criteria'; 'when to return insufficient evidence' | case#falsification-and-release-gates-for-a-different-architecture; grpc-case#how-to-design-an-actual-controlled-comparison; grpc-case#explicit-decision-rejection-criteria |\n\nSearch coverage: every facet was searched with at least three formulations across the book layer. Page section maps were used to navigate chapters from volume landings to exact sections; an outline call was attempted and returned no entries in this snapshot, so it contributed nothing. The final search rounds returned only anchors already in the ledger. Short labels used above are expanded in the anchor legend immediately above, and the exact keys are repeated in the evidence map in section 9.\n\n**Anchor legend (short label to exact section key).**\n\n| Short label | Exact section_key |\n|---|---|\n| case#the-attractive-migration-that-regressed-performance | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#the-attractive-migration-that-regressed-performance |\n| case#diagnose-what-conventional-profilers-miss | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss |\n| case#two-distinct-fixes-not-one-miracle-patch | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch |\n| case#competing-diagnoses-and-falsifiable-tests | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#competing-diagnoses-and-falsifiable-tests |\n| case#why-the-two-patches-need-two-separate-quality-gates | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates |\n| case#reuse-criteria-and-limits | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#reuse-criteria-and-limits |\n| case#separate-the-true-causes-fixes-and-observation-windows | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows |\n| case#falsification-and-release-gates-for-a-different-architecture | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#falsification-and-release-gates-for-a-different-architecture |\n| case#applicability-and-safer-modernization | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#applicability-and-safer-modernization |\n| memory-tools#4-what-the-actual-diagnostic-tools-prove | tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove |\n| scaling-models#3-a-model-for-contention-and-coordination-overhead | tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead |\n| capacity#record-the-boundary-before-the-number | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number |\n| capacity#experiment-sequence | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#experiment-sequence |\n| tails-critical-path#1-one-percentile-cannot-describe-a-distributed-request | tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request |\n| load-testing-and-benchmark-validity#purpose-and-mission | tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e#purpose-and-mission |\n| configuration-rollout#publish-observe-promote | tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote |\n| configuration-rollout#alternatives-and-decision-reversal | tycho.page.9681d7dd04749125f5749d0c83f96d9b#alternatives-and-decision-reversal |\n| grpc-case#how-to-design-an-actual-controlled-comparison | tycho.page.36d83a4c7ecb4d12b60fb814d605646a#how-to-design-an-actual-controlled-comparison |\n| grpc-case#explicit-decision-rejection-criteria | tycho.page.36d83a4c7ecb4d12b60fb814d605646a#explicit-decision-rejection-criteria |\n\n## 9. Evidence map\n\nThe claim-to-anchor table below is the exact map for every claim ID used in sections 1-7. The machine-readable ledger in this JSON repeats the same keys with a verbatim quote and a per-item status for each entry; the citations array is exactly the unique set of those keys.\n\n| Claim | Exact section_key(s) |\n|---|---|\n| C1 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#the-attractive-migration-that-regressed-performance |\n| C2 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#the-attractive-migration-that-regressed-performance |\n| C3 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#competing-diagnoses-and-falsifiable-tests |\n| C4 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch |\n| C5 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss |\n| C6 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss |\n| C7 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows |\n| C8 | tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove |\n| C9 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#competing-diagnoses-and-falsifiable-tests |\n| C10 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows |\n| C11 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows; tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove |\n| C12 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch; tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows |\n| C13 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch |\n| C14 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#falsification-and-release-gates-for-a-different-architecture; tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch |\n| C15 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#reuse-criteria-and-limits; tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch |\n| C16 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows; tycho.page.6cdc8b405be542f29528e4cfd7454bc9#falsification-and-release-gates-for-a-different-architecture |\n| C17 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates |\n| C18 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates |\n| C19 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates |\n| C20 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#falsification-and-release-gates-for-a-different-architecture |\n| C21 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#reuse-criteria-and-limits |\n| C22 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#applicability-and-safer-modernization |\n| C23 | tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch; tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows |\n| C24 | tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead |\n| C25 | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number; tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request |\n| C26 | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#experiment-sequence |\n| C27 | tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote; tycho.page.9681d7dd04749125f5749d0c83f96d9b#alternatives-and-decision-reversal |\n| C28 | tycho.page.36d83a4c7ecb4d12b60fb814d605646a#how-to-design-an-actual-controlled-comparison; tycho.page.36d83a4c7ecb4d12b60fb814d605646a#explicit-decision-rejection-criteria |\n| C29 | tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e#purpose-and-mission |\n\n## 10. Unknowns and contradictions\n\n1. **Upstream status unknown.** Whether a current JDK still contains the secondary-superclass sharing defect, and whether a supported fix exists, is not established. This is the largest unknown for the second fix: it decides whether the patch is necessary at all.\n2. **Exact runtime and hardware unknown.** No VM image, JDK build identifier or host specification is available for the reported measurements, so the ~350 RPS and ~3.5x results cannot be reproduced or bounded here.\n3. **The fast cohort's pre-padding level is not published.** The equalization argument is an inference from 'band disappeared plus 150 RPS remained', not a separately observed fast-node number.\n4. **The 250 RPS goal's derivation is not in evidence.** It is treated as the acceptance criterion because the case uses it that way; whether it was achievable at the stated CPU target is unknown.\n5. **No correctness evidence is reported for the second change.** The cited material lists the tests that would be needed and reports performance outcomes, not correctness results; a throughput win is silent on correctness.\n6. **No independent replication.** All of this is one first-party report; the case itself records that complete replication and review remain unverified.\n7. **Tension in the record.** The same case both recommends investigating true sharing and warns against importing the HotSpot patch; this is not a contradiction but a scoping condition, and it is resolved only by the gates in section 5, never by the size of the reported win.\n\n## 11. One-sentence answers\n\n- **Why the profiler can be accurate and still miss the cause:** it measures where the CPU is and which frames run, while the defect changes how many cycles those frames need, so identical stack profiles coexist with a threefold CPI difference and the profile has no discriminating power for the hypothesis that matters.\n- **Why the lost cohort is not evidence the bottleneck is gone:** the band was a symptom and a detector, and the acceptance quantity — per-node goodput at the CPU target — stayed near 150 against a goal near 250, while the next mechanism, true sharing, took over as the binding constraint for every node.\n- **Why the second fix cannot be adopted safely:** it changes shared runtime behavior rather than local layout, its correctness and cross-workload effects are untested on the target JDK and architecture, its upstream status is unknown, and the only safety apparatus that could make it reversible — flag, correctness matrix, cross-workload regression, fallback image, canary on representative hardware and traffic, and a removal plan — is exactly what the evidence does not yet supply.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The large-instance migration produced about 25% more production throughput at a roughly 55% autoscaling CPU target and made average latency more than 50% worse, even though an equal-traffic canary had looked healthy.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#the-attractive-migration-that-regressed-performance",
+          "quote": "An equal-traffic initial canary appeared healthy, but at an autoscaling CPU target near **55%**, production throughput improved only about **25%**, and average latency degraded by more than **50%**.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Nodes split into persistent fast and slow populations at similar incoming request rates, with about 12% fast.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#the-attractive-migration-that-regressed-performance",
+          "quote": "Nodes split into persistent fast and slow populations despite similar incoming request rates; about **12%** were fast.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Because request rates were similar across cohorts, the split is better explained by per-process state than by traffic; the case's own countertest treats host differences tied to process or VM initialization rather than traffic locality as the discriminating signal.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#competing-diagnoses-and-falsifiable-tests",
+          "quote": "| Host placement or network variance | Per-host work, NUMA locality, cache, NIC and request classification | Host differences remain tied to process/VM initialization rather than traffic locality |",
+          "supports": "C3",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "An equal-traffic canary does not test the per-instance load the larger instance is expected to carry, so a healthy canary cannot validate a capacity change; throughput must be normalised to the autoscaling CPU target.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch",
+          "quote": "| Canary | Equal requests to larger/smaller node | Also test expected *per-instance* scaled load |",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Flame graphs, JFR and JIT probes showed similar code paths on fast and slow nodes, while hardware performance counters showed extra cycles-per-instruction, cache churn and machine clears.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss",
+          "quote": "Flame graphs, JFR and JIT probes showed similar code paths on fast and slow nodes.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss",
+          "quote": "Intel performance counters and VTune instead showed extra cycles-per-instruction, cache churn, and machine clears.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The traced mechanism was false sharing between writes to _secondary_super_cache and reads of the adjacent _secondary_supers when both occupy one x86 cache line, and the reported one-in-eight chance of non-overlapping alignment matched the approximately 12% fast-node fraction.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss",
+          "quote": "The team traced one HotSpot secondary-superclass-lookup routine: `_secondary_super_cache` writes and adjacent `_secondary_supers` reads could share an x86 cache line, causing false sharing between otherwise independent memory locations.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss",
+          "quote": "The reported **one-in-eight** chance of non-overlapping alignment matched approximately the fast-node fraction.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "The case record classifies the standard profiling stage as revealing no useful actionable difference while the CPU microarchitecture bottleneck remained unexplained.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows",
+          "quote": "| Standard profile | Fast and slow nodes had similar flame-graph/JFR/JIT stack distributions | No useful actionable difference discovered | CPU microarchitecture bottleneck still unexplained |",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A CPU sampling profile records code executing on CPU across sampled stacks and omits waiting states and low-frequency intermittent events; a CPU flame graph can point to hot functions but cannot prove the request critical path or the cause of waiting without correlated evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove",
+          "quote": "| CPU sampling profile | Code executing on CPU across sampled stacks | Missing waiting states or low-frequency intermittent events |",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove",
+          "quote": "A CPU flame graph can point to hot functions; it cannot prove request critical path, end-to-end correctness or cause of waiting without correlated evidence.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Similar execution profiles across high and low latency cohorts despite different CPI argue against the hypothesis that one application method consumes excessive CPU, while the false-sharing hypothesis is refuted only if padding fails to remove the cohort bimodality and coherence events.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#competing-diagnoses-and-falsifiable-tests",
+          "quote": "| Application method uses excessive CPU | Sampling profile by Java method and request class | Similar execution profiles across high/low latency cohorts despite different CPI |",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#competing-diagnoses-and-falsifiable-tests",
+          "quote": "| **False sharing** | CPU cache-line invalidations and hot instruction disassembly on adjacent fields | Padding fields does not eliminate the cohort bimodality or coherence events |",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Slow nodes had almost 3x CPI and roughly 4x machine clears versus fast nodes, so the cohorts differed in cycles per instruction rather than in which frames executed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows",
+          "quote": "| Hardware counters | Slow nodes had **almost 3× CPI** and roughly **4× MACHINE_CLEARS** vs fast nodes | Investigators localized HotSpot subtype-check code with Intel VTune and assembly |",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A faithful instrument can still have no discriminating power: when stack shape is invariant across cohorts while CPI varies roughly threefold, 'the profile is unchanged' is a reason to move down a layer, not a reason to stop.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows",
+          "quote": "| Hardware counters | Slow nodes had **almost 3× CPI** and roughly **4× MACHINE_CLEARS** vs fast nodes | Investigators localized HotSpot subtype-check code with Intel VTune and assembly |",
+          "supports": "C11",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove",
+          "quote": "A CPU flame graph can point to hot functions; it cannot prove request critical path, end-to-end correctness or cause of waiting without correlated evidence.",
+          "supports": "C11",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Padding the fields removed the persistent slow-node band, but per-node throughput remained around 150 requests per second against a goal of about 250.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch",
+          "quote": "Slow nodes disappeared, but throughput remained around **150 requests/second per node**, below the **~250 RPS** goal.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows",
+          "quote": "Capacity still only around **150 RPS/node**, below **~250 RPS** target",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "The residual constraint was identified as true sharing: multiple cores wrote the same cached state, and a second change bypassed secondary-superclass-cache writes behind a JVM command-line flag.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch",
+          "quote": "This led to identifying *true sharing*: multiple cores wrote the same cached state. A second change bypassed secondary-superclass-cache writes behind a JVM command-line flag.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "After a first fix, latency and throughput checks must be repeated because a second bottleneck can become dominant, and the case's gate table names 'declare success after removing slow band' as the failing shortcut with 'retest at original throughput target' as the better evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#falsification-and-release-gates-for-a-different-architecture",
+          "quote": "then **repeat all latency and throughput checks after the first fix**, because a second bottleneck can become dominant.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch",
+          "quote": "| First patch | Declare success after removing slow band | Retest at original throughput target; new bottleneck can emerge |",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Removing the band changed the shape of the latency distribution, not the level of per-node goodput; the decision quantity is useful performance at the intended operating point, and 150 RPS stays below the 250 RPS goal.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#reuse-criteria-and-limits",
+          "quote": "The reusable design lesson is **compare useful performance at the new intended operating point and challenge conventional profilers when execution profiles do not explain real CPU stalls**.",
+          "supports": "C15",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch",
+          "quote": "Slow nodes disappeared, but throughput remained around **150 requests/second per node**, below the **~250 RPS** goal.",
+          "supports": "C15",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The fast/slow contrast was also an identification strategy: the cohort split acted as a natural control group, so removing it removes the comparison that made the first cause visible and makes the next diagnosis harder unless contrast is deliberately recreated with an isolated, reversible patch.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows",
+          "quote": "| Standard profile | Fast and slow nodes had similar flame-graph/JFR/JIT stack distributions | No useful actionable difference discovered | CPU microarchitecture bottleneck still unexplained |",
+          "supports": "C16",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#falsification-and-release-gates-for-a-different-architecture",
+          "quote": "Validate the suspected field-layout issue with an isolated JVM patch on representative production traffic",
+          "supports": "C16",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The first change altered memory layout while the second altered JDK behavior, so a safe adoption procedure must test them as different interventions under separate quality gates.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates",
+          "quote": "Padding the adjacent fields changed **memory layout**; bypassing the contentious cache update changed JDK *behavior*.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "A patch that fixes one subtype-check benchmark may regress other workloads because the superclass cache is an optimization under different class shapes, and the required test matrix includes class-loader changes, concurrent subtype checks, dynamically generated proxy types, long-running mixed workloads, end-to-end correctness and end-to-end latency at an exact JDK commit and CPU architecture.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates",
+          "quote": "A code patch that fixes one subtype-check benchmark may regress other workloads because the superclass cache serves as an optimization under different class shapes.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates",
+          "quote": "For another runtime, the test matrix must include class-loader changes, concurrent subtype checks, dynamically generated proxy types, long-running mixed workloads, end-to-end correctness and upstream/downstream latency; gather data for the exact JDK commit and target CPU architecture.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Safe adoption of the second change requires a feature flag, a reversible JDK image and runtime class correctness tests, and must not assume that a 2022 blog's internal patch is still necessary or valid in a 2026 JDK.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates",
+          "quote": "Require a feature flag, a reversible JDK image and runtime class correctness tests; do not assume a blog's internal patch is still necessary or valid in a 2026 JDK.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "A globally enabled HotSpot behavior change must never be shipped on one service's apparent gain alone; the guard is a versioned feature flag, a fallback JDK image and cross-workload regression coverage.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#falsification-and-release-gates-for-a-different-architecture",
+          "quote": "Never ship a globally enabled HotSpot behavior change solely on one service's apparent gain: maintain a versioned feature flag, a fallback JDK image and cross-workload regression coverage.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "The case sets an explicit refusal gate: no automatic HotSpot patch when hardware counters are unavailable, the exact problematic source code is not present, or a production-representative correctness test cannot be executed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#reuse-criteria-and-limits",
+          "quote": "**Refuse an automatic HotSpot patch** when hardware counters are unavailable, the exact problematic source code is not present, or a production-representative correctness test cannot be executed.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The referenced JDK-8180450 does not come with established patch identity, release inclusion or later OpenJDK status, and no independent performance re-run or exact VM image is available.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#applicability-and-safer-modernization",
+          "quote": "The authors refer to JDK-8180450; source-controlled patch identity, release inclusion and later OpenJDK status are not established here. No independent performance re-run or exact VM image is available.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "The reported ~350 RPS and ~3.5x improvement describe one specific service and hardware/JDK configuration and are not a fleet-wide runtime update or guaranteed performance multiplier.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch",
+          "quote": "These numbers describe **one specific service and hardware/JDK configuration**.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows",
+          "quote": "Not a fleet-wide runtime update or guaranteed performance multiplier",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "A scalability curve fitted with contention and coherence parameters is not a mechanism detector, and retrograde throughput at higher processor counts is possible when coordination work increases faster than useful work.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+          "quote": "The expression is **not** a mechanism detector. Fitted coefficients cannot prove that a particular lock, network link or cache-invalidation flow is the cause.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+          "quote": "**retrograde** throughput at higher N if coordination work increases faster than useful work.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "Capacity acceptance needs a declared boundary with per-operation-class latency and error data, and a percentile is a property of a distribution rather than a single request's maximum, so successful, rejected and failed requests must be shown to share a defined population.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+          "quote": "Record percentile latency and error rate **per operation class**, not only aggregate averages.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+          "quote": "A percentile is a value of a **distribution**, not a single request's maximum.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "Scale-up and scale-out must be compared under identical workload and cost boundaries while noting state locality, coordination overhead and autoscaling delay.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#experiment-sequence",
+          "quote": "Compare scale-up and scale-out under identical workload and cost boundaries, noting state locality, coordination overhead and autoscaling delay.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "A progressive rollout must pass an evidence gate before broadening, must freeze on alarm or missing evidence, must keep its exposure cohort stable for the observation interval, and should remove the flag once rollout ends so it does not become an untested permanent interface.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote",
+          "quote": "Canary --> Broad: evidence meets gate",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote",
+          "quote": "Cohorts must be stable for the observation interval: hashing a tenant identifier is more useful than randomly changing the behavior on every request.",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#alternatives-and-decision-reversal",
+          "quote": "Remove a flag after its rollout ends; otherwise the configuration space becomes an untested permanent interface.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "A defensible comparison holds the service version, JDK patch, dependencies, caller mix, reply sizes, deadline budget and downstream concurrency limit constant and varies one factor; where neither versioned data nor a valid workload profile exists, the honest result is insufficient evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#how-to-design-an-actual-controlled-comparison",
+          "quote": "hold constant the service version, JDK patch, gRPC/Netty and tracing dependencies, caller mix, reply sizes, deadline budget and downstream concurrency limit. Vary **only** the worker executor initially",
+          "supports": "C28",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#explicit-decision-rejection-criteria",
+          "quote": "When neither versioned data nor a valid workload profile exists, return **insufficient evidence**.",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "A performance benchmark can produce precise-looking numbers while measuring the wrong population.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e#purpose-and-mission",
+          "quote": "A performance benchmark can produce precise-looking numbers while measuring the wrong population.",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#the-attractive-migration-that-regressed-performance",
+    "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#competing-diagnoses-and-falsifiable-tests",
+    "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch",
+    "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss",
+    "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#separate-the-true-causes-fixes-and-observation-windows",
+    "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove",
+    "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#falsification-and-release-gates-for-a-different-architecture",
+    "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#reuse-criteria-and-limits",
+    "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates",
+    "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#applicability-and-safer-modernization",
+    "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+    "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#experiment-sequence",
+    "tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote",
+    "tycho.page.9681d7dd04749125f5749d0c83f96d9b#alternatives-and-decision-reversal",
+    "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#how-to-design-an-actual-controlled-comparison",
+    "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#explicit-decision-rejection-criteria",
+    "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e#purpose-and-mission"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

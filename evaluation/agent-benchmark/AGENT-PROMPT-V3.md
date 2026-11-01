@@ -35,7 +35,9 @@ For every facet:
    conceptual query.
 2. Use `outline` when the structure is unclear.
 3. Follow `next_actions`, `related_ids` and page section maps.
-4. Search the relevant layer; for cross-layer questions search more than one.
+4. Search the relevant layer with `--volume book|atlas|modeling-and-simulation`;
+   for cross-layer questions search more than one. Atlas and modeling questions
+   must use their own volume, not only book results.
 5. Continue until every facet has evidence and two consecutive searches add no
    new evidence. There is no fixed maximum number of calls or searches.
 6. Do not substitute a snippet for a section you need to cite.
@@ -71,7 +73,7 @@ because the first source did not mention it.
 
 ```bash
 .venv/bin/python scripts/agent_session_cli.py describe
-.venv/bin/python scripts/agent_session_cli.py search "query" --limit 5 --log LOG
+.venv/bin/python scripts/agent_session_cli.py search "query" --limit 5 --volume atlas --log LOG
 .venv/bin/python scripts/agent_session_cli.py page "book/..." --max-chars 5000 --log LOG
 .venv/bin/python scripts/agent_session_cli.py read "section_key" --max-chars 5000 --log LOG
 .venv/bin/python scripts/agent_session_cli.py outline "topic" --limit 4 --log LOG

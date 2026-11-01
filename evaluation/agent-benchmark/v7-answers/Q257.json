@@ -1,0 +1,507 @@
+{
+  "task_id": "Q257",
+  "answer": "# Q257 — Why a pre-commit log line and a dataset-level lineage edge are not evidence, and what an authoritative audit record must bind\n\n## Short answer\n\nThe log line and the lineage edge are not weak versions of the same evidence; each answers a different question. The log line answers \"what did this runtime report at the moment it emitted the line?\" — it is written before the commit, by the same application whose claim is in doubt, on a best-effort channel, so the same line would exist if the transaction had rolled back. The lineage edge answers \"which job/run connected which datasets?\" — at dataset or partition granularity, so the same edge would exist whatever the usage report actually contains, including a report that holds only anonymized counts. An authoritative audit record must bind the durable effect itself: a stable effect identity, the accountable actor and delegated authority, the exact action and resource/tenant scope, the authorization decision and governing policy version, the committed outcome and target state revision, origin and observation times, a bounded correlation reference, an integrity reference, and a classification/retention rule — and it must do so under a tested consistency boundary relative to the commit, not on an asynchronous best-effort path.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence (section_key) |\n|---|---|---|\n| F1 Pre-commit log semantics | \"reservation accepted before commit\"; \"log emitted then rollback\"; \"attempt versus accepted state\" | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence |\n| F2 Log pipeline completeness and trust | \"log sink unavailable during successful commit\"; \"missing log not proof\"; \"compromised application forges logs\" | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail; tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records |\n| F3 Lineage granularity | \"job run dataset lineage edge meaning\"; \"column-level mapping unknown\"; \"declared versus observed lineage\" | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace |\n| F4 Report content versus dependency | \"anonymized counts usage report\"; \"multi-output job input attribution\"; \"aggregation and anonymization semantics\" | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval; tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission |\n| F5 Audit record binding | \"audit record fields\"; \"effect identity\"; \"policy version\"; \"integrity reference\" | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail; tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage |\n| F6 Commit boundary and ordering | \"atomic audit with commit\"; \"dual-write order\"; \"tested commit boundary\" | tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail; tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence |\n| F7 Reconciliation and negative evidence | \"reconcile telemetry with committed state\"; \"report uncertainty\"; \"log line does not prove commit\" | tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing; tycho.chapter.49cb8db3af4e406ea6988c8e5e852acf#decision-and-worked-result |\n\n## 1. Three records, three questions\n\nThe book separates the evidence products by the question each answers: an operational log records what a runtime reported; a durable business audit records who was authorized to change which authoritative state and what actually committed; dataset lineage records which job/run consumed or produced which dataset or partition. Their completeness, identity, privacy and retention requirements differ, and co-locating them in one search system does not make them equivalent (tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#purpose-and-mission; tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage).\n\nThe failure modes in the book's own table are exactly the two mistakes in this scenario: \"Log drop interpreted as no event\" (the log treated as complete business history) and \"A reported dependency treated as data correctness\" (the lineage edge treated as content evidence).\n\n## 2. Why \"reservation accepted\" before the commit is not evidence of accepted state\n\n### 2.1 It is written before the event it asserts\n\nThe book's reservation example states that an operational log such as \"reservation requested\" may be emitted before the database transaction commits; it is diagnostic context, not evidence of accepted state. The stronger wording \"booking accepted\" does not repair the defect: the failure chronology in the retention page has the application emit \"booking accepted\", then its database transaction fail while the log sink persists the line. A successful log write that precedes a rolled-back transaction cannot certify a durable business mutation (tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence; tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records).\n\nThe epistemic point is discrimination, not sincerity. The line is emitted on a code path that runs whether the commit later succeeds, aborts or is never attempted after a crash. A record that would be present in both the committed and the rolled-back worlds cannot distinguish them; the fact that in this instance the commit happened makes the line accidentally true, not evidential.\n\n### 2.2 Log capture is best-effort in both directions\n\nThe same example notes that a log sink may be unavailable while an authorized operation commits successfully; the failure chronology has another request commit while the log collector is down. Therefore the log is not a complete ledger: absence is not proof that no booking committed, and presence is not proof that one did. Traces have the same defect in the book's treatment — an unsampled request or a collector drop means absence of a span is not proof that an operation did not happen (tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries).\n\n### 2.3 It is the application's self-report\n\nA log is emitted by the component whose behavior is being assessed. The book's comparison table puts the trust boundary bluntly: a compromised application may forge its own logs, while accountability needs stronger isolation, append integrity and verification. An audit event must say what happened, not just what code intended to do (tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail).\n\n### 2.4 The word \"accepted\" is not bound to domain state\n\n\"Accepted\" in a log line may mean the request was accepted for processing, not that a reservation was committed. Nothing in the line ties the label to the authoritative reservation row, its revision, or the authorization decision. The book requires a different record for that question: a durable business audit, whose essential property is durable event/effect identity and integrity policy, and whose failure mode is an asynchronous log missing after a commit (tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage).\n\n### 2.5 What the line does establish\n\nIt is legitimate evidence that a particular process instance reached a particular code path and reported a particular string at a particular time, with the caveats that its timestamp is origin time rather than observation time, and that delivery may be delayed, duplicated or reordered. That is useful for timing, correlation and hypothesis generation. It is not evidence of committed state, and its absence is not evidence of no booking.\n\n## 3. Why the lineage edge is not evidence of the report's contents\n\n### 3.1 The edge is a dependency statement at dataset granularity\n\nOpenLineage records jobs, runs, input/output datasets and facets; data-flow metadata relates executions to datasets and their change over time. A lineage record can and should carry explicit source-target relationships without inferring that each input contributes to every output. The edge \"bookings table feeds the usage report\" is therefore a claim that some job/run connected those datasets — not a claim about which columns were read, which rows passed a filter, or what the output values are (tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace).\n\n### 3.2 Multi-output jobs break input-to-output attribution\n\nThe book's synthetic example is almost exactly this scenario: one job reads public catalogue descriptions and device booking status to produce a public listing; a second output aggregates only anonymized usage counts. It would be false to infer that every booking attribute appears in the usage report merely because both outputs came from one job. Lineage should preserve actual mapping and processing semantics, and unknown column-level mappings must be marked unknown (tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace).\n\n### 3.3 Anonymized counts are derived content, not copied rows\n\nIf the report contains only anonymized counts, then booking identity and the individual attributes have been removed by the transformation; the counts are new quantities produced by projection, filtering, aggregation, suppression or noise. The edge is compatible with any of those implementations and with many possible count values. It tells you that the report depends on the bookings dataset, not what the report says, whether the aggregation window is correct, whether the anonymization policy was applied, or whether the artifact is the current materialization. The book's lineage table adds the same caution for outputs: existence does not establish validity or freshness, and a run's start event is not completion proof (tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval).\n\n### 3.4 What would support a claim about the report's contents\n\nThe book's shape for an honest lineage record is: source dataset namespace/name/version → transformation job/version/run → output dataset namespace/name/version, plus any qualifying field-level relationship actually known (tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace). To assert this report's contents you would need that chain instantiated for the materialization at hand — the concrete output artifact and its identity, the job/run that produced it, the transformation code and parameters (including the aggregation and anonymization rules), the input dataset versions or partitions actually read, and the known field-level mapping — plus the artifact's own values for spot verification. The graph edge alone supplies none of these. Even a complete lineage graph does not prove that the transformation executed correctly: a lineage graph describes declared or observed data flows, not automatically a proof that every input/output transformation executed correctly (tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission).\n\n### 3.5 What the edge does establish\n\nIt supports impact analysis and reproducibility routing: if you trust the producer's declaration or the run record, you know where to look next, which job to inspect and which dataset versions to request. That is genuine value, but it is navigation, not content evidence and not business approval.\n\n## 4. What an authoritative audit record must bind\n\nThe book gives two complementary formulations. The domain-level one: an illustrative audit record might contain a stable effect ID, actor/role reference within authorized access, tenant or resource scope, operation type, target state revision, commit time and an integrity mechanism (tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit). The systems-level one is the proposed audit record envelope with event_id, occurred_at/observed_at, actor_id/delegated_from, action/resource_kind/resource_id, decision/outcome/reason_code, policy_version/artifact_digest, correlation_id, integrity_reference and classification/retention_rule (tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail).\n\nBinding them together, an authoritative record must bind:\n\n| Binding dimension | What it fixes | Why it is required in this scenario |\n|---|---|---|\n| Effect identity | event_id and a stable effect ID, unique per audit event and reusable for dedup/replay | A retry must address one committed reservation, not create a second acceptance |\n| Actor and delegation | actor_id / delegated_from | Acceptance is only meaningful as an authorized principal's effect |\n| Action and scope | action, resource_kind, resource_id, tenant or resource scope | \"Accepted\" must name which reservation, for which tenant or member |\n| Decision and policy | authorization outcome plus policy_version / artifact_digest | Distinguishes \"permitted\" from \"committed\", and records the rule version applied |\n| Outcome and state revision | decision/outcome/reason_code with pending or unknown distinguished; target state revision | This is the field that separates an attempt from a committed booking |\n| Time | occurred_at and observed_at, with clock/synchronization caveat | Pre-commit origin time versus collection time cannot be conflated |\n| Correlation | bounded correlation_id, not a secret | Links logs, traces and lineage without granting them authority |\n| Integrity | hash, sequence, signature or external append-only witness as designed and tested | Detects tampering, gaps and reordering after the fact |\n| Classification and retention | handling restrictions and deletion/retention contract | The record must survive and be accessible under a defined policy |\n| Commit boundary | the consistency mechanism between record and state: atomic local transaction, durable handoff, or reconciliation with declared failure behavior | Without it, the record is only a better-formatted log |\n\nThe last row is what makes the other rows authoritative. The book is explicit that the design requires a real implementation of atomicity/consistency to claim the audit reflects committed state, and that a diagram does not guarantee a transactional outbox or an audit record written atomically with another database. It also states the policy contradiction directly: sending an audit record asynchronously on a best-effort channel while promising no evidence gaps is a contradiction; if audit must agree with authoritative state, define transactional or reconciliation mechanisms and their failure behavior (tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail).\n\nOrdering alone cannot substitute for the boundary. The outbox page shows both unsafe orders: database-then-broker can commit the reservation and crash before publishing, while broker-then-database can publish a purported acceptance and later roll back the reservation. The guarantee is conditional on actual atomic insertion; an intent record written after a completed business transaction still leaves a failure window (tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders). The same two windows apply to any log or notification emitted outside the local commit, which is why the book requires a tested commit boundary and a safe identity/corruption model before calling an audit durable (tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence).\n\nApplied to the booking: the authoritative record must say that effect E (the reservation identity) was created or transitioned to the CONFIRMED revision by actor A under policy version P, with a committed outcome at database commit time T, protected by integrity reference I, classified and retained under rule R — and it must be committed within the same local transaction as the reservation row, or through a durable handoff whose reconciliation is defined and tested. A record that says only \"accepted\" without the effect identity, the state revision and the outcome is an audit-shaped log.\n\nApplied to the report: the analogous binding is provenance at artifact granularity — report artifact identity, the job/version/run that produced it, the input dataset versions actually read, the known field-level mapping, the aggregation and anonymization rules, and the artifact's own values. The book supplies the record-link shape and the warning that unknown mappings stay unknown; it does not define a report-specific audit schema (inference; see Unknowns).\n\n## 5. Boundaries, contradictions and unknowns\n\n- The examples are fictional. The book states plainly that no test ran for the rollback-after-accepted-log case, the commit-during-log-export-failure case or the partial-lineage case (tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test). Nothing here is a production observation.\n- The audit envelope is an explicitly illustrative contract: it is not an OpenTelemetry schema and does not assert that any signature or witness implementation exists. Which sensitive fields are admissible, how long they remain and whether they are immutable require actual policy decisions and cannot be invented by the book (tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail; tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit).\n- The kept tension: the audit record is defined as the record that states what committed, yet its authority is conditional on an implemented and tested consistency mechanism. A schema, a diagram or a retention promise is not that mechanism. This contradiction is resolved only by tested behavior and independent integrity controls — tamper evidence and complete event capture require independent engineering controls, and encryption at rest alone does not prove integrity (tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries).\n- OpenLineage does not prove the accuracy of producer-emitted lineage or hidden column dependencies; the book's source ledger marks those limits explicitly and leaves the formal immutable audit-evidence implementation, signature/key rotation and tamper test as research gaps (tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#7-source-to-claim-ledger-and-research-gaps).\n- Unknown for this scenario: whether the warehouse edge is producer-declared or run-observed; whether the log was sampled, buffered or duplicated; whether the \"accepted\" line was written by the service at all; what anonymization method the report applies and whether it meets any stated privacy requirement; whether the report artifact is fresh; and which policy governs admission, retention and immutability of the audit record. None of these can be settled from the records described.\n- Deliberately not claimed: that logs are useless (they are diagnostic context and can time-correlate a rollback), that lineage is useless (it routes investigation and supports impact analysis), or that an audit record alone proves the state (it must be bound to the commit boundary).\n\n## 6. What to do when the records disagree\n\nThe book's recovery sequence is: query authoritative effect identities and committed revisions under authorized access; reconcile telemetry and trace observations against those records rather than redefining truth; identify dropped or duplicated log windows and missing dataset/lineage events; rebuild derived views from a versioned state source only if their replay contract allows; report uncertain results as uncertain while preserving access and retention policy. It also warns never to silently regenerate an \"approved\" event merely because a process ran (tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence; tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records).\n\nFor the scenario: read the reservation row (or its effect/event table) by effect identity at a consistent point; if the row is committed at revision N, acceptance is established by that state plus the audit record bound to revision N, not by the log. For the report: open the artifact that is actually published, record its digest and the job/run and input versions that produced it, and state which column mappings are known and which are unknown. Where either check is unavailable, the correct output is \"unknown\", not a story reconstructed from the log line or the graph edge.\n\n## 7. Evidence map\n\n| Claim | Section keys |\n|---|---|\n| C1 pre-commit line records attempt, not outcome | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence; tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records |\n| C2 best-effort capture both ways | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence; tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records |\n| C3 self-report and forgery | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail |\n| C4 audit must agree under defined mechanism | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail; tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit |\n| C5 ordering windows and atomic insertion | tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders; tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence |\n| C6 edge is dataset-level dependency | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace |\n| C7 multi-output attribution failure | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval |\n| C8 content needs artifact, versions, run, mapping | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace; tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval; tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records |\n| C9 effect identity | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail; tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders |\n| C10 actor, action, scope, policy | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail; tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage |\n| C11 outcome and state revision | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail |\n| C12 time, correlation, integrity, retention | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail |\n| C13 integrity and retention controls | tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries; tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage |\n| C14 reconciliation and declared uncertainty | tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence; tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records |\n| C15 lineage binding shape | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace; tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval |\n| C16 illustrative contract, fictional, untested | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail; tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test |\n| C17 different products, not equivalent | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#purpose-and-mission; tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission; tycho.chapter.49cb8db3af4e406ea6988c8e5e852acf#decision-and-worked-result |\n| C18 separate identities | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#2-correlation-without-recording-credentials |\n| C19 absence and counts | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries; tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing |\n| C20 source limits | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#7-source-to-claim-ledger-and-research-gaps |\n\n## Unknowns and abstentions\n\nNo claim is made that this particular booking's log was false, or that the warehouse lineage is wrong; the argument is about evidential warrant, not about the truth of either record in this instance. Unknowns retained: the anonymization method and any privacy guarantee of the report; whether the lineage edge is declared or observed; the audit store's actual atomicity, retention and tamper controls; the governing policy versions; and whether any of the proposed negative tests — rollback after an accepted log, commit during log-export failure, partial multi-output lineage — has ever been executed here. The book records that none did.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A log line written before the database commit records an attempt or intent at emission time, not a durable outcome; the transaction can still fail, leaving a persisted line that misstates accepted state.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "An operational log such as \"reservation requested\" may be emitted before the database transaction commits. It is valuable diagnostic context, but it is **not evidence of accepted state**.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "the application emits \"booking accepted\", then its database transaction fails; the log sink persists the line",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records",
+          "quote": "a successful log write preceding a rolled-back transaction cannot certify a durable business mutation",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Log capture is best-effort: a sink can be unavailable while an authorized commit succeeds, so a missing line is not evidence that no booking committed, and a present line is not evidence that one did.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "Likewise, a log sink may be unavailable while an authorized operation commits successfully.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "Another request commits a booking while the log collector is down.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records",
+          "quote": "a missing log is not proof that booking disappeared",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A log is emitted by the same application whose state claim is in question; it can express intended rather than completed behavior and can be forged, so it lacks the isolation and append integrity an accountability record needs.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "An audit event has to say **what happened**, not just what code intended to do.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "A compromised application may forge its own logs",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "Stronger isolation/append integrity/verification is necessary for accountability",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "For an audit or effect record to agree with authoritative state, it must be written under a defined transactional or reconciliation mechanism with declared failure behavior; asynchronous best-effort audit cannot promise completeness.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "When audit must agree with authoritative state, define transactional or reconciliation mechanisms and their failure behavior.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "Sending an audit record asynchronously on a best-effort channel while promising no evidence gaps is a contradiction.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "This design requires a **real implementation of atomicity/consistency** to claim the audit reflects committed state.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Any record emitted outside the local commit has an ordering window: emitting after the commit can lose the record, emitting before it can publish an acceptance that is later rolled back; only a shared atomic boundary or tested reconciliation closes both windows.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+          "quote": "Naive sequence **DB then broker** can commit the reservation and crash before publishing. Naive sequence **broker then DB** can publish a purported acceptance and later roll back the reservation.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+          "quote": "The source's event-intent guarantee is conditional on **actual atomic insertion**.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "Do not claim an audit is durable without a tested commit boundary and safe identity/corruption model.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A lineage edge is a job/run/dataset-level data-flow relationship; it states dependency at dataset or partition level, not a row- or column-level content mapping.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval",
+          "quote": "data-flow metadata relates those executions to datasets and their change over time",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace",
+          "quote": "The existence of a shared job does not prove every input field affects every output field. Unknown column-level mappings must be marked unknown.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval",
+          "quote": "Existence does not establish validity or freshness",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "In multi-output processing, one input can feed one output without appearing in another; inferring that every booking attribute appears in an anonymized usage report merely because both outputs came from the same job is false.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval",
+          "quote": "**Synthetic example:** one job reads public catalogue descriptions and device booking status to produce a public listing; a second output aggregates only anonymized usage counts. It would be false to infer that every booking attribute appears in the usage report merely because both outputs came from one job.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval",
+          "quote": "Lineage should preserve actual mapping and processing semantics.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "The report's contents are produced by a transformation that aggregates and anonymizes, so establishing them requires the specific output artifact plus dataset versions, transformation job/version/run identity and any actually known field-level mapping, not a graph edge.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace",
+          "quote": "source dataset namespace/name/version → transformation job/version/run → output dataset namespace/name/version, plus any qualifying field-level relationship actually known.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval",
+          "quote": "A start event is not completion proof",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records",
+          "quote": "That business approval or row-level correctness was achieved",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "An authoritative audit record must bind a stable effect or event identity so retries and replays address one committed effect rather than duplicating acceptance.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "| event_id | Uniquely identifies one audit event for dedup/replay |",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "a stable effect ID",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+          "quote": "Retry command with stable business identity",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "It must bind the accountable actor, including delegation, the exact protected action and resource/tenant scope, and the authorization decision with the policy version that governed it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "actor/role reference within authorized access, tenant or resource scope, operation type",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "| actor_id / delegated_from | Authenticated service or principal and delegated authority |",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "| policy_version / artifact_digest | Versioned policy and software identity relevant to the decision |",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+          "quote": "Business audit | Who was authorized to change what authoritative state, and what committed?",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "It must bind the durable business outcome and the resulting authoritative state revision, distinguishing a pending or unknown result from a committed one.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "target state revision, commit time and an integrity mechanism",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "| decision / outcome / reason_code | Authorization outcome versus durable business outcome; distinguish pending/unknown |",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "It must bind origin and observation times with clock caveats, a bounded correlation identifier, an integrity reference, and a classification and retention rule.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "| occurred_at / observed_at | Origin and collection times, with clock/synchronization caveat |",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "| correlation_id | Bounded link to eligible traces or business event, not a secret |",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "| integrity_reference | Hash/sequence/signature or external append-only witness as designed and tested |",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "| classification / retention_rule | Handling restrictions and deletion/retention contract |",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Integrity and completeness need independent engineering controls: tamper evidence, sequence, hash, signature or external witness, access limits and policy-driven retention; encryption at rest alone does not prove integrity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+          "quote": "Tamper evidence and complete event capture require independent engineering controls; encrypting at rest alone does not prove integrity.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+          "quote": "A shared audit service must enforce subject/object/tenant permissions and safe access histories.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+          "quote": "Policy, legal/contract owner, deletion and access scope",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Resolving a disagreement requires querying authoritative effect identities and committed revisions at a consistent point, reconciling telemetry and lineage against them, and reporting gaps as uncertainty rather than reconstructing records.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "Query authoritative effect identities and committed revisions under authorized access.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "Reconcile telemetry and trace observations against those records rather than redefining truth.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "Report uncertain results as uncertain, and preserve the investigation's access/retention policy.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records",
+          "quote": "never silently regenerate an \"approved\" event merely because a process ran",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "For a derived report the lineage binding shape is source dataset version → transformation job/version/run → output dataset version, plus every field-level relationship that is actually known.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace",
+          "quote": "source dataset namespace/name/version → transformation job/version/run → output dataset namespace/name/version, plus any qualifying field-level relationship actually known.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval",
+          "quote": "Lineage should preserve actual mapping and processing semantics.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Tycho's audit envelope is an explicitly illustrative contract; its examples are fictional, policy choices about admissible fields, retention and immutability cannot be invented, and no negative test ran.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "Which sensitive fields are admissible, how long they remain and whether they are immutable require actual policy decisions; they cannot be invented by a reference book.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "Fields are a **Tycho illustrative contract**, not a claim that OpenTelemetry defines this audit schema or that any signature implementation is present.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test",
+          "quote": "**No test ran** for any of these cases.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Logs, audit records and lineage answer different questions; placing them in one search system or carrying one correlation ID does not make them equivalent or complete.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#purpose-and-mission",
+          "quote": "Putting all four in the same search system does not make them equivalent or complete.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+          "quote": "These are different evidence products with different completeness, identity, privacy and retention requirements.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.49cb8db3af4e406ea6988c8e5e852acf#decision-and-worked-result",
+          "quote": "Three records about one operation can legitimately disagree in completeness; a log line alone does not prove an authorized commit.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Event identifiers, idempotency keys, transaction or outbox IDs, trace IDs and dataset/job/run identities are separate concepts, so a shared correlation ID does not upgrade a log line or a lineage edge into evidence of committed state or report content.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries",
+          "quote": "An event ID, request idempotency key, transaction/outbox ID and trace ID are separate concepts.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#2-correlation-without-recording-credentials",
+          "quote": "**Business/event ID:** authoritative domain operation or durable event, access-controlled according to data sensitivity.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#2-correlation-without-recording-credentials",
+          "quote": "**Dataset/job/run identity:** lineage between inputs and derived outputs.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Absence of a span or log is not proof that an operation did not happen, and a trace or log count does not decide how many business operations committed; authoritative tables and idempotency outcomes decide.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries",
+          "quote": "Unsampled requests or collector/exporter drops; absence of a span is not proof that an operation did not happen.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing",
+          "quote": "An analyst who counts traces concludes there were two registration attempts, but that does **not** tell whether there were one or two committed business registrations.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing",
+          "quote": "The authoritative registration/event tables and idempotency outcomes decide the count.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The cited public sources support only narrow representation claims: OpenTelemetry's log data model is an interoperable record shape rather than a durable authoritative audit guarantee, and OpenLineage does not prove the accuracy of producer-emitted lineage or hidden column dependencies.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#7-source-to-claim-ledger-and-research-gaps",
+          "quote": "Interoperable log shape, not durable authoritative audit guarantees",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#7-source-to-claim-ledger-and-research-gaps",
+          "quote": "Does not prove accuracy of producer-emitted lineage or hidden column dependencies",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#7-source-to-claim-ledger-and-research-gaps",
+          "quote": "No generic observability document alone establishes those properties.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.49cb8db3af4e406ea6988c8e5e852acf#decision-and-worked-result",
+    "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records",
+    "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#2-correlation-without-recording-credentials",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#4-data-lineage-is-not-a-request-trace",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#7-source-to-claim-ledger-and-research-gaps",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#purpose-and-mission",
+    "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+    "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+    "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+    "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

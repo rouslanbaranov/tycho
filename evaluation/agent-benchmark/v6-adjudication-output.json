@@ -1,0 +1,47 @@
+{
+  "status": "ai-adjudicator-not-human",
+  "items": [
+    {
+      "task_id": "Q204",
+      "pass": false,
+      "core_claims_met": 5,
+      "core_claims_total": 6,
+      "notes": "Scope mismatch, 600/s envelope, routing skew, quota-store failure contract, overshoot/reconciliation and rate-versus-concurrency (with deadlines and a count-and-age-bounded queue) are all covered. The acceptance-boundary claim is absent: the answer never distinguishes accepted-pending from completed and never requires reconciliation of an unknown-after-commit outcome by stable identity rather than blind retry."
+    },
+    {
+      "task_id": "Q206",
+      "pass": true,
+      "core_claims_met": 6,
+      "core_claims_total": 6,
+      "notes": "All six core claims are addressed: modulo remap, first-node-clockwise ring bound, the 1/N expectation versus guarantee, token-induced failure/load cost, hot-key indivisibility, and node-loss repair with hinted handoff and anti-entropy. The 16-to-17 arithmetic is wrong (16/272 = 1/17 ≈ 5.9% of keys stay, not 1/272), but the qualitative claim that almost all mappings move is correctly asserted and the error does not erase coverage."
+    },
+    {
+      "task_id": "Q215",
+      "pass": false,
+      "core_claims_met": 5,
+      "core_claims_total": 6,
+      "notes": "Non-additivity, request weighting, double dilution of short crises, bucket-boundary retention, downsampling loss and the verify-don't-trust check are covered. The instrumentation claim is not: there is no logical operation ID spanning retries, no attempt/admission/final-outcome record with explicit unknown and timeout, no route/operation classification, and no reconciliation after lost acknowledgments."
+    },
+    {
+      "task_id": "Q234",
+      "pass": false,
+      "core_claims_met": 5,
+      "core_claims_total": 6,
+      "notes": "Probe contract versus journey, green-versus-reject mechanisms, SLI population/denominator/owner, retry hysteresis with the 80% vendor figure and the declaration list are covered. The recovery half of the success claim is missing: the answer never states that recovery means the correct journey is restored and sustained rather than process liveness or a green dashboard after data divergence."
+    },
+    {
+      "task_id": "Q235",
+      "pass": false,
+      "core_claims_met": 4,
+      "core_claims_total": 6,
+      "notes": "Kill-switch skew, fail-safe defaults, permission/authorization separation with cache-policy independence, and snapshot/evaluation guarantees are covered. The lifecycle claim omits rejecting a flag that hides a broken deployment in favor of a canary or branch-by-abstraction and does not state that permanent flags become configuration debt; the publication claim omits schema and cross-field validation and stable exposure-cohort selection."
+    },
+    {
+      "task_id": "Q247",
+      "pass": false,
+      "core_claims_met": 5,
+      "core_claims_total": 6,
+      "notes": "Empty-list validity versus decision sufficiency, constraint semantics, decision-record obligations and constraint laundering are covered, and the answer correctly corrects the premise to empty-list rather than literal omission. It denies the gate-failure clause: it reports that the scenario-to-decision constraint link is unenforced and a record declaring its own constraints still passes V12-E, so the claim that such a record fails the gate is contradicted rather than covered."
+    }
+  ]
+}

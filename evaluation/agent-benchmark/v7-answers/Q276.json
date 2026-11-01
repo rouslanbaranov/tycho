@@ -1,0 +1,373 @@
+{
+ "task_id": "Q276",
+ "answer": "# Q276 — Why a transactional inbox cannot make an external email send exactly once\n\n## Session, layers and evidence status\n\nLayers used: **book** (V04/C04 retry, intent identity, dedup authority and retention;\nV04/C05 inbox atomicity and the outbox/inbox route; V04/C07 consumer offsets) and **atlas**\n(Transactional Inbox, Idempotent Receiver and Idempotency Key cards, v11). Snapshot\n`4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a`; ranker\n`tycho-section-fts5-bm25-v5`.\n\nBook text is evidence, not proof. The owner pages label their derivation rules as Tycho\nsynthesis, and the four-window consumer trace is \"original reasoning and was not executed\".\nNothing below is a production measurement.\n\n## Facet matrix\n\n| Facet | Query formulations tried | Evidence |\n|---|---|---|\n| F1. What the inbox commit covers | \"inbox pattern consumer idempotency\", \"transactional inbox local transaction\", atlas card lookup | `eba0d0…#3-inbox-and-consumer-local-atomicity`, `aa810d…#purpose-and-decision-question` |\n| F2. Crash window and redelivery | \"exactly once email side effect\", \"crash between DB and external delivery\", \"notification consumer email\" | `eba0d0…#3`, `69fe87…#5-message-redelivery-and-consumer-effects`, `d97d84…#4-consumer-offset-effect-and-crash-points` |\n| F3. Marker identity and scope | \"inbox table message id unique constraint\", \"consumer identity message identity composite\", \"two consumers same event\" | `eba0d0…#3`, `69fe87…#bounded-pattern-ownership-notes`, `d20ce2…#1-distinguish-five-identities` |\n| F4. Retention versus replay | \"retention replay window duplicate after expiry\", \"dedup marker TTL\", \"replay horizon\" | `eba0d0…#3`, `69fe87…#bounded-pattern-ownership-notes`, `33399db…#6`, `d97d84…#rebalance-external-effects-and-expired-replay-positions` |\n| F5. When the inbox is the wrong tool | \"inbox contraindications\", \"when not to use an inbox\", \"cost duplicate risk\" | `c93415…#overview`, `8d1dbd…#overview` |\n| F6. Alternatives and key contract | \"outbox dual write atomic\", \"idempotency key downstream api\", \"inbox versus outbox\" | `c93415…#overview`, `aa810d…#purpose-and-decision-question`, `aa810d…#integrated-decision-and-reading-route`, `d9c13b…#overview`, `5eda4c…#overview` |\n\n## 1. What the inbox actually buys\n\nAn inbox commits two things in one local transaction: the consumer's processed-event\nidentity and the consumer's local business effect. That is the whole guarantee. It converts\nat-least-once redelivery into at-most-once *local* processing for one consumer and one\nmessage identity.\n\nThe scope is explicitly local. The integrated V04/C05 route states the inbox question as\n\"how can a downstream owner apply a redelivered event without duplicating its local business\neffect?\" — not how to make a remote provider call happen once. The card and owner page both\nsay the mechanism is bounded, and the atlas card warns that it \"does **not** guarantee\nexactly-once side effects outside its local authority\".\n\nSo the email is not inside the inbox transaction because the handler invokes it inside the\nsame function. It is a second authority with its own commit, and \"it cannot include an\nindependently committed email or remote API call merely because the local handler invokes\nit\". That second boundary \"needs its own durable intent, idempotency or reconciliation\ncontract\".\n\n## 2. Why the email is not sent exactly once: the crash trace\n\nTake the stated sequence literally: insert the processed marker, crash, redeliver the next\nday. The next delivery finds the marker and skips. The email was never sent. That is a lost\neffect, not an exactly-once effect.\n\nThe book states this case almost verbatim as a fictional failure: \"a notification consumer\nwrites a processed marker then crashes before making an external non-idempotent send. On\nredelivery it may falsely skip the missing send.\"\n\nThe mirror ordering is no better: send first, record after, crash between. The marker is\nabsent and the message is reprocessed, so the email is sent twice. Ordering cannot fix it:\n\"No perfect ordering of two independent commits creates an automatic global transaction.\"\nKafka transactions do not help by themselves either; a Kafka transaction \"does not\nautomatically enclose an unrelated SQL commit, payment provider or email delivery.\"\n\nSo the honest crash table for this handler is:\n\n| Crash point | Durable state | Next redelivery | Outcome |\n|---|---|---|---|\n| Before marker commit | No marker, no send | Reprocessed | One email |\n| After marker, before send (the scenario) | Marker only | Skipped | Email lost |\n| After send, before marker | Send only | Reprocessed | Email duplicated |\n| After marker and send, before ack | Marker and send | Skipped | One email, ack uncertain |\n| After marker expiry (day 8–30 replay) | Marker gone | Treated as new | Email duplicated |\n\nOnly the first and fourth rows look correct, and each depends on an ordering or a timing\nthat the crash schedule does not guarantee. Exactly-once needs both halves at once — no loss\nand no duplicate — across two authorities. A local marker supplies neither half for the\nremote effect; it records a decision, not a delivered email.\n\nTwo further facts explain why this is structural rather than a bug in one handler:\n\n- At-least-once is the documented default. \"Kafka guarantees at-least-once delivery by\n  default.\" Redelivery is the normal condition.\n- Acknowledgement is a separate uncertain step. Tycho's recovery rule is to \"retry the local\n  transaction, reconcile in-progress records, and treat the acknowledgement as a separate\n  uncertain step.\"\n\nThe book's conditional claim is blunt: if the downstream cannot commit with a stable effect\nkey or offer readback, \"the caller may be unable to give an exactly-once **business**\nguarantee. Say **unknown** and design recovery rather than promising idempotence through an\ninterface wrapper.\" A wrapper that calls the provider and writes a marker is exactly such a\nwrapper.\n\nIf the send's outcome is genuinely ambiguous, that ambiguity must be resolved, not inferred.\nThe offsets page's matrix lists \"Kafka output delivered, external email fails\" as \"Kafka\nrecord exists; mail outcome ambiguous\" and requires a \"Separate consumer dedup/retry and\nreconciliation contract\". The dedup table row is the same rule: a crash between DB and\nexternal delivery needs \"External idempotency or durable reconciliation; local DB cannot make\nremote effect atomic\".\n\n## 3. The identity the marker must have\n\nThe marker identity must be a composite, not the message id alone:\n\n1. **Consumer identity.** \"The identity must include the correct subscriber and event/effect\n   scope; two different consumers legitimately process the same event into different local\n   states.\" A second consumer of the same event keeping its own local table is therefore\n   correct, not a conflict. If several consumers share one dedup store, the key must be a\n   composite of consumer identity and message identity.\n2. **Message/event identity.** Stable across broker redeliveries, restarts and replays. Not\n   the transport attempt and not a per-handler sequence number.\n3. **Effect scope.** The marker names one externally observable effect of that consumer.\n   The \"Consumer-effect key\" row warns against \"Deduplicating only a transport packet\", and\n   the event ID \"is not necessarily the business command ID, nor the notification-delivery\n   effect ID\". Equating event, command and delivery-effect identities is safe only when\n   their semantic scopes really coincide.\n4. **Owner/tenant scope.** \"A retry identity must be scoped to the relevant\n   owner/tenant/principal and operation semantics.\" A tenant-colliding key is a\n   cross-tenant suppression bug, not idempotency.\n\nStorage arbitration belongs to the store, not to application code: the same-key insert must\nbe decided by a uniqueness constraint or conditional write, so two concurrent deliveries can\nattempt the insert but only one succeeds. \"An in-memory set can deduplicate within one live\nprocess but fails across replicas, restarts and retained events.\"\n\nFor the email specifically, the marker that matters is not the inbox row alone. The route\nthat matches the book is a durable **send-intent record** keyed by the same composite\nidentity, with an in-progress state before the call and a completed state with the observed\noutcome after it, plus a provider-side idempotency key derived from that identity so the\nprovider can arbitrate the duplicate. The inbox row then suppresses duplicate *local work*;\nthe send-intent record and the provider key are what make the send recoverable.\n\n## 4. Retention: seven days cannot cover a thirty-day replay\n\nThe rule is stated three ways in the evidence and they agree:\n\n- \"Retain each record at least as long as the broker can still redeliver the original\n  message.\"\n- \"Set a time-to-live on deduplication records that exceeds this window, so that a late\n  redelivery still finds its marker.\"\n- \"The marker lifetime must cover the maximum broker redelivery, DLQ replay and historical\n  replay horizon; a shorter window turns an expired identity into a new message and can\n  duplicate the effect.\"\n\nWith a thirty-day replay horizon, a seven-day marker is a latent duplicate bug for every\nredelivery between day 8 and day 30. The expired identity is not recognized, the consumer\ntreats the message as new, and the email goes out again. This is the same failure the\nretention table names as \"Old request replays after key expiry\": \"A finite retention window\ncannot promise deduplication forever; reconcile by durable business identity.\"\n\nExpiry also needs an explicit policy, not a default. The guidance is to \"name a cleanup\nowner, retain the dedup evidence for the declared window, and define post-expiry behavior\nexplicitly - reconcile or reject, never silently treat it as new.\" \"Reconcile\" means\nchecking durable business identity (for example the provider's own record or a durable\nsend-intent row) rather than assuming the message is new. \"Reject\" means dead-lettering or\nfailing visibly.\n\nTwo retention corollaries matter here:\n\n- Provider-side retention is part of the window. An idempotency key at the email provider\n  that expires before the replay horizon reopens the duplicate window at the provider, even\n  if the local marker is still present.\n- Broker history expiry is itself a data decision. If the requested position no longer\n  exists, a reset \"cannot recreate deleted records\", and a silent reset can turn a recovery\n  failure into \"apparently healthy but incomplete output\". The 7/30 mismatch is therefore\n  both a duplicate risk and a completeness risk.\n\nA finite window cannot do more than this. Beyond the horizon, the only correct mechanism is\nreconciliation by durable business identity, not an endless marker table.\n\n## 5. When an inbox is the wrong choice\n\nThe card's hard contraindications are direct: \"Reject when the consumer is naturally\nidempotent, when identity cannot be retained, or when the effect spans multiple\nauthorities.\" The Idempotent Receiver card adds \"when identity is unstable, or when\ndeduplication state cannot be retained\". In practice the inbox is the wrong primary tool\nwhen:\n\n1. **The effect is external and non-idempotent (this email).** The inbox cannot span it. Use\n   an outbox plus a provider idempotency key and reconciliation, or accept an explicit\n   at-most-once/at-least-once choice. The inbox is still fine for the local state, but it is\n   not the mechanism that makes the send safe.\n2. **The consumer is already naturally idempotent.** A conditional update, upsert or\n   naturally commutative effect needs no marker table; the book's source guidance is to\n   prefer naturally idempotent operations.\n3. **The effect spans multiple authorities.** One local commit cannot cover two systems;\n   pretending otherwise just moves the failure.\n4. **Identity is unstable or unavailable.** No stable message/event identity means no\n   reliable key.\n5. **The identity cannot be retained.** No TTL, no cleanup owner, or a table whose growth\n   cannot be operated means the dedup guarantee expires unpredictably.\n6. **Cost exceeds the duplicate-impact risk.** The card's competing alternative is a unique\n   constraint/conditional insert, a producer outbox or an idempotent downstream API, and the\n   choice reverses \"when the inbox table and retention cost exceed the duplicate-impact\n   risk\".\n7. **Only the remote effect matters and loss is worse than duplication.** Marker-before\n   turns redelivery into a silent loss. If a missed email is unacceptable and a duplicate is\n   tolerable, an at-least-once send with a provider key is safer than an inbox that suppresses\n   the retry.\n8. **Ordering is required.** Deduplication removes duplicates but does not order events; an\n   inbox is not a resequencer.\n\nAlternatives have limits too: a producer outbox gives durable intent, not atomicity with the\nbroker or exactly-once delivery, and \"writing an outbox does not make a remote notification\natomic with the original transaction; relay and receiver failures still need recovery.\"\n\nThe outbox card makes the same conditionality explicit from the producer side. It fits when\nthe database can share a local transaction, a relay can publish later within a bounded age,\nduplicate publication is deduplicated, and relay ownership and retention are explicit. It\nshould be rejected when the state store cannot share the transaction with an outbox, when\npublication latency is unacceptable, or when no relay is operated. Its own crash windows --\npublish before completion duplicates, commit before publish retries, a poison row blocks\nprogress -- show that it relocates the duplicate problem rather than removing it, and that\nbounded attempts plus repair evidence are part of the design, not an afterthought.\n\n## 6. What this team should change\n\n1. Keep the local inbox for local state, but stop treating it as the email guarantee.\n2. Add a durable send-intent row keyed by (consumer, event, effect), written in-progress\n   before the provider call and completed with the provider's identifier and outcome after\n   it.\n3. Send a provider idempotency key derived from the same composite identity, and verify the\n   provider's retention covers the replay horizon.\n4. Reconcile in-progress or stale intent rows before acknowledging; treat an unknown outcome\n   as unknown, not as success or failure.\n5. Raise marker retention above the 30-day replay horizon with margin, name the cleanup\n   owner, and define post-expiry behavior as reconcile-or-reject.\n6. Keep the second consumer's table separate (or key a shared store by consumer identity);\n   never share a bare message-id table across consumers.\n7. If the provider offers neither an effect key nor readback, make the at-most-once versus\n   at-least-once choice explicit and document it as a business risk, not an idempotency\n   claim.\n\nIf the inbox/idempotency-key route is kept, the key contract needs published scope,\nfingerprint inputs, retention, a cleanup owner, and an in-progress/completed record around\nthe external call, with stale in-progress records reconciled \"before acknowledging\nredelivery\". Expiry ends historical deduplication, and a reused key with changed intent is\n\"a conflict, not idempotency\".\n\n## 7. Evidence map\n\n| Claim | Section keys |\n|---|---|\n| C1 | `eba0d0…#3`, `aa810d…#purpose-and-decision-question` |\n| C2 | `eba0d0…#3`, `eba0d0…#a-four-window-consumer-recovery-trace` |\n| C3 | `eba0d0…#3` |\n| C4 | `d97d84…#4` |\n| C5 | `eba0d0…#3` |\n| C6 | `69fe87…#4` |\n| C7 | `69fe87…#5`, `d97d84…#4` |\n| C8 | `eba0d0…#3`, `69fe87…#bounded-pattern-ownership-notes` |\n| C9 | `eba0d0…#3`, `69fe87…#4` |\n| C10 | `d20ce2…#1`, `69fe87…#5` |\n| C11 | `d20ce2…#1` |\n| C12 | `69fe87…#bounded-pattern-ownership-notes`, `eba0d0…#3` |\n| C13 | `eba0d0…#3`, `33399db…#6` |\n| C14 | `d97d84…#rebalance-external-effects-and-expired-replay-positions` |\n| C15 | `c93415…#overview`, `8d1dbd…#overview` |\n| C16 | `c93415…#overview`, `aa810d…#purpose-and-decision-question` |\n| C17 | `d9c13b…#overview`, `69fe87…#bounded-pattern-ownership-notes`, `c93415…#overview` |\n| C18 | `5eda4c…#overview` |\n| C19 | `5eda4c…#overview` |\n\n(Keys are abbreviated in this table; the claim ledger below carries the exact keys.)\n\n## 8. Unknowns and limits\n\n- The corpus does not fix the 7-day and 30-day numbers; they come from the question. The\n  rule (retention must exceed the replay horizon) is sourced; the specific figures are not\n  independently verified here.\n- No specific email provider's idempotency-key behaviour, retention or readback API was read\n  in this session. The claim that a provider key can arbitrate duplicates is the book's\n  \"idempotent downstream API\" alternative, not a verified provider contract.\n- The V04 pages are proposed manuscript material. The four-window trace and the inbox\n  synthesis are explicitly unexecuted reasoning; the Microsoft and Kafka sentences quoted\n  are public documentation.\n- No duplicate rate, send latency or retention cost was measured; the cost-versus-risk\n  reversal is a decision rule, not a measurement.\n- The second consumer's own table is correct under the sourced rule, but whether the two\n  consumers share a database or a provider account is unknown here; sharing changes the key,\n  not the principle.\n- A redelivery that lands after provider-side key expiry but before local marker expiry is a\n  residual duplicate window this evidence does not close.\n",
+ "claims": [
+  {
+   "claim_id": "C1",
+   "text": "The inbox commits the consumer's processed-event identity and its local business effect in one local transaction, so its guarantee is at-most-once local processing, not an end-to-end effect guarantee.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "An inbox can persist a consumer's processed-event identity and business effect together in **one local transaction**.",
+     "supports": "C1",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+     "quote": "**Inbox/idempotent consumer:** how can a downstream owner apply a redelivered event without duplicating its local business effect?",
+     "supports": "C1",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C2",
+   "text": "An independently committed email cannot be pulled into that transaction: the local commit cannot include it, so it needs its own durable intent, idempotency or reconciliation contract, and the inbox does not guarantee exactly-once side effects outside its authority.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#a-four-window-consumer-recovery-trace",
+     "quote": "This boundary covers effects controlled by that transaction. It cannot include an independently committed email or remote API call merely because the local handler invokes it. That second boundary needs its own durable intent, idempotency or reconciliation contract.",
+     "supports": "C2",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "A transactional inbox does **not** guarantee exactly-once side effects outside its local authority.",
+     "supports": "C2",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C3",
+   "text": "In the stated crash (marker committed, send not attempted) the next-day redelivery finds the marker and skips, so the email is never sent: at-most-once with a lost effect, not exactly-once.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "**Fictional failure:** a notification consumer writes a processed marker then crashes before making an external non-idempotent send. On redelivery it may falsely skip the missing send.",
+     "supports": "C3",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C4",
+   "text": "Reversing the order duplicates the send on the same crash, and no ordering of two independent commits yields a global transaction; a Kafka transaction does not enclose the email delivery either.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+     "quote": "No perfect ordering of two independent commits creates an automatic global transaction.",
+     "supports": "C4",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+     "quote": "**Kafka transaction** can coordinate publication to Kafka partitions and (in supported consume-transform-produce workflows) offsets with Kafka output, but it does not automatically enclose an unrelated SQL commit, payment provider or email delivery.",
+     "supports": "C4",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C5",
+   "text": "Redelivery is the normal condition because Kafka defaults to at-least-once, and the acknowledgement remains a separate uncertain step that cannot close the crash window.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "Kafka guarantees at-least-once delivery by default.",
+     "supports": "C5",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "retry the local transaction, reconcile in-progress records, and treat the\nacknowledgement as a separate uncertain step.",
+     "supports": "C5",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C6",
+   "text": "Without a stable downstream effect key or readback the caller cannot claim an exactly-once business guarantee; the correct state is unknown plus a recovery design.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+     "quote": "If a downstream system can commit independently without supporting a stable effect key or readback, the caller may be unable to give an exactly-once **business** guarantee. Say **unknown** and design recovery rather than promising idempotence through an interface wrapper.",
+     "supports": "C6",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C7",
+   "text": "The external delivery boundary needs external idempotency or durable reconciliation because the local database cannot make the remote effect atomic, and an ambiguous provider outcome must be resolved rather than inferred.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+     "quote": "| Crash between DB and external delivery | External idempotency or durable reconciliation; local DB cannot make remote effect atomic |",
+     "supports": "C7",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+     "quote": "| Kafka output delivered, external email fails | Kafka record exists; mail outcome ambiguous | Separate consumer dedup/retry and reconciliation contract |",
+     "supports": "C7",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C8",
+   "text": "Marker identity must be a composite of consumer/subscriber identity and message/event identity with effect scope; a second consumer of the same event correctly keeps its own table because consumers legitimately apply one event to different local states.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "The identity must include the correct subscriber and event/effect scope; two different consumers legitimately process the same event into different local states.",
+     "supports": "C8",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+     "quote": "If the consumers share a deduplication store,\nkey the records on a composite of the consumer identity and the message identity.",
+     "supports": "C8",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C9",
+   "text": "The store must arbitrate duplicates with a uniqueness constraint or conditional insert; application-level check-then-insert or an in-memory set fails across replicas, restarts and retained events.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "The same Microsoft page requires store-level arbitration: \"Use a uniqueness\nconstraint on the deduplication key such that two transactions can attempt to insert a key,\nbut only one can succeed.\"",
+     "supports": "C9",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+     "quote": "An in-memory set can deduplicate within one live process but fails across replicas, restarts and retained events.",
+     "supports": "C9",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C10",
+   "text": "The marker names one consumer-observable effect, not the transport attempt; event, business-command and notification-delivery identities may differ and may be equated only when their semantic scopes coincide.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+     "quote": "| Consumer-effect key | One externally observable effect applied by a particular consumer | Deduplicating only a transport packet |",
+     "supports": "C10",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+     "quote": "The event ID is not necessarily the business command ID, nor the notification-delivery effect ID. Choosing all three to be equal can be legitimate only if their intended semantic scopes really coincide.",
+     "supports": "C10",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C11",
+   "text": "The identity must be scoped to owner, tenant or principal and to operation semantics, and a finite key window cannot deduplicate arbitrary delayed replay forever.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+     "quote": "A retry identity must be scoped to the relevant owner/tenant/principal and operation semantics. Its retention must be long enough for accepted retry/reconciliation behavior, but a finite key window cannot prevent arbitrary delayed replay forever.",
+     "supports": "C11",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C12",
+   "text": "Retention must exceed the maximum broker redelivery, DLQ replay and historical replay horizon; seven-day markers against a thirty-day replay lose the marker for day 8-30 redeliveries and duplicate the email.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+     "quote": "Retain each record at least as long as the broker can still redeliver the original message.",
+     "supports": "C12",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+     "quote": "Set a time-to-live on deduplication records that exceeds this window, so that a late redelivery\nstill finds its marker.",
+     "supports": "C12",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "The marker lifetime must cover the maximum broker redelivery, DLQ\nreplay and historical replay horizon; a shorter window turns an expired identity into a new\nmessage and can duplicate the effect.",
+     "supports": "C12",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C13",
+   "text": "Post-expiry behaviour must be explicit and owned: reconcile by durable business identity or reject, never silently treat the expired identity as a new message.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "Name a cleanup owner, retain the dedup evidence for the\ndeclared window, and define post-expiry behavior explicitly - reconcile or reject, never\nsilently treat it as new.",
+     "supports": "C13",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+     "quote": "| Old request replays after key expiry | A finite retention window cannot promise deduplication forever; reconcile by durable business identity |",
+     "supports": "C13",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C14",
+   "text": "Broker-side history expiry is itself a data decision: a reset cannot recreate deleted records, and a silent reset can look healthy while being incomplete.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+     "quote": "If the requested offset no longer exists, auto.offset.reset chooses a configured behavior; it cannot recreate deleted records.",
+     "supports": "C14",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C15",
+   "text": "An inbox is contraindicated when the consumer is naturally idempotent, when identity is unstable or cannot be retained, when the effect spans multiple authorities, or when table and retention cost exceed the duplicate-impact risk.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+     "quote": "**Hard contraindications.** Reject when the consumer is naturally idempotent, when\nidentity cannot be retained, or when the effect spans multiple authorities.",
+     "supports": "C15",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+     "quote": "**Hard contraindications.** Reject when the effect is naturally idempotent, when identity\nis unstable, or when deduplication state cannot be retained.",
+     "supports": "C15",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+     "quote": "**Competing alternative.** A unique constraint/conditional insert on effect identity, a\nproducer outbox or an idempotent downstream API. Reverse when the inbox table and retention\ncost exceed the duplicate-impact risk.",
+     "supports": "C15",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C16",
+   "text": "Alternatives are a unique constraint or conditional insert, a producer outbox or an idempotent downstream API; an outbox supplies durable intent, not atomicity with the broker or with a remote notification.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+     "quote": "**Competing alternative.** A unique constraint/conditional insert on effect identity, a\nproducer outbox or an idempotent downstream API. Reverse when the inbox table and retention\ncost exceed the duplicate-impact risk.",
+     "supports": "C16",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+     "quote": "The outbox gives durable intent, not\natomicity with the broker or exactly-once delivery.",
+     "supports": "C16",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#integrated-decision-and-reading-route",
+     "quote": "Writing an outbox does not make a remote notification atomic with the original transaction; relay and receiver failures still need recovery.",
+     "supports": "C16",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C17",
+   "text": "If an idempotency-key or send-intent route is used for the email, the contract needs published scope, fingerprint inputs, retention and cleanup owner, an in-progress then completed record around the call, and reconciliation of stale records before acknowledgement; expiry ends historical deduplication and a reused key with changed intent is a conflict.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview",
+     "quote": "**Good-fit conditions.** Retries are expected; the operation owner publishes key scope,\nfingerprint inputs and retention; the outcome record and effect commit together; a\nsupport-visible record survives the retry window.",
+     "supports": "C17",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+     "quote": "Record the key with an in-progress\nstate, and then perform the external action.",
+     "supports": "C17",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+     "quote": "The consumer should reconcile stale records or route unresolved\ncases for intervention before acknowledging redelivery.",
+     "supports": "C17",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview",
+     "quote": "Expiry ends historical deduplication; a reused key with changed\nintent is a conflict, not idempotency.",
+     "supports": "C17",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+     "quote": "an external send that cannot\njoin the local transaction needs an in-progress/completed record and reconciliation before\nacknowledgement.",
+     "supports": "C17",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C18",
+   "text": "An outbox is a fit only when the state store can share a local transaction, a relay publishes within a bounded age, duplicate publication is deduplicated, and relay ownership and retention are explicit; otherwise it is contraindicated.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+     "quote": "**Good-fit conditions.** The database supports a local transaction; a relay can publish\nlater within a bounded age; duplicate publication is deduplicated; relay ownership and\nretention are explicit.",
+     "supports": "C18",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+     "quote": "**Hard contraindications.** Reject when the state store cannot share a transaction with an\noutbox, when publication latency is unacceptable, or when no relay is operated.",
+     "supports": "C18",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C19",
+   "text": "The outbox's own crash windows (duplicate after publish before completion, retry after commit before publish, a poison row blocking progress) relocate rather than remove the duplicate problem and require bounded attempts and repair evidence.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+     "quote": "A crash after publish before completion duplicates; after commit\nbefore publish retries; a poison row can block progress. Bound attempts/age and keep\nrepair evidence.",
+     "supports": "C19",
+     "status": "observed"
+    }
+   ]
+  }
+ ],
+ "citations": [
+  "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+  "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+  "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#a-four-window-consumer-recovery-trace",
+  "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+  "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+  "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+  "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+  "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+  "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+  "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+  "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+  "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+  "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#integrated-decision-and-reading-route",
+  "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview",
+  "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview"
+ ],
+ "missing_required_anchors": [],
+ "abstain": false
+}

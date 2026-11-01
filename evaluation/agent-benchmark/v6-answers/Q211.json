@@ -1,0 +1,213 @@
+{
+  "task_id": "Q211",
+  "answer": "# Q211 - CDC snapshot, dropped replication slot, and a bounded rebuild\n\n## Onboarding and layer\n\n`describe` was run first. It reports 555 documents, 3132 sections, snapshot\n`4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a`, citation scheme\n`tycho.section-key.v2`, and layers `book`, `atlas`, `modeling-and-simulation`. This question\nneeds the **book** layer only: it asks for mechanism and contract prose (CDC, projections,\nreplication retention, recoverability records), not pattern-registry identity or modeled runs.\nAll retrieval used `--volume book`.\n\n## Facet matrix (6 facets)\n\n| Facet | Query formulations | Evidence used |\n|---|---|---|\n| F1 What a completed snapshot proves | \"change data capture snapshot log position\"; \"consistent snapshot completeness\"; \"snapshot isolation visibility\" | CDC card; CDC state section 1; CDC ownership notes |\n| F2 Snapshot-to-stream handoff | \"snapshot to stream gap\"; \"initial load then change stream boundary\"; \"log position cursor\" | CDC card; CDC ownership notes; CDC state section 1 |\n| F3 Retention, lag and slot invalidation | \"replication slot retention dropped\"; \"consumer lag retention replay window\"; \"retained WAL\" | CDC card; CDC ownership notes; replica-recovery |\n| F4 Derived-state completeness | \"derived state completeness watermark\"; \"materialized view source version\"; \"applied position checkpoint\" | CQRS sections 3, 4 and notes; index-lifecycle 4-5 |\n| F5 What must be recorded | \"relay cursor duplicate publication reconciliation\"; \"recovery point objective\"; \"recoverability contract\" | CDC card; CDC state section 1 and notes; recovery-objects 1 and 3; CQRS notes |\n| F6 Bounded rebuild | \"bounded rebuild scope partition\"; \"incremental snapshot backfill shadow table\"; \"atomic publish generation\" | CDC card; CQRS section 3 and notes; index-lifecycle 4; shadow-migration case; recovery-objects 1 |\n\n## 1. Direct answer\n\nThe snapshot did not prove the derived state was complete because a snapshot proves a\npoint-in-time copy, not an interval. Its no-gap property exists only through the log\nposition that the connector read before scanning and then used as the stream start. A\n\"snapshot completed\" event records that a copy finished; it does not record the boundary\nthat would let anyone decide which later changes are missing. When the slot then falls\nbehind retention and is dropped, the WAL after `restart_lsn` is gone and cannot be\nreconstructed, so the missing interval becomes an unknown rather than a computable one.\nThe derived state is therefore only known to be *snapshot-complete*, never *change-complete*.\n\nTo keep a rebuild bounded, record a durable lineage: slot identity and retention envelope\n(including the oldest still-replayable position); the snapshot's consistent log position and\nsnapshot identity; the per-partition applied watermark committed atomically with the derived\nrows; the alignment between WAL position, topic offset, state checkpoint and sink commit; the\nderivation and schema versions; the idempotency identity; verification evidence; and the\ndeclared recovery point with its reconciliation contract. Those records decide whether a\nbounded resume is possible, and if not, which recorded scope must be re-snapshotted.\n\n## 2. Mechanism and justification\n\n### 2.1 A snapshot is a copy at a position, not a completeness certificate\n\nThe CDC page's failure section states the actual contract: \"The initial snapshot reads the\nlog position and then streams from it; if the snapshot fails before completion, 'upon restart\nthe connector begins a new snapshot.'\" The ownership notes add that the snapshot \"reads the\ncurrent log position before scanning and then streams from that position, so a successful run\ndoes not miss updates made during the scan.\" The guarantee is conditional on the stored\nposition. Nothing in the snapshot says which changes after that position were applied\ndownstream, nor whether a previously skipped range existed. Completeness is a property of the\ninterval `(P, now]`, and the snapshot only covers the state at `P`.\n\nThis is why a completion flag is the wrong proof object. The same page says the log position,\n\"not the connector's wall clock, is the cursor; a snapshot taken at a defined log position\nestablishes the starting boundary.\"\n\n### 2.2 The handoff is a position, and gap windows are normal\n\nThe state page lists \"snapshot-to-stream gaps\" among common CDC failures and states that\nthe database WAL position, the Kafka partition offset, the application state-store checkpoint\nand the external sink commit \"are not the same cursor. An implementation must document where\ntheir alignment is guaranteed and where duplicates or gaps may be replayed.\" A snapshot that\ncompleted without those alignments leaves the derived store at an unlocatable point on all\nfour cursors. That is the precise gap the question asks about: the connector knew it had\nfinished a scan; the derived state owner could not say from where.\n\n### 2.3 Retention converts lag into an unrecoverable interval\n\nThe CDC card names the mechanism: the slot's `confirmed_flush_lsn` and `restart_lsn` fields\n\"bound what WAL is still available; a slot can be invalidated when `restart_lsn` falls behind\n`max_slot_wal_keep_size`.\" The ownership notes define `restart_lsn` as \"the LSN of the oldest\nWAL that the connector might require\" and are blunt about the outcome: the connector resumes\nfrom the recorded LSN while the slot remains intact, but dropping the slot means \"you will\nlose data\" because the removed WAL cannot be reconstructed. The replica page generalises the\ntrade-off: limiting retention \"can instead leave a stalled consumer unable to continue from\nits old position,\" unlimited retention can exhaust storage, and neither setting \"eliminates\nthe need to monitor slot progress and define reinitialization.\"\n\nSo the slot drop is not a performance incident that a retry fixes. It is the destruction of\nthe only evidence that would have bounded the missing interval. Note also that a position\ndifference \"measures a byte interval; it is not automatically a time-to-catch-up prediction\",\nso \"I will catch up\" is not a completeness argument either.\n\n### 2.4 Derived completeness needs an applied position, not a capture success\n\nCQRS section 3 states the invariant directly: \"A materialized view must record its source\nversion or offset, refresh trigger and freshness contract. A stale view is a derived read,\nnot authority.\" Its failure guidance is \"Resume from a recorded cursor, rebuild with external\nside effects disabled, and represent an unknown or lagging view explicitly rather than\nserving it as current.\" The ownership notes add that the owner publishes \"the position it has\napplied and the staleness callers should expect,\" and that projection failure modes include\n\"cursor gaps, schema drift and partial rebuilds.\" Index lifecycle work reaches the same\nconclusion from the search side: the required check for a lagging index is a \"Version/freshness\ngate and source-pointer validation,\" and the rule is \"One source of truth; index derived,\nrebuildable.\"\n\nCrucially, capture success is at-least-once, not exactly-once: the CDC card warns not to\nassume exactly-once across the database and downstream, because \"on a fault Debezium can emit\nduplicate change events and provides at-least-once delivery.\" Duplicates are tolerable only\nwhen the apply identity is `(key, log position)` and the watermark advances monotonically;\notherwise the derived store cannot even be trusted to be at the position it claims.\n\n### 2.5 What must be recorded (the ledger)\n\nThe card's own Tycho conditions are the seed: \"record the slot, the key/partition policy, the\nsnapshot position and the idempotency identity.\" The rest of the evidence extends it into a\nrecoverability contract. The recoverability contract in the backup chapter lists the shape:\nsystem id and base-backup manifest with hash; \"WAL sequence and archive completeness, timeline\nhistory and recovery stop point\"; incremental ancestry; and \"expected replay duration.\" It\nalso warns that \"timeline and archive retention must permit the actual desired point.\" Applied\nto a CDC-to-derived-state pipeline, record:\n\n1. **Stream and retention envelope.** Slot name, source system/cluster id, `restart_lsn` and\n   `confirmed_flush_lsn` at each checkpoint, and the retention settings that bound them\n   (`max_slot_wal_keep_size`, idle-slot timeout). This is the field that lets a resume attempt\n   be rejected *before* it silently skips WAL.\n2. **Snapshot identity and boundary.** Snapshot id/version, the consistent log position read\n   before scanning, start/end wall clock for diagnostics only, source schema version at that\n   position, and per-table/partition row counts or checksums. The card requires the snapshot\n   position; the CQRS invariant requires a source version or offset.\n3. **Applied watermark.** The position actually applied to the derived store, committed\n   atomically with the rows it describes, per key-partition or shard, monotonically increasing.\n   The state page demands documented alignment of WAL position, topic offset, state checkpoint\n   and sink commit; the CQRS notes demand the published applied position and reject a position\n   that would move the projection backwards.\n4. **Derivation identity.** Pipeline/connector version, code revision, event schema version and\n   compatibility window, and the key/partition policy. Schema drift is listed as an explicit\n   failure state; DDL is not in the logical stream, and Debezium does not support schema\n   changes while an incremental snapshot runs.\n5. **Apply semantics.** Idempotency identity `(key, log position)`, transaction metadata\n   availability, and tombstone/delete interpretation. The card's conditions require consumers to\n   apply changes idempotently by key and log position.\n6. **Verification and publication.** Counts/checksums plus the generation or epoch marker that\n   tells readers which derived generation is complete, with the known limits of those checks\n   (the shadow-migration case records that equal row counts do not prove equal sets, and a\n   matching checksum does not prove every semantic).\n7. **Recovery point and reconciliation contract.** The declared acceptable-loss boundary, the\n   rebuild owner and named procedure, the last known-good watermark, recorded suspect\n   partitions or key ranges, and the expected replay duration. The recovery chapter defines a\n   reconciliation contract as how \"operations accepted after the restored point are identified,\n   replayed, rejected or recovered from other independent evidence\", and the CQRS notes say a\n   rebuild \"needs an owner, a recorded position and a freshness contract\" and must \"preserve\n   log offsets and block outbound effects.\"\n\n### 2.6 How those records bound the rebuild\n\nWith the ledger above, the rebuild decision is a comparison, not a guess:\n\n- If the durable applied watermark `P_a` is still at or above the slot's replayable floor `R`,\n  resume from `P_a`. The work is bounded by the delta `(P_a, now]` and by measured replay\n  throughput, and progress is observable as the watermark advances.\n- If `P_a < R`, or the slot is gone, no incremental path exists. The missing interval is\n  `(P_a, now]` and is not reconstructable from the log. The card's runbook is to \"rebuild from\n  a consistent snapshot rather than assuming the stream is complete\", which is exactly why\n  the *recovery point must be explicit* (state page: \"A missing or expired slot can require\n  resnapshotting the source; that recovery point must be explicit\").\n- The rebuild is bounded in **scope** if watermarks and suspect ranges were recorded per\n  partition: re-snapshot only the partitions below `R`, following the shadow-migration case\n  where a bad target partition merges \"an earlier snapshot ... with later deltas\" and\n  \"rollback and corrective backfill use the recorded suspect partitions.\" Without per-partition\n  records the only defensible scope is the entire derived state, which is the unbounded case.\n- The rebuild is bounded in **time** by the recorded expected replay duration and by the\n  snapshot-plus-delta shape (never a replay from the beginning of history when a snapshot at a\n  new position can restart the lineage).\n- The rebuild is bounded in **correctness** only by verification (counts, checksums, generation\n  publish) and by an explicit unknown-or-lagging representation until verification passes.\n\n## 3. Boundaries and trade-offs\n\n- **Recording the position does not restore exactly-once.** At-least-once delivery and\n  duplicate events on recovery are documented; the rebuild must be idempotent by\n  `(key, log position)` and must disable outbound side effects while replaying. The CQRS replay\n  section is explicit that replaying old events must not resend money, email or notifications.\n- **The four cursors can diverge legitimately.** WAL position, topic offset, state checkpoint\n  and sink commit are different cursors with different guarantees; an implementation must\n  document where alignment is guaranteed and where duplicate or gap replay is possible. A\n  single \"last offset\" field is not a substitute.\n- **Retention is a resource trade-off, not a correctness switch.** Unlimited retention can\n  exhaust storage and, in extreme cases, pressure the database; tight retention makes\n  reinitialization routine. Neither removes the need to monitor slot progress and define the\n  reinitialization procedure.\n- **Counts and checksums are weak completeness proofs.** The shadow-migration case records that\n  two unequal sets can share a count, and that a matching checksum does not prove all data\n  semantics; verification therefore bounds suspicion, not truth.\n- **Structural staleness is separate from row staleness.** Logical decoding does not emit DDL,\n  and Debezium does not support schema changes during an incremental snapshot; a derived store\n  can be row-current and schema-stale, so the schema version belongs in the record.\n- **The answer does not hold when the history is materially infinite.** If the source keeps an\n  archive or a replayable authority log that still covers `P_a`, a dropped slot is recoverable\n  by replay from that archive, and the bound comes from the archive's completeness record\n  instead. If the derived state is disposable and cheap to rebuild completely, boundedness\n  matters less than verifying the new generation.\n- **Some sources cannot retain a slot at all.** The CDC card's contraindications then point to\n  a transactional outbox plus relay or scheduled extraction; those shapes have their own\n  cursor records, and \"dual-write with reconciliation remains an unbound heuristic.\"\n- **A primary-key change has a window in which the JDBC key and the change event disagree**,\n  so key-based rebuilding can mis-scope a row unless that window is handled.\n\n## 4. Evidence map\n\n| Claim | section_key |\n|---|---|\n| Snapshot reads the log position and streams from it; a failed snapshot restarts as a new snapshot | `tycho.page.b92e251caf4b47d58bd3101fde058206#overview` |\n| Slot `confirmed_flush_lsn`/`restart_lsn` bound available WAL; invalidation at `max_slot_wal_keep_size` | `tycho.page.b92e251caf4b47d58bd3101fde058206#overview` |\n| Dropping the slot loses data; removed WAL cannot be reconstructed | `tycho.page.b92e251caf4b47d58bd3101fde058206#overview` |\n| Record slot, key/partition policy, snapshot position, idempotency identity | `tycho.page.b92e251caf4b47d58bd3101fde058206#overview` |\n| Rebuild from a consistent snapshot rather than assuming the stream is complete | `tycho.page.b92e251caf4b47d58bd3101fde058206#overview` |\n| At-least-once delivery, duplicates on fault, DDL absent from the stream | `tycho.page.b92e251caf4b47d58bd3101fde058206#overview` |\n| Log position is the cursor; snapshot at a defined position is the starting boundary | `tycho.page.54c4335d1dd142e8b794daf4768fc3d2#bounded-pattern-ownership-notes` |\n| Four cursors differ; alignment must be documented | `tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input` |\n| Missing or expired slot may require resnapshot; recovery point must be explicit | `tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input` |\n| Materialized view must record source version/offset, refresh trigger, freshness contract | `tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness` |\n| Resume from recorded cursor; rebuild with side effects disabled; unknown view not current | `tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness` |\n| Owner publishes accepted schema, applied position, expected staleness | `tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes` |\n| Rebuild needs owner, recorded position, freshness contract; preserve log offsets | `tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes` |\n| Replay must not repeat external effects; idempotent or atomic cursor record | `tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects` |\n| Index is derived and rebuildable; version/freshness gate for lagging index | `tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria` |\n| Indexing must handle change detection, tombstones, redirects, partial failures, rebuild | `tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem` |\n| Retention bounds a stalled consumer; monitor slot progress and define reinitialization | `tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback` |\n| Position difference is a byte interval, not a catch-up time | `tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback` |\n| Recoverability contract: archive completeness, recovery stop point, ancestry, expected replay | `tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies` |\n| Retention must permit the desired recovery point | `tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies` |\n| Reconciliation contract for operations after the restored point | `tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock` |\n| Recorded suspect partitions enable bounded corrective backfill; checks/count limits | `tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves` |\n| Retention and consumer failure windows are explicit selection criteria | `tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#6-when-kafka-is-inappropriate` |\n\n## 5. Unknowns and confidence\n\nConfidence is **moderate-high for the mechanism** (snapshot boundary, slot invalidation, lost\nWAL, recorded-cursor rebuild) and **moderate for the exact field list**, which is a synthesis\nof several pages rather than a single contractual schema. Open gaps:\n\n- The book does not give per-engine retention defaults, a numeric rebuild-duration SLA, or a\n  standard name for the composite lineage record; the seven-part ledger is my construction\n  from the cited contracts.\n- No bound source exercises a real slot invalidation, a projector crash, or a production\n  rebuild; the CQRS notes state the selected pages \"do not test a projector crash, a cursor\n  protocol or a production rebuild.\" Rebuild duration must be measured locally.\n- The shadow-migration case is a company-reported lifecycle, not a reproduction of all\n  data-quality checks.\n- Whether a given derived store can rebuild with side effects disabled, and whether the source\n  can export a snapshot at a log position, are implementation facts not established here.\n- What would change the answer: proof that the connector persists the snapshot position and\n  that the WAL/archive still covers it would turn an unbounded rebuild into a bounded resume;\n  conversely, a pipeline whose derived store has no per-partition watermarks stays unbounded\n  even with a perfect slot record.\n",
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "What a completed initial snapshot actually proves",
+      "question_part": "Why did the snapshot not prove the derived state was complete?",
+      "evidence": [
+        "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "id": "F2",
+      "facet": "Snapshot-to-stream handoff is a position, not a completion flag",
+      "question_part": "Why did the snapshot not prove completeness?",
+      "evidence": [
+        "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#bounded-pattern-ownership-notes",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input"
+      ]
+    },
+    {
+      "id": "F3",
+      "facet": "Replication slot retention, invalidation and unrecoverable WAL",
+      "question_part": "slot falls behind retention and is dropped",
+      "evidence": [
+        "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#bounded-pattern-ownership-notes",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback"
+      ]
+    },
+    {
+      "id": "F4",
+      "facet": "Derived-state completeness requires an applied, verified watermark",
+      "question_part": "derived state complete",
+      "evidence": [
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+        "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria"
+      ]
+    },
+    {
+      "id": "F5",
+      "facet": "What must be recorded so the loss is bounded and provable",
+      "question_part": "what must be recorded",
+      "evidence": [
+        "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock"
+      ]
+    },
+    {
+      "id": "F6",
+      "facet": "How the record bounds a rebuild's scope, time and correctness",
+      "question_part": "so that a rebuild stays bounded",
+      "evidence": [
+        "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+        "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock"
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+    "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input",
+    "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#bounded-pattern-ownership-notes",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+    "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+    "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#6-when-kafka-is-inappropriate"
+  ],
+  "evidence": [
+    {
+      "claim": "The initial snapshot reads the log position and then streams from it; a failed snapshot restarts as a new snapshot.",
+      "section_key": "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+      "note": "Observed: card Failure and recovery paragraph quoting Debezium (\"upon restart the connector begins a new snapshot\")."
+    },
+    {
+      "claim": "A slot's confirmed_flush_lsn and restart_lsn bound what WAL is still available; restart_lsn falling behind max_slot_wal_keep_size invalidates the slot.",
+      "section_key": "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+      "note": "Observed: card states the slot fields and the max_slot_wal_keep_size invalidation."
+    },
+    {
+      "claim": "Dropping the slot means data is lost because the removed WAL cannot be reconstructed.",
+      "section_key": "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+      "note": "Observed: card quotes Debezium \"you will lose data\"."
+    },
+    {
+      "claim": "The CDC record must include the slot, key/partition policy, snapshot position and idempotency identity.",
+      "section_key": "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+      "note": "Observed: card's explicit Tycho conditions."
+    },
+    {
+      "claim": "Recovery should rebuild from a consistent snapshot rather than assume the stream is complete.",
+      "section_key": "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+      "note": "Observed: card Tycho runbook sentence."
+    },
+    {
+      "claim": "CDC delivery is at-least-once; duplicates occur on fault; logical decoding does not carry DDL.",
+      "section_key": "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+      "note": "Observed: contraindications and failure paragraphs."
+    },
+    {
+      "claim": "The log position, not the connector clock, is the cursor; a snapshot at a defined log position establishes the starting boundary.",
+      "section_key": "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#bounded-pattern-ownership-notes",
+      "note": "Observed: ownership notes opening paragraph."
+    },
+    {
+      "claim": "The initial snapshot reads the position before scanning, so a successful run does not miss updates made during the scan.",
+      "section_key": "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#bounded-pattern-ownership-notes",
+      "note": "Observed; the guarantee is conditional on the recorded position and intact slot."
+    },
+    {
+      "claim": "WAL position, Kafka offset, state-store checkpoint and sink commit are different cursors; alignment must be documented.",
+      "section_key": "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input",
+      "note": "Observed: Important distinctions paragraph."
+    },
+    {
+      "claim": "A missing or expired slot may require resnapshotting the source, and that recovery point must be explicit.",
+      "section_key": "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input",
+      "note": "Observed: Failure and recovery paragraph."
+    },
+    {
+      "claim": "A materialized view must record its source version or offset, refresh trigger and freshness contract.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+      "note": "Observed: Materialized-view invariant."
+    },
+    {
+      "claim": "Resume from a recorded cursor; rebuild with external side effects disabled; never serve an unknown view as current.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+      "note": "Observed: Failure and recovery paragraph."
+    },
+    {
+      "claim": "The projection owner publishes the accepted event schema, the applied position and the expected staleness.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+      "note": "Observed: CQRS Read Projections note."
+    },
+    {
+      "claim": "A rebuild needs an owner, a recorded position and a freshness contract, and must preserve log offsets and block outbound effects.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+      "note": "Observed: Limits note and named-procedure paragraph."
+    },
+    {
+      "claim": "Crash between apply and cursor write can replay the same event; the cursor and derived row must commit atomically or apply idempotently.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects",
+      "note": "Observed: replay section, including the external-side-effect hazard."
+    },
+    {
+      "claim": "The index must be derived and rebuildable, with a version/freshness gate when it lags the source.",
+      "section_key": "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria",
+      "note": "Observed: failure/check table rows."
+    },
+    {
+      "claim": "Indexing must explicitly handle change detection, tombstones, redirects, partial failures and rollback/rebuild.",
+      "section_key": "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+      "note": "Observed: incremental indexing section."
+    },
+    {
+      "claim": "Limited retention can strand a stalled consumer; unlimited retention can exhaust storage; neither removes monitoring and reinitialization.",
+      "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+      "note": "Observed: Retention is a resource commitment paragraph."
+    },
+    {
+      "claim": "A position difference is a byte interval, not a time-to-catch-up prediction.",
+      "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+      "note": "Observed: enrichment contract paragraph."
+    },
+    {
+      "claim": "A recoverability contract records archive/WAL completeness, recovery stop point, incremental ancestry and expected replay duration.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+      "note": "Observed: bulleted contract; directly analogous field list."
+    },
+    {
+      "claim": "Retention must permit the actual desired recovery point.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+      "note": "Observed: closing paragraph."
+    },
+    {
+      "claim": "A reconciliation contract defines how operations after the restored point are identified, replayed, rejected or otherwise recovered.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock",
+      "note": "Observed: recovery objective definitions."
+    },
+    {
+      "claim": "Recorded suspect partitions enable bounded corrective backfill; counts and checksums have epistemic limits.",
+      "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+      "note": "Observed: case gates table and three-phase transition; company-reported, not reproduced."
+    },
+    {
+      "claim": "Retention/egress cost and consumer failure windows are explicit selection criteria for a retained log.",
+      "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#6-when-kafka-is-inappropriate",
+      "note": "Observed: when-Kafka-is-inappropriate section."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": 62000,
+    "estimated": true
+  }
+}

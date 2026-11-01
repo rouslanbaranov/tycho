@@ -1,0 +1,434 @@
+{
+  "task_id": "Q275",
+  "answer": "# Q275 — A composed product page is not a consistent join; the contract is the product\n\n## Scope, layers and method\n\nLayers used: **book** for the mechanism and its boundaries, and **atlas** for pattern identity, fit conditions and contraindications. I also queried modeling-and-simulation once for projection freshness; it returned a V12 validation test matrix rather than a composition or freshness decision artifact, so no claim below depends on that layer. Snapshot: 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a; citation scheme tycho.section-key.v2.\n\nMethod: six decision-relevant facets, two to three formulations per facet, atlas searched separately from book, candidate sections read through tycho_read before citation. Snippets were not treated as sections.\n\n### Facet matrix\n\n| Facet | Query formulations | Evidence (section keys) |\n|---|---|---|\n| F1. Join semantics and consistency across owners | \"API composition join across services\"; \"API composition fan-out\"; \"composition contract deadlines partial retries\" | tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes; tycho.page.ade9759a19a0402594773756d097c11c#overview; tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation |\n| F2. Partial results, empty blocks and degradation | \"partial response degraded read fallback\"; \"graceful degradation partial response\"; \"empty price block fallback product page\" | tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation; tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation |\n| F3. Deadlines and time budgets | \"deadline propagation timeout budget request\"; \"request deadline ingress remaining budget\"; \"timeout budget\" | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets; tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes; tycho.page.364e2c08af2a47249d9d3431346f046c#overview |\n| F4. Retries, duplicate calls and effect identity | \"retry idempotency safe method gateway\"; \"retry idempotency duplicate\"; \"stock call retry\" | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets; tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope; tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview |\n| F5. Maintained read model versus copy or dual write | \"materialized read model CQRS projection\"; \"read model projection staleness\"; \"copying data into another service ownership dual write\" | tycho.page.5c7d91711de3463eba59be2b16c607e4#overview; tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness; tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes; tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders |\n| F6. What the composition contract must declare | \"composition contract deadlines partial retries\"; \"gateway aggregation partial response\"; \"freshness contract stale read version\"; \"BFF composition ownership\" | tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation; tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes; tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract; tycho.page.6b75e10be102574cdc7351525ebabac9#overview |\n\n## Answer in one paragraph\n\nA database join is one evaluation over one transactional snapshot and one authority. A request-time composition is several independent reads over several authorities at several times, then an in-memory merge; it has no shared snapshot, no distributed transaction and no authority to resolve disagreement, so it cannot be a consistent join in the database sense. It can be a legitimate **reported** view, but only if the report is honest: per-call and whole-request deadlines, an explicit partial-or-fail policy with a versioned shape that marks missing parts, and a retry policy owned at one layer and bounded per dependency and per aggregate. A maintained read model is better when the same shaped query repeats, fan-out latency or partial-failure complexity exceeds the cost of a projection, staleness is tolerable and declarable, and the projection has an owner, a source position, a refresh trigger and a rebuild path. Copying price into the catalogue is not that by default; it is a local replica that becomes a second authority unless it is declared and governed as a projection. The symptoms in the question are contract defects: an empty price block is an undeclared partial result, and a gateway retry of the stock call is an undeclared retry with unbounded fan-out.\n\n## 1. Why the composed response is not a consistent join across owners\n\nA join is a relational operation with one evaluation context: one snapshot, one set of visibility rules, one authority for each predicate, and one transaction boundary that makes the result internally consistent. Composition does not have those properties:\n\n- **The composer calls owners and joins their replies in memory.** API Composition \"calls several owner APIs for one request and assembles their responses into a single caller-visible result\" (tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes). Gateway aggregation likewise \"composes several owner responses into one client response at the edge\" (tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation). The data is joined after the fact, not inside an owner's transaction.\n- **There is no cross-source snapshot.** Per-owner reads happen at different times, so the aggregate can mix owner revisions; a caller's just-committed write may be absent (same API Composition section, the \"No snapshot\" paragraph). Even a single owner call may read a replica that lags its authority. Version/as-of markers per source, or a read model, are the only ways to make read-your-writes legible; otherwise the page is a collage of different instants.\n- **A composition endpoint is not a transaction.** The API Composition owner notes state this explicitly (\"a composition endpoint is not a transaction\"), and the outbox chapter's failure table states the same structural fact for cross-component work: \"There is no atomic transaction spanning all illustrated components\" (tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders). Composition can read four owners, but it cannot commit, isolate or roll back across them.\n- **Strong consistency is a contraindication, not an implementation detail.** The API Composition card rejects the claim \"when strong consistency is required\" and \"when composition needs writes across owners\" (tycho.page.ade9759a19a0402594773756d097c11c#overview). Gateway aggregation repeats the boundary: do not aggregate \"when strong consistency across owners is required\" or when \"partial results cannot be represented honestly\" (tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation). If the page's price, stock and availability must agree exactly at one instant, request-time composition cannot deliver that, and no amount of retries or timeouts changes the semantics.\n\nSo \"consistent join\" is the wrong mental model. The composer is a **reader and reporter** of per-owner facts. Its product is an observation with a declared completeness and freshness, not a transaction. That is not a defect if the observation is labelled; it is a defect when the label is missing.\n\n## 2. The two observed symptoms are contract failures, not transport failures\n\n### 2.1 The empty price block is an undeclared partial result\n\nWhen pricing is slow and the page returns with an empty price block, the composition has made a policy decision silently: it chose \"partial response\" and encoded it as \"no value\". Those are different claims. An empty block can be read as free, as not applicable, as unavailable, or as a rendering bug. The API Composition owner notes require the opposite: \"One slow or failed participant must not silently disappear from the result; apply per-call deadlines, mark missing parts or fail the composition explicitly\" (tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes). They also record Azure's aggregation guidance: a gateway can \"return a partial response when missing data is acceptable, or it might fail the entire request when complete and consistent order data is required\", and the team should \"Make this decision explicit in the policy design so that clients experience predictable behavior\" (same section).\n\nGraceful Degradation supplies the same test from the resilience side: a degraded response is legitimate only when \"a degraded response is explicitly less accurate or contains less data; the reduced outcome and the caller-visible state are declared\", and it must be rejected \"when it silently changes correctness\" (tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview). The book goes further: \"silent loss of correctness is worse than an explicit failure: each mode needs an entry condition, a visible status, an owner and an audited override\" (same card). The optional-dependency walkthrough makes the contrast concrete: on an optional-service timeout, the legitimate action is to \"return core success with explicit absent recommendations\", while the unsafe row is to \"Retry stalled optional call before completing critical booking\" (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation).\n\nThe defect is therefore not that the page degraded. The defect is that the page did not say which fields were absent, why, at what freshness, or whether the omission was allowed. An empty price block without a per-field status is a silent contract change.\n\n### 2.2 The gateway retry re-sends the stock call because retry ownership was never declared\n\nA retry is a new attempt at the same logical call, not a fresh request. If the stock call is a pure read, the immediate cost is duplicated work and a second observation that may differ from the first; if it holds, reserves or decrements stock, the retry can create a duplicate effect unless the operation has a stable effect identity and the receiver deduplicates. Gateway Aggregation is explicit: \"Fan out in parallel, cap retries per dependency and for the whole aggregate, and expose which dependency failed; a gateway retry must not multiply load across every participant\" (tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation).\n\nThe deadline and retry chapter adds the ownership rule: \"Retry only at the layer immediately above the layer that rejected the request. Lower layers should return a classified result, not independently retry work that the caller has already judged non-retryable\" and \"Avoid retry amplification across proxy, API and downstream clients; designate where retries are owned and instrument actual attempt counts\" (tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets). A gateway retry of a call that the composition already retried, or that a lower client retried, is exactly the amplification the chapter warns about. And retry safety is not established by the HTTP method alone: RFC 9110 makes safe methods idempotent \"under intended request effect semantics\", but \"The method's abstract semantics do not prove a particular handler is correctly implemented, nor that any non-idempotent POST is safe to repeat automatically\" (tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope). If the stock call can change an effect, it needs an application effect key, not a gateway retry.\n\n## 3. When a maintained read model is the better choice\n\n### 3.1 Fit conditions\n\nA maintained read model (a CQRS projection, materialized view or page-shaped derived store) is the better choice when the query shape is repeated and expensive to compose, and when the freshness cost can be stated and accepted:\n\n- **Repeated, shaped reads dominate.** The API Composition owner notes say \"a maintained read model may be cheaper for repeated composition\" and that filtering, sorting and pagination cannot generally be delegated to owners, so the composer over-fetches and joins in memory (tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes). A product page is exactly a repeated shaped read: one key, a fixed set of blocks.\n- **Fan-out latency or partial-failure complexity exceeds the duplication cost.** The API Composition card's competing alternative is \"A maintained read model\", and it says to reverse the choice \"when composition latency and partial-failure complexity exceed the duplication alternative\" (tycho.page.ade9759a19a0402594773756d097c11c#overview). The owner notes add the selection rule: \"prefer composition when the sources are authoritative and the caller needs a live view\" (tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes).\n- **Staleness is acceptable and declarable.** CQRS fits when \"Read and write workloads differ; projections can be asynchronous; stale reads are acceptable; duplicate/order handling is owned\" and \"the write model remains the only authority for command-owned state\" (tycho.page.5c7d91711de3463eba59be2b16c607e4#overview). If the journey cannot tolerate lag and cannot wait for a version, the authority read path is the alternative.\n- **The projection has an owner and a rebuild path.** CQRS is rejected \"when every read requires immediate consistency with no version-wait or authority-read path, or when projection maintenance has no owner\" (same card). A read model without an owner is not a design; it is an orphaned copy.\n\n### 3.2 What the read model must carry, and what it costs\n\nA read model is derived data, not a new authority. The owner page requires that \"A materialized view must record its source version or offset, refresh trigger and freshness contract. A stale view is a derived read, not authority; a query that requires current state must use an authority path\" (tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness). The write side keeps command authority: \"The write model owns command authority and the read model is a derived, read-only view; neither side may claim authority merely because it can read the other's tables\" (tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes).\n\nThe costs are real and belong in the decision: projection lag, duplicate apply, cursor gaps, schema drift and rebuild duration are normal failure modes; the apply must be idempotent, the derived row and cursor committed atomically, and rebuilds run with outbound side effects disabled (CQRS card and owner page). A projection that cannot be rebuilt from the authority \"is a second database without an owner\" (materialized-view notes in the same bounded section). The read contract must publish \"the position it has applied and the staleness callers should expect\", not leave freshness in an operator's memory (CQRS Read Projections notes, same section). Freshness should be measured as projection age and offset gap, with an approved requirement and representative tests, not asserted as a number (tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness).\n\nSo the read model is better when all of the following hold: the page query repeats; the fan-out is the latency or failure bottleneck; partials are hard to represent honestly at request time; a bounded staleness is acceptable per field; and a team owns the projection, its position, its refresh and its rebuild. It is worse when every read needs immediate consistency, when the query shape changes constantly, or when the projection would be a copy nobody maintains.\n\n### 3.3 Why copying price into the catalogue is not the same thing\n\nThe proposal \"copy price data into the catalogue service so the fan-out disappears\" removes one call but does not, by itself, produce a read model. A local copy of another owner's fact is a replica: \"When a command needs facts owned by another service, a local replica is a cache of that owner's state, not a second authority. Give it an owner, a source version, refresh/invalidation and reconciliation when the owner changes; the local copy must never become the decision-time writer\" (tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes). Without those properties, the catalogue becomes a second price authority: price changes now have two write paths and no atomic transaction across them. The outbox chapter shows the two unsafe orders: write the local store then publish and crash, or publish then fail to commit, leaving a claimed change that never happened (tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders). That is not a join fix; it is a consistency problem moved into the catalogue's schema.\n\nTwo further points follow. First, copying only price does not remove the page fan-out: catalogue, stock and review reads remain, so the composition still has several owners, partial-failure policy and deadlines. If the goal is to remove the fan-out, the unit to materialize is the **page-shaped read model** across the participating owners, with each source's version and freshness, not one field inside another owner's domain store. Second, a price copy can be legitimate if it is explicitly a cache or projection: owned by the catalogue or page team, with a source version, invalidation on price change, reconciliation, a declared staleness bound and an authority fallback for decisions that need current price. That is a read model with a narrow scope, not an ownership transfer.\n\n### 3.4 The composing layer may be a BFF, but that does not make it an authority\n\nIf the composition is a Backend for Frontend, the BFF is a legitimate owner of a client-specific composition: it \"composes several owner APIs for one client experience\", and the pattern fits when \"a team can own each BFF\", \"shared domain services remain authoritative\" and \"duplicated client-specific composition is acceptable\" (tycho.page.6b75e10be102574cdc7351525ebabac9#overview). It is rejected \"when BFFs would duplicate domain logic\" or \"when no team owns a BFF lifecycle\". The BFF card also names the maintenance risk: independent BFF and domain lifecycles create release-alignment risk, so the team should \"treat BFF/domain divergence as drift, version the composition and test the client contract\" (same card). A BFF therefore changes **who owns the composition**, not whether the response is a consistent join; it still needs the deadline, partial-result and retry declarations in section 4, and it must not become a second domain authority.\n\n## 4. What the composition contract must declare\n\nThe contract is the artifact that turns an ad-hoc fan-out into an operable interface. It must declare at least the following.\n\n### 4.1 Deadlines\n\n- **One end-to-end budget, fixed at ingress.** \"A timeout on one socket is not a complete request deadline. The caller has an end-to-end business time budget; proxies, authentication, queueing, internal RPCs and durable state can consume it\" (tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets). The contract should state the page budget, the per-source allocation and the margin, not four independent timeouts.\n- **Propagate the remaining budget, not a fresh timeout.** \"Each hop should use at most the remaining deadline, minus its own processing and margin, and propagate the remainder\" (tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes). A relative duration with elapsed time deducted avoids wall-clock skew; the Deadline Propagation card adds that \"each hop enforces expiry before more work\" and that expiration must be observable (tycho.page.364e2c08af2a47249d9d3431346f046c#overview).\n- **Enforcement and missing-deadline behavior.** \"Requiring a deadline at ingress, rejecting a missing propagated deadline on bounded paths, and moving cleanup to durable work are Tycho guidance\" (bounded notes). A propagated value without an enforcement point \"is only a hint\", and an omitted timeout header can mean an infinite timeout, silently removing the bound (Deadline Propagation card). The contract must say which is mandatory.\n- **Timeout ownership and unit.** \"Name the timeout owner, the unit (connect, read, total) and the retry interaction; a timeout that silently becomes a retry can multiply load. The timeout value must be observable\" (bounded notes). This is precisely the stock-call failure in the question.\n- **What survives the deadline.** \"An API must define which result is still meaningful after the caller stops waiting, and what resource cleanup follows\" (deadline section). Cancellation stops work where possible but \"is not proof that a previously committed effect was undone\" (same section); cleanup and reconciliation need a durable workflow, not an unbounded request task.\n\n### 4.2 Partial results\n\n- **Required versus optional per source, per query shape.** The contract must say which blocks may be absent and which make the page invalid. Graceful Degradation requires that \"Essential and optional work are distinguishable\" and that \"the reduced outcome and the caller-visible state are declared\" (tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview). If price is essential or contractual, the honest response is an explicit failure, not an empty block.\n- **Partial-or-fail policy, explicit and predictable.** The API Composition notes cite Azure's choice between \"a partial response when missing data is acceptable\" and failing \"the entire request when complete and consistent order data is required\", and require the team to \"Make this decision explicit in the policy design so that clients experience predictable behavior\" (tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes). The policy belongs in the contract, not in an exception handler.\n- **A versioned shape that marks missing parts.** \"A partial response needs a versioned shape that marks missing parts rather than silently omitting them\" (tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation). Each block needs a status that distinguishes unavailable from not-applicable from genuinely empty or zero, plus the source version or as-of time observed. \"Expose which dependency failed\" is part of the same contract sentence.\n- **Freshness and read-your-writes.** A composed page mixes revisions; the contract should carry per-source version/as-of markers so a caller can tell what it is looking at, or route read-your-writes journeys to a version-wait or authority read (API Composition notes). For a read model, publish the applied position and expected staleness in the read contract (CQRS Read Projections notes).\n- **Visible degraded state and its owner.** Graceful Degradation requires \"a visible status, an owner and an audited override\" plus an entry condition and recovery hysteresis (tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview). A degraded page without a status is indistinguishable from a correct page.\n- **Bounded join work.** The composer must bound over-fetch, memory and merged-page stability; filtering, sorting and pagination cannot generally be delegated, so the contract should state the ordering and page-stability rule (API Composition notes, \"Query shape\").\n\n### 4.3 Retries\n\n- **One retry owner.** \"Retry only at the layer immediately above the layer that rejected the request\" and \"designate where retries are owned and instrument actual attempt counts\" (tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets). If the gateway retries, the composition must not also retry the same call; if the composition retries, the gateway must return a classified result instead.\n- **Retryable classes only.** \"Retry only a documented retryable failure class, with a bounded total deadline and bounded attempt/backoff budget; observe server pushback/backpressure\" (same section). Permanent failures, broad overload and a deadline that cannot fit another attempt are not retryable; a backend should propagate a specific \"overloaded; do not retry\" signal rather than a generic error (same section).\n- **Effect identity before transport retries.** \"First ask whether the operation is read-only, semantically idempotent, or protected by an application effect key\" (same section). HTTP method semantics are not proof; a command needs an idempotency identity that binds one logical intent, caller/payload scope and retention to an authoritative outcome record (tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route, and tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope). If the stock call has an effect, the contract must say so and require the key; if it is read-only, the contract must say that the retry is safe but still bounded.\n- **Budgets and the deadline.** \"Every attempt must consume the same end-to-end deadline and attempt budget, so added delay cannot extend the caller's useful completion window\" (deadline bounded notes, Retry with Jitter). The contract needs an attempt cap, backoff with jitter, a per-dependency cap, a whole-aggregate cap and a service-wide retry budget; \"The policy needs an owner and a visible attempt metric; an exponential curve without a deadline check can spend the caller's budget after the result stopped being useful\" (same notes, Retry with Exponential Backoff). Gateway Aggregation states the aggregate rule directly: \"cap retries per dependency and for the whole aggregate\" (tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation).\n- **Ambiguous outcomes.** \"Prefer explicit outcome lookup for an ambiguous durable command, rather than treating every timeout as 'nothing happened'\" (deadline section). A timeout after commit is not a non-event, and a retry that assumes otherwise can duplicate it.\n\n### 4.4 Cross-cutting declarations\n\n- **Version the composition and each owner adapter.** \"The composition endpoint and each owner adapter need an explicit version and a propagated trace context, because a composed failure spans several calls\" (tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes). Gateway Aggregation adds per-call authorization: \"Each downstream call carries its own deadline and authorization\" (tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation).\n- **Declare authority and freshness per field.** The cache authority table asks, for each value, \"Which system/state revision determines the correct value?\" and \"Maximum tolerated age/version gap for the user journey\" (tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract). A page with a price block, a stock block and a review block has at least three such answers.\n- **Name the composition owner and test it.** API Composition fits when \"composition logic is owned and tested\" (tycho.page.ade9759a19a0402594773756d097c11c#overview). The contract without an owner is documentation, not an interface.\n\n## 5. Decision rule and boundaries\n\nUse request-time composition when the page is read-mostly, the shape is small and stable, per-owner calls can carry bounded deadlines, partial results and their failure behavior can be represented, the composition logic is owned and tested, and the response does not require a distributed transaction (tycho.page.ade9759a19a0402594773756d097c11c#overview). Prefer it when the sources are authoritative and the caller needs a live view (API Composition notes).\n\nUse a maintained read model when the same page query repeats, the fan-out latency or partial-failure complexity exceeds the cost of a projection, filtering/sorting/pagination across owners is required, staleness is acceptable and declarable, and a team owns the projection, its source position, refresh trigger, freshness contract and rebuild path (API Composition card; CQRS card and owner page). Do not use one when every read requires immediate consistency with no version-wait or authority-read path, or when projection maintenance has no owner (CQRS card).\n\nDo not silently return an empty block when a source is slow. If the block is essential, fail the composition explicitly; if it is optional, mark it absent in a versioned shape and expose the failed dependency and the degradation state. Do not let a gateway retry multiply the fan-out; assign one retry owner, bound attempts per dependency and per aggregate, and check effect identity before repeating a call. And do not call a copy a read model: a copy becomes acceptable only when it has an owner, a source version, refresh/invalidation, reconciliation, a declared staleness bound and an authority fallback, and never becomes the decision-time writer.\n\n## 6. Evidence map\n\n| Claim | Statement | Evidence (section key) | Status |\n|---|---|---|---|\n| C1 | Composition is an in-memory join of owner responses, not a database join. | tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes; tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation | observed |\n| C2 | There is no cross-source snapshot; the aggregate can mix revisions and miss a just-committed write. | tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes | observed |\n| C3 | A composition endpoint is not a transaction; no atomic transaction spans the owners. | tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes; tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders | observed |\n| C4 | Strong cross-owner consistency is a contraindication for aggregation. | tycho.page.ade9759a19a0402594773756d097c11c#overview; tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation | observed |\n| C5 | A slow participant must not silently disappear; the partial-or-fail policy must be explicit and predictable. | tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes | observed |\n| C6 | Degradation is legitimate only when essential/optional is distinguishable and the reduced outcome and caller-visible state are declared. | tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation | observed |\n| C7 | A gateway retry of a fan-out call must be capped per dependency and per aggregate and must not multiply load. | tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation | observed |\n| C8 | Retries must be owned at one layer, limited to retryable classes, and measured for amplification. | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets | observed |\n| C9 | Retry safety depends on operation semantics and effect identity, not on the HTTP method alone. | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets; tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope | observed |\n| C10 | The request deadline is one end-to-end budget; each hop uses the remaining time and enforces expiry. | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets; tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes; tycho.page.364e2c08af2a47249d9d3431346f046c#overview | observed |\n| C11 | A maintained read model is the alternative when fan-out latency and partial-failure complexity exceed duplication cost, especially for repeated shaped queries. | tycho.page.ade9759a19a0402594773756d097c11c#overview; tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes | observed |\n| C12 | CQRS fits asynchronous, stale-tolerant reads with an owned write authority and is rejected for immediate consistency or unowned projections. | tycho.page.5c7d91711de3463eba59be2b16c607e4#overview | observed |\n| C13 | A read model is derived: it records source version/offset, refresh trigger and freshness contract; the write model owns authority. | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness; tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes | observed |\n| C14 | A local copy of another owner's fact is a cache, not a second authority, and needs owner, source version, refresh/invalidation and reconciliation. | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes | observed |\n| C15 | Copying price into the catalogue without those properties creates a second authority and dual-write failure windows; a view that cannot be rebuilt is a second database without an owner. | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes; tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders | observed |\n| C16 | The deadline contract must declare the end-to-end budget, propagation and enforcement, timeout owner and unit, and post-deadline cleanup. | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets; tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes | observed |\n| C17 | The partial-result contract must use a versioned shape with per-source status and missing markers, expose the failed dependency, and declare a visible degraded state. | tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation; tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview | observed |\n| C18 | The retry contract must declare the retry owner, retryable classes, effect identity, attempt/backoff budgets, per-dependency and aggregate caps, and instrumentation. | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets; tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes; tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation | observed |\n| C19 | The composition contract also needs composition and adapter versions, propagated trace context, per-call authorization and per-field authority/freshness. | tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes; tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation; tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract | observed |\n| C20 | A page-shaped read model, not a single-field copy, is the alternative the sources describe; composition cost scales with participants. | tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes; tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes | inference |\n| C21 | A BFF can own client-specific composition when a team owns it and shared domain services remain authoritative, but it must not duplicate domain logic; divergence is drift and the composition and client contract must be versioned and tested. | tycho.page.6b75e10be102574cdc7351525ebabac9#overview | observed |\n\n## 7. Unknowns and limits\n\n- **No production evidence.** Every mechanism above is a pattern or design rule. The book explicitly labels the 900-ms budget as hypothetical and the pattern pages as living documents, not benchmarks. This answer does not claim any measured latency, error rate or cost.\n- **No numeric budgets are given.** The question does not state the page budget, the price-service latency distribution, price volatility or the tolerated staleness. The contract must set these from an approved requirement and representative tests; the book warns against claiming a freshness threshold without both.\n- **The stock call's semantics are unknown.** The question says \"a gateway retry re-sends the stock call\" but not whether the call reads stock or holds/reserves it. If it has an effect, the retry needs an application effect key; if it is a pure read, it still needs a retry cap and an observation-freshness marker. This distinction changes the contract but not the recommendation to declare it.\n- **The essential/optional classification is a product decision.** The sources say a degraded response must be declared, but they do not say whether price, stock or reviews are essential for this page. If price is contractually required, the honest policy is fail-whole-request; the answer cannot choose that for the owner.\n- **The composition owner is unnamed.** The question does not say whether the composing layer is a gateway, a BFF or a dedicated composition service. The contract requirements are the same, but the retry owner and the versioning point differ.\n- **HTTP status encoding is not specified by the evidence.** The sources require a versioned shape that marks missing parts; they do not prescribe whether that is a distinct status code or an in-body status. The contract should choose one and document it; this answer does not invent one.\n- **A read model's freshness bound and rebuild cost are unverified here.** The CQRS pages describe what must be recorded and measured, not a threshold for this page. The decision needs the owner's staleness requirement and a rebuild test before the read model is accepted.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Request-time composition is an in-memory join of several owner responses, not a database join evaluated in one transaction.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+          "quote": "An API composition layer calls several owner APIs for one request and assembles their responses into a single caller-visible result.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "Gateway aggregation composes several owner responses into one client response at the edge.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The composition has no cross-source snapshot: per-owner reads happen at different times, so the aggregate can mix owner revisions and omit a caller's just-committed write.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+          "quote": "per-owner reads happen at different times, so the aggregate can mix owner revisions; it is not a cross-source snapshot, and a caller's just-committed write may be absent.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A composition endpoint is not a transaction, and no atomic transaction spans the participating owners.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+          "quote": "Tycho synthesis, not a source claim: a composition endpoint is not a transaction.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+          "quote": "There is **no atomic transaction spanning all illustrated components**.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Strong consistency across owners is a contraindication for aggregation; when it is required, a request-time composition cannot honestly serve the query.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ade9759a19a0402594773756d097c11c#overview",
+          "quote": "Reject the claim when strong consistency is required; when fan-out latency exceeds the client budget; when composition needs writes across owners; when one service can answer the query directly without duplicating authority.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "Do not aggregate when strong consistency across owners is required, one slow dependency exhausts the gateway, the composition is a hidden domain workflow, or partial results cannot be represented honestly.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A slow or failed participant must not silently disappear; the composition must mark missing parts or fail explicitly, and the partial-or-fail policy must be predictable to clients.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+          "quote": "One slow or failed participant must not silently disappear from the result; apply per-call deadlines, mark missing parts or fail the composition explicitly.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+          "quote": "Make this decision explicit in the policy design so that clients experience predictable behavior.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Degradation is legitimate only when essential and optional work are distinguishable and the reduced outcome and caller-visible state are declared; silent correctness loss is worse than explicit failure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview",
+          "quote": "Essential and optional work are distinguishable; a degraded response is explicitly less accurate or contains less data; the reduced outcome and the caller-visible state are declared; recovery and hysteresis are defined and exercised.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview",
+          "quote": "silent loss of correctness is worse than an explicit failure: each mode needs an entry condition, a visible status, an owner and an audited override.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+          "quote": "return core success with explicit absent recommendations",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A gateway retry of a fan-out call must be capped per dependency and for the whole aggregate, and must not multiply load across participants.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "Fan out in parallel, cap retries per dependency and for the whole aggregate, and expose which dependency failed; a gateway retry must not multiply load across every participant.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Retries must be owned at one designated layer, limited to documented retryable classes, bounded by the deadline and budget, and instrumented to expose amplification.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Retry only at the layer immediately above the layer that rejected the request. Lower layers should return a classified result, not independently retry work that the caller has already judged non-retryable.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Avoid retry amplification across proxy, API and downstream clients; designate where retries are owned and instrument actual attempt counts.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Retry safety depends on operation semantics and effect identity, not on the HTTP method alone; commands need an idempotency identity and ambiguous outcomes need an explicit lookup.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "First ask whether the operation is read-only, semantically idempotent, or protected by an application effect key.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+          "quote": "The method's abstract semantics do not prove a particular handler is correctly implemented, nor that any non-idempotent POST is safe to repeat automatically.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "The key binds one logical intent, caller/payload scope and retention window to an authoritative outcome record.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The request deadline is one end-to-end budget; each hop should use at most the remaining time, enforce expiry before more work, and propagate the remainder.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "A timeout on one socket is not a complete request deadline. The caller has an end-to-end business time budget; proxies, authentication, queueing, internal RPCs and durable state can consume it.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes",
+          "quote": "Each hop should use at most the remaining deadline, minus its own processing and margin, and propagate the remainder.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.364e2c08af2a47249d9d3431346f046c#overview",
+          "quote": "The full request path can carry the remaining budget as a relative duration; each hop enforces expiry before more work; expiration is observable.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A maintained read model is the stated alternative to request-time composition when fan-out latency and partial-failure complexity exceed the cost of duplicating data, especially for repeated shaped queries.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ade9759a19a0402594773756d097c11c#overview",
+          "quote": "A maintained read model. Reverse the choice when composition latency and partial-failure complexity exceed the duplication alternative.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+          "quote": "Build a maintained read model; prefer composition when the sources are authoritative and the caller needs a live view.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+          "quote": "a maintained read model may be cheaper for repeated composition",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "CQRS fits divergent read/write workloads, asynchronous projections, tolerable staleness and owned duplicate/order handling, and is rejected for immediate consistency or an unowned projection.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+          "quote": "Read and write workloads differ; projections can be asynchronous; stale reads are acceptable; duplicate/order handling is owned; Tycho guidance: the write model remains the only authority for command-owned state.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+          "quote": "Reject when one model meets both needs, when every read requires immediate consistency with no version-wait or authority-read path, or when projection maintenance has no owner.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A maintained read model is derived data: it records source version/offset, refresh trigger, freshness contract and rebuild path, while the write model retains command authority.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+          "quote": "A materialized view must record its source version or offset, refresh trigger and freshness contract. A stale view is a derived read, not authority; a query that requires current state must use an authority path.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+          "quote": "The write model owns command authority and the read model is a derived, read-only view; neither side may claim authority merely because it can read the other's tables.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A local copy of another owner's fact is a cache, not a second authority, and needs an owner, source version, refresh/invalidation and reconciliation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+          "quote": "When a command needs facts owned by another service, a local replica is a cache of that owner's state, not a second authority. Give it an owner, a source version, refresh/invalidation and reconciliation when the owner changes; the local copy must never become the decision-time writer.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Copying price into the catalogue without those properties creates a second authority and dual-write failure windows; a view that cannot be rebuilt is a second database without an owner.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+          "quote": "A view that cannot be rebuilt from the authority is a second database without an owner.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+          "quote": "Naive sequence **DB then broker** can commit the reservation and crash before publishing. Naive sequence **broker then DB** can publish a purported acceptance and later roll back the reservation.",
+          "supports": "C15",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The deadline contract must declare the ingress end-to-end budget, per-hop propagation and enforcement, timeout owner and unit, and what cleanup continues after the response budget.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "An API must define which result is still meaningful after the caller stops waiting, and what resource cleanup follows.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes",
+          "quote": "Name the timeout owner, the unit (connect, read, total) and the retry interaction; a timeout that silently becomes a retry can multiply load. The timeout value must be observable.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes",
+          "quote": "Requiring a deadline at ingress, rejecting a missing propagated deadline on bounded paths, and moving cleanup to durable work are Tycho guidance",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The partial-result contract must use a versioned shape with per-source status and missing markers, expose the failed dependency, and declare a visible degraded state and its owner.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "A partial response needs a versioned shape that marks missing parts rather than silently omitting them.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview",
+          "quote": "each mode needs an entry condition, a visible status, an owner and an audited override",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The retry contract must declare the retry owner, retryable classes, effect identity, attempt/backoff budgets, per-dependency and aggregate caps, and attempt instrumentation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Retry only a documented retryable failure class, with a bounded total deadline and bounded attempt/backoff budget; observe server pushback/backpressure.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes",
+          "quote": "Every attempt must consume the same end-to-end deadline and attempt budget, so added delay cannot extend the caller's useful completion window.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "cap retries per dependency and for the whole aggregate",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The composition contract also needs composition and adapter versions, propagated trace context, per-call authorization and per-field authority and freshness declarations.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+          "quote": "the composition endpoint and each owner adapter need an explicit version and a propagated trace context, because a composed failure spans several calls.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "Each downstream call carries its own deadline and authorization.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+          "quote": "| Authority | Which system/state revision determines the correct value? |",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The sources describe a page-shaped maintained read model, not a single-field copy, as the alternative to repeated composition; composition cost scales with participants.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+          "quote": "Fan-out latency is the max of participants; per-source authorization, versioning and partial-failure schema are costs, and a maintained read model may be cheaper for repeated composition.",
+          "supports": "C20",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+          "quote": "The projection owner publishes the event schema it accepts, the position it has applied and the staleness callers should expect.",
+          "supports": "C20",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "A BFF can own client-specific composition when a team owns it and shared domain services remain authoritative, but it must not duplicate domain logic; BFF/domain divergence is drift and the composition and client contract must be versioned and tested.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+          "quote": "The BFF composes several owner APIs for one client experience; client populations have materially different interaction needs; a team can own each BFF; shared domain services remain authoritative; duplicated client-specific composition is acceptable; cross-cutting policy stays outside the BFF.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+          "quote": "Reject the claim when one client contract is adequate; when BFFs would duplicate domain logic; when no team owns a BFF lifecycle; when the split multiplies deployments without a measured client benefit.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+          "quote": "treat BFF/domain divergence as drift, version the composition and test the client contract",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.364e2c08af2a47249d9d3431346f046c#overview",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes",
+    "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+    "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+    "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+    "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+    "tycho.page.ade9759a19a0402594773756d097c11c#overview",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+    "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+    "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

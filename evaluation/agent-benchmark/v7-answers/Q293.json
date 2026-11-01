@@ -1,0 +1,529 @@
+{
+  "task_id": "Q293",
+  "answer": "# Q293 - One seed base, two very different places to hold it\n\n**Scope.** The question is a modeling-and-simulation question (V12 contracts and Monte Carlo\npages); those pages live in the book volume, so the book layer returns the same text. No\natlas layer was needed. Everything below is synthetic/modeled V12 evidence, not production\nmeasurement.\n\n## 1. Short answer\n\nA seed base is a declaration about the experiment, not a number that makes a result stable.\nV12's scenario contract fixes it as an input: a comparison shares \"the same seed base and the\nsame seed = base + replication scheme\", and it also requires that \"the engine samples\nindependently per replication\". Both halves matter, and the team kept only the first.\n\n- **Across candidates the shared stream is a between-unit factor.** Every candidate's\n  replication i receives the same derived seed, so candidate runs are paired on the same\n  arrival realization. That is what the identical-workload rule is for: candidate differences\n  should not be explainable by arrival luck. The book names the resulting condition - sharing\n  a stream \"can create common random numbers, which is sometimes desirable, but it must be a\n  declared choice\" - and the declaration is carried by the scenario's seed block (same base,\n  same derivation) plus the shared workload. Declared, it is a visible property of the design\n  whose consequences (candidate estimates are correlated) a reader can account for. The book\n  calls it \"sometimes desirable\" but does not develop it: the Monte Carlo chapter\n  explicitly excludes variance reduction from its scope.\n- **Within a candidate the same stream is a within-unit factor.** Restarting every replication\n  from the base replaces n independent replications with n copies of one arrival realization.\n  The standard error is defined \"for n independent replications\"; once the replications are\n  dependent, s is no longer an estimate of the sampling variability of the mean, and the book\n  states the symptom exactly: \"A shared random stream makes the standard error too small.\" In\n  the limit where the whole generator state resets, s = 0, the interval collapses to a point,\n  and its nominal coverage is empty rather than merely narrow.\n\nThe run still prints a standard error and \"converged\" because both are **computed outputs, not\ndesign checks**. Convergence is the ratio se/|mean| against 0.02, and the run contract requires\nthe metric block to carry a standard error and confidence interval and the convergence block to\ncarry a status, metric, relative error, threshold and replication count. A collapsed s drives\nthe ratio toward zero, so the schema is satisfied and the status reads converged.\n\nWhat the contracts actually preserve is declaration, binding and reproducibility - not achieved\nindependence. The scenario preserves the scheme (base and derivation) and the replication count\nas declared inputs; the run preserves the base seed and the count, the engine version, the\nmodel/scenario hashes, the computed metrics, convergence, uncertainty, sensitivity, limitations\nand the result hash. Replay proves that \"the stored inputs, engine version and seed produce the\nstored metrics\" and is \"a reproducibility check, not a truth check\" - it does not prove the\ninterval covers a production value. A run that restarted from base would replay bit-identically\nand keep every field, so the record cannot tell the two implementations apart. That asymmetry\nis the answer: the cross-candidate share is a choice the contract can carry and make visible;\nthe within-candidate share is a deviation the contract cannot express and therefore cannot see.\n\n## 2. Facet matrix\n\n| Facet | Query formulations | Evidence (section keys) |\n|---|---|---|\n| F1. What a replication-based standard error assumes, and when the interval stops being valid | \"standard error replication confidence interval\"; \"independent replications standard error confidence interval coverage\"; \"effective sample size correlation between replications\" | #standard-error, #batch-means-and-dependence, #coverage-and-its-assumptions |\n| F2. Why a shared stream across candidates is a declared design choice | \"common random numbers seed variance reduction\"; \"common random numbers paired comparison\"; \"identical workload across candidates comparison validity\"; \"variance reduction shared stream candidates\" | #failure-modes (scenario), #the-identical-workload-rule, #a-worked-cross-chapter-synthesis |\n| F3. Why the same sharing inside a candidate is a defect | \"correlated replications pseudo-replication underestimated uncertainty\"; \"same seed base thirty replications identical arrivals\"; \"reseed every replication same base\"; \"declared choice assumption experiment design\" | #failure-modes (convergence), #why-reference-cases-matter, #batch-means-and-dependence |\n| F4. Why a standard error and a converged status still appear | \"convergence status relative error threshold replications\"; \"insufficient sample evidence interval invalid\" | #relative-error, #what-convergence-does-not-mean, #required-fields (run), #a-stopping-rule |\n| F5. What the scenario contract preserves about the scheme | \"seed scheme replication index deterministic derivation\"; \"declared choice assumption experiment design\" | #required-structure, #seeds-and-replications, #the-monte-carlo-procedure |\n| F6. What the run contract preserves, and what replay proves | \"reproducibility replay seed result hash\"; \"seed scheme replication index deterministic derivation\" | #the-reproducibility-contract, #what-replay-proves (run and reproducibility pages), #required-fields |\n\n## 3. Mechanism\n\n### 3.1 The interval's premise is in its own definition\n\nV12 reports se = s / sqrt(n) with a normal 95% interval mean +/- 1.96 se. The phrase \"for n\nindependent replications\" is the premise, not decoration: if replications are correlated, the\nvariance of their average is not sigma^2 / n. Writing rho for the within-candidate correlation\nbetween two replications, Var(mean) is approximately (sigma^2 / n)(1 + (n - 1)rho); at rho = 1\nthis equals sigma^2, the variance of a single run, regardless of n. That identity is standard\nstatistics rather than a V12 sentence, but it is exactly the arithmetic behind the book's\n\"too small\": the denominator sqrt(n) keeps being applied to an s that no longer contains the\nremoved component. With a full reset s is literally zero, so the interval has zero width and\ncoverage zero for any non-degenerate truth.\n\nThe book's own restriction is categorical: the interval \"does not become more valid if the\nreplications are correlated\", and \"Replications are independent by construction in V12: each\nreplication uses its own seed.\"\n\n### 3.2 The same operation is a block factor in one place and the error term in the other\n\nThe unit of independence is the replication, and the two placements touch different things:\n\n- Held constant **between** candidates, the stream does not alter any candidate's replication\n  set. Each candidate still has n independent replications, so its own sample variance remains\n  an estimate of its own replication variance. What changes is the covariance between candidate\n  means: pairing raises the correlation of A and B, which typically shrinks the variance of a\n  difference. The per-candidate interval is a marginal object and survives; the comparison is a\n  joint object and must be read as paired. This is standard reasoning (inference), and the book\n  only declares the scheme - it does not spell out the paired analysis.\n- Held constant **within** a candidate, the stream enters the sample itself. The replication is\n  the error term; freezing it removes the very variability the interval measures. Nothing in the\n  design can compensate, because the estimator's uncertainty statement is computed from that\n  sample.\n\nThe asymmetry is not a matter of degree. Across candidates the choice changes a covariance the\ndesign can declare; within a candidate it changes the variance estimate the formula cannot\nabsorb. That is why one is an experimental choice and the other destroys the interval.\n\n### 3.3 Three regimes, one direction of error\n\nThe premise says \"identical arrivals\", which admits a range of severity:\n\n1. **Full reset** (every draw restarted from base): the thirty replications are thirty copies of\n   one run. s = 0, se = 0, the interval is a point, relative error is 0, status is converged, and\n   the effective sample size is one. The reported \"mean of 30\" equals one realization.\n2. **Arrivals only** (service-time and parameter draws still vary): s contains only the\n   non-arrival variation. The mean is a conditional estimate given one arrival realization, the\n   interval is too narrow, and its coverage is below nominal. The book's \"too small\" is the\n   general case; the full reset is its limit.\n3. **Correct**: distinct per-replication seeds (base + index), so the independence assumption is\n   satisfied by construction and the standard error estimates what it claims to estimate.\n\nThe scenario contract's scheme - \"the same seed base and the same seed = base + replication\nscheme\" - is precisely the rule that produces regime 3. A run that restarts from base is not\nimplementing the scenario it is bound to; it is implementing a different design that the\nscenario cannot declare, because the seed field already says base + index.\n\n### 3.4 Why \"converged\" survives the failure\n\nConvergence is a ratio, not a validation: relative error = se / |mean| against a threshold of\n0.02. It is reported as an achieved value; V12 does not adapt n during a run - \"The scenario\ndeclares the replication count, and the run reports the achieved error.\" So the count is a\ndeclaration, and the status is arithmetic on the reported error.\n\nThree consequences follow. First, when s collapses the ratio collapses with it, so the run is\nlabelled converged by construction. Second, the documented V12-C gate only excludes a run from\nconverged evidence when the reported relative error exceeds 0.02; it does not re-derive\nindependence. Third, the contrast with the book's own stress case is instructive: a two-\nreplication run with honest variance has a relative error of 0.032 and is marked\ninsufficient-sample, while a thirty-replication run with duplicated variance would pass. The\nthreshold reacts to the number it is given; it cannot know that the number is not a standard\nerror.\n\nThe book is explicit about what convergence means - \"the sampling error of the reported metric\nis small under the declared model\" - and about what it does not mean: not model validity, not\nmeasured inputs, not a correct decision, not coverage of a production value. In the degenerate\ncase even the narrow meaning fails, because the reported sampling error is not an estimate of\nsampling error at all.\n\n### 3.5 What the scenario and run contracts actually preserve\n\n| Object | Scenario contract preserves | Run contract preserves | Neither preserves |\n|---|---|---|---|\n| Seed | base and the derivation rule (base + index); the field is required by the schema | base seed and replication count | the per-replication seed values |\n| Replications | the declared count | the count, repeated in metrics and convergence blocks | whether the replications were distinct streams |\n| Workload | duration, warmup, arrival process, identical across candidates | the scenario hash that binds them | that the workload was actually identical in execution |\n| Statistics | metric definitions, units, direction | value, unit, count, standard error, confidence interval; convergence status, metric, relative error, threshold | whether s covered every variance component, or whether coverage is nominal |\n| Dependence | declared input correlations and the shared seed scheme | uncertainty method, draws, correlated-inputs flag | the effective sample size implied by replication dependence |\n| Provenance | model and scenario as canonical inputs | engine name/version/deterministic flag, model/scenario/input hashes, Python, platform, invocation, limitations, result hash | truth: replay is a reproducibility check, not a truth check |\n\nRead as a whole, the scenario records the model, the distributions and the declared\ncorrelations (steps 1-3); the run records the seeded sample, the execution, the mean, standard\nerror and interval, the variance decomposition, the assumptions and the limits (steps 4-8). The\nseed scheme is preserved as a **declaration and a binding**, not as a verified property. That is\nthe honest scope of the contracts: they make the design reviewable and the result replayable,\nand they leave statistical validity to the method.\n\n## 4. Boundaries and what would change the conclusion\n\n- If only the arrival stream is shared while service-time and parameter draws remain\n  independent, the interval is understated rather than degenerate. It is still invalid as a\n  statement of sampling error, but it is not zero-width. The question's premise (\"identical\n  arrivals\") does not by itself fix which regime applies; a full reset produces the degenerate\n  case.\n- If the comparison is read as a paired difference across candidates, pairing is the point of\n  common random numbers and does not harm a per-candidate marginal interval (inference). But the\n  within-candidate restart removes the replication basis for that paired estimate too: the\n  effective number of pairs becomes one.\n- The book does not develop variance-reduction theory; the Monte Carlo chapter explicitly\n  excludes it. So the beneficial side of common random numbers is design reasoning here, not a\n  V12 claim. What V12 does claim is the declaration requirement and the independence\n  requirement.\n- Nothing in this evidence is production measurement. The confidence intervals are synthetic;\n  narrowness \"does not make the inputs measured\", and a converged synthetic estimate of a\n  biased model is still biased.\n\n## 5. What a correct handling would look like, in contract terms\n\nEither the replications keep distinct derived seeds (base + index) and the cross-candidate\nsharing stays declared in the scenario, or, if a shared stream inside a candidate were genuinely\nintended, the design would need a field that declares it and a variance estimator that does not\npretend the replications are independent (for example batch means over one long run, which the\nbook mentions as the method for a single long run). The current schema offers no such\ndeclaration, which is why the within-candidate restart can only be a deviation. The run record's\nlimitations field is the only place the caveat could live today, and the decision record would\nthen have to treat the interval as unusable rather than merely wide.\n\n## 6. Claim-to-evidence map\n\n| Claim | Substance | Sections |\n|---|---|---|\n| C1 | Seed scheme is part of the comparison definition; schema requires the field | scenario #overview, #required-structure |\n| C2 | Scheme is base + replication index | #the-identical-workload-rule, #seeds-and-replications |\n| C3 | Shared stream allowed only as a declared choice | scenario #failure-modes |\n| C4 | The three candidates visibly share arrivals, seed scheme and metrics | volume #a-worked-cross-chapter-synthesis, #the-identical-workload-rule |\n| C5 | Same scheme across candidates; engine independent per replication | scenario #failure-modes |\n| C6 | Standard error is defined for independent replications | #standard-error |\n| C7 | Replications independent by construction; dependence within a replication | #batch-means-and-dependence |\n| C8 | Shared stream makes the standard error too small | convergence #failure-modes |\n| C9 | Ignored seed makes \"independent\" replications identical | #why-reference-cases-matter |\n| C10 | Per-replication random source; hidden cross-replication state is a failure | engine #components, #failure-modes |\n| C11 | Convergence is se/mean against 0.02 | #relative-error |\n| C12 | Convergence means only small sampling error under the model | #what-convergence-does-not-mean, #coverage-and-its-assumptions |\n| C13 | Run schema requires standard error, interval and convergence fields | run #required-fields |\n| C14 | Run stores base seed and count, not per-replication seeds | #seeds-and-replications, reproducibility #the-reproducibility-contract, run #required-fields |\n| C15 | Replay is a reproducibility check, not a truth check | run #what-replay-proves, reproducibility #what-replay-proves |\n| C16 | Scenario records steps 1-3; run records steps 4-8 | #the-monte-carlo-procedure |\n| C17 | V12-C excludes only runs above the relative-error threshold | #v12-c-statistical-validity |\n| C18 | Verified/converged/executable can still fail to support a decision | #insufficient-evidence-is-not-a-model-failure |\n| C19 | Variance reduction is out of the Monte Carlo chapter's scope | chapter #boundaries-and-evidence |\n| C20 | Ignored correlation makes the output distribution too narrow | #correlated-inputs |\n| C21 | Narrow synthetic independent-replication intervals do not make inputs measured | worked example #the-results |\n| C22 | Result-hash scope is stated inconsistently across sections | #seeds-and-replications, engine #determinism-rules, run #required-fields |\n| C23 | Seed is an input from the scenario, not the clock | engine #determinism-rules, #seeds-and-replications |\n| C24 | Count is declared; the run reports the achieved error | #a-stopping-rule |\n| C25-C29 | Inference: variance collapse, ratio survival, block-versus-error-term distinction, declaration-versus-independence, paired reading | as listed in the ledger |\n\n## 7. Unknowns, contradictions and unverified points\n\n1. **Result-hash scope is stated inconsistently.** #seeds-and-replications says \"the result hash\n   covers the metrics\"; the engine page says it covers metrics, convergence, uncertainty,\n   sensitivity and limitations; the run contract says it is computed over the record without the\n   hash field. The run contract's own failure-modes list names hashing only the metrics as a\n   defect, which suggests the short sentence is stale, but the text conflict is real and recorded\n   (C22).\n2. **The run record cannot distinguish the two implementations.** This is an inference (C28), not\n   a book sentence. It is reinforced by a supplementary check outside the CLI evidence path: in\n   the repository's V12 artifacts the scenario stores the seed base and scheme fields while the\n   run stores only the base seed and replication count, with no per-replication seed list. That\n   check is supporting detail, not a registered evidence entry.\n3. **The severity of \"identical arrivals\" is not fixed by the question.** Whether the run also\n   reset service-time and parameter draws decides between a degenerate interval and an\n   understated one; the book does not discuss the intermediate case.\n4. **No measured coverage loss.** The claim that coverage degrades is analytic (rho = 1 gives\n   Var = sigma^2); V12 contains no experiment that measures coverage of a corrupted replication\n   design.\n5. **The paired-analysis treatment is absent from the book.** The declared cross-candidate\n   sharing implies correlated candidate estimates, but no page states how differences or their\n   intervals are computed; that part is inference (C29).\n6. **All evidence is synthetic/modeled.** No production observation, no independent review and\n   no owner acceptance is asserted by these pages.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The scenario contract makes the seed scheme part of the comparison definition: it requires a replications-and-seed block, and for a candidate comparison the workload, duration, warmup, metric definitions and seed scheme are identical while only the candidate configuration changes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#overview",
+          "quote": "For a candidate comparison, the workload, duration, warmup, metric definitions and seed scheme are identical. Only the candidate configuration changes.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "replications and seed;",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "The schema requires every field.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The concrete scheme is a shared base seed plus a per-replication derivation, seed = base + replication index, so the same replication index receives the same derived seed in every candidate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+          "quote": "the same seed base and the same seed = base + replication scheme",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+          "quote": "V12 uses a base seed and a deterministic per-replication seed.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The book treats a shared stream as a design choice that is permissible only when it is declared: sharing can create common random numbers, which is sometimes desirable, but it must be a declared choice.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+          "quote": "Sharing the same random stream can create common random numbers, which is sometimes desirable, but it must be a declared choice.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The declaration is visible at design level: all three candidates use the same arrivals, duration, seed scheme and metrics, so the cross-candidate sharing is a stated property of the experiment rather than a hidden accident.",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis",
+          "quote": "Three candidates use the same arrivals, duration, seed scheme and metrics",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+          "quote": "A comparison is not a comparison if each candidate receives a different arrival pattern, duration or warmup.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The other half of the scheme is explicit: V12 uses the same seed scheme for all candidates, and the engine samples independently per replication, so sharing happens across candidates and not inside a candidate's replication set.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+          "quote": "V12 uses the same seed scheme for all candidates; the engine samples independently per replication.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The standard error is defined for n independent replications, and the book states that the interval does not become more valid when the replications are correlated or the output distribution is heavy-tailed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+          "quote": "For n independent replications with sample standard deviation s",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+          "quote": "more valid if the replications are correlated or the output distribution is heavy-tailed.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "V12 states that replications are independent by construction because each replication uses its own seed, and that dependence is a within-replication property by design.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence",
+          "quote": "Replications are independent by construction in V12: each replication uses its own seed.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence",
+          "quote": "Within a replication, events are dependent by design.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "The documented consequence of sharing a stream inside a replication set is that the standard error is too small; the book lists correlated replications as a failure mode.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+          "quote": "A shared random stream makes the standard error too small.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "An ignored seed is a recognized wrong implementation: a Monte Carlo implementation can look plausible while the seed is ignored and the independent replications are identical.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter",
+          "quote": "the seed is ignored and the \"independent\" replications are identical.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The engine architecture expects a per-replication random source seeded from the scenario, and hidden state that carries across replications is a documented engine failure mode.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#components",
+          "quote": "A per-replication random.Random instance seeded from the scenario.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#failure-modes",
+          "quote": "A module-level cache carries state between replications.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Convergence is computed, not judged: relative error is the standard error divided by the absolute mean, compared with a threshold of 0.02.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+          "quote": "relative error = se / |mean|",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+          "quote": "The threshold is 0.02.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Convergence has a narrow meaning: the sampling error of the reported metric is small under the declared model, not that the model is valid, the inputs measured, the decision correct, or the interval covering a production value.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+          "quote": "It means the sampling error of the reported metric is small under the declared model.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+          "quote": "It does not cover the true production value if the model is biased or the inputs are mis-specified.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "The run contract requires every metric to carry a replication count, standard error and confidence interval, and the convergence block to carry a status, metric, relative error, threshold and replication count.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "metrics: value, unit, replication count, standard error and confidence interval;",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "convergence: status, metric, relative error, threshold and replications;",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "What the run record preserves about the seed scheme is the base seed and the replication count, together with model and scenario hashes; it does not store the per-replication seeds.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+          "quote": "The run record stores the base seed and replication count",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+          "quote": "seed base and replication count;",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "provenance: model hash, scenario hash, seed base, replications, input hash, Python,",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Replay is a reproducibility check, not a truth check, and it does not prove that the confidence interval covers a production value.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+          "quote": "A replay that matches is a reproducibility check, not a truth check.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+          "quote": "that the confidence interval covers a production value;",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The division of labour is explicit: the scenario contract records the model, the distributions and the declared correlations (steps 1-3), and the run record records the seeded sample, execution, mean, standard error, interval, variance decomposition, assumptions and limits (steps 4-8).",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-monte-carlo-procedure",
+          "quote": "The scenario contract records steps 1-3; the run record records steps 4-8.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The documented V12-C gate excludes a run from converged evidence only when the reported relative error exceeds the 0.02 threshold.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+          "quote": "A run that fails the 0.02 relative-error threshold is not used as converged evidence.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "A model can be verified, converged and executable and still fail to support a decision, because the missing evidence is about the world rather than the code.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+          "quote": "The missing evidence is about the world, not the code.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The Monte Carlo chapter explicitly excludes variance reduction from its scope, so the variance-reduction rationale for common random numbers is not developed anywhere in the book.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#boundaries-and-evidence",
+          "quote": "The chapter does not cover variance reduction, Markov-chain Monte Carlo, quasi-Monte Carlo or a full metrological uncertainty budget.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The book's general statement of the dependence effect is that ignoring a known correlation produces an output distribution that is too narrow and a decision that looks more certain than it is.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+          "quote": "A model that ignores a known correlation produces an output distribution that is too narrow and a decision that looks more certain than it is.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "The worked example attributes its narrow intervals to the synthetic workload and to independent replications, and states that narrow intervals do not make the inputs measured.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "The confidence intervals are narrow because the workload is synthetic and the replications are independent.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "Narrow intervals do not make the inputs measured.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The book is inconsistent about the scope of the result hash: one section says the hash covers the metrics, the engine section says it covers metrics, convergence, uncertainty, sensitivity and limitations, and the run contract says it is computed over the record without the hash field.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+          "quote": "the result hash covers the metrics",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+          "quote": "The result hash covers metrics, convergence, uncertainty, sensitivity and limitations.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "The result hash is computed over the record without the hash field.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "The seed is an input, not an environment detail: it comes from the scenario rather than the wall clock, and it is part of the input contract rather than a number chosen to make a result look stable.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+          "quote": "The seed comes from the scenario, not from the wall clock.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+          "quote": "It is part of the input contract.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The replication count is a declared scenario value and the run reports the achieved error; V12 does not adapt n during a run, so the count is a declaration rather than evidence of achieved precision.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule",
+          "quote": "V12 does not adapt n during a run. The scenario declares the replication count, and the run reports the achieved error.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "Restarting every replication from the same base replaces independent replicates with copies of one arrival realization: s then estimates only the variation that still remains, so s divided by the square root of n is not the standard error of the mean, and with a full reset s is zero and the interval is a point.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+          "quote": "For n independent replications with sample standard deviation s",
+          "supports": "C25",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+          "quote": "A shared random stream makes the standard error too small.",
+          "supports": "C25",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+          "quote": "the same seed base and the same seed = base + replication scheme",
+          "supports": "C25",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "Because convergence is computed as the standard error divided by the mean from the same corrupted error estimate, a collapsed s yields a near-zero relative error and a converged status; the diagnostic shares the faulty input and cannot detect the design fault.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+          "quote": "relative error = se / |mean|",
+          "supports": "C26",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+          "quote": "It means the sampling error of the reported metric is small under the declared model.",
+          "supports": "C26",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "The distinction is structural: across candidates the shared stream is held constant between the units being compared, so it acts as a pairing factor and leaves each candidate's replication set independent, whereas within a candidate it is held constant inside the unit whose sampling error is being estimated and removes the error term the interval depends on.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence",
+          "quote": "Replications are independent by construction in V12: each replication uses its own seed.",
+          "supports": "C27",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+          "quote": "V12 uses the same seed scheme for all candidates; the engine samples independently per replication.",
+          "supports": "C27",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "The contracts preserve declaration and reproducibility, not achieved independence: a run that restarted from base would still record a base seed and thirty replications, still satisfy every documented field, and still replay bit-identically, so the record cannot distinguish it from the declared scheme.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+          "quote": "The run record stores the base seed and replication count",
+          "supports": "C28",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+          "quote": "A replay that matches is a reproducibility check, not a truth check.",
+          "supports": "C28",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "convergence: status, metric, relative error, threshold and replications;",
+          "supports": "C28",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "Under across-candidate common random numbers each candidate's own interval is still computed from that candidate's independent replications while the candidate estimates become correlated, so difference statements are the place where the pairing matters; the book declares the sharing but does not state how a comparison accounts for it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+          "quote": "the same seed base and the same seed = base + replication scheme",
+          "supports": "C29",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "The confidence intervals are narrow because the workload is synthetic and the replications are independent.",
+          "supports": "C29",
+          "status": "inference"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#overview",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter",
+    "tycho.page.687d2196433c3b076d00c73144dad431#components",
+    "tycho.page.687d2196433c3b076d00c73144dad431#failure-modes",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-monte-carlo-procedure",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+    "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#boundaries-and-evidence",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

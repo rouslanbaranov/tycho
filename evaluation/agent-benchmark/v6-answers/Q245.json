@@ -1,0 +1,273 @@
+{
+  "task_id": "Q245",
+  "answer": "# Q245 — Why structural validation accepts an unreferenced model, and why that file is not evidence\n\n**Scope note.** The question is answered from the modeling-and-simulation layer (V12). The\nbook layer was searched only to test whether a general \"schema validity is not evidence\"\nprinciple exists outside V12; the hits were the same V12 pages, so no separate cross-layer\nsource is claimed. The CLI exposed only book-shaped sections for this layer (artifact_total\nwas 0 on every search), so artifact data was read directly from the V12 registry and index\nas read-only evidence.\n\n## Direct answer\n\nStructural validation accepts the file because V12-A is a closed set of *local* and\n*outbound* checks. It verifies each registered artifact's own form (strict schema, stored\nhash), the uniqueness of identifiers in the artifact namespace, and that every reference an\nartifact makes resolves: scenario to model, run to model and scenario, decision candidate to\nrun, decision pattern link to the registry. Every reference obligation has the form \"for\nevery artifact that names X, X exists\". V12 never asserts the converse, \"for every model,\nsome scenario or decision names it\", and the strict model schema has no field in which a\nconsumer could be declared. A well-formed model with a unique identifier therefore satisfies\nevery rule while participating in no edge. V12 names this exact case an **orphan model** and\nsays the validator \"treats it as an unused artifact, not as evidence\"\n(model-specification#failure-modes).\n\nThe file is not evidence because, in V12, evidence is not a property of a file. It is\nlayered by the question it answers and produced by relations: a scenario binds the model to\na workload, seeds and metrics; a run record stores metrics, convergence and provenance\nhashes; a decision record binds candidates to scenarios, runs and constraints. With no\nscenario and no decision there is no run, no metric, no convergence status and no candidate\nthat could cite the file, so there is no claim for it to support. The contract \"does not\nprove the model is useful. It makes the model's claims inspectable\"\n(model-specification#why-a-contract-instead-of-a-diagram).\n\n## 1. What V12-A actually checks — and what it never checks\n\nThe gate matrix defines V12-A as \"Structure, schemas, unique IDs, links, hashes\", marked\nimplemented, and it is implemented by the validator that also enforces the other structural\nrules (validation-gates#the-gate-matrix). The enumerated checks are\n(validation-gates#v12-a-structural):\n\n| Check | What it constrains | Needs a consumer? |\n|---|---|---|\n| valid strict frontmatter for every V12 document | document form | no |\n| unique volume, chapter and page identifiers | documentation namespace | no |\n| unique model, scenario, run and decision identifiers | artifact namespace | no |\n| every scenario model_id resolves | edge scenario -> model | no |\n| every run model_id and scenario_id resolve | edges run -> model, run -> scenario | no |\n| every decision candidate run resolves | edge decision -> run | no |\n| every pattern identifier and owner page resolves | edges to the edition registry | no |\n| every stored hash matches the current model or scenario file | file identity | no |\n| the reverse index is derived from the records, not hand-edited | index integrity | no |\n| no protected existing page or card references V12 | corpus protection | opposite direction |\n\nThe last row is the only check that looks inbound, and it forbids references *to* V12 from\nthe protected corpus; it does not require references *into* V12\n(decision-records-and-pattern-links#the-iron-rule). So the table contains no rule whose\nfailure an unreferenced model could trigger.\n\nThe model contract repeats the same shape. Its validator section lists exactly four checks:\n\n1. the object matches the strict JSON Schema for model specifications;\n2. the identifier is unique and starts with tycho.model;\n3. every scenario that names the model resolves to this identifier;\n4. every parameter with evidence status measured has a source and a measurement record\n   (model-specification#how-the-contract-is-validated).\n\nCheck 3 quantifies over scenarios, not over models. Nothing in the four checks asks whether\na scenario exists.\n\n## 2. Why the orphan file passes: four mechanisms\n\n### 2.1 The reference rules are one-directional\n\nRead as predicates, the validator enforces:\n\n- for every scenario s: model_id(s) is an element of models;\n- for every run r: model_id(r) and scenario_id(r) are elements of models and scenarios;\n- for every decision d, for every candidate c: scenario_id(c) is in scenarios and each\n  run_id(c) is in runs.\n\nIt does not enforce:\n\n- for every model m: there exists a scenario s with model_id(s) = m (or a decision that\n  reaches it).\n\nThe premise violates only the unstated second family. An artifact is therefore accepted on\nits own form plus its own outgoing edges, which is precisely the definition of an orphan:\nit has no outgoing edges to check and no incoming requirement to fail.\n\n### 2.2 The strict schema cannot express a consumer\n\nThe model schema is strict: additional properties are rejected and required fields are\nenumerated, and V12 describes the contract as a versioned JSON object whose fields a\nvalidator can check (model-specification#required-structure). A schema constrains the\nobject's own fields; it has no vocabulary for \"which other files point at me\". Adding an\ninbound requirement would have to live in the validator, not in the model schema. This is\nalso why the page says the strict schema \"rejects the missing fields; it cannot detect a\nfalse claim\" (model-specification#failure-modes) — the schema is a form check, and reference\ncompleteness is not a form.\n\n### 2.3 Uniqueness is identity hygiene, not use\n\nThe identifier requirement is that the tycho.model.* identifier is unique and starts with\ntycho.model (model-specification#how-the-contract-is-validated); the gate matrix likewise\nrequires unique model, scenario, run and decision identifiers\n(validation-gates#v12-a-structural). Uniqueness matters because references resolve by\nidentifier: a duplicate would make resolution ambiguous, which is why uniqueness sits in the\nsame gate as link resolution. *Inference:* uniqueness is a precondition for a reference to\nbe well defined, not evidence that one exists. A unique identifier is fully compatible with\nzero references, and that is exactly the case in the question.\n\n### 2.4 The derived index makes the orphan consistent, not anomalous\n\nThe reverse index is generated from V12 records rather than maintained by hand\n(validation-gates#v12-a-structural). Its key is a pattern identifier and its value is the\nlist of models, scenarios, runs and decisions that mention that pattern\n(decision-records-and-pattern-links#the-derived-reverse-index). A model with no pattern\nmentions contributes nothing to the expected map, and the derived-index check still passes;\na model that does mention patterns appears only as a mention, and the page is explicit that\nthe index \"is not a graph of semantic relationships. It is a lookup table with provenance\"\nand that co-occurrence proves neither causation nor validation\n(decision-records-and-pattern-links#the-derived-reverse-index). So no derived structure\ncontradicts the orphan's existence, and no derived structure promotes it to evidence either.\n\n*Repository observation (not a section claim):* the validator iterates registry-listed\nartifacts, never the model directory, so validation is registry-driven\n(scripts/validate_v12.py, model loop before scenario loop), and the V12 search index counts\nmodels by registry membership, not by use (scripts/validate_v12.py, document-count check;\ngenerated/v12-index.v1.json currently lists 3 models, 10 scenarios, 10 runs and 2\ndecisions). Index presence is catalog membership, not evidentiary support.\n\n## 3. Why the file is not evidence\n\n### 3.1 Evidence is layered by the question it answers\n\nV12 keeps five layers separate: source and claim evidence, model verification, calibration,\nsimulation evidence and decision evidence. \"Each layer answers a different question. A\nresult can be strong in one layer and weak in another. The labels are not a ladder, and a\nlater layer never upgrades an earlier one automatically\"\n(evidence-and-validation-vocabulary#the-five-layers; the volume landing repeats the table and\nadds that a model-verified label does not imply calibration,\ntycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers). A model contract is the *model* layer object: it declares\nstate, parameters, invariants, verification cases and validity limits. It answers \"what did\nwe assume and what would we test?\", not \"what happens under these assumptions?\" and not\n\"what should we do?\". The latter two questions belong to scenario/run and decision records.\n\n### 3.2 Evidence is relational: the chain that produces it\n\nThe provenance page states that provenance must answer \"which model and scenario produced\nthe result\", alongside engine version, seeds, replications, inputs and metrics; a timestamp\nand a filename are not provenance (run-and-result-provenance#provenance-is-not-a-log-line).\nThe run contract requires id, version, model_id and scenario_id plus model and scenario\nhashes, seed base, replications, input hash, metrics, convergence, uncertainty, sensitivity\nand limitations (run-and-result-provenance#required-fields). The chain diagram is explicit:\nmodel entity plus scenario entity feed the engine-run activity, which generates the run\nrecord, which feeds the decision record and replay\n(run-and-result-provenance#a-provenance-chain).\n\nWithout a scenario there is no workload, no seed scheme and no metric set, so no run record\ncan be produced; without a run record, no decision candidate can cite the model, because\ncandidates carry a scenario and run identifiers\n(decision-record#required-structure), and the validator requires each candidate scenario and\nevery candidate run to resolve. The orphan is therefore not merely unused: under the\npremise it is structurally unreachable from any decision.\n\n### 3.3 V12 states the orphan case and its evidentiary status\n\nThe model contract's failure modes name this exact situation: \"**Orphan model.** A model file\nexists but no scenario or decision references it. The validator treats it as an unused\nartifact, not as evidence\" (model-specification#failure-modes). This is not an inference from\nthe absence of a rule; it is the volume's own classification. The same page calls the\ncontract \"a guardrail, not a reviewer\" and says it \"does not prove the model is useful\"\n(model-specification#why-a-contract-instead-of-a-diagram).\n\n### 3.4 Why \"unused artifact\" is the right verdict, not \"hidden failure\"\n\nV12 is careful to distinguish declared incompleteness from failure. A calibration status of\nuncalibrated \"is a complete value, not a missing one\"\n(model-specification#required-structure); every model in the volume is uncalibrated and\nvalidity limits are \"a condition on the result's use\", not a disclaimer\n(calibration-and-validity-limits#validity-limits); and a decision record may return\ninsufficient evidence as a complete outcome\n(decision-record#insufficient-evidence-is-a-result). Those tolerances apply *inside* a\nreferenced chain: they condition a result that exists. An orphan has no result to condition,\nso the tolerance does not transfer. It is not a failed piece of evidence; it is not evidence\nat all, by the volume's own definition.\n\nThe nuance that keeps this honest: \"not evidence\" means not simulation evidence and not\ndecision evidence. The file can still be read as a declaration of assumptions, and its\nverification block can name tests and observed results — but verification is not validation\n(\"A verified engine is not a validated system\",\nmodel-verification#verification-versus-validation), and the validator only checks that the\nverification fields exist, not that the tests ran (verification theater,\nmodel-specification#failure-modes). It also cannot support a decision, because a verified,\nconverged, executable model can still fail to support one\n(insufficient-evidence-outcomes#insufficient-evidence-is-not-a-model-failure).\n\n## 4. Boundaries and trade-offs\n\n1. **Reference is necessary, not sufficient.** A model referenced by a scenario is still\n   only an input. The simulation evidence is synthetic unless calibrated; a decision may be\n   conditional; and the gates explicitly do not establish source truth, real-system match,\n   owner acceptance, CI or production behavior (validation-gates#what-the-gates-do-not-establish).\n   The orphan sits at the weak end of a continuum, not outside a binary rule.\n2. **Acceptance is silence, not endorsement.** V12-A passing means no structural rule was\n   violated. It does not mean the model is useful, covered, reviewed or safe to rely on.\n   The volume says the gates \"do not establish that the models match a real system\" and \"do\n   not establish that the decisions are accepted by the owner\"\n   (validation-gates#what-the-gates-do-not-establish).\n3. **No referential-completeness gate is a deliberate-looking omission.** A rule \"every\n   model must be referenced\" would also reject work-in-progress models, shared models\n   awaiting scenarios and archived variants. V12 instead classifies the orphan editorially\n   as an unused artifact. *Inference:* the trade-off is accepting dead files in exchange for\n   not blocking legitimate intermediate states; the sources state the behavior, not the\n   rationale.\n4. **The only inbound rule points the other way.** The iron rule forbids existing cards,\n   owner pages and the rest of the protected corpus from referencing V12\n   (decision-records-and-pattern-links#the-iron-rule). It protects reviewable evidence, not\n   model reachability, so it is not a counterexample.\n5. **Referenced models are not thereby evidence either.** A scenario plus a run yields\n   simulation evidence; a decision record yields decision evidence; neither upgrades the\n   model. Forbidden inferences include \"the model is verified, so the design is correct\",\n   \"the simulation succeeded, so production will succeed\" and \"the pattern is mentioned, so\n   the pattern is promoted\"\n   (evidence-and-validation-vocabulary#forbidden-inferences).\n6. **Replay is not truth.** Even a full run chain proves reproducibility, not validity: \"A\n   replay that matches is a reproducibility check, not a truth check\"\n   (run-and-result-provenance#what-replay-proves). So the chain raises the artifact's\n   evidentiary layer; it does not certify the world.\n7. **Registry scope.** The validator only sees registered artifacts; a schema-valid model\n   file outside the registry would not be validated at all (repository observation of the\n   registry-driven loops). \"Passes the strict schema\" therefore already presupposes\n   registration, which is a second, independent reason acceptance says nothing about use.\n8. **What would change the answer.** A scenario naming the model would make it reachable;\n   a run record would give it simulation evidence; a decision candidate would give it\n   decision relevance. A mere backlink added to a scenario would not by itself make the file\n   evidence. Conversely, a new validator rule requiring at least one scenario per model\n   would make structural validation reject it — but that would be a policy change, not a\n   change in what counts as evidence.\n\n## 5. Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1. Scope of structural validation | \"structural validation gate matrix\"; \"validator strict frontmatter unique identifiers\"; \"V12-A structure schemas unique IDs links hashes\" | validation-gates#the-gate-matrix, #v12-a-structural; model-specification#how-the-contract-is-validated |\n| F2. Direction of reference rules and the orphan case | \"every scenario model_id resolves\"; \"unique identifier model artifact unreferenced\"; \"orphan model unused artifact\" | validation-gates#v12-a-structural; model-specification#how-the-contract-is-validated, #failure-modes |\n| F3. Schema and identifier semantics | \"strict JSON schema cannot detect false claim\"; \"model contract required structure\"; \"identifier unique tycho.model\" | model-specification#required-structure, #why-a-contract-instead-of-a-diagram, #how-the-contract-is-validated |\n| F4. Evidence layering and the artifact chain | \"five evidence layers\"; \"model scenario run decision provenance chain\"; \"decision record candidates runs\" | evidence-and-validation-vocabulary#the-five-layers; run-and-result-provenance#provenance-is-not-a-log-line, #required-fields, #a-provenance-chain; decision-record#required-structure |\n| F5. Claim-relative evidence (verification vs validation; insufficient evidence) | \"model-verified production-verified\"; \"verification versus validation\"; \"insufficient evidence is a result\" | model-verification#verification-versus-validation, #what-is-not-verified; insufficient-evidence-outcomes#insufficient-evidence-is-not-a-model-failure; decision-record#insufficient-evidence-is-a-result |\n| F6. Discovery/index semantics and absence | \"derived reverse index lookup table\"; \"co-occurrence does not prove\"; \"artifact reachability dependency graph references\" | decision-records-and-pattern-links#the-derived-reverse-index, #what-a-link-does-not-mean; validation-gates#v12-a-structural, #what-the-gates-do-not-establish |\n\nSaturation: the last two search rounds (\"artifact reachability dependency graph references\nvalidator\" and \"referential integrity inbound references completeness gate\") returned only\nsections already in this matrix, and the two rounds before them added only\nmodel-specification#failure-modes and model-verification#what-is-not-verified, which were\nalready read.\n\n## 6. Evidence map\n\n| Claim | Section key | Observed or inference |\n|---|---|---|\n| V12-A covers structure, schemas, unique IDs, links and hashes, and is implemented | validation-gates#the-gate-matrix | observed |\n| Structural checks include unique artifact IDs and resolution of scenario->model, run->model/scenario, decision->run, pattern links, hashes and derived reverse index | validation-gates#v12-a-structural | observed |\n| The model validator checks schema, unique tycho.model ID, scenario->model resolution and measured-parameter sources, and nothing about consumers | model-specification#how-the-contract-is-validated | observed |\n| The orphan model is explicitly \"an unused artifact, not as evidence\" | model-specification#failure-modes | observed (quoted) |\n| The strict schema cannot detect a false claim; the contract is a guardrail, not a reviewer | model-specification#failure-modes, #why-a-contract-instead-of-a-diagram | observed |\n| Uncalibrated is a complete value, not a missing one | model-specification#required-structure | observed |\n| Evidence is five separate layers and not a ladder | evidence-and-validation-vocabulary#the-five-layers | observed |\n| Cross-layer inferences such as verified->correct or simulated->production are forbidden | evidence-and-validation-vocabulary#forbidden-inferences | observed |\n| Decision records separate model-verification, calibration and decision statuses, and conditional outcomes must state conditions and reversal triggers | evidence-and-validation-vocabulary#evidence-statuses-used-in-decision-records | observed |\n| Provenance must name the model and scenario that produced a result; timestamp/filename is not provenance | run-and-result-provenance#provenance-is-not-a-log-line | observed |\n| Run records require model_id, scenario_id, hashes, seeds, metrics and convergence | run-and-result-provenance#required-fields | observed |\n| The chain is model+scenario -> run -> decision; no scenario means no run record | run-and-result-provenance#a-provenance-chain | observed |\n| Replay proves reproducibility, not truth | run-and-result-provenance#what-replay-proves | observed |\n| Decision candidates carry a scenario and runs, plus constraints and evidence statuses | decision-record#required-structure | observed |\n| Insufficient evidence is a complete decision outcome | decision-record#insufficient-evidence-is-a-result | observed |\n| A verified, converged, executable model can still fail to support a decision | insufficient-evidence-outcomes#insufficient-evidence-is-not-a-model-failure | observed |\n| Verification is not validation; a verified engine is not a validated system | model-verification#verification-versus-validation | observed |\n| Operational validity, calibration and production traces are not verified | model-verification#what-is-not-verified | observed |\n| The reverse index is a pattern-keyed lookup with provenance; co-occurrence is not proof | decision-records-and-pattern-links#the-derived-reverse-index | observed |\n| A pattern link does not promote, re-review or establish production applicability | decision-records-and-pattern-links#what-a-link-does-not-mean | observed |\n| The gates do not establish source truth, real-system match, owner acceptance, CI/production or promotion | validation-gates#what-the-gates-do-not-establish | observed |\n| The iron rule forbids the existing corpus from referencing V12 | decision-records-and-pattern-links#the-iron-rule | observed |\n| Every model in the volume is uncalibrated; validity limits are conditions on use | calibration-and-validity-limits#validity-limits | observed |\n| A scenario binds model_id to workload, configuration, seeds and metrics | scenario-specification#required-structure | observed |\n| Model-verified does not imply calibration; decision-supported may coexist with an uncalibrated model when conditional | tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers | observed |\n| Uniqueness is a precondition for resolvable references, not evidence of use | model-specification#how-the-contract-is-validated; validation-gates#v12-a-structural | inference |\n| A referential-completeness rule was omitted to avoid blocking work-in-progress, shared or archived models | model-specification#failure-modes | inference |\n| The validator is registry-driven and the V12 index counts models by registry membership | (no section; scripts/validate_v12.py and generated/v12-index.v1.json) | repository observation, not a section claim |\n\n## 7. Unknowns and confidence\n\n- **No live orphan was observed.** The current V12 registry has three models\n  (checkout-des, modernization-path, order-intake), ten scenarios, ten runs and two\n  decisions, and every model is named by at least one scenario (repository observation).\n  The acceptance behavior is therefore established from the validator's rule set and the\n  explicit failure-mode text, not from watching a real orphan pass.\n- **No disposition policy found.** V12 classifies the orphan as unused but does not state\n  whether such files should be deleted, archived or retained. I did not find a retention or\n  lifecycle rule in the volume, and I am not inventing one.\n- **No future-gate statement found.** The gate list V12-A to V12-F contains no referential\n  completeness gate, and no page says whether one is planned. A new gate would change the\n  first half of the answer, not the second.\n- **Artifact retrieval boundary.** The CLI's modeling-and-simulation searches returned\n  book-shaped sections and reported artifact_total 0; artifact-level lookup\n  (include_artifacts) was not exposed. Artifact data was therefore read from the V12\n  registry, index and JSON files, which is artifact data, not a summary.\n- **No report, label or answer was read**, per the benchmark rules.\n- **Confidence.** High that structural acceptance follows from the one-directional check set\n  and the explicit orphan classification; high that the file is not simulation or decision\n  evidence; medium on the rationale for omitting a completeness gate, which is inference\n  from the stated behavior rather than a documented decision.\n\n## 8. One-line answer\n\nStructural validation accepts the file because every V12-A rule is local to an artifact or\noutbound from it, so a unique, schema-valid model with no consumers violates nothing and is\nclassified as an unused artifact; the file is not evidence because V12 evidence is layered\nand relational — with no scenario there is no run, with no run no metrics or decision\ncandidate, so the model supports no claim about a workload or a choice.\n",
+  "citations": [
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#provenance-is-not-a-log-line",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#a-provenance-chain",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+    "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-derived-reverse-index",
+    "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+    "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-iron-rule"
+  ],
+  "evidence": [
+    {
+      "claim": "V12-A covers structure, schemas, unique IDs, links and hashes, is implemented, and later gates cover other concerns.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+      "note": "Observed gate table: V12-A Structure, schemas, unique IDs, links, hashes = implemented; V12-B..F are separate gates."
+    },
+    {
+      "claim": "The structural check list resolves only outbound references and includes no inbound or coverage requirement for models.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+      "note": "Observed: every scenario model_id resolves; every run model_id and scenario_id resolve; every decision candidate run resolves; reverse index derived; iron rule forbids existing pages referencing V12."
+    },
+    {
+      "claim": "The model validator checks schema, unique tycho.model identifier, scenario-to-model resolution and measured-parameter sources only.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+      "note": "Observed four-item list; check 3 quantifies over scenarios, not models. Corroborated by the registry-driven model loop in scripts/validate_v12.py."
+    },
+    {
+      "claim": "V12 names the orphan model and says the validator treats it as an unused artifact, not as evidence.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+      "note": "Observed quote: 'A model file exists but no scenario or decision references it. The validator treats it as an unused artifact, not as evidence.'"
+    },
+    {
+      "claim": "The strict schema rejects missing fields but cannot detect a false claim; the contract is a guardrail, not a reviewer.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+      "note": "Observed under verification theater: 'The strict schema rejects the missing fields; it cannot detect a false claim.'"
+    },
+    {
+      "claim": "The contract makes a model's claims inspectable but does not prove the model useful.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+      "note": "Observed: 'The contract does not prove the model is useful. It makes the model's claims inspectable.'"
+    },
+    {
+      "claim": "A calibration status of uncalibrated is a complete value, not a missing one.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+      "note": "Observed in required-structure: 'A calibration status of uncalibrated is a complete value, not a missing one.'"
+    },
+    {
+      "claim": "Evidence is five separate layers, not a ladder, and a later layer never upgrades an earlier one.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+      "note": "Observed: source/claim, model verification, calibration, simulation, decision; each answers a different question."
+    },
+    {
+      "claim": "Cross-layer inferences such as verified implies correct, simulated implies production, or mentioned implies promoted are invalid.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+      "note": "Observed list of forbidden inferences; each crosses a layer boundary without required evidence."
+    },
+    {
+      "claim": "Decision records separate model-verification, calibration and decision statuses; conditional outcomes must state the condition and reversal triggers.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+      "note": "Observed: model-verified/partially-verified/unverified; calibrated/partially-calibrated/uncalibrated; decision-supported/insufficient-evidence."
+    },
+    {
+      "claim": "Provenance must identify which model and scenario produced the result; a timestamp and filename are not provenance.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#provenance-is-not-a-log-line",
+      "note": "Observed: provenance answers which model and scenario, engine version, seed, replications, inputs, metrics and limitations."
+    },
+    {
+      "claim": "Run records bind model and scenario by hash and require model_id, scenario_id, seeds, metrics and convergence.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+      "note": "Observed required fields: id, version, model_id, scenario_id, engine, provenance hashes, metrics, convergence, uncertainty, sensitivity, limitations, result_sha256."
+    },
+    {
+      "claim": "The provenance chain is model plus scenario to run to decision; without a scenario there is no run record.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#a-provenance-chain",
+      "note": "Observed diagram and text alternative: model and scenario entities feed the engine run; run record feeds decision and replay."
+    },
+    {
+      "claim": "Replay is a reproducibility check, not a truth check.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+      "note": "Observed: 'A replay that matches is a reproducibility check, not a truth check.'"
+    },
+    {
+      "claim": "Decision candidates carry a scenario and runs, plus constraints, metrics and evidence statuses.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+      "note": "Observed: candidates include identifier, scenario, runs, pattern identifiers and owner pages."
+    },
+    {
+      "claim": "Insufficient evidence is a complete decision outcome; a record may return no recommendation.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+      "note": "Observed: 'A decision record can conclude that the evidence is insufficient'; no-recommendation is not invalid."
+    },
+    {
+      "claim": "A verified, converged, executable model can still fail to support a decision.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+      "note": "Observed: 'A model can be: verified... converged... executable... and still fail to support a decision.'"
+    },
+    {
+      "claim": "Verification is not validation; a verified engine is not a validated system.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+      "note": "Observed: Sargent distinction; 'A verified engine is not a validated system.'"
+    },
+    {
+      "claim": "Operational validity, calibration and a production trace are not verified.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+      "note": "Observed list: service-time distribution not fitted, arrivals not tested against production trace, FIFO only, no dependency calls."
+    },
+    {
+      "claim": "The reverse index is a pattern-keyed lookup with provenance, not a semantic graph; co-occurrence is not proof.",
+      "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-derived-reverse-index",
+      "note": "Observed: pattern_id -> [model, scenario, run, decision]; 'It is a lookup table with provenance.'"
+    },
+    {
+      "claim": "A pattern link does not promote, re-review or establish production applicability.",
+      "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+      "note": "Observed: simulation evidence never promotes a pattern to sufficient; owner page remains canonical."
+    },
+    {
+      "claim": "The gates do not establish source truth, real-system match, owner acceptance, CI/production behavior or pattern promotion.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+      "note": "Observed five-item list; acceptance is not endorsement."
+    },
+    {
+      "claim": "Every V12 model is uncalibrated and validity limits are conditions on use, not disclaimers.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+      "note": "Observed: 'A validity limit is not a disclaimer appended to a result. It is a condition on the result's use.'"
+    },
+    {
+      "claim": "A scenario binds model_id to workload, configuration, seeds and metrics.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+      "note": "Observed required scenario fields; model_id is part of the scenario contract."
+    },
+    {
+      "claim": "Model-verified does not imply calibration; a decision-supported record may coexist with an uncalibrated model when conditional.",
+      "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+      "note": "Observed volume-level five-layer table and separation statement."
+    },
+    {
+      "claim": "The iron rule forbids the protected existing corpus from referencing V12; it is an outward-pointing inbound rule.",
+      "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-iron-rule",
+      "note": "Observed: 'V12 references existing patterns. Existing patterns do not reference V12.' Also the last V12-A bullet."
+    },
+    {
+      "claim": "Uniqueness is a precondition for resolvable references, not evidence of use.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+      "note": "Inference from the fact that the same gate checks identifier uniqueness and reference resolution; the sources do not state this rationale."
+    },
+    {
+      "claim": "Omitting a referential-completeness rule trades dead files for accepting work-in-progress, shared or archived models.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+      "note": "Inference: the page classifies the orphan editorially but does not state a rationale or a retention policy."
+    }
+  ],
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "Scope of structural validation (V12-A)",
+      "queries": [
+        "structural validation gate matrix",
+        "validator strict frontmatter unique identifiers",
+        "V12-A structure schemas unique IDs links hashes"
+      ],
+      "evidence": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated"
+      ]
+    },
+    {
+      "id": "F2",
+      "facet": "Direction of reference rules and the orphan case",
+      "queries": [
+        "every scenario model_id resolves",
+        "unique identifier model artifact unreferenced",
+        "orphan model unused artifact"
+      ],
+      "evidence": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes"
+      ]
+    },
+    {
+      "id": "F3",
+      "facet": "Schema and identifier semantics",
+      "queries": [
+        "strict JSON schema cannot detect false claim",
+        "model contract required structure",
+        "identifier unique tycho.model"
+      ],
+      "evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated"
+      ]
+    },
+    {
+      "id": "F4",
+      "facet": "Evidence layering and the artifact chain",
+      "queries": [
+        "five evidence layers",
+        "model scenario run decision provenance chain",
+        "decision record candidates runs"
+      ],
+      "evidence": [
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#provenance-is-not-a-log-line",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#a-provenance-chain",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure"
+      ]
+    },
+    {
+      "id": "F5",
+      "facet": "Claim-relative evidence: verification vs validation; insufficient evidence",
+      "queries": [
+        "model-verified production-verified",
+        "verification versus validation",
+        "insufficient evidence is a result"
+      ],
+      "evidence": [
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result"
+      ]
+    },
+    {
+      "id": "F6",
+      "facet": "Discovery/index semantics and the meaning of absence",
+      "queries": [
+        "derived reverse index lookup table",
+        "co-occurrence does not prove",
+        "artifact reachability dependency graph references"
+      ],
+      "evidence": [
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-derived-reverse-index",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+      ]
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "layers": [
+    "modeling-and-simulation",
+    "book (cross-check only)"
+  ],
+  "snapshot": "4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a"
+}

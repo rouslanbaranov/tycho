@@ -1,0 +1,267 @@
+{
+  "task_id": "Q291",
+  "answer": "# Q291 - A correlated arrival/service sample against the 48-row quadratic screen\n\n## 0. Onboarding and layer choice\n\nI ran describe first. It reports 555 documents and 3,132 sections, coverage \"complete\",\nsnapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a, ranker\ntycho-section-fts5-bm25-v5, citation scheme tycho.section-key.v2, and three layers: book,\natlas and modeling-and-simulation.\n\nThe question is a V12 model/sensitivity question, so the primary layer is\nmodeling-and-simulation. The same canonical V12 prose is also reachable through the book\nlayer, and the decision-use caveat lives on a V12 decision page. Atlas is not needed: the\nquestion is not about pattern identity, family coverage or an atlas card, and no atlas claim\nis made here.\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1. Rejection trigger: a correlated joint sample against an independent-input screen | \"engine rejects correlated screen\"; \"response-surface sensitivity requires independent inputs\"; \"sensitivity scenario declares no correlation\" | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen |\n| F2. What the 48-row screen computes and decomposes | \"48 input rows quadratic response surface\"; \"decompose fitted variance main effects interaction\"; \"first-order and total-order shares\" | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen; tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity |\n| F3. Meaning and limits of the reported indices | \"first-order Sobol index share of variance\"; \"total-order includes interactions\"; \"near-zero first-order not irrelevant\" | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity |\n| F4. Correlation declaration and propagation | \"declare correlations between inputs or state independent\"; \"Gaussian copula declared correlation\"; \"separate dependent-input run\" | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-monte-carlo-procedure; tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity |\n| F5. Ranking honesty and decision use | \"sensitivity ranking not production claim\"; \"identify what to measure first\"; \"ignored correlation too narrow\" | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes; tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen |\n| F6. Validation and convergence gate for correlated runs | \"V12-C statistical validity\"; \"correlated_inputs true Gaussian-copula\"; \"0.02 relative-error threshold\" | tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity |\n\nSearch breadth. I used exact-term, synonym, layer-alias and conceptual formulations,\nincluding: \"arrival rate service mean joint sample quadratic screen\"; \"48-row interaction\nscreen design rank deficient correlated inputs\"; \"engine rejects correlated screen\nindependent inputs sensitivity scenario\"; \"Gaussian copula declared correlation input\ndraws\"; \"candidate B sensitivity run arrival rate service mean\"; \"sensitivity scenario\ncontract correlation declared screen validation\"; \"arrival rate service mean utilization\nqueue model\"; \"correlated inputs variance decomposition main effect attribution\"; \"Sobol\nindices independent inputs assumption correlation\"; \"joint sample arrival rate service mean\nmove together\"; \"dependent-input run correlation separate Monte Carlo\"; \"response-surface\nsensitivity requires independent inputs separate dependent-input run\"; \"correlation\ndeclared scenario uncertainty parameter draws\"; \"sensitivity screen rejected validation\nfailure correlated\". Successive searches converged on the same V12 screen page and added no new evidence; I then\nread the V12-C validation gate and the related uncertainty, scenario-contract,\nreference-case, queue and validation-gate pages.\n\n## 2. Direct answer\n\nThe engine rejects the screen because the V12 quadratic response-surface screen is an\nindependent-input procedure. The sensitivity scenario must declare no correlation, and a\njoint sample in which arrival rate and service mean move together is a correlated design.\nThe engine rejects a correlated screen instead of returning first-order or total-order\nshares. This is a guardrail, not a numerical accident: a correlated joint sample does not\nidentify the separate main effects and the interaction that the screen claims to report.\n\nThe screen does not decompose the model's true output variance. It draws 48 rows from the\ndeclared distributions, runs the model for each row, fits a quadratic surface in\nstandardized input coordinates, and decomposes the variance of that fitted surface into\nper-input main effects and one interaction term. It then reports those fitted shares as\nfirst-order and total-order indices. It is a screening approximation over a small sample,\nnot a full Sobol' analysis.\n\nCorrelated inputs cannot be ranked by that screen. They must be declared in the scenario\ncontract and propagated by the separate dependent-input Monte Carlo run: sample the joint\ndistribution with the declared correlation (the documented correlated case uses a Gaussian\ncopula), report the output distribution with seeds, replications, standard errors,\nconfidence intervals and convergence, and keep the 48-row screen on the independent-input\nsensitivity scenario. The ranking stays honest only if it is labelled as a screen under\ndeclared distributions and a quadratic approximation, and if the correlated case's\nuncertainty comes from the joint run rather than from the rejected screen.\n\n## 3. Why the engine rejects that screen\n\n### 3.1 The screen's contract requires independent inputs\n\nThe page is explicit: after listing the five steps, it says the screen \"also requires\nindependent inputs: the sensitivity scenario declares no correlation, and the engine rejects\na correlated screen.\" The same paragraph says correlated inputs are propagated by the\nseparate Monte Carlo run, not by the independent-input variance decomposition, and that the\nscreen is not a full Sobol' analysis.\n\nSo the rejection has a documented trigger: the scenario declares a correlation, and the\nscreen's contract says it is only for independent inputs. The engine does not fit a\ncorrelated design and then warn; it rejects the screen.\n\n### 3.2 The statistical reason: the shares are not identified\n\nThe procedure fits a quadratic surface in standardized coordinates:\n\n    Y = b0 + b1*x1 + b2*x2 + b12*x1*x2 + b11*x1^2 + b22*x2^2\n\nwhere x1 is the standardized arrival rate and x2 is the standardized service mean. The\nscreen's main-effect variance for an input uses that input's linear and squared terms; the\ninteraction variance is the single cross-product term. This attribution is meaningful only\nwhen the input columns vary independently.\n\nIf the two inputs are generated as one joint sample and move together, the columns are\ncollinear. With a perfect joint move, x2 is an affine function of x1, so x1*x2 and x2^2 are\nlinear combinations of 1, x1 and x1^2. The design matrix is rank-deficient, and the\ncoefficients b1, b2, b12, b11 and b22 are not separately identified. With a partial\ncorrelation, the columns are nearly collinear: the fit may still solve numerically, but the\nsplit of fitted variance between \"arrival main effect\", \"service main effect\" and\n\"interaction\" is unstable and sample-dependent. The first-order ranking can then be an\nartifact of which collinear direction the solver happened to favour.\n\nThat is the deeper reason the engine's rejection is correct. Even if a team bypassed the\ndeclaration check and forced correlated rows through a quadratic fit, the fit would not\nrecover a stable attribution. The rejection is the visible guardrail for an identification\nproblem, not an inconvenience to work around. (This paragraph is inference from the\nindependence requirement and the fitted quadratic form, not a separate source claim.)\n\n### 3.3 The screen is not a post-hoc analyzer of arbitrary rows\n\nThe documented procedure is that the screen draws its own 48 rows from the declared\ndistributions, runs the model, and fits the surface. The documented procedure implies it is not a generic analyzer that\naccepts an arbitrary external sample matrix. A joint sample with a declared correlation is\ntherefore outside the screen's contract twice over: the declarations are not independent,\nand the rows were not drawn under the screen's independent-input design. The engine's\nrejection is consistent with that contract.\n\n## 4. What the 48-row screen actually decomposes\n\n### 4.1 The five documented steps\n\nThe screen:\n\n1. draws 48 input rows from the declared distributions;\n2. runs the model for each row;\n3. fits a quadratic surface in standardized input coordinates;\n4. decomposes the fitted variance into main effects and the interaction term;\n5. reports the first-order and total-order shares.\n\nThe key word is fitted. The decomposition is of the variance of the fitted quadratic\nsurface over the sampled rows, not of the simulator's full output variance and not of a\npopulation variance. The shares are functions of the fitted coefficients and the\nstandardized design.\n\n### 4.2 Main effects, the single interaction, and the two reported shares\n\nWith two inputs, the fitted surface has one linear term and one squared term per input, plus\none cross-product term. The screen attributes fitted variance to:\n\n- the arrival-rate main effect (its linear plus curvature contribution);\n- the service-mean main effect (its linear plus curvature contribution);\n- the single arrival-by-service interaction term.\n\nFirst-order is the share of variance explained by an input alone. Total-order includes every\ninteraction that involves that input. In this two-input screen the total-order share adds the\nfitted interaction share to the main-effect share; that is why the reference cases say the\ntotal-order share includes the fitted interaction variance and is at least the first-order\nshare by construction. That condition is a coherence check, not proof that the decomposition\nis correct or precise.\n\nThe screen is explicitly an approximation. It assumes a quadratic surface is adequate over\nthe sampled range and that input standardization is meaningful. It is not a full Sobol'\nanalysis and does not use the paired fixed/varied evaluations of a pick-freeze estimator.\nThe 48-row sample is small, and the reference-case page calls the indices a screen, not a\nprecision estimate.\n\n### 4.3 What the candidate B numbers do and do not say\n\nThe fitted screen reports:\n\n- arrival rate: first-order 0.361, total-order 0.464;\n- service mean: first-order 0.536, total-order 0.639.\n\nThe two first-order shares sum to 0.897, leaving about 0.103 for interaction and unexplained\nvariation. The service mean has the larger main effect in this sampled range, and the arrival\nrate has a substantial interaction share. The screen does not prove that service time is\nmore important in production; it says that, under the declared distributions and the\nquadratic approximation, service mean explains more of the fitted variance.\n\n### 4.4 What the screen does not decompose\n\nIt does not decompose:\n\n- the simulator's full output variance;\n- higher-order interaction structure beyond the fitted cross term;\n- variance shared by correlated inputs;\n- causal effects;\n- production variance or production importance;\n- the sampling error of the indices (the 48-row screen is not a precision estimate).\n\nThe phrase \"interaction and unexplained variation\" in the page is important: the screen\nreports the fitted main and interaction shares, but the exact split between the fitted\ninteraction and any variation the quadratic surface does not capture is not reported as a\nseparate residual. The page gives the 0.103 remainder, not a residual analysis.\n\n## 5. How correlated inputs must be propagated to keep the ranking honest\n\n### 5.1 Declare the dependence in the scenario contract\n\nThe Monte Carlo procedure says to declare correlations between inputs, or state that they\nare independent. The scenario contract's uncertainty block carries parameter draws and\ncorrelations, and the schema requires every field. Independence is a modelling assumption,\nnot a neutral default. The correlation must be declared, not inferred from the data: the\nengine applies the declared correlation to the input draws and does not infer a correlation\nfrom data.\n\nThe correlation magnitude documented in the V12 uncertainty page is a negative -0.4 between dual-write\nlag and reconciliation capacity in the modernization scenario, labelled as a Gaussian\ncopula. That is a different input pair from arrival rate and service mean. It illustrates the\nmethod; it is not evidence for the sign or size of the team's arrival/service correlation.\n\n### 5.2 Use the separate dependent-input Monte Carlo run\n\nCorrelated inputs are propagated by the separate Monte Carlo run, not by the independent-input\nvariance decomposition. In the documented correlated case, the modernization scenario\ndeclares correlated inputs and its run reports the Gaussian-copula method and\ncorrelated_inputs true. The run record is where the dependence assumption becomes visible\nand auditable.\n\nPractically, the propagation path is:\n\n1. declare the marginal distributions and the correlation structure in the scenario;\n2. sample the joint distribution with the declared correlation, preserving the marginals\n   (the documented method is a Gaussian copula);\n3. run the model over the joint sample with the declared seeds and replications;\n4. report the output mean, standard error, confidence interval and convergence status;\n5. keep the dependence assumption and the method label with the result.\n\nA run that fails the 0.02 relative-error threshold is not used as converged evidence. A\ncorrelated run that is not converged is not a basis for a ranking either.\n\n### 5.3 Do not feed the joint rows into the 48-row screen\n\nThe screen's ranking is conditional on independent inputs. Feeding correlated rows into it\ndoes not produce a correlation-adjusted ranking; it produces shares whose attribution is not\nidentified. The honest procedure is:\n\n- keep the 48-row quadratic screen on the independent-input sensitivity scenario;\n- take the correlated case's uncertainty from the separate dependent-input run;\n- do not quote the screen's first-order or total-order shares as a ranking under\n  correlation;\n- label the screen's output as a screening approximation under the declared distributions\n  and the quadratic form;\n- use the screen to identify what to measure first, not to support a production claim.\n\nThe decision page makes the last point explicitly: the sensitivity ranking is not used to\nsupport a production claim; it is used to identify what to measure first. The scenario\ncontract records the failure mode that matters here: when two inputs are drawn independently\neven though they move together, the resulting uncertainty is too narrow. Ignoring a known\ncorrelation therefore does not just mis-rank inputs; it makes the decision look more certain\nthan it is.\n\n### 5.4 Keep the ranking honest under correlation\n\nA correlation-honest ranking has to state its conditioning set: the declared marginals, the\ndeclared correlation, the sampling method, the seed and replication scheme, the convergence\nresult, and the fact that the screen is a quadratic approximation over 48 rows. Under\ncorrelation, the arrival rate and the service mean share variance; attributing that shared\nvariance to one of them is a modelling choice, not a decomposition result. If the team needs\na single importance ordering under correlation, I found no defined correlated\nSobol', Shapley or conditional-index procedure for this screen. The defensible output is the\njoint run's output distribution plus an explicit statement that the screen cannot rank the\ntwo inputs under that dependence. Inventing a correlated index and presenting it as the\nscreen's result would be the dishonest option.\n\n## 6. Boundaries and failure modes\n\n- **Independence is a modelling assumption, not a neutral default.** A correlated sample\n  that ignores the dependence narrows the output distribution and overstates certainty.\n- **Quadratic overreach.** The response surface is an approximation over the sampled range;\n  extrapolating it beyond that range is a documented failure mode.\n- **Small-sample screening.** The 48-row sample is small; the indices are a screen, not a\n  precision estimate, and no confidence interval for the indices is documented.\n- **Total-order sanity is not correctness.** Total-order being at least first-order follows\n  by construction from including the fitted interaction variance; it checks coherence, not\n  the truth of the decomposition.\n- **Bounded-output distortion.** A success rate near 1.0 has little variance, so a variance\n  decomposition can look unstable even when the underlying effect is real.\n- **Synthetic and uncalibrated.** The V12 models are uncalibrated; the screen is modeled\n  evidence, not production measurement, independent review or owner acceptance.\n- **No production or causal claim.** The screen ranks fitted variance under declared\n  distributions; it does not prove production importance or causality.\n- **Convergence gate.** A run that fails the 0.02 relative-error threshold is not converged\n  evidence; the sensitivity run itself is converged at 0.00016 relative error, and a\n  separate two-replication stress run is marked insufficient-sample at 0.032.\n- **Do not transfer the -0.4 example.** That value belongs to dual-write lag and\n  reconciliation capacity, not to arrival rate and service mean.\n- **Do not bypass the rejection.** The engine's rejection is the guardrail; forcing\n  correlated rows through the fit does not restore identifiability.\n\n## 7. Evidence map\n\n| Claim | Section key(s) | What the evidence supports |\n|---|---|---|\n| C1 | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen | The screen requires independent inputs and the engine rejects a correlated screen. |\n| C2 | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen | The five-step 48-row quadratic procedure. |\n| C3 | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen | Fitted-variance approximation, not full Sobol' analysis. |\n| C4 | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity | First-order versus total-order meaning and interaction caveat. |\n| C5 | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen | Inference: a joint sample makes the quadratic attribution non-identified. |\n| C6 | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity; tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs | Correlated inputs go to the separate dependent-input run; the run reports Gaussian copula and correlated_inputs true. |\n| C7 | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-monte-carlo-procedure; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure; tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs | Declare correlations in the scenario; the engine applies declared correlations and does not infer them. |\n| C8 | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes; tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes | Ignoring correlation narrows uncertainty and overstates certainty. |\n| C9 | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty; tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity | Candidate B numbers, 0.897 sum, 0.103 remainder, and the production caveat. |\n| C10 | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty | Honest use: independent screen, dependent-input run, convergence gate, measurement-first decision use. |\n| C11 | tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities | Inference: arrival rate and service mean enter utilization together, so a joint move entangles their contributions. |\n| C12 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity | Total-order includes fitted interaction variance; sanity is coherence, not precision. |\n\n## 8. Unknowns and limits\n\n- **No documented correlated index.** The corpus says correlated inputs go to the separate\n  dependent-input run, but I found no defined correlated Sobol', Shapley or conditional\n  importance index for this screen. The specific statistic for ranking under correlation is\n  therefore not established here.\n- **Exact rejection mechanics are not in the prose.** The corpus states that the engine\n  rejects a correlated screen; it does not document the exact validation code path, the\n  error object or where in the run life cycle the rejection occurs. I did not treat the\n  absence of that detail as evidence about the implementation.\n- **The 0.103 remainder is not a residual analysis.** The page describes it as interaction\n  and unexplained variation; it does not report a separate residual or a confidence interval\n  for the interaction share.\n- **The team's correlation is not specified.** I found no corpus statement of the sign or\n  magnitude of the arrival-rate/service-mean correlation in the question's joint sample.\n  The -0.4 value in the corpus belongs to a different pair. Both a perfect joint move\n  (rank-deficient) and a partial correlation (unstable split) are covered by the reasoning,\n  but the team's case cannot be pinned to a number from the corpus.\n- **No index uncertainty.** The 48-row screen's indices are reported without a documented\n  confidence interval; the reference-case page calls them a screen, not a precision\n  estimate.\n- **No production validity.** The models are uncalibrated and synthetic/modeled; the screen\n  does not establish production behavior, independent review or owner acceptance.\n- **The screen's 48-row sample is the documented description.** I did not use any\n  implementation detail outside the corpus as evidence for the answer.\n\n## 9. Bottom line\n\nThe rejection is correct. The 48-row quadratic screen decomposes the fitted variance of a\nquadratic response surface into main effects and one interaction; it is not a full Sobol'\ndecomposition of the model's output variance. A joint arrival/service sample makes the\nquadratic attribution non-identified, so the screen cannot rank the two inputs honestly.\nCorrelated inputs must be declared in the scenario and propagated by the separate\ndependent-input Monte Carlo run (Gaussian copula in the documented case), with convergence\nreported; the screen must stay on the independent-input sensitivity scenario. The ranking is\nhonest only when it is labelled as a screening approximation and when the correlated case's\nuncertainty and conclusions come from the joint run, not from the rejected screen.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The engine rejects a correlated screen because the V12 quadratic screen is an independent-input procedure: the sensitivity scenario must declare no correlation, and the engine rejects a correlated screen instead of returning first-order or total-order shares.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "It also requires independent\ninputs: the sensitivity scenario declares no correlation, and the engine rejects a correlated\nscreen.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The screen's procedure is: draw 48 input rows from the declared distributions, run the model for each row, fit a quadratic surface in standardized input coordinates, decompose the fitted variance into main effects and the interaction term, and report first-order and total-order shares.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "1. Draw 48 input rows from the declared distributions.\n2. Run the model for each row.\n3. Fit a quadratic surface in standardized input coordinates.\n4. Decompose the fitted variance into main effects and the interaction term.\n5. Report the first-order and total-order shares.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "That decomposition is of the fitted quadratic surface, not the full output variance of the model: the screen assumes a quadratic surface is adequate over the sampled range and that input standardization is meaningful, and it is explicitly not a full Sobol' analysis.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "The screen is an approximation. It assumes that a quadratic surface is adequate over the\nsampled range and that the input standardization is meaningful.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "The screen is not a full Sobol' analysis.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "First-order is the share of output variance explained by one input alone; total-order includes every interaction involving that input; a first-order index near zero does not mean the input is irrelevant because it may act only through an interaction.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+          "quote": "For an output Y with variance V, the first-order Sobol' index for input i is the share of V\nexplained by input i alone. The total-order index includes every interaction that involves\ninput i. A first-order index near zero does not mean the input is irrelevant; it may act\nonly through an interaction.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Inference: when arrival rate and service mean are generated as one joint sample, their columns co-move; the quadratic fit's cross-product and squared columns become collinear with the main-effect columns, so the fit cannot separately identify the main effects and the interaction, and the first-order ranking of the two inputs is not a stable decomposition.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "1. Draw 48 input rows from the declared distributions.\n2. Run the model for each row.\n3. Fit a quadratic surface in standardized input coordinates.\n4. Decompose the fitted variance into main effects and the interaction term.\n5. Report the first-order and total-order shares.",
+          "supports": "C5",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "It also requires independent\ninputs: the sensitivity scenario declares no correlation, and the engine rejects a correlated\nscreen.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Correlated inputs are propagated by the separate dependent-input Monte Carlo run, not by the screen's independent-input variance decomposition; the modernization run reports the Gaussian-copula method and correlated_inputs true.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "Correlated inputs are propagated by the separate Monte Carlo run, not by this\nindependent-input variance decomposition.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+          "quote": "The modernization scenario declares correlated inputs, and its run reports the Gaussian-copula\nmethod and correlated_inputs true.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+          "quote": "The engine's sampling applies the declared correlation to the input draws. It does not infer\na correlation from data.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "The correlation must be declared in the scenario contract, not inferred from data: the contract's uncertainty block carries parameter draws and correlations, the schema requires every field, and the Monte Carlo procedure says to declare correlations between inputs or state that they are independent.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-monte-carlo-procedure",
+          "quote": "3. Declare correlations between inputs, or state that they are independent.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "uncertainty: parameter draws and correlations;",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "The schema requires every field.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+          "quote": "The engine's sampling applies the declared correlation to the input draws. It does not infer\na correlation from data.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Sampling correlated inputs independently narrows the output distribution and makes a decision look more certain than it is; the scenario contract records this as the Ignored correlation failure mode when two inputs move together.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+          "quote": "A model that ignores a known correlation produces an output\ndistribution that is too narrow and a decision that looks more certain than it is.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+          "quote": "**Ignored correlation.** Two inputs are drawn independently even though they move together.\n  The resulting uncertainty is too narrow.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+          "quote": "**Independent by default.** Correlated inputs are sampled independently, narrowing the\n  output distribution.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The candidate B screen reports arrival rate 0.361 first-order and 0.464 total-order, and service mean 0.536 first-order and 0.639 total-order; the first-order shares sum to 0.897, leaving about 0.103 for interaction and unexplained variation; the screen says service mean explains more of the fitted variance in the sampled range, not that it is more important in production.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "The two first-order indices sum to 0.897, leaving about 0.103\nfor interaction and unexplained variation.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "The screen does not prove that service time is\nmore important in production; it says that, under the declared distributions and the\nquadratic approximation, it explains more of the fitted variance.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+          "quote": "It says service time explains more of the fitted variance in the\nsampled range. It does not prove that service time is the dominant production factor.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+          "quote": "The candidate B screen reports arrival 0.361/0.464 and service 0.536/0.639. Both pairs satisfy\nthe condition. The screen's 48-row sample is small; the indices are a screen, not a\nprecision estimate.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Honest use keeps the screen on the independent-input sensitivity scenario, takes the correlated case's uncertainty from the separate dependent-input run, requires convergence (a run failing the 0.02 relative-error threshold is not converged evidence), and uses the screen to identify what to measure first rather than to support a production claim.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "Correlated inputs are propagated by the separate Monte Carlo run, not by this\nindependent-input variance decomposition.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+          "quote": "A run that fails the 0.02 relative-error threshold is not\nused as converged evidence.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+          "quote": "The decision record does not use the\nsensitivity ranking to support a production claim; it uses it to identify what to measure\nfirst.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+          "quote": "The sensitivity run reports a quadratic response-surface screen and is\nconverged.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Inference: for a queue, arrival rate and service mean enter utilization (rho = lambda / mu for one server class), so a joint move entangles their separate contributions to the output; the independent-input screen cannot attribute the shared movement to one input.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "Utilization (rho): offered load divided by capacity, rho = lambda / mu for one server\n  class, or lambda / (c * mu) for c identical servers.",
+          "supports": "C11",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "It also requires independent\ninputs: the sensitivity scenario declares no correlation, and the engine rejects a correlated\nscreen.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The screen's total-order shares are at least its first-order shares by construction because the total-order share includes the fitted interaction variance; that is a coherence check, not proof of correctness or precision, and the 48-row indices are a screen rather than a precision estimate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+          "quote": "The V12 screen enforces the second condition by construction: the total-order share includes\nthe fitted interaction variance.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+          "quote": "The candidate B screen reports arrival 0.361/0.464 and service 0.536/0.639. Both pairs satisfy\nthe condition. The screen's 48-row sample is small; the indices are a screen, not a\nprecision estimate.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-monte-carlo-procedure",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

@@ -1,0 +1,404 @@
+{
+  "task_id": "Q268",
+  "answer": "# Q268 — Why neither a \"reservation requested\" log line nor its absence can establish acceptance\n\n## 1. Scope, layers and search record\n\nThe session was opened with describe before any retrieval. The collection reports snapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a, 555 documents, 3132 sections, coverage complete, and citation scheme tycho.section-key.v2.\n\nLayers needed: book only. The question is about what a record can prove about a committed effect, so it is neither a pattern-identity question (atlas) nor a model, run or decision-artifact question (modeling-and-simulation). No atlas card or V12 artifact is cited; all evidence below is book prose.\n\nSearch record: six decision-relevant facets were decomposed (section 2), each probed with two to three distinct formulations (exact terms, synonyms, layer aliases and a conceptual query). outline was used to find the V09/C04 owning pages and the observability landing; next_actions and related sections were followed into the transactional-outbox and intent-identity pages. Two final rounds (\"contradictory records / forensic reconstruction\" and \"false positive rolled back / false negative missing log\") returned only anchors already read, so the facet set is saturated for this question. One retrieval caveat: the CLI returns one best section per document per query, so a missing hit is a retrieval artifact, not evidence that the book lacks the topic.\n\n## 2. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. Ordering of log emission and commit | \"log line written before transaction commits\"; \"dual write transactional outbox\"; \"audit record atomic with domain transaction\" | record-semantics#2; transactional-outbox#1 |\n| F2. Lossy observation channel and negative evidence | \"log collector outage missing log lines\"; \"absence of logs is not proof\"; \"false negative missing log committed\" | record-semantics#2; record-integrity#5; trace-context#1 |\n| F3. What each record type can and cannot prove | \"logs are evidence not proof observability\"; \"authoritative effect record committed state\"; \"three incompatible records\" | logs-audit#purpose; record-semantics#1; walkthrough; trace-context#3 |\n| F4. Required content of an authoritative effect record | \"authoritative effect record committed state\"; \"tamper evident audit sequence hash\"; \"audit record fields\" | record-semantics#2; trace-context#3; record-integrity#4 |\n| F5. Reconciliation procedure for contradictory records | \"reconcile telemetry committed records\"; \"forensic reconstruction committed state\"; \"contradictory records investigation\" | record-integrity#5; trace-context#5; transactional-outbox#6; intent-identity#3 |\n| F6. Durability and evidence-status boundaries | \"write ahead log commit durability acknowledgement\"; \"no test ran\"; \"commit durability\" | wal-durability#1; record-integrity#6 |\n\nShort labels map to full section keys in section 6 and in the claims array.\n\n## 3. Mechanism\n\n### 3.1 A log line reports execution, not acceptance\n\nThe application writes \"reservation requested\" on the request path, before the database transaction commits. The commit is a separate event decided by the database. There is no shared atomic boundary between the log write and the state change, so the line can survive a transaction that later aborts, a crash between emission and commit, a constraint violation, or an exception after the log statement. The book states the general form directly: an operational log such as \"reservation requested\" may be emitted before the database transaction commits; it is valuable diagnostic context but not evidence of accepted state. The trace-context page adds the audit version of the same limit: a command-requested audit event written before a failed business transaction is not proof of a completed business effect.\n\nThis is the reversed-order side of the naive dual-write analysis. In the commit-then-publish order, a failure between the steps leaves a committed registration with no notification. Reversing the order creates the converse risk: an observer can see an event for a registration that never committed. The log line sits in exactly that reversed position: publication first, decision second.\n\nThe word in the line also matters. \"requested\" records intent, not outcome. An audit-grade record must say what happened, not what the code intended to do; a command-requested event is not proof of a completed effect. So even if every collector were perfectly reliable, the line's semantics would still be a statement about a request, not about acceptance.\n\n### 3.2 The collector outage turns absence into pipeline evidence\n\nDuring the outage a different request commits successfully and produces no visible line. The book's fictional failure is exactly this pair: the application emits \"booking accepted\", then its database transaction fails and the sink persists the line; another request commits a booking while the log collector is down; the operations team cannot reconstruct authoritative acceptance from logs alone. A log sink may be unavailable while an authorized operation commits successfully — this is stated as a normal condition, not an exotic one.\n\nAbsence therefore measures the observation pipeline: emission, sampling, filtering, buffering, export, indexing, retention and query can each remove a line. The trace page warns that unsampled requests or collector/exporter drops mean absence of a span is not proof that an operation did not happen. The same logic applies to a log line: the pipeline is best-effort and its completeness is a separate property from the domain decision. The book's three-record walkthrough puts it plainly: a missing log is not proof that the booking disappeared.\n\nThe critical subtlety is that the missing evidence is not missing at random. The outage window is precisely when lines for committed requests are suppressed, so the probability of observing a line given acceptance falls toward zero exactly in the period an operator wants to audit. Correlated missingness is what makes the operator's rule dangerous rather than merely noisy.\n\n### 3.3 The two inference directions fail independently\n\nThe operator's decision rule has two halves, and each fails for its own reason:\n\n| Observation | What it is compatible with | Inference licensed about acceptance |\n|---|---|---|\n| line present | committed; rolled back; crashed before commit; retried duplicate | none |\n| line absent | never attempted; collector loss; sampling; retention; query or index failure; committed without a line | none |\n| line present and commit present | normal accepted request | accepted, but the line adds nothing the commit does not already prove |\n| line absent and commit present | collector gap | accepted, with a recorded log gap |\n| line present and commit absent | rollback, crash, failed constraint, post-log exception | not accepted |\n| line absent and commit absent | genuinely rejected, or unobserved | unknown |\n\nThe log is neither sufficient nor necessary for acceptance. Presence is not sufficient because emission precedes the decision; absence is not necessary because the channel can lose committed events. A test that can both admit a false accept and produce a false reject cannot define the decision predicate. The book's framing is that operational logs, traces, business audit and lineage are different evidence products with different completeness, identity, privacy and retention requirements; a sampled trace or best-effort log cannot become a trustworthy ledger of all authorized changes merely by being stored for years. An audit trail needs an explicit integrity, access, ordering and completeness contract.\n\nThere is also a category error in treating the log as a weaker copy of the truth. It is not a copy at all: it is a report produced by the same process that may fail before or after the decision, on a channel with its own failure modes. The authority for acceptance is the committed state and its effect identity; the log is at best corroborating context.\n\n### 3.4 What an authoritative effect record must contain\n\nThe book separates two things that the question conflates:\n\n1. The authority: the committed business state plus a stable effect identity.\n2. The attestation: a durable audit or effect record written under a defined consistency boundary with that state.\n\nAn illustrative domain audit record might contain a stable effect ID, actor/role reference within authorized access, tenant or resource scope, operation type, target state revision, commit time and an integrity mechanism. The audit envelope in the trace page adds the operational detail: event identity, origin and collection times with clock caveat, authenticated actor or delegated authority, action and resource identity, authorization outcome versus durable business outcome with pending/unknown distinguished, policy version and software identity, a bounded correlation link, an integrity reference, and a classification or retention rule.\n\nCombining the two sources, an authoritative effect record for a reservation should carry at least:\n\n| Field group | Required content | Why it is required |\n|---|---|---|\n| Effect identity | stable effect ID; immutable, unique per committed effect | deduplication, replay and lookup by identity rather than by time |\n| Request identity | scoped client request key bound to immutable request parameters, with the persisted outcome | resolves ambiguous retries to the same committed effect; rejects same-key different-intent reuse |\n| Actor and authority | authenticated principal, delegated-from reference, authorization decision and policy version | distinguishes who was allowed to cause the effect from what the effect was |\n| Scope | tenant, resource kind and resource ID | prevents cross-tenant or cross-object confusion during reconciliation |\n| Operation and outcome | operation type, durable outcome, reason code, explicit pending/unknown state | an effect record must state what happened, not what was requested |\n| State position | target state revision and commit time | orders effects on one object and makes stale reads visible |\n| Integrity | per-authority sequence, hash, signature or external witness, with documented ordering bounds | tamper evidence and replay detection need independent controls, not encryption at rest alone |\n| Handling | classification, retention rule and access policy | audit data must be minimized, access-controlled and retained deliberately |\n\nThree consistency conditions turn this field list into authority rather than decoration:\n\n- Atomic binding. The business state and the effect or audit record must commit together in one local transaction, or through an explicitly designed durable handoff with a tested commit boundary. The outbox invariant is the model: if the transaction commits, the business update and its outbox intent exist together; if it aborts, neither is visible. The book warns that a diagram does not guarantee this; it requires a real implementation of atomicity and consistency.\n- Atomic identity resolution. The service must atomically resolve-or-commit the request key and parameters, so a repeat returns the same committed outcome instead of creating a second reservation. This is what makes the record usable as the answer to \"was this request accepted?\".\n- A declared completeness and failure policy. If the audit or log pipeline is unavailable, the system must choose and document one behaviour: reject the protected operation, buffer in a durable bounded queue, or accept a declared loss risk where policy permits. Sending records asynchronously on a best-effort channel while promising no evidence gaps is a contradiction.\n\nFinally, \"authoritative\" is bounded by a declared durability model. Write-ahead logging and commit acknowledgement depend on configured durability: synchronous_commit, fsync, full_page_writes, replica availability and storage-level guarantees change what an acknowledged write survives. A record is authoritative for the failures it is designed and tested to survive, not in the abstract.\n\n### 3.5 How the investigation should reconcile the contradiction\n\nThe contradiction is not between two equally authoritative records. It is between a lossy observation and the authority, plus a separate pipeline incident. The investigation should resolve the requests and diagnose the outage as two workstreams, then join them in one report.\n\nRecommended procedure:\n\n1. State the invariant and the question precisely. Acceptance means a committed reservation with a durable effect identity and revision for the logical request, not the presence of a line. Write down the window and the population definition before querying.\n2. Build the candidate population from identity-bearing sources, not from log lines: client request keys, API ingress records, queue messages, operator reports and idempotency keys. If the only source of candidates is the log, the investigation has already inherited the outage.\n3. Query the authoritative effect identities and committed revisions under authorized access, at a consistent point (snapshot or bounded read), so the reconciliation is not racing live writes.\n4. Classify every candidate into the four cells of section 3.3: line plus commit, line without commit, commit without line, neither. The first is consistent acceptance; the second is a false accept to remove; the third is a false reject to restore; the fourth is unknown unless the authority itself records a rejection.\n5. Pay special attention to the third cell: it is the direct signature of the collector outage. The request did commit, the line was lost. Do not let its absence in the log turn it into a rejection.\n6. For the fourth cell, distinguish \"authority says rejected\" from \"no evidence either way\". Report the latter as unknown; do not manufacture a rejection from silence.\n7. Identify the dropped or duplicated log windows, measure collector lag and backlog, and state which candidates fall inside the gap. Report uncertain results as uncertain, and preserve the investigation's access and retention policy.\n8. Use logs and traces only for timing, candidate generation and pipeline diagnosis. The safe sequence is: define the business invariant, query authoritative state at a consistent point, obtain idempotency and event identities, use logs and traces as supporting timing and context, then reconcile audit coverage and declare missing evidence. A missing record must be reported as a gap, never reconstructed from a guessed span.\n9. Reconcile the derived views only from a versioned state source whose replay contract allows it, and declare the reconciliation procedure and time window in advance rather than after seeing the result.\n10. Fix the boundary, not the story. The durable repair is to move the authoritative record to the commit boundary: write the effect/audit record in the same transaction as the state, or use an outbox with a tested relay and a declared failure policy. Adding trust to the log cannot repair either failure direction.\n\nA concrete reconciliation table for the incident:\n\n| Request | Log line | Authoritative record | Verdict | Action |\n|---|---|---|---|---|\n| A | present | committed revision | accepted | close; line is corroboration only |\n| B | present | no commit, rollback recorded | not accepted | remove from accepted set; investigate why the line was emitted before the decision |\n| C | absent during outage | committed revision | accepted | restore to accepted set; record the log gap |\n| D | absent | no commit and no rejection record | unknown | report as unresolved; do not count as rejected |\n\nThe two anomalies must not be collapsed. \"Line before commit\" is an ordering defect in emission; \"commit without line\" is a loss defect in the observation channel. They happen to produce opposite errors, but they need separate fixes and separate evidence.\n\n## 4. Boundaries and failure modes\n\n- The book's evidence is design guidance, not production observation. The rollback and outage acceptance tests are proposed fixtures; the source states that no test ran for any of them. This answer therefore describes a mechanism and an investigation method, not measured behaviour of any system.\n- Authority is relative to a durability model. A commit acknowledged under asynchronous replication may be lost on failover; an audit record's survival depends on its own storage and replication. State the failure model with the verdict.\n- Audit, lineage and logs are different products. Lineage describes data-flow relationships, not business approval; a lineage record cannot certify that a reservation was accepted.\n- Retention, access and privacy are part of the record contract. A shared audit service must enforce subject, object and tenant permissions; a backup or search index can retain data after the primary record is removed. Raw request bodies and tokens should not be copied into operational logs.\n- Correlation identifiers help join records but do not prove causality or commit. A trace or correlation ID links eligible records; it is not authority.\n- Negative evidence has legitimate uses. A bounded, measured collector gap is evidence about the pipeline, and a complete, integrity-protected audit stream with no record for a request can support a rejection finding if its completeness contract covers that request. Neither use is available from an unmeasured absence.\n\n## 5. Unknowns and unverified claims\n\n1. Whether the application writes any durable audit or effect record in the same transaction as the reservation. If it does, that record, not the log, is the authority; if it does not, the committed row plus its identity is the only authority.\n2. Whether \"reservation requested\" is emitted once per logical request or once per attempt. Retries can produce several lines for one intent; the line count is not the request count.\n3. Whether a client request key or idempotency identity exists and is persisted with the outcome. Without one, ambiguous retries cannot be resolved by identity.\n4. Whether the collector outage window is known, bounded and measured, and whether buffered lines were later delivered. A delayed delivery changes the gap description but not the authority.\n5. Whether sampling, filtering or rate limiting was active on the log stream. Any of these makes absence even weaker.\n6. Whether the request that committed during the outage had a client-visible success response. That response corroborates but does not replace the authoritative record.\n7. Clock skew between hosts. Wall-clock log timestamps cannot order emission against commit across machines without a clock assumption.\n8. Retention and authorization limits on querying the authority, and whether the investigation is permitted to read the relevant audit records.\n9. Whether any of the proposed negative tests (rollback after a \"requested\" line; commit during log export failure) has ever run in this system. The book records that no test ran for its own fixtures; this question supplies no evidence that the application under discussion ran them either.\n\n## 6. Evidence map\n\n| Label | Section key |\n|---|---|\n| record-semantics#1 | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage |\n| record-semantics#2 | tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit |\n| record-integrity#4 | tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries |\n| record-integrity#5 | tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence |\n| record-integrity#6 | tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test |\n| logs-audit#purpose | tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission |\n| walkthrough | tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records |\n| trace-context#1 | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries |\n| trace-context#3 | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail |\n| trace-context#5 | tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing |\n| transactional-outbox#1 | tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe |\n| transactional-outbox#2 | tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary |\n| transactional-outbox#3 | tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers |\n| transactional-outbox#6 | tycho.page.ace968ab1de8409383c6a9b22a00d006#6-observability-and-validation-design |\n| intent-identity#3 | tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking |\n| wal-durability#1 | tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists |\n\nClaim-to-anchor summary:\n\n| Claim | Proposition | Anchors |\n|---|---|---|\n| C1 | Acceptance is the durable commit; the line records attempted intent | record-semantics#2; trace-context#3; transactional-outbox#1 |\n| C2 | Emission and commit are independent effects, so a line can survive a rollback | transactional-outbox#1; record-integrity#6; walkthrough |\n| C3 | An outage can hide a committed request, so absence measures the pipeline | record-semantics#2; record-integrity#5; trace-context#1 |\n| C4 | Logs are diagnostic reports, not an authoritative ledger | logs-audit#purpose; record-semantics#1; walkthrough |\n| C5 | Presence cannot certify, absence cannot reject; the rule fails both ways | walkthrough; record-integrity#5; trace-context#5 |\n| C6 | Authoritative records need a real atomic mechanism and tested commit boundary | record-semantics#2; record-integrity#5; transactional-outbox#2 |\n| C7 | Effect and request identity must be durable and atomically resolved | record-semantics#2; transactional-outbox#3; intent-identity#3 |\n| C8 | Decision, outcome, actor, scope, revision and time must be explicit | trace-context#3; record-semantics#2 |\n| C9 | Integrity, ordering, access and retention belong in the record contract | record-semantics#2; trace-context#3; record-integrity#4; logs-audit#purpose |\n| C10 | Authority is bounded by a declared durability and failure model | wal-durability#1; record-integrity#5 |\n| C11 | Reconciliation starts from authority and identity, not from logs | record-integrity#5; trace-context#5; transactional-outbox#6 |\n| C12 | The gap must be bounded and candidates classified, with unknowns reported | record-integrity#5; trace-context#5; transactional-outbox#6 |\n| C13 | An unavailable pipeline needs a declared policy, not a no-gap promise | trace-context#3 |\n| C14 | The proposed tests were not run; the mechanism is a design contract | record-integrity#6 |\n| C15 | The repair belongs at the commit boundary, not in greater trust in logs | walkthrough; trace-context#3; record-integrity#5 |\n\n## 7. Mechanical check\n\nThe answer file was validated with validate_agent_answer.py against corpus-v7.json. The mechanical contract (resolved section keys, citations equal to unique evidence keys, every claim with evidence, computed missing-anchor list) passed. A PASS does not prove semantic support; the quotes in the claims array are verbatim fragments read through the CLI in this session.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Acceptance of a reservation is defined by the durable commit of the reservation in authoritative state; an application log line such as 'reservation requested' is emitted outside that commit and records attempted intent, not the accepted outcome.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "An operational log such as \"reservation requested\" may be emitted before the database transaction commits. It is valuable diagnostic context, but it is **not evidence of accepted state**.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "A command-requested audit event written *before* a failed business transaction is not proof of a completed business effect.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+          "quote": "Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification. Reversing the order creates the converse risk: a consumer can see an event for a registration that never committed. Neither REST success nor broker acknowledgement alone proves the pair committed atomically.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "A log line can exist for a request whose transaction never committed because emission and commit are independent effects with no shared atomic boundary; the reverse ordering carries the mirror risk that a committed effect has no published record.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+          "quote": "Reversing the order creates the converse risk: a consumer can see an event for a registration that never committed.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test",
+          "quote": "Force a rollback after an operational \"requested\" log and ensure authoritative audit says no accepted effect.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records",
+          "quote": "a successful log write preceding a rolled-back transaction cannot certify a durable business mutation.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "When the log collector is down, a reservation that did commit can have no log line, so absence is evidence about the observation pipeline rather than about the domain.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "Likewise, a log sink may be unavailable while an authorized operation commits successfully.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "**Fictional failure:** the application emits \"booking accepted\", then its database transaction fails; the log sink persists the line. Another request commits a booking while the log collector is down. The operations team cannot reconstruct authoritative acceptance from logs alone.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries",
+          "quote": "Unsampled requests or collector/exporter drops; absence of a span is not proof that an operation did not happen.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Operational logs are diagnostic reports with best-effort completeness; they are a different evidence product from an authoritative audit record and cannot become a trustworthy ledger merely through storage or retention.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+          "quote": "Logs explain what software *reported*.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+          "quote": "A sampled trace or best-effort log **cannot** become a trustworthy ledger of all authorized changes merely by being stored for years.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+          "quote": "This is a **structured telemetry model**, not a guarantee that every application log event was recorded atomically with its corresponding business transaction.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records",
+          "quote": "a missing log is not proof that booking disappeared",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The log line is therefore neither sufficient nor necessary for acceptance: its presence cannot certify a commit and its absence cannot certify a rejection, so both operator rules fail as decision rules.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records",
+          "quote": "a successful log write preceding a rolled-back transaction cannot certify a durable business mutation.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "The operations team cannot reconstruct authoritative acceptance from logs alone.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing",
+          "quote": "An analyst who counts traces concludes there were two registration attempts, but that does **not** tell whether there were one or two committed business registrations.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "An authoritative effect record must be bound to the state change by a real atomicity or consistency mechanism with a tested commit boundary, not by an asynchronous best-effort handoff.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "This design requires a **real implementation of atomicity/consistency** to claim the audit reflects committed state.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "Do not claim an audit is durable without a tested commit boundary and safe identity/corruption model.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+          "quote": "If this transaction commits, the stored business update and its outbox intent exist together; if it aborts, neither change from that transaction is visible as committed state.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "The record must carry a stable effect identity and a scoped request identity bound to immutable parameters with a persisted outcome, so a repeat can resolve the same committed effect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "An **illustrative domain audit record** might contain a stable effect ID, actor/role reference within authorized access, tenant or resource scope, operation type, target state revision, commit time and an integrity mechanism.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+          "quote": "**Client request key K:** expresses a user's logical intent to repeat *the same command* after an ambiguous response. Scope it by principal/tenant and operation, bind it to immutable request parameters, persist outcome where necessary, and document expiry.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+          "quote": "With stable scoped intent and an atomic deduplication contract, a repeat returns the same committed outcome.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "It must distinguish authorization decision from durable business outcome, including pending or unknown states, and name the actor, resource scope, operation, committed revision and commit time.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "Authorization outcome versus durable business outcome; distinguish pending/unknown",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "An **illustrative domain audit record** might contain a stable effect ID, actor/role reference within authorized access, tenant or resource scope, operation type, target state revision, commit time and an integrity mechanism.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "Principal, actor/delegation, action, target, policy decision, time and immutable event ID",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "It must include an integrity reference (sequence, hash, signature or external witness) and an explicit access and retention classification, because tamper evidence and completeness need independent engineering controls.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+          "quote": "commit time and an integrity mechanism",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "Stable per-authority sequence/hash or external evidence with documented ordering bounds",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+          "quote": "Tamper evidence and complete event capture require independent engineering controls; encrypting at rest alone does not prove integrity.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+          "quote": "An audit trail needs an explicit integrity, access, ordering and completeness contract.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Authoritative status is relative to a declared durability and failure model, because commit acknowledgement and record survival depend on configured durability, flushing and replication rather than on the label.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists",
+          "quote": "corresponding WAL records must meet the configured commit durability policy before acknowledgement",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists",
+          "quote": "`synchronous_commit`, `fsync`, `full_page_writes`, replica availability and storage-level guarantees change what an acknowledged write can survive.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "Do not claim an audit is durable without a tested commit boundary and safe identity/corruption model.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The investigation should begin from authoritative effect identities and committed revisions read at a consistent point, keyed by request or effect identity, and treat logs and traces only as timing and candidate-generation evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "1. Query authoritative effect identities and committed revisions under authorized access.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "2. Reconcile telemetry and trace observations against those records rather than redefining truth.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing",
+          "quote": "The safe question sequence is: define business invariant → query authoritative state at a consistent point → obtain idempotency and event identities → use logs and traces as supporting timing/context → reconcile audit coverage and declare missing evidence.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#6-observability-and-validation-design",
+          "quote": "**Consistency:** compare accepted registrations, event records and processed side effects under a declared reconciliation procedure and time window.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "It must bound the dropped-log window and classify every candidate as line plus commit, line without commit, commit without line, or neither, reporting the last as unknown rather than as rejection unless the authority records a rejection.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "3. Identify dropped/duplicated log windows and missing dataset/lineage events.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "5. Report uncertain results as uncertain, and preserve the investigation's access/retention policy.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing",
+          "quote": "the missing audit record must be reported as a gap, never reconstructed from a guessed span",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#6-observability-and-validation-design",
+          "quote": "compare accepted registrations, event records and processed side effects under a declared reconciliation procedure and time window",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Because a best-effort audit channel cannot promise completeness, an unavailable pipeline requires a declared policy: reject the protected operation, buffer durably, or accept a declared loss risk; otherwise the no-gap promise contradicts the channel.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "If the audit pipeline is unavailable, choose a documented policy: reject a protected operation, buffer with a durable bounded queue, or accept a declared loss risk if permitted.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "Sending an audit record asynchronously on a best-effort channel while promising no evidence gaps is a contradiction.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The proposed rollback-and-outage acceptance tests were never executed, so the reconciliation mechanism is a design contract and the contradiction must be recorded with that evidence status.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test",
+          "quote": "**No test ran** for any of these cases.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test",
+          "quote": "Force a rollback after an operational \"requested\" log and ensure authoritative audit says no accepted effect.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test",
+          "quote": "Commit a booking during log export failure and ensure audit remains complete under its own contract.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "The two anomalies require one repair at the commit boundary, a durable effect or audit handoff or transactional record, not greater trust in the log, and the investigation must not collapse them into a single explanation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records",
+          "quote": "If legal obligations require atomic audit recording, architect the local commit or durable audit handoff explicitly; arbitrary asynchronous logs are insufficient.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "quote": "When audit must agree with authoritative state, define transactional or reconciliation mechanisms and their failure behavior.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+          "quote": "The operations team cannot reconstruct authoritative acceptance from logs alone.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records",
+    "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing",
+    "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#6-observability-and-validation-design",
+    "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+    "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

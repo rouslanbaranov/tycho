@@ -1,0 +1,383 @@
+{
+  "task_id": "Q284",
+  "answer": "# Q284 — A schema prefix is a namespace; a service boundary is an ownership rule\n\n## Scope, layers and snapshot\n\nThis is a conceptual architecture question, so it needs the **book** layer (V02/C02 domain boundaries and data ownership; V02/C03 modular monolith and module enforcement; V04/C03 consistency and sagas) and the **atlas** layer (Database per Service, Modular Monolith, Saga, CQRS, API Composition). I also queried **modeling-and-simulation** once; it returned only general model-scope pages (model scope and abstraction, stock-and-flow), not a decision record, run or scenario for this case, so no claim below rests on that layer.\n\nAll sections cited here were read in full through the CLI against snapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a. The atlas registry is a draft and its coverage is not independent review; the book marks most of this material as synthetic design guidance, not measured evidence.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1 — Why a prefix is not a boundary | \"schema prefix shared database service boundary\"; \"database per service one server shared tables\"; \"integration database shared schema coupling\" | Domain boundaries purpose; Domain semantics §2; Ownership-isolation pattern notes; Database per Service card |\n| F2 — What must be declared before ownership | \"data ownership declared owner contract\"; \"one authoritative writer\"; \"named owner allowed-call surface\"; \"schema ownership grants\" | Domain semantics §2; Module-enforcement §1 and §5; Modular-monolith pattern notes; Ownership §6 |\n| F3 — Checkout's single transaction | \"saga compensating action no owner\"; \"transaction boundary invariant atomicity\"; \"one writer per state\" | Saga workflows §4; Transaction-isolation route; Invariants and isolation §1; Module-enforcement §6 |\n| F4 — The reporting job's cross-owner joins | \"reporting requires one shared schema\"; \"CQRS read model reporting\"; \"API composition join\"; \"CDC warehouse\" | Database per Service card; CQRS card; API Composition card; Multi-store §7 |\n| F5 — When a shared database with module ownership wins | \"shared database enforced module ownership\"; \"modular monolith module ownership\"; \"when not to split the module\" | Ownership-isolation notes; Modular Monolith card; Module-enforcement §6 |\n| F6 — Transition conditions | \"move writer to a different context\"; \"relax shared transaction into events\"; \"mediated writes\" | Boundary evolution §5; Ownership §7 |\n\n## 1. Why a schema prefix is not a service boundary\n\nA prefix answers \"where does this table live?\" A boundary answers different questions, and the book deliberately separates them: a domain boundary defines the meaning and scope of a model, a module boundary controls implementation dependencies, a data ownership boundary decides who can authoritatively change state, an API/event contract carries chosen facts, and a deployment boundary decides what can be released or fail independently. \"These distinctions are related but are not the same.\" A schema name is none of those five things; it is a namespace inside one storage engine.\n\nTwo observations destroy the prefix-as-boundary claim in both directions:\n\n1. Sharing one physical database does not prevent real ownership. The book states plainly that \"a single physical relational database can house several contexts; it must still define which module owns writes to each logical aggregate or table.\" The boundary is an ownership rule even when several schemas share one server: only the owning service writes its records, and no critical-path query joins another service's tables without an explicit contract. A prefix could therefore coexist with a genuine boundary; it just does not create one.\n\n2. Separating stores does not prove ownership either. \"Conversely, separate databases do not automatically prove exclusive authority if two services both independently update the same business object.\" Moving schemas to different servers can relocate the checkout/billing dual authority across a network while adding partial failure; it does not resolve who may write billing.\n\nIn this system the prefix fails the ownership test on every count. Checkout writes billing rows, so billing is not the only writer of its records. Every service reads the other schemas for joins, so there is a critical-path query against tables without a declared contract. The reporting job joins all three, so the schema is a shared integration surface, not three private ones. These are exactly the shortcuts the owner section names: \"shared-table shortcuts and distributed joins reappear as hidden coupling; detect them through schema ownership review and cross-service access inspection rather than assuming the boundary exists.\" A review of this database would find the coupling immediately; the prefix changes nothing about grants, roles, code dependencies or review.\n\nThe atlas is equally direct. It lists as a hard contraindication the case \"when 'database per service' is implemented as one server with shared tables\" — that is a rejection of the claim, not a partial score. So the current layout cannot be described as database-per-service with per-service schemas; it is one shared database with naming conventions.\n\nThe practical test from the book is whether the boundary can state its rules on its own: \"a boundary is weak if none of its business rules can be stated separately.\" For shipping, the only thing that distinguishes its schema today is its name. Nothing states which operations shipping may perform, which tables it may read, which fields other services may copy, or who repairs shipping state after a failed cross-service call. That is a weak boundary by the book's own definition.\n\nOne more consequence matters for the blocked split. If the team splits the schemas without first declaring authority, the reporting job and checkout's direct billing write will simply become cross-database calls; the same two-writer ambiguity will persist, now with timeouts and partial failure. The physical split is not the missing ingredient. The missing ingredient is the declaration described next.\n\n## 2. What must be declared before each service owns its data\n\nThe book gives a concrete seven-part **state authority contract**, and this is the declaration list the team is missing:\n\n| Element | What must be declared (verbatim from the owner section) |\n|---|---|\n| Logical identity | \"which key is stable, how versions/aliases map, and which keys may be reassigned.\" |\n| Command ownership | \"exactly which operation may create, mutate, cancel or delete authoritative state.\" |\n| Validation boundary | \"where consistency, authorization and required preconditions are checked atomically.\" |\n| Concurrency control | \"transaction, compare-and-set/version, serialized owner or a proven multi-writer coordination model.\" |\n| Published read models | \"who may cache/project state, allowed staleness and reconciliation.\" |\n| Failure and recovery | \"how retries identify the same logical operation; how a lost acknowledgment is resolved.\" |\n| Version and retirement | \"how new fields and retired contracts coexist with old consumers.\" |\n\nAround that contract, four further declarations make ownership operational:\n\n- **A named owner and an allowed-call surface.** Each module needs \"a named owner, an allowed-call surface and a dependency test that fails a bypass.\" The same notes add: \"Test schema ownership as well as the public API.\" A named owner who cannot say which calls are legal is not an owner.\n- **Authorization at the resource authority.** \"A domain owner should decide the business effect, but must validate the caller's authorized relationship to that effect.\" Browsing a catalogue never implies the right to cancel another user's booking, and cross-context integration \"should explicitly document which fields may be published.\" Checkout's ability to reach the billing tables is exactly the kind of ambient authority this rule forbids.\n- **A read-path contract.** Who may project or cache state, what staleness is allowed, and who reconciles it are part of the same contract. The reporting job is a read model consumer and needs this declaration as much as any service does.\n- **The invariant and its enforcing transaction boundary.** \"Place invariants at their enforcing transaction boundary and state how cross-boundary uncertainty is reconciled.\" Before deciding whether orders and billing are one owner or two, the team must write down the invariant — for example, \"no order is confirmed without a recorded billing obligation\" — and say who commits it and what an ambiguous client outcome means. The book's formulation is that \"the critical question is who can commit the authoritative allocation and what happens after ambiguous client outcomes.\"\n\nThere is also a declaration about *change*: moving a writer to a different context is possible only with \"single-writer enforcement, reconciliation and rollback/forward repair,\" and relaxing a shared transaction into events requires \"required invariant and failure/recovery after messages are delayed.\" Both are listed as transitions needing explicit verification, not as ordinary refactorings.\n\nIn short, the team must declare, per schema: owner, commands, identity, validation boundary, concurrency rule, who may read and how stale, what happens after a lost acknowledgment, how versions retire, who repairs what, and which fields may leave the boundary. Only after those declarations is \"each service owns its data\" a statement with content.\n\n## 3. Checkout's single transaction: what it proves and what it does not\n\nThe requirement for one transaction across orders and billing is evidence, not embarrassment. The book treats \"transactionally coupled invariants with one consistent authoritative state owner\" as a reason to keep a module internal rather than extract it. The transaction is telling the team that the invariant spans both aggregates. That is a design fact to be declared, not a legacy accident to be engineered away.\n\nThe proposed saga does not yet qualify as an alternative. In the book's terms, a saga coordinates local transactions with compensating actions; \"a compensating transaction is a new business action that creates an acceptable counter-effect; it is not rollback and it can fail. It needs idempotent effect identity, retry/repair ownership and a user-visible unknown state when the counter-effect cannot be proven.\" And the summary route is blunt: \"a compensating action can fail or arrive late; a saga is not an atomic transaction across independent owners.\"\n\nA saga with no compensating action and no owner therefore fails on three counts:\n\n1. It cannot enforce the invariant. There is no counter-effect that restores a consistent business state when billing fails after the order commits.\n2. It has no one accountable for the broken state. \"Retry/repair ownership\" is a named prerequisite, not an implementation detail.\n3. It has no honest unknown state. When the counter-effect cannot be proven, the user must see an unknown outcome; without compensation there is nothing to reconcile.\n\nThat makes it strictly worse than today's transaction: it gives up atomicity without acquiring declared ownership or repair. It is an unfinished business protocol, not a weaker transaction.\n\nThe book's own ordering supports this. \"Use one local transaction or a two-phase commit when the steps do not genuinely cross independent owners, or when compensation is unsafe.\" And \"orchestration or a single local transaction may be preferable when steps need central visibility or when compensations cannot be made safe.\"\n\nSo the decision tree for checkout and billing is:\n\n- **If the invariant genuinely couples the two aggregates (the current evidence):** keep one local transaction. Make the coupling explicit by declaring a single authority for the pair. Two sub-options are honest. Either billing exposes a command that checkout invokes inside the same transaction — the owner writes its own rows, and checkout stops writing billing's tables — or the pair is declared one module with one owner. Both are \"shared database with mediated writes,\" which the book calls \"possibly a bounded transitional state; direct writes by every context are not a safe default.\" Direct writes are what the team has now.\n- **If the business can accept eventual consistency:** design the saga properly first: per-step compensation with a named owner, idempotent effect identity, durable workflow state and correlation, deduplication and dead-letter handling, a user-visible unknown state, and a repair loop. The saga page's durable-state table (admit command, reserve, request, compensate, confirm, notify) has to be instantiated for orders and billing, including the false assumptions it lists — a timeout is not a rejection, and a compensation call does not always succeed.\n- **If the stores support it and the availability cost is acceptable:** two-phase commit remains the book's stated alternative when compensation is unsafe. Whether 2PC is available and operationally acceptable across the target stores is unknown here; the book lists the option, not a feasibility result.\n\nNotice what does not appear in that tree: \"split the schemas and hope the saga appears.\" The split is the last step, not the first.\n\n## 4. The reporting job: a read path, not an entitlement\n\nThe reporting job that joins all three schemas is a cross-owner reader. It should be designed as a declared derived representation with an owner, not as a license for arbitrary joins.\n\nThe book offers three shapes, each with conditions:\n\n- **A maintained read model (CQRS).** Read and write workloads differ, projections can be asynchronous, stale reads are acceptable, and duplicate/order handling is owned; the write model remains the only authority. It is rejected \"when projection maintenance has no owner.\" Tycho guidance adds: commit the derived row and its cursor atomically, disable outbound side effects during rebuild, and treat cursor gaps and schema drift as explicit failure states.\n- **API composition.** Good for read-mostly queries with per-owner deadlines and declared partial-result behavior; rejected \"when composition needs writes across owners\" or when one service can answer directly without duplicating authority. It is not a way to reassemble a distributed join at will.\n- **A CDC/outbox-fed analytics projection.** \"A single authoritative registration database plus a graph/search/OLAP projection is a valid possible design — but then there are two data representations, not two automatically consistent sources of truth.\" The contract must \"define freshness, rebuild, deduplication, schema migration and failure recovery explicitly.\"\n\nThe atlas contains the decisive sentence for this team: database per service is contraindicated \"when reporting requires one shared schema.\" So the reporting job is a legitimate reason to keep one physical database. It is not a reason to skip ownership. The difference between the current state and a defensible one is that reporting gets a read-only role, a declared freshness and rebuild contract, and an owner for the report — while the schema it reads is still governed by the owning modules.\n\nIf reporting keeps reading the live tables directly, it becomes a second consumer of every schema and freezes them: any column change now needs the reporting job's release. That is the development-time coupling the Shared database page warns about, and it is the real cost of the current arrangement.\n\n## 5. When a shared database with enforced module ownership is the better choice\n\nThe shared database with enforced module ownership is the better choice when all of the following hold:\n\n- **One accountable owner or a small group with a shared release cadence.** The Modular Monolith card's good-fit conditions require exactly this, together with module contracts and data ownership that \"can be enforced by build or review checks,\" valuable local transactions, and no need yet for independent runtime scaling or failure isolation.\n- **Transactionally coupled invariants with one consistent authoritative state owner.** This is the first listed reason to keep a module internal, and it is checkout's situation.\n- **Insufficient independent team or deployment need.** Other listed reasons include operational limits on more endpoints and service identities, low measured isolation benefit, and still-changing interfaces without a viable old/new client contract.\n- **Reporting that needs one shared schema**, as above.\n- **Enforcement that is real.** The book's narrower alternative is \"a shared database whose module ownership is enforced by schema grants, code review and dependency checks, not the page's free cross-service access.\" Without that, the option is just the integration database the team already has.\n\nThe economics are stated just as plainly: a shared database with enforced module ownership \"is simpler when teams release together; choose separate stores only when independent ownership, scaling or recovery justify the coordination cost,\" and \"strong cross-service transactions remain a contraindication: an outbox or reconciliation reduces, but does not remove, that coordination cost.\" Monolith First adds that the microservice premium \"will slow down a team, favoring a monolith for simpler applications,\" while modularity at \"the API boundaries and how the data is stored\" makes a later split easier.\n\nThe option also has hard contraindications, and they are worth stating because \"shared database\" is often used as a excuse: reject it when modules need independent deployment, scaling or failure isolation; when no team can enforce boundary ownership; when a regulatory or trust boundary requires separate runtime isolation; or \"when 'modular' is used to describe shared tables with no enforced contract.\" The last clause describes the current system precisely. So the shared database is the better choice only after the prefix is backed by grants, mediated writes, dependency checks and named owners. Before that, it is neither a modular monolith nor a service architecture; it is an integration database with naming conventions.\n\nReverse the choice when \"cross-service consistency, independent scaling or reporting cost exceed the autonomy benefit.\" That is the trigger to revisit, and it should be recorded with the conditions rather than argued abstractly.\n\n## 6. A defensible sequence for this team\n\n1. **Write the invariant and the authority contract for orders, billing and shipping.** Use the seven elements in section 2. Decide explicitly whether orders and billing are one authority or two. The current transaction is evidence for one.\n2. **Stop cross-owner writes before touching deployment.** Checkout must invoke a billing command inside the same local transaction, or the pair must be declared one module. Grant the checkout role no write privilege on billing tables. This is the mediated-write transition, and it is what makes \"billing owns billing\" true rather than aspirational.\n3. **Declare reporting as a read model.** Give it a read-only role, a named owner, a freshness and rebuild contract, and a decision on whether it reads a replica, a CDC-fed store, or the live schema under a declared staleness bound.\n4. **Enforce mechanically.** Schema grants per module, dependency checks in the build, tests that fail cross-schema writes and undeclared joins, and per-service credentials. The atlas's module card requires \"a dependency test that fails a bypass\"; the owner notes require schema-ownership tests as well as API tests.\n5. **Then decide the split on declared conditions, not on the prefix.** Extract only if independent release cadence, scaling, failure isolation or a trust boundary now justify the coordination cost. If so, compensations, owners, idempotency and durable workflow state come first; reporting is replatformed onto its read model before the schemas move, because it is the hardest join and the last thing that should be cut over.\n6. **Record the decision and the triggers to revisit it.** The book's conditions are the record: cross-service consistency, independent scaling and reporting cost are the reversal triggers.\n\n## 7. Boundaries of this answer and unknowns\n\n- The book's boundary material is explicitly synthetic design guidance, not measured evidence; no migration, benchmark or production observation for this scenario exists in the corpus.\n- The atlas cards are draft entries with decision state applicable-under-conditions; they are navigation and decision aids, not independent acceptance.\n- The scenario does not state the team's release cadence, scaling needs, reporting freshness tolerance, or whether billing already exposes a command interface. Those determine the final choice.\n- Whether two-phase commit is available and acceptable across the target stores is unknown; the book lists it as an alternative without a feasibility result.\n- Whether the orders/billing invariant is truly one invariant or two with a business-accepted window is a business decision, not something the sources can settle.\n- Regulatory or trust isolation requirements are not given; if they exist, they can override the whole analysis.\n\n## 8. Evidence map\n\n| Claim | Section key(s) |\n|---|---|\n| C1 prefix is a namespace, not a boundary | tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission; tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns |\n| C2 separate databases do not prove authority | tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns |\n| C3 boundary is an ownership rule on shared servers | tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes |\n| C4 hidden coupling is found by review, not naming | tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes |\n| C5 one server with shared tables is contraindicated | tycho.page.a6cac42ca5b94af1acdfebbda52de94a#overview |\n| C6 seven-part state authority contract | tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns |\n| C7 named owner, allowed-call surface, dependency test | tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#bounded-pattern-ownership-notes; tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them |\n| C8 authorization at the resource authority | tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree |\n| C9 transaction is evidence of coupled invariants | tycho.page.4365dbae044244c1b82751a39704e292#6-when-not-to-split-the-module-into-a-separate-service; tycho.page.5da19d9b920940fb837bbb28e8fefe77#1-define-the-invariant-before-naming-consistency; tycho.page.4365dbae044244c1b82751a39704e292#1-stable-module-boundaries-before-event-buses |\n| C10 compensation is a business action that can fail | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.page.3c78e2b17ac74973b2ae658977843c2a#integrated-decision-and-reading-route |\n| C11 one local transaction or 2PC when compensation is unsafe | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback |\n| C12 reporting needs a declared derived representation | tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem; tycho.page.ade9759a19a0402594773756d097c11c#overview; tycho.page.5c7d91711de3463eba59be2b16c607e4#overview |\n| C13 one shared schema for reporting is a contraindication | tycho.page.a6cac42ca5b94af1acdfebbda52de94a#overview; tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes |\n| C14 shared DB wins under shared cadence and enforceable contracts | tycho.page.c6b05f1a6f65430f97a3e219732ff713#overview; tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes |\n| C15 no enforcement means shared tables, not modularity | tycho.page.c6b05f1a6f65430f97a3e219732ff713#overview; tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes |\n| C16 reverse when coordination cost exceeds autonomy benefit | tycho.page.a6cac42ca5b94af1acdfebbda52de94a#overview; tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes |\n| C17 moving the writer needs single-writer enforcement | tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release |\n| C18 mediated writes are a bounded transitional state | tycho.page.461b24a5b47b4b8e82d37125cac20c8d#7-selecting-boundaries-and-proving-they-work |\n| C19 a weak boundary cannot state its rules separately | tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes |\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A schema prefix is a namespace, not a service boundary: domain, module, ownership, contract and deployment boundaries are distinct concepts, and one physical database may host several contexts only if it declares which module owns writes to each logical aggregate or table.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission",
+          "quote": "These distinctions are related but are not the same.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "A single physical relational database can house several contexts; it must still define which module owns writes to each logical aggregate or table.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Separate databases do not by themselves prove exclusive authority: two services can independently update the same business object across separate stores.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "Conversely, separate databases do not automatically prove exclusive authority if two services both independently update the same business object.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The boundary is an ownership rule even when schemas share one physical server: only the owning service writes its records, and no critical-path query joins another service's tables without an explicit contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes",
+          "quote": "The boundary is an ownership rule even when several schemas share one physical server.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Cross-schema writes and joins are hidden coupling that must be found by schema-ownership review and cross-service access inspection; naming alone cannot establish the boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes",
+          "quote": "Shared-table shortcuts and distributed joins reappear as hidden coupling; detect them through schema ownership review and cross-service access inspection rather than assuming the boundary exists.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Database per service implemented as one server with shared tables is a hard contraindication, not a partial implementation of the pattern.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a6cac42ca5b94af1acdfebbda52de94a#overview",
+          "quote": "when \"database per service\" is implemented as one server with shared tables",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Before a service owns its data it must declare a state authority contract covering logical identity, command ownership, validation boundary, concurrency control, published read models, failure and recovery, and version and retirement.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "A state authority contract records:",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "which key is stable, how versions/aliases map, and which keys may be reassigned.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "exactly which operation may create, mutate, cancel or delete authoritative state.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "where consistency, authorization and required preconditions are checked atomically.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "who may cache/project state, allowed staleness and reconciliation.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "how retries identify the same logical operation; how a lost acknowledgment is resolved.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Ownership also requires a named owner, an allowed-call surface and a dependency test that fails a bypass, and schema ownership must be tested as well as the public API.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#bounded-pattern-ownership-notes",
+          "quote": "each module has a named owner, an allowed-call surface and a dependency test that fails a bypass.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#bounded-pattern-ownership-notes",
+          "quote": "Test schema ownership as well as the public API.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+          "quote": "Do dependency checks reject forbidden import paths and cycles?",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Authorization must be enforceable at the resource authority, and the set of fields that may be published across the boundary must be declared.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree",
+          "quote": "authorized relationship to that effect",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree",
+          "quote": "should explicitly document which fields may be published.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A transaction that must span orders and billing is evidence of transactionally coupled invariants with one consistent authoritative state owner, which is a declared reason to keep the module internal rather than split it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4365dbae044244c1b82751a39704e292#6-when-not-to-split-the-module-into-a-separate-service",
+          "quote": "transactionally coupled invariants with one consistent authoritative state owner;",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4365dbae044244c1b82751a39704e292#1-stable-module-boundaries-before-event-buses",
+          "quote": "One authoritative writer for each business aggregate, even with shared physical storage.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#1-define-the-invariant-before-naming-consistency",
+          "quote": "The critical question is who can commit the authoritative allocation and what happens after ambiguous client outcomes.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A saga coordinates local transactions with compensating actions, not an atomic transaction across owners; a compensation is a new business action that can fail and needs idempotent effect identity, retry and repair ownership, and a user-visible unknown state.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "A compensating transaction is a new business action that creates an acceptable counter-effect; it is not rollback and it can fail. It needs idempotent effect identity, retry/repair ownership and a user-visible unknown state when the counter-effect cannot be proven.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3c78e2b17ac74973b2ae658977843c2a#integrated-decision-and-reading-route",
+          "quote": "A compensating action can fail or arrive late; a saga is not an atomic transaction across independent owners.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A saga with no compensating action and no owner fails these prerequisites; when compensation cannot be made safe, one local transaction or two-phase commit is the declared alternative.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "Use one local transaction or a two-phase commit when the steps do not genuinely cross independent owners, or when compensation is unsafe.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "Orchestration or a single local transaction may be preferable when steps need central visibility or when compensations cannot be made safe.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Reporting across three owners is a read-model problem: it needs a derived representation with declared freshness, rebuild, deduplication, schema migration and failure recovery, or API composition with declared partial-result behavior and an owner for projection maintenance.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+          "quote": "not two automatically consistent sources of truth",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+          "quote": "Define freshness, rebuild, deduplication, schema migration and failure recovery explicitly.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ade9759a19a0402594773756d097c11c#overview",
+          "quote": "per-owner calls have bounded deadlines; partial results and their declared failure behavior can be represented",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+          "quote": "or when projection maintenance has no owner.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "When reporting genuinely requires one shared schema, database per service is contraindicated and the shared database is the right target, but the ownership must be enforced by schema grants, code review and dependency checks rather than free cross-service access.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a6cac42ca5b94af1acdfebbda52de94a#overview",
+          "quote": "when reporting requires one shared schema",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes",
+          "quote": "a shared database whose module ownership is enforced by schema grants, code review and dependency checks, not the page's free cross-service access.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A shared database with enforced module ownership is the better choice when one accountable owner or small group shares a release cadence, module contracts and data ownership can be enforced by build or review checks, local transactions are valuable, and independent scaling or failure isolation is not yet required.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c6b05f1a6f65430f97a3e219732ff713#overview",
+          "quote": "The capability has one accountable owner or a small group with a shared release cadence; module contracts and data ownership can be enforced by build or review checks; local transactions are valuable; independent runtime scaling or failure isolation is not yet required.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes",
+          "quote": "A shared database with enforced module ownership is simpler when teams release together; choose separate stores only when independent ownership, scaling or recovery justify the coordination cost.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Without real enforcement a shared database is just shared tables with no contract, which is itself a hard contraindication; the shared-database option is better only when the enforcement exists.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c6b05f1a6f65430f97a3e219732ff713#overview",
+          "quote": "or when \"modular\" is used to describe shared tables with no enforced contract.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes",
+          "quote": "Strong cross-service transactions remain a contraindication: an outbox or reconciliation reduces, but does not remove, that coordination cost.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The choice should be reversed when cross-service consistency, independent scaling or reporting cost exceed the autonomy benefit; the microservice premium slows teams, while modularity at API boundaries and data storage makes a later split easier.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a6cac42ca5b94af1acdfebbda52de94a#overview",
+          "quote": "Reverse the choice when cross-service consistency, independent scaling or reporting cost exceed the autonomy benefit.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes",
+          "quote": "will slow down a team, favoring a monolith for simpler applications",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Moving a writer to another context and relaxing a shared transaction into events are possible only with single-writer enforcement, reconciliation and rollback or forward repair, and with the required invariant and failure recovery after delayed messages declared.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release",
+          "quote": "Move writer to a different context | Possible with bounded transition | Single-writer enforcement, reconciliation and rollback/forward repair",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release",
+          "quote": "Relax shared transaction into events | Permits decoupling where eventual consistency fits | Required invariant and failure/recovery after messages are delayed",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Mediated writes through the owning module inside one local transaction are a bounded transitional option; direct writes by every context are not a safe default.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#7-selecting-boundaries-and-proving-they-work",
+          "quote": "possibly a bounded transitional state; direct writes by every context are not a safe default.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "A boundary is weak if none of its business rules can be stated separately, which is the test a schema prefix fails when only the name distinguishes one module from another.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes",
+          "quote": "A boundary is weak if none of its business rules can be stated separately.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+    "tycho.page.3c78e2b17ac74973b2ae658977843c2a#integrated-decision-and-reading-route",
+    "tycho.page.4365dbae044244c1b82751a39704e292#1-stable-module-boundaries-before-event-buses",
+    "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+    "tycho.page.4365dbae044244c1b82751a39704e292#6-when-not-to-split-the-module-into-a-separate-service",
+    "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree",
+    "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#7-selecting-boundaries-and-proving-they-work",
+    "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes",
+    "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+    "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+    "tycho.page.5da19d9b920940fb837bbb28e8fefe77#1-define-the-invariant-before-naming-consistency",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+    "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release",
+    "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#bounded-pattern-ownership-notes",
+    "tycho.page.a6cac42ca5b94af1acdfebbda52de94a#overview",
+    "tycho.page.ade9759a19a0402594773756d097c11c#overview",
+    "tycho.page.c6b05f1a6f65430f97a3e219732ff713#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

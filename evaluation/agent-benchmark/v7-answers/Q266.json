@@ -1,0 +1,387 @@
+{
+  "task_id": "Q266",
+  "answer": "# Q266 — Signing-key rotation: why overlap is needed, when it is unsafe, and what an isolated verifier must do\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. Why routine rotation needs overlap at all | \"signing key rotation overlap\"; \"key rotation\"; \"rotation overlap\" | tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities; tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ |\n| F2. How long the overlap must last and what it spans | \"token lifetime\"; \"key distribution\"; \"long-lived connections\"; \"cached key\" | tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities; tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ; tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes |\n| F3. When overlap becomes unsafe | \"signing key compromised emergency rejection\"; \"compromise\"; \"rotation window\" | tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities; tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ |\n| F4. Verifier behavior when the key authority is unreachable | \"key authority unreachable\"; \"offline\"; \"unknown key authority unavailable\"; \"disconnected policy\" | tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities; tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance; tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay; tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading |\n| F5. Key identifier, untrusted key URL and trust anchoring | \"key identifier kid untrusted key URL token\"; \"jku x5u key URL header injection\"; \"JWKS\" | tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities; tycho.page.58c3c4e5e19d46bcb2da66255eb61068#6-threat-model-decisions-and-abuse-cases |\n| F6. Signature validity versus authorization and acceptance evidence | \"revocation\"; \"bearer token\"; \"negative tests\"; \"credential contract\" | tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities; tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay; tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests; tycho.chapter.3563624d13ca4430aa77abea4f8f0bc2#decision-and-worked-result |\n\nSearch notes: the book returned the same core rotation sections for the exact, synonym and conceptual formulations; later searches on certificate renewal, key service, trust anchor and cached-key wording added no new rotation-specific section beyond the atlas ownership notes already read in the identity page. Two consecutive searches produced no new evidence, so I stopped broadening.\n\n## 2. Short answer\n\n**Why routine rotation needs overlap.** A token is signed when it is issued and verified later, often much later. A client that received a token signed by K1 just before the gateway switched to K2 can keep presenting that token until it expires. If every verifier drops K1 the moment K2 is \"live\", those unexpired K1 tokens stop validating, and the deployment converts a routine key change into a mass authentication failure. The overlap is the interval in which both verification keys are trusted so that the old-key token population drains naturally. It must be planned across producers, verifiers, caches and long-lived connections, and it must start by distributing and verifying the new key material before any new-key-only token is issued.\n\n**When overlap is unsafe.** Overlap is for a routine rotation in which the old private key is still believed trustworthy. It is unsafe when the old private signing key is compromised or suspected: every extra minute of old-key acceptance is another minute in which an attacker who holds that key can mint tokens that verify. The correct incident decision is emergency rejection and session re-establishment, with availability and revocation handled explicitly. Overlap is also unsafe when it is unbounded or unowned, when it lets the old private key keep signing, when rotated trust material is missing from some verifiers, or when \"overlap\" is actually acceptance of a key URL or algorithm chosen by the token itself. And no overlap ever extends authorization: a cryptographically valid token can outlive a revoked session or object permission, so the resource still rechecks permission.\n\n**What a verifier must do when it cannot reach the authority.** It must fail closed for anything it cannot verify. With no trusted cached key for the token's key identifier, it must not accept the credential: it returns an explicit unavailable/denied outcome, does not dereference a token-supplied key URL, and does not silently disable authentication. With a known cached key and a known, unexpired credential, it may continue only inside its configured offline-validation and current-permission contract and only up to its bounded cached-key horizon; it must not extend trust indefinitely or mint a new acceptance path. When the authority returns, it refreshes the key set, resolves identifiers only inside the configured trust relationship, and revalidates.\n\n## 3. Why routine rotation needs overlap\n\n### 3.1 The signature is checked after issuance, not at issuance\n\nA bearer token is self-contained evidence: the verifier checks the issuer's signature with verification material it trusts. The OAuth section notes that a bearer token can be replayed by an unauthorized holder until it is invalidated or expired. That lifetime is exactly the tail that rotation must respect. If K1 signs a token at T0 with a five-minute lifetime and K2 becomes the only accepted key at T0+10 seconds, the token is still valid for another four minutes and fifty seconds by its own contract, but no verifier will accept it. Overlap exists to make the verification contract agree with the token contract during the transition.\n\nThis is not a hypothetical edge case: clients can be offline, asleep, behind a slow request path, or simply holding a token they obtained seconds before the switch. The question's \"overnight\" rotation makes the tail worse, because a client that received a token before the change can present it after the change without any interaction with the gateway.\n\n### 3.2 Rotation is distributed, so \"live\" is not one instant\n\nThe book's rollover plan is explicit about order:\n\n1. Distribute the trusted K2 verification material to verifiers.\n2. Only then issue K2-only tokens.\n3. Keep K1 acceptance for the explicitly permitted overlap of existing tokens and policy.\n4. Retire K1 after that overlap ends.\n\nThe TLS page generalizes the same point: plan overlap across producers, verifiers, caches and long-lived connections, and verify the new chain before making it the only accepted path. The identity page's federated-identity notes say the same thing in JWKS terms: key rollover updates the jwks member before old keys are removed. This ordering is what prevents a window in which tokens are issued under a key that some verifier cannot yet check, or in which a verifier has removed a key that clients are still using.\n\nA region whose key cache cannot reach the key authority is the hard case. During the overlap it can still validate K1 tokens from its cached K1 material, but it cannot learn K2. If the operator assumes \"K2 is live everywhere\" and removes K1, that region either rejects K1 tokens it could still validate (an unnecessary outage) or keeps accepting K1 tokens after the rest of the fleet has retired them (an inconsistent, potentially unsafe tail). Neither outcome is acceptable as an unstated side effect. The overlap plan must include cache refresh and failure behavior for that region, and the verifier must know what it is allowed to do when it cannot refresh.\n\n### 3.3 How long the overlap must be\n\nThe book does not give a universal duration, and it explicitly warns against inventing one. It says to verify the overlap against the old token lifetime and verifier distribution, and it observes that a five-minute token plus a two-minute clock allowance can expose a longer acceptance window than the nominal five minutes. The exact bound depends on issuer and verifier clocks and configured checks; invented durations must not be reused as defaults.\n\nThe defensible derivation is therefore an inference from the stated controls:\n\n- the longest remaining lifetime of any legitimately issued K1 token;\n- plus the configured clock tolerance on the verifier side (and any issuer-side skew that can extend the token's accepted validity);\n- plus the time needed to distribute K2 material to every verifier and refresh every cache;\n- plus the time needed to drain or re-establish long-lived connections that were established under the old trust state;\n- plus an operational margin for the slowest verifier, with the whole interval explicitly owned, monitored and ended.\n\nThe result is a bound, not a feeling. \"Until the new key is live\" is not a bound, because the new key can be live at the authority while a verifier's cache is stale, and the old key can be gone from the authority while old tokens are still unexpired.\n\n## 4. When overlap is unsafe\n\n### 4.1 Compromise, not routine retirement\n\nThe decisive distinction in the book is normal rotation versus compromise. Planned signing-key rollover verifies overlap against old token lifetime and verifier distribution. A compromised private signing key instead calls for emergency rejection and session re-establishment, and normal overlap may be unsafe. Continued acceptance of an old key during compromise may violate the threat contract; availability and revocation then need an explicit incident decision.\n\nThe mechanism is simple: an attacker with the old private key can create arbitrary tokens that pass the old-key check. Every verifier that still accepts K1 is a verifier that accepts the attacker's forgeries. Overlap that is prudent for a planned retirement is therefore a vulnerability during a compromise. The same logic applies when trust in the old key is lost for any equivalent reason: the key is no longer a routine old key, it is a suspect key.\n\n### 4.2 Unbounded, unowned or mis-scoped overlap\n\nEven without compromise, overlap is unsafe when it has no defined end. The book's formulation is \"only for the explicitly permitted overlap of existing tokens and policy\" — not \"until further notice\", and not \"as long as some client might still have a token\". An unowned overlap becomes permanent old-key acceptance, which is indistinguishable from never rotating.\n\nTwo further distinctions matter:\n\n- **Retaining the public key is not retaining signing authority.** The old public key may remain in the verifier's trust store for the overlap, but the old private key must not be allowed to sign new tokens. The book states this directly: retaining a public key does not require allowing new signatures under its private counterpart. If the old key can still sign new tokens during the overlap, the overlap is a second active signing key, not a retirement window.\n- **Overlap does not cover missing trust material.** The book lists \"rotated trust material missing on one verifier\" as a negative case. A verifier that never received K2 is not \"covered\" by the overlap; it is a distribution failure that the overlap is supposed to expose and bound, not hide. The fleet must know which key versions each verifier trusts, and the rotation is not complete until the old key is gone from every verifier that can still see old tokens.\n\n### 4.3 \"Overlap\" that is really trust bypass\n\nThe question's verifier that accepts a token whose key identifier points at an untrusted key URL is not doing overlap at all. It is letting the token choose its own verification key. The book is unambiguous: do not allow untrusted token fields to select an arbitrary key URL or algorithm; a key identifier selects inside a configured trust relationship, and it is not that relationship itself.\n\nIf a verifier dereferences an attacker-supplied key URL, the attacker can publish a key, sign a token with the matching private key, and have the verifier report a valid signature. The cryptographic check succeeds, but the trust check has been inverted: the attacker, not the issuer, supplied the anchor. The same verifier is also making an outbound request to an attacker-chosen destination, which is the SSRF pattern the security chapter warns about: user-supplied URLs fetched without target validation; network allowlists may not cover DNS rebinding, redirect chains and internal address access; safer patterns are typed reference resolution, no arbitrary outbound fetch for ordinary users, strict destinations and isolated egress.\n\nThe correct response is rejection, not \"the signature verified, so accept\". The identifier must resolve inside the configured issuer relationship — a pinned key set, a configured authority, or a trusted local cache — and nowhere else. An unknown identifier after a legitimate refresh from that configured source is an unknown key, and an unknown key is not a reason to fetch a new URL from the token.\n\n### 4.4 Overlap never restores revoked permission\n\nA token can be cryptographically valid and still describe authority that no longer exists. The book says a cryptographically valid token can still outlive a revoked session or object permission, and its table requires rechecking at the resource: token signature alone does not restore permission. The chapter decision says the same: network reachability or a valid token does not grant permission to every object. So the overlap window is a signature-verification window only. It must not be used to keep a revoked session, user, tenant or object permission alive, and user, session, key and object revocations remain separate scopes with different blast radii.\n\n## 5. What a verifier must do when it cannot reach the authority\n\nThe book gives a compact decision table. The operational reading is:\n\n| Verifier state | Required behavior | Why |\n|---|---|---|\n| Unknown key identifier; no trusted cached key; authority unreachable | Do not accept the credential. Return an explicit unavailable/denied outcome, alert, and retry the configured authority with backoff. Never resolve a token-supplied URL, never fall back to an unverified key, never disable signature checking. | \"Unknown key while authority unavailable: do not accept unverifiable credentials.\" A control-plane outage must not silently remove authentication. |\n| Key identifier known; trusted cached key present; token unexpired and otherwise valid; authority unreachable | Continue only within the configured offline-validation and current-permission contract and the cached-key horizon. Recheck current permission at the resource. Do not extend the cache indefinitely and do not refresh unknown credentials indefinitely. | \"Known unexpired credential while authority unavailable: continue only within its configured offline-validation and current-permission contract.\" |\n| Cache empty after a restart; authority unreachable | Fail closed and report unavailable. Do not start in a state that accepts unsigned or unverifiable tokens. | \"Unavailable key service on restart\" is an explicit negative case; a control-plane outage should not silently remove authentication. |\n| Authority reachable again | Refresh the key set, resolve the identifier only inside the configured trust relationship, revalidate outstanding credentials and stale decisions, and record the outcome. | Key metadata expires and must be refreshed; the verifier must not treat an expired cache as current. |\n| Privileged mutation or a new unknown key during the outage | Apply the separate, stricter failure decision. Fail closed unless a deliberately pre-authorized emergency path exists. | \"New unknown keys and privileged mutations need their own failure decision.\" |\n\nThe verifier's configuration is part of the answer, not an implementation detail. It must record the issuer, allowed algorithms, audience, token lifetime, clock tolerance, verification-key source and cached-key horizon. It must also define clock-skew, cache-lifetime and disconnected-policy behavior. A verifier that has not written these down cannot make a defensible decision when the authority disappears, and a cache horizon that is longer than the token lifetime silently extends acceptance beyond the token contract.\n\nThe failure must be observable as a decision, not as a drop in a success counter. The book asks for explicit denied-versus-unavailable outcomes and no secret-bearing logs, and it asks for failure tests: policy engine unavailable, stale authorization cache, credential renewal failure, transport outage, denied secret rotation, expired or rotated credentials, a stale certificate chain, a wrong issuer with a matching key ID, rotated trust material missing on one verifier, and an unavailable key service on restart. A rotation is not accepted because the happy-path handshake rate stayed high; it is accepted when the denied and unavailable paths behaved as designed.\n\nFor a gateway that offloads token validation, the same contract applies to the offloaded function: an owner, a versioned policy and a failure mode; fail-closed behavior and a tested bypass path with an audit record. Token validation at the edge does not authorize the object, and the edge becoming the only authorization point is a known failure mode.\n\n## 6. The specific unsafe verifier in the scenario\n\nThe verifier that accepts a token whose key identifier points at an untrusted key URL has made three mistakes at once:\n\n1. It treated a token-controlled identifier as a locator for trust material. The identifier is a selector inside a preconfigured relationship; it is not the relationship.\n2. It let untrusted token fields choose the key URL (and, by the same rule, the algorithm). The book forbids both.\n3. It fetched an attacker-directed destination, which is an SSRF-shaped exposure even if the fetched key happens to verify the signature.\n\nThe right handling is to reject the token as untrusted. If the identifier is not present in the configured issuer's key set, the verifier may refresh that set from the configured authority; if the authority is unreachable or the identifier remains unknown, the token stays unverifiable and is not accepted. A signature that verifies under a key the issuer never authorized is not authentication — it is an attacker-supplied key validating an attacker-supplied token.\n\n## 7. Operational sequence that satisfies all three parts\n\n1. **Prepare:** publish K2 verification material to the configured key source; distribute it to verifiers and caches; record issuer, algorithms, audience, token lifetime, clock tolerance, key source and cache horizon.\n2. **Verify:** confirm every verifier can resolve K2 and that the new chain/key is correct before it becomes the only accepted path.\n3. **Issue:** start issuing K2 tokens. Keep K1 verification only for the explicitly permitted overlap of existing tokens and policy.\n4. **Observe:** track per-verifier key versions, unknown-key denials, unavailable outcomes and the remaining K1 token population. Do not assume \"live at the authority\" means \"present in every cache\".\n5. **Drain:** let long-lived connections and old tokens finish within the bound. Recheck permissions at the resource; do not let signature validity substitute for revoked authority.\n6. **Retire:** remove K1 from verifiers only after the last legitimate K1 token has expired, clock tolerance is accounted for, every verifier has refreshed, and the overlap has an owner and an end.\n7. **Incident override:** if K1 is compromised or suspected, skip the routine overlap. Reject K1, re-establish sessions, and make the availability and revocation decision explicitly.\n\n## 8. Evidence map\n\n- tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities — routine rollover plan, K1/K2 ordering, overlap permission, signing-versus-verification distinction, configured fields, key-identifier rule, decision table, clock-window warning, cache/revocation scopes, negative cases, deny/unavailable logging.\n- tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ — overlap across producers, verifiers, caches and long-lived connections; verify the new chain before it is the only path; compromise versus routine rotation.\n- tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance — control-plane outage must not silently remove authentication; established sessions and locally verifiable credentials only within original validity and policy horizon; new unknown keys and privileged mutations get their own decision; denied versus unavailable outcomes.\n- tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes — federated key rollover publishes the jwks member before old keys are removed; expired metadata must be refreshed.\n- tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay — bearer tokens replayable until invalidated or expired; fail-closed policy-service timeout; emergency policy must be pre-authorized, audited, time-bounded and explicitly risk-accepted.\n- tycho.page.58c3c4e5e19d46bcb2da66255eb61068#6-threat-model-decisions-and-abuse-cases — user-supplied URL fetching, SSRF, DNS rebinding, redirect chains and safer typed-reference destinations.\n- tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests — negative tests including expired/rotated credentials and failure paths.\n- tycho.page.43bf5d29ec5b4327b0c4cf57391679da#4-token-and-credential-boundaries — credential contract fields including clock skew, cache lifetime and disconnected-policy behavior.\n- tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading — gateway-offloaded validation needs an owner, versioned policy, failure mode, fail-closed behavior and tested bypass.\n- tycho.chapter.3563624d13ca4430aa77abea4f8f0bc2#decision-and-worked-result — a valid token does not grant permission to every object.\n- tycho.chapter.3563624d13ca4430aa77abea4f8f0bc2#further-mechanism-and-recovery-questions — the book itself scopes the rotation material as source-scoped enrichment whose examples and proposed tests are not executed results.\n\n## 9. Unknowns and limits\n\n- The book does not prescribe an exact overlap duration. It explicitly refuses to reuse invented durations and says the bound depends on issuer and verifier clocks and configured checks. Any concrete number in a real deployment must come from that deployment's token lifetime, skew budget, verifier distribution and cache-refresh measurements.\n- The book gives failure policy, not a key-authority high-availability design. It does not specify a cache TTL, a mirroring topology, or a maximum tolerated outage; it requires the verifier to have a configured cached-key horizon and a disconnected-policy decision.\n- The book does not measure revocation propagation or key-distribution latency. Its rotation and outage examples are original design reasoning, not executed results; the rotation page states that no cryptographic implementation, issuer, key service or penetration test was executed.\n- The federated-identity notes containing the jwks-before-removal sentence are marked synthetic design guidance on that page, not measured evidence.\n- The book does not decide the product trade-off between hard-failing all traffic and allowing a narrow read-only recovery path during an authority outage. It requires any emergency path to be deliberately pre-authorized, strongly audited, time-bounded, documented and tested; the choice remains an explicit incident decision.\n- No production observation, benchmark or external review is claimed here. The answer is an evidence-linked design reading of the book sections above, with derived durations and sequencing marked as inference where the book does not state them.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Routine signing-key rotation needs an overlap because verification happens after issuance: clients can still hold unexpired bearer tokens signed by the old key after the new key becomes live, so immediately removing the old verification key rejects otherwise valid, unexpired credentials.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Keep K1 acceptance only for the explicitly permitted overlap of existing tokens and policy.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Planned signing-key rollover | Verify overlap against old token lifetime and verifier distribution",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay",
+          "quote": "A **bearer token** can be replayed by an unauthorized holder until invalidated or expired.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The order matters: distribute and verify the new verification material before issuing new-key-only tokens, and remove the old key only after its permitted overlap has ended; federated key rollover likewise publishes the new jwks member before old keys are removed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "A fictional service verifies tokens signed by K1 and will introduce K2. Before issuing K2-only tokens, distribute the trusted K2 verification material to verifiers.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ",
+          "quote": "Verify the new chain before making it the only accepted path.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes",
+          "quote": "key rollover updates the jwks member before old keys are removed.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Overlap is a distributed-state problem, not only a key-authority setting: it has to cover producers, verifiers, caches and long-lived connections, so a region whose key cache cannot reach the authority is inside the overlap design rather than an exception to it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ",
+          "quote": "For routine certificate or signing-key replacement, plan overlap across producers, verifiers, caches and long-lived connections.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Record issuer, allowed algorithms, audience, token lifetime, clock tolerance, verification-key source and cached-key horizon.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The overlap must be sized from the old token lifetime, the verifier distribution and clock tolerance, not from a fixed or invented default; a clock allowance makes the effective acceptance window longer than the nominal token lifetime.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Planned signing-key rollover | Verify overlap against old token lifetime and verifier distribution",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "A fictional five-minute token and a two-minute clock allowance can expose a longer acceptance window than the nominal five minutes.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "The exact bound depends on issuer/verifier clocks and configured checks; do not add allowances casually or reuse these invented durations as defaults.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Overlap is unsafe when the old private signing key is compromised or suspected: continued acceptance can validate attacker-forged tokens, so the incident decision is emergency rejection and session re-establishment, with the availability and revocation trade-off made explicitly.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Private signing key compromised | Decide emergency rejection and session re-establishment; normal overlap may be unsafe",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ",
+          "quote": "During compromise, continued acceptance of an old key may violate the threat contract; availability and revocation need an explicit incident decision.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Retaining the old public key for verification must not be confused with retaining signing authority: the public key may stay in the trust store for its bounded overlap while new signatures under the old private key are no longer allowed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Distinguish signing authority from public verification material: retaining a public key does not require allowing new signatures under its private counterpart.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "An overlap must be explicitly permitted and bounded; an unbounded acceptance path, or a plan that leaves rotated trust material missing on some verifier, is unsafe because it leaves old-key acceptance with no defined end.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Keep K1 acceptance only for the explicitly permitted overlap of existing tokens and policy.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Proposed negative cases: old valid token after logout, wrong issuer with a matching key ID, rotated trust material missing on one verifier, revoked tenant access during an open stream, unavailable key service on restart, and a restored backup requiring an intentionally retired key.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A valid signature is not authorization: a token can remain cryptographically valid after its session or object permission was revoked, so the resource must recheck current permission rather than treating old-key overlap as continued authority.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "a cryptographically valid token can still outlive a revoked session or object permission.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Object permission revoked | Recheck at the resource; token signature alone does not restore permission",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.3563624d13ca4430aa77abea4f8f0bc2#decision-and-worked-result",
+          "quote": "Network reachability or a valid token does not grant permission to every object; test denied operations through indirect paths.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A token key identifier is a selector inside a preconfigured trust relationship, not the trust relationship itself; verifiers must not let untrusted token fields choose an arbitrary key URL or algorithm.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Do not allow untrusted token fields to select an arbitrary key URL or algorithm. A key identifier selects inside a configured trust relationship; it is not that relationship itself.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A verifier that accepts a token whose key identifier points at an untrusted key URL has let the attacker supply the verification key; the token must be rejected, and the verifier must not dereference the supplied URL, because fetching attacker-directed URLs also creates redirect, DNS-rebinding and internal-address exposure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "A key identifier selects inside a configured trust relationship; it is not that relationship itself.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#6-threat-model-decisions-and-abuse-cases",
+          "quote": "a worker accepts user-supplied URL and fetches it without target validation. A network allowlist alone may not cover DNS rebinding, redirect chains and internal address access.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#6-threat-model-decisions-and-abuse-cases",
+          "quote": "Safer alternatives include typed reference resolution, no arbitrary outbound fetch for ordinary users, strict destinations and isolated egress.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "If the key authority is unreachable and the verifier has no trusted key for the token's identifier, it must fail closed: it does not accept unverifiable credentials, and new unknown keys get their own explicit failure decision rather than silent authentication removal.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Unknown key while authority unavailable | Do not accept unverifiable credentials",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance",
+          "quote": "New unknown keys and privileged mutations need their own failure decision.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance",
+          "quote": "A control-plane outage should not silently remove authentication or refresh unknown credentials indefinitely.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "If the authority is unreachable but the verifier already holds a trusted cached key and the credential is known and unexpired, it may continue only within its configured offline-validation and current-permission contract, and for no longer than its bounded cache horizon.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Known unexpired credential while authority unavailable | Continue only within its configured offline-validation and current-permission contract",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance",
+          "quote": "Determine whether already established sessions and locally verifiable credentials can continue within their original validity and policy horizon.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Record issuer, allowed algorithms, audience, token lifetime, clock tolerance, verification-key source and cached-key horizon.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Verifier configuration must define issuer, allowed algorithms, audience, token lifetime, clock tolerance, verification-key source and cached-key horizon, along with clock-skew, cache-lifetime and disconnected-policy behavior.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Record issuer, allowed algorithms, audience, token lifetime, clock tolerance, verification-key source and cached-key horizon.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#4-token-and-credential-boundaries",
+          "quote": "clock skew, cache lifetime and disconnected-policy behavior,",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Outage and rotation behavior must produce explicit denied-versus-unavailable outcomes, not a generic success metric, and must be exercised with negative cases such as stale chains, wrong issuer or audience, rotated trust material missing on a verifier and an unavailable key service on restart.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance",
+          "quote": "Record denied versus unavailable outcomes, not only a handshake success rate.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Proposed negative cases: old valid token after logout, wrong issuer with a matching key ID, rotated trust material missing on one verifier, revoked tenant access during an open stream, unavailable key service on restart, and a restored backup requiring an intentionally retired key.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests",
+          "quote": "**Exercise failure**: policy engine unavailable, stale authorization cache, credential renewal failure, transport outage, denied secret rotation and long-running transaction against revoked rights.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "When a gateway offloads token validation, that function needs an owner, a versioned policy and a defined failure mode; fail-closed behavior and a tested bypass path are part of the contract, not optional operational detail.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+          "quote": "Each offloaded function needs an owner, a versioned policy and a failure mode; TLS termination does not authenticate the final application, token validation does not authorize the object",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+          "quote": "Fail-closed behavior and a tested bypass path are part of the contract, with an owner and audit record.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Cached allow decisions and cached keys need bounded staleness and defined policy-service outage behavior, because user, session, key and object revocations are separate scopes with different blast radii.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "If a service caches an allow decision, define maximum stale permission, invalidation delivery and policy-service outage behavior.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Revocation of a user, a session, a key and one object are separate scopes; their blast radii differ.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Fail-closed is the default when a policy or key dependency times out; any emergency bypass must be deliberately pre-authorized, strongly audited, time-bounded and supported by explicitly documented risk acceptance and tests.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay",
+          "quote": "if a remote policy service times out, protected writes may need to fail closed, but a critical read-only recovery function might use a deliberately pre-authorized emergency policy with strong audit and expiration.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay",
+          "quote": "Such deviations require **explicitly documented** risk acceptance and tests.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Expired key metadata must be refreshed, so a verifier that cannot reach the authority cannot treat an expired cache as indefinitely current.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes",
+          "quote": "Entity Configuration expiration controls how often federation keys are refetched; expired metadata must be refreshed.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The book itself labels the rotation material as source-scoped enrichment and its examples and proposed tests as not executed results, so the answer's operational numbers are derived guidance rather than measured production evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.3563624d13ca4430aa77abea4f8f0bc2#further-mechanism-and-recovery-questions",
+          "quote": "source-scoped enrichment; examples and proposed tests are not executed results.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.3563624d13ca4430aa77abea4f8f0bc2#decision-and-worked-result",
+    "tycho.chapter.3563624d13ca4430aa77abea4f8f0bc2#further-mechanism-and-recovery-questions",
+    "tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance",
+    "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#4-token-and-credential-boundaries",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#6-threat-model-decisions-and-abuse-cases",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+    "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

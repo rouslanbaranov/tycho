@@ -1,0 +1,342 @@
+{
+  "task_id": "Q286",
+  "answer": "# Q286 — Why publish-subscribe is a delivery contract, what each subscription and consumer must declare, and when a queue or durable consumer fits\n\n## Scope and layers\n\ndescribe was run first. The question is an atlas-layer question (an atlas entry states the decision conditions) whose mechanism lives in the bounded book owner sections that the atlas entry links to. Layers needed: **atlas** (the Publish/Subscribe and Durable Subscriber entries, their fit conditions, contraindications and evidence limits) and **book** (the owner page for topic/cursor delivery ownership, and the messaging-family comparison). The modeling-and-simulation layer was not needed: the question asks for a delivery contract, not for a model, run or decision record.\n\nThe question has three independent asks, plus four concrete symptoms to explain: (1) why publish-subscribe is a delivery contract rather than fire-and-forget; (2) what each subscription and each consumer must declare; (3) when a queue or a durable consumer is the better fit. There are six decision-relevant facets.\n\n## Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1 Delivery contract vs fire-and-forget | \"publish subscribe delivery contract fire and forget\"; \"delivery contract acknowledgement retention replay guarantee\"; topic and cursor ownership | tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes, ...#1-first-identify-what-a-consumer-must-own |\n| F2 Late subscriber and retroactive expectation | \"durable subscriber cursor retention offline consumer\"; \"replay stale business deadline\"; late subscription | tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory, owner notes |\n| F3 Restart while down | \"subscription durable across temporary disconnects\"; ephemeral versus durable; resume after reconnect | entry-inventory (Durable Subscriber), owner notes, owner section 1 |\n| F4 Duplicate after lost acknowledgement | \"acknowledgement lost redelivery duplicate effect key deduplication\"; \"at-least-once duplicate delivery dedup effect key receiver\"; idempotent receiver | owner notes, owner section 1, tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview |\n| F5 Subscription and consumer declarations | \"prefetch in-flight bound acknowledgement window\"; ordering scope; subscription contract; effect key and dedup rule | owner notes (Event-Driven Consumer, Durable Subscriber), owner section 1, ...#2-requirement-driven-comparison-not-a-ranking |\n| F6 Fan-out growth, tenant consumers, identity, queue versus durable consumer | \"fan-out subscriber count unbounded population partition topic\"; \"topic subscription registration tenant consumers retention cost\"; \"point-to-point queue one consumer exactly one worker\"; decision route | entry-inventory (Publish/Subscribe and Point-to-Point Queue), owner notes, owner section 1, tycho.chapter.a4b31346a691566550633efe0cf2693e#chapter-result-and-counterexample |\n\n## 1. Why publish-subscribe is a delivery contract, not fire-and-forget\n\nA topic is a fan-out address, not a mailbox. The owner section is explicit: publish-subscribe \"is a delivery contract, not a fire-and-forget call.\" A publisher names a topic; every current matching subscriber receives its own copy through its own cursor; and a subscriber that is absent during publication \"sees nothing unless the subscription is durable.\" The publisher's call therefore says only that the broker accepted responsibility. It says nothing about which subscriptions existed, how far back they can read, whether a delivery was acknowledged, or whether the consumer's business effect committed.\n\nThat is why each of the four symptoms is a contract question rather than an operational accident:\n\n- **A subscriber added after a busy morning expects the earlier orders.** A subscription created after those orders has no delivered position before it existed; whether the broker initializes it from retained history or from its creation point is a broker policy that must be checked (inference). It sees earlier orders only if the subscription is durable and its retention and replay window covers that history. So \"record whether it is ephemeral or durable before claiming a guarantee\" is the first declaration, and the retroactive expectation is either satisfied by a bounded replay or must be met by a separate backfill from a retained source. The atlas card also warns that a durable subscriber is contraindicated when \"a late replay violates a business deadline.\"\n- **A subscriber restarts and loses the events published while it was down.** Under an ephemeral subscription there is no server-side position to resume from, so those publications are gone. A durable subscriber keeps a server-side cursor and retained messages for an offline consumer, so delivery resumes after disconnect; but the resume is bounded by retention, acknowledgement timeout and replay policy.\n- **The same event is delivered twice after an acknowledgement is lost.** This is the normal outcome of the safe ordering: the effect commits, the acknowledgement is lost, and the broker redelivers. The inverse ordering, acknowledging before the effect, loses work. Neither ordering gives exactly-once business behaviour for free, so the consumer owns deduplication.\n- **The subscriber list keeps growing with tenant-specific consumers.** Every added subscription multiplies the publisher's fan-out: the publisher writes once, but the broker stores and delivers once per subscriber, and each subscription holds its own retention. An unknown, unbounded population makes both load and retention unownable. The card's remedy is to cap registration or partition the topic, and its hard contraindication explicitly rejects publish-subscribe when the subscriber count is unknown and unbounded.\n\nThe naming error compounds the delivery error. \"A subscription name is not a business identity\" — and neither is a topic name. A topic name is a routing and ownership decision. The business identity is the stable event or effect identity (for example an order identifier plus a version or event id) that the consumer stores with its dedup marker. A team that treats the topic name as the business identity has no key against which to deduplicate, no way to tell a replay from a new order, and no place to record which tenant's copy is which.\n\nFire-and-forget is therefore true only of the call site. Asynchrony moves the contract; it does not remove it. The delivery contract is exactly the set of promises a publisher, broker, subscription and consumer make to one another about retention, ordering, acknowledgement, duplication and terminal failure — and every one of those promises is owned by someone.\n\n## 2. What each subscription must declare\n\nA subscription is the unit that holds delivery state. Before any guarantee is claimed, it must declare:\n\n| Declaration | Why it is required | Consequence if undeclared |\n|---|---|---|\n| Durability: ephemeral or durable | An ephemeral subscription has no retained position; a durable one keeps a server-side cursor | A \"guaranteed\" integration silently loses everything published while a consumer is down |\n| Retention scope and window | Bounds how far back replay can reach and when the cursor is too old | A late subscriber expects history the broker no longer has; replay silently starts mid-stream |\n| Acknowledgement window and maximum redelivery | Determines how long an unacknowledged delivery is retried and when it stops | Infinite redelivery of a poison message, or early discard of work still in flight |\n| Prefetch or in-flight bound | Bounds concurrent unacknowledged work pushed to a consumer | Unbounded buffering hides overload instead of applying backpressure |\n| Ordering scope (queue, subscription, stream or partition, and the key) | Order is scoped, never global | False assumptions about per-order sequence across partitions |\n| Replay policy and staleness deadline | A replay older than its declared deadline is stale and must be repaired, not applied | Stale prices, stale fraud decisions, duplicate customer emails |\n| Cursor ownership and lag observability | Someone must own the position and its lag | Silent backlog growth discovered only during an incident |\n| Registration cap and tenant-to-topic mapping | Fan-out and retention cost grow with subscriber count | Unbounded tenant subscriptions and unownable load |\n\nTwo of these are contractual in a stronger sense than the rest: the subscription declares \"a prefetch or in-flight bound and an acknowledgement window,\" and \"concurrency and ordering requirements belong to the subscription contract, not to the framework default.\" A framework default is not a declaration; it is an accident waiting to be discovered under load.\n\n## 3. What each consumer must declare\n\nThe consumer owns the business effect, and the broker cannot make that effect idempotent. \"Every consumer still needs a stable effect identity and a deduplication/acknowledgement rule; durable storage does not make the business effect idempotent.\" Each consumer must declare:\n\n1. **A stable effect key.** The identity that the dedup store keys on: order id plus event version, not the topic name and not the delivery id. If the identity is unstable, deduplication cannot work at all.\n2. **A deduplication rule and its retention.** Duplicate suppression is only as good as the dedup-state window: it must cover the redelivery window, including concurrent duplicates. The Idempotent Receiver card's good-fit conditions are exactly this — \"messages carry stable identity; effect and identity are recorded atomically; retention covers the redelivery window; concurrent duplicates are handled.\"\n3. **An acknowledgement policy and its ordering.** The handler \"must own effect identity, deduplication and acknowledgement ordering\": commit the business effect and the dedup marker together where possible, acknowledge only after the durable effect, and keep a reconciliation path for the case where a crash leaves the outcome unknown. A marker written before the effect leaves an in-progress record that needs reconciliation; a separate external effect followed by a crash before its marker duplicates the effect.\n4. **A statement about non-transactional side effects.** Email, analytics writes and fraud-case creation do not join the consumer's local transaction. Each needs its own idempotency story or an explicit at-least-once tolerance. (Inference, not a source claim: for this team the email consumer is the least tolerant of duplicates and the analytics consumer the most; that difference should be declared per consumer rather than assumed uniform.)\n5. **A terminal path.** Retry bounds, poison-message handling and the action when the cursor is too far behind. The Point-to-Point Queue and competing-consumers notes both require a declared terminal path rather than infinite visibility timeouts.\n6. **Lag and capacity ownership.** Because fan-out amplifies load, each consumer must know its budget: how much backlog it can absorb, and who pages when it cannot.\n\nThe acknowledgement split deserves its own statement because it is the most common source of false confidence: the broker's confirmation to the publisher and the consumer's acknowledgement of processing \"are independent; publisher confirm does **not** mean the consumer performed a business transaction.\" A green publish metric proves acceptance, not an email sent, an analytics row written, or a fraud case opened.\n\n## 4. When a queue or a durable consumer is the better fit\n\nThe owner section gives an explicit route rather than a product ranking: first ask whether the publication must survive an absent subscriber, then ask whether multiple independent consumers must replay retained history. The text alternative states it directly: \"decide whether a publication must survive absent subscribers, then whether multiple independent consumers must replay history.\"\n\n- **No to both** — ephemeral pub/sub (or a direct call) is adequate, and it is honest only when losing the signal while nobody is listening is acceptable.\n- **Survive an absent subscriber, no shared replay** — a durable task queue with acknowledgement and redelivery. \"A queue fits when each task needs exactly one owner and the consumer can absorb redelivery.\"\n- **Survive and replay for independent readers** — a retained stream or durable consumer with an explicit cursor and owned state. A JetStream durable consumer or another persisted queue may better match a recoverable requirement than Core-style ephemeral delivery.\n\nThe pattern-level rule is symmetric. The Publish/Subscribe entry's competing alternative is a \"point-to-point queue with explicit routing,\" and the choice reverses \"when one work item needs one consumer, not an independent copy per subscriber.\" Conversely, the Point-to-Point Queue entry reverses to fan-out when every subscriber needs a copy. Competing consumers then scale a queue, at the cost of per-key order unless partition assignment is explicit.\n\nApplied to this team:\n\n- **Email, analytics and fraud are three independent reactions to one order event** — that is genuinely a fan-out shape, and publish-subscribe is the right family. But each of the three is its own subscription with its own durability, retention and acknowledgement declarations, and each needs its own consumer dedup. Sharing one \"fire-and-forget\" topic without those declarations is what produced the four symptoms.\n- **A subscriber added later expects earlier orders** — if the broker's retention cannot cover the morning, a durable subscription cannot manufacture the history; the honest design is a bounded backfill from a retained source, with a declared staleness deadline.\n- **A restart must not lose events** — that consumer needs a durable subscription (or a queue) with an owned cursor; an ephemeral subscription is a choice to lose them.\n- **Duplicates after a lost acknowledgement** — the fix is consumer-side: stable effect key, dedup marker committed with the effect, acknowledgement after the effect. Moving to a queue does not remove this; it changes who redelivers.\n- **Growing tenant-specific subscribers** — cap registration or partition the topic by tenant, and give each subscription a retention budget. If the number of tenants is unknown and unbounded, publish-subscribe is the wrong primitive for the whole set; per-tenant queues or a partitioned stream with explicit ownership are the alternatives.\n- **If any one of these must process each order exactly once as a work item** — for example a single fraud adjudication per order — that piece should be a queue with one owner, not a broadcast. The atlas entry lists \"one consumer must receive every message exactly once\" as a hard contraindication, so even the queue selection is a statement about ownership and duplicate handling, not a guarantee the broker provides.\n\n## 5. Boundaries of this evidence\n\nThe atlas entry is selection evidence, not delivery proof. Its decision state is applicable-under-conditions; owner links are bounded sections; all cards are self-checked; and \"no entry claims sufficient technical or decision coverage.\" The chapter also records that no independent editorial review, benchmark, production observation or runtime test is asserted. The broker comparison rows describe \"documented conceptual capabilities of selected versions, not measured latency, pricing, throughput or operational superiority,\" and message ordering is typically scoped to queue, subscription, stream or partition with no implied global total order. One further boundary is recorded as a counterexample: \"a durable subscriber that replays an unbounded history without an owner is not evidence for the durable-subscriber card's retention conditions.\" Durability is a cursor, not a backup: \"a durable cursor is not a backup of the consumer's business state.\"\n\n## 6. Evidence map\n\n| Claim | Anchor |\n|---|---|\n| C1 contract, not fire-and-forget | tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes; ...#1-first-identify-what-a-consumer-must-own |\n| C2 late subscriber, retention, stale replay | tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory; owner notes |\n| C3 restart while down | owner notes; owner section 1; entry-inventory |\n| C4 duplicate after lost acknowledgement | owner notes; owner section 1 |\n| C5 subscription declarations | owner notes; comparison section |\n| C6 consumer declarations | owner notes; Idempotent Receiver card; owner section 1 |\n| C7 publisher confirm versus consumer commit | owner section 1; owner notes |\n| C8 fan-out growth and unbounded tenants | owner notes; entry-inventory; chapter counterexample |\n| C9 identity | owner notes; owner section 1 |\n| C10 queue versus durable consumer | owner section 1; owner notes; entry-inventory |\n| C11 atlas evidence limits | entry-inventory; evidence and known limits; purpose and mission; comparison section |\n\n## 7. Unknowns and unverified claims\n\n- Whether this team's topic is a retained log or a transient fan-out topic is not knowable from the question; the \"expects the earlier orders\" requirement may need a backfill path rather than subscription replay.\n- Tenant count, growth rate and retention cost are unmeasured here; the unbounded-population contraindication is a structural condition, not a measured threshold.\n- Duplicate tolerance per consumer is undeclared: whether the email provider deduplicates by message id, whether analytics writes are idempotent, and whether fraud case creation is repeatable are all open.\n- No broker configuration, acknowledgement timeout, redelivery count or retention value is known; no runtime test of this integration was performed, and no production observation exists.\n- No anchor claims end-to-end exactly-once delivery; the atlas entry treats \"exactly once\" as a hard contraindication for publish-subscribe, so a queue or stream still leaves deduplication with the consumer.\n- The atlas registry is draft and coverage is not independent review; the owner page's bounded notes are synthetic design guidance, not measured evidence.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Publish-subscribe is a delivery contract, not a fire-and-forget call: a publisher names a topic, each current matching subscriber gets its own cursor, and the delivery a subscriber actually receives depends on subscription type and retention, not on the publisher's call returning.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "Publish-subscribe is a delivery contract, not a fire-and-forget call.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "A publisher names a topic, and each current subscriber gets its own cursor; a subscriber absent during publication sees nothing unless the subscription is durable.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "A topic fans each publication out to every current matching subscriber; ephemeral subscribers lose messages published while they are absent.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "A subscriber added after a busy morning receives earlier orders only if the subscription is durable and its retention and replay window covers that history; otherwise the retroactive expectation is a separate backfill job, and a replay past its declared business deadline is stale and must be routed to repair rather than applied.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+          "quote": "Should a subscriber retain messages across temporary disconnects?",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "Record whether it is ephemeral or durable before claiming a guarantee.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "A server-side cursor plus retained messages lets an offline consumer resume after reconnect. Resume is bounded only by retention, acknowledgement timeout and replay policy.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+          "quote": "Reject when the subscriber is disposable, when retention would grow without bound, or when a late replay violates a business deadline.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A subscriber that restarts loses the events published while it was down under an ephemeral subscription; a durable subscriber keeps a server-side cursor and retained messages so delivery resumes after disconnect, subject to retention, acknowledgement timeout and replay policy.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "A best-effort subscription can lose work.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "A durable subscriber keeps a server-side cursor and retained messages for an offline consumer, so delivery can resume after disconnect.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+          "quote": "The subscriber can be offline; retention scope and replay are bounded; duplicate handling exists; the broker supports durable subscriptions.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A duplicate after a lost acknowledgement is the expected consequence of acknowledging after the effect commits rather than before: the effect is already durable, the acknowledgement never arrives, and the broker redelivers, so non-repeatable effects need a stable effect key plus consumer-side deduplication.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "Redelivery follows an effect that committed before its acknowledgement; the opposite order loses work.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "A worker crash after the effect but before acknowledgement can cause redelivery, so nonrepeatable effects need consumer-side deduplication and stable effect identity.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "It must own effect identity, deduplication and acknowledgement ordering: a crash after the effect but before acknowledgement causes redelivery, while acknowledging before the effect can lose work.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Each subscription must declare its durability (ephemeral or durable), its retention scope and replay window, its acknowledgement window and maximum redelivery, its prefetch or in-flight bound, and its ordering scope; concurrency and ordering belong to the subscription contract, not to framework defaults.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "Record whether it is ephemeral or durable before claiming a guarantee.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "The subscription declares a prefetch or in-flight bound and an acknowledgement window",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "Concurrency and ordering requirements belong to the subscription contract, not to the framework default.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#2-requirement-driven-comparison-not-a-ranking",
+          "quote": "Message ordering is typically scoped to queue/subscription/stream/partition and concrete producer/consumer behavior; no column implies global total order.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Each consumer must declare a stable effect key and business identity, a deduplication rule with state retention covering the redelivery window, and an acknowledgement policy that commits the effect and the dedup marker atomically where possible and reconciles the unknown outcome of a crash between them.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "Each consumer therefore needs an effect key, a deduplication rule and an acknowledgement policy.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+          "quote": "Messages carry stable identity; effect and identity are recorded atomically; retention covers the redelivery window; concurrent duplicates are handled.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+          "quote": "A crash after a separate external effect but before its marker can duplicate the effect; a marker written before the effect can leave an in-progress record that needs reconciliation.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "Every consumer still needs a stable effect identity and a deduplication/acknowledgement rule; durable storage does not make the business effect idempotent.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A publisher confirmation is not proof that a consumer performed a business transaction: the broker's acceptance to the publisher and the consumer's acknowledgement of processing are independent acknowledgements.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "These are independent; publisher confirm does **not** mean the consumer performed a business transaction.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "A publisher confirm means the broker accepted responsibility, not that a consumer completed the business effect.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "One message has one eligible worker at a time; the acknowledgement retires it after the configured redelivery policy; a publisher confirmation does not prove the consumer committed its effect.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Fan-out cost grows with subscriber count, so an unknown and unbounded tenant-specific subscriber population makes load and retention unownable; the remedy is to cap registration or partition the topic, and an unbounded subscriber count is an explicit hard contraindication for publish-subscribe.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "Fan-out cost grows with subscriber count; an unknown or unbounded population makes load and retention unownable.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "Cap registration or partition the topic.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+          "quote": "Reject when one consumer must receive every message exactly once, when subscriber count is unknown and unbounded, or when the broker cannot express retention and durable delivery is required.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#chapter-result-and-counterexample",
+          "quote": "a durable subscriber that replays an unbounded history without an owner is not evidence for the durable-subscriber card's retention conditions.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A topic or subscription name is not a business identity: topic design, subscriber registration and per-subscriber cursors are part of the delivery contract, and every option still needs business-level identity and failure handling.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "A subscription name is not a business identity.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "every option still needs business-level identity and failure handling",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "Topic design, subscriber registration and per-subscriber cursors are part of the delivery contract.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The queue-versus-durable-consumer choice starts from whether the work must survive an absent subscriber and whether independent readers must replay retained history; a queue fits when each task needs exactly one owner and the consumer can absorb redelivery, while a durable consumer or retained stream fits independent subscribers that need their own copy and replay.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "decide whether a publication must survive absent subscribers, then whether multiple independent consumers must replay history.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "A queue fits when each task needs exactly one owner and the consumer can absorb redelivery.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "Use ephemeral pub/sub only when losing a signal with no listener is acceptable; a durable business task needs a persisted consumer or queue.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+          "quote": "Reverse the choice when one work item needs one consumer, not an independent copy per subscriber.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "a JetStream durable consumer or another persisted queue may better match that requirement.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "quote": "Ephemeral pub/sub fits a notification whose loss while offline is acceptable. A recoverable business task needs a durable consumer or another persisted queue, not a best-effort subscription alone.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The atlas entry supports pattern selection rather than proving delivery: it states good-fit conditions, hard contraindications and an applicable-under-conditions decision state, its owner links are bounded sections, cards are self-checked, and no entry claims sufficient technical or decision coverage, benchmark, production observation or runtime test.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+          "quote": "Should one event reach all interested subscribers without the publisher knowing their count?",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+          "quote": "Subscribers have independent reactions; the publisher can tolerate fan-out; delivery and retention semantics are explicit; duplicate handling is owned.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#evidence-and-known-limits",
+          "quote": "No entry claims sufficient technical or decision coverage.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#evidence-and-known-limits",
+          "quote": "No independent editorial review, benchmark, production observation or runtime test is asserted.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#purpose-and-mission",
+          "quote": "All 20 entries have a self-checked card. Owner sections are bounded: a messaging-family or workflow page may own the delivery contract without owning every EIP mechanism.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#2-requirement-driven-comparison-not-a-ranking",
+          "quote": "Rows describe **documented conceptual capabilities** of selected versions, not measured latency, pricing, throughput or operational superiority.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.a4b31346a691566550633efe0cf2693e#chapter-result-and-counterexample",
+    "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+    "tycho.chapter.a4b31346a691566550633efe0cf2693e#evidence-and-known-limits",
+    "tycho.chapter.a4b31346a691566550633efe0cf2693e#purpose-and-mission",
+    "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+    "tycho.page.0eee61f261054af0ad728d791036c5f4#2-requirement-driven-comparison-not-a-ranking",
+    "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+    "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

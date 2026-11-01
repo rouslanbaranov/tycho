@@ -1,0 +1,456 @@
+{
+  "task_id": "Q261",
+  "answer": "# Q261 — Why the checkout incident record supports neither a containment claim nor a restored-state claim\n\n## Scope and layer\n\nThis is a **book-layer** question. It asks what an incident record must contain before it can support operational claims, so the relevant evidence is the book's incident-response material in V09/C06, with the caching and safe-rollout pages supplying the derived-state and rollback boundaries. No atlas pattern identity and no V12 model, run or decision artifact is needed. Evidence snapshot: 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a; citation scheme: tycho.section-key.v2.\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence read |\n|---|---|---|\n| Claim structure: containment versus restored state | \"incident review postmortem root cause analysis\"; \"recovery mitigation restored guarantees\"; \"restored state steady state verification after incident\" | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth; tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure; tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth |\n| Causal sufficiency and the single root cause | \"alert threshold is not root cause\"; \"checkout slowdown latency regression\"; \"competing hypotheses discriminating evidence\" | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth; tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause; tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident |\n| Chronology and timestamps | \"incident timeline timestamps detection recovery\"; \"timeline onset detection notification uncertainty\" | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation; tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure; tycho.page.1810c1f1f11648bdba66aafa5da60d33#7-practice-response-before-production-failure |\n| Per-action attribution: cache rollback and restart | \"cache rollback invalidation undo\"; \"restart process health recovery not proof\"; \"cache rollback restart recovery verification\" | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation; tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices; tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission; tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status |\n| Restored-state verification | \"green dashboard resolved user-visible correctness\"; \"safe rollout and recovery software rollback persisted state\" | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth; tycho.page.1e89567050974052b13ba62b3b44484f#5-recovery-domains-and-two-distinct-objectives; tycho.page.1810c1f1f11648bdba66aafa5da60d33#original-tabletop-exercise-recovery-must-have-an-oracle |\n| Follow-up and closure | \"after-action analysis\"; \"postmortem follow-up action closure\" | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation; tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause; tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth |\n\n## 2. Short answer: two claims, two different evidence contracts\n\nA record can support a claim only when its entries bear on that claim's truth conditions and discriminate them from the alternatives. The two claims do not have the same truth conditions, and the record fails both for different reasons.\n\n| Claim | What must be true | What the record actually has | Verdict |\n|---|---|---|---|\n| Containment | A defined harmful path was stopped or bounded for a defined population, by an identified, approved and reversible action, from a known time, while known-safe behaviour remained; the record shows the harm did not continue. | A cause label (\"the database was slow\"), a time when the alert fired, and one merged \"actions taken\" line. | Cannot support. |\n| Restored state | After the intervention, user-visible outcomes and durable state are correct, side effects are known, and an acceptance oracle verified it. | The same three items; no post-action outcome check, no state reconciliation, no per-action result. | Cannot support. |\n\nThe record is therefore not merely incomplete. It is **non-discriminating**. Its entries fit the claims, but they fit the negations just as well. \"Database slow, alert fired, cache rolled back, process restarted\" is equally consistent with:\n\n- the database slowdown caused the checkout slowdown;\n- the cache rollback caused a cold-miss database spike that produced the \"database was slow\" observation;\n- the restart masked a checkout that was still incorrect;\n- the checkout was already recovering before either action.\n\nA record that fits all four explanations equally supports none of them. The correct status is **unknown or unverified**, not \"contained\" and not \"restored\". This is not the same as saying the system was not contained or not restored; it says the record does not establish either.\n\nThere is also an important asymmetry. A record can support a containment claim without a complete root cause if it names the harmful path, the affected scope, the action and the observed stop. A record can support a restored-state claim without a complete root cause if it documents user-visible and durable-state checks. Root cause is essential for prevention, not for these two claims. That is why fixing only the phrase \"the database was slow\" would not repair the record: the containment and restoration gaps are independent.\n\n## 3. The causal gap: \"the database was slow\" compresses observation, interpretation and causation\n\nThe sentence contains three different statements:\n\n1. **Observation:** a database metric crossed a threshold, or a latency graph rose, during the checkout slowdown.\n2. **Interpretation:** the database was slow — but which metric, over what window, for which queries, at what percentile, with what lock and pool state?\n3. **Causal claim:** the database slowdown caused the checkout slowdown.\n\nThe record asserts (3) while evidencing at most (1). The book's incident material is explicit that an alert is a threshold crossing, not proof of a root cause or of the precise population harmed: \"An alert is evidence that a condition crossed a configured threshold. It is not automatically proof of a certain root cause or the precise population harmed.\" The same page requires \"first observed symptoms, earliest known data change, detection/notification time and uncertainty\" rather than a single detection timestamp.\n\nDatabase latency is compatible with several mechanisms, and they are not distinguished by the record:\n\n- **Retry amplification.** A stale or failed checkout read causes clients to retry; retries raise database QPS; database latency rises. The book's synthetic incident is exactly this shape: the initial diagnosis is \"slow PostgreSQL\", but the harmful path may be an outdated search index followed by repeated failed lookup/retry, and \"database CPU is not sufficient causal evidence\". The timeline says: \"Do not declare database root cause; compare accepted intents and retry amplification\".\n- **Cache rollback cold start or miss storm.** If the rollback removes or invalidates a cache, concurrent handlers fall through to the database. The caching page describes the mechanism: \"When a popular key expires, thousands of concurrent request handlers can all fall through to a slower database, overwhelming a backend that normally handles only a fraction of the offered read traffic.\" In that case the database is slow because the response made it slow. The response becomes a competing cause of the symptom it was meant to treat.\n- **Lock, pool or I/O contention inside the database.** Checkout writes may hold locks or exhaust a connection pool; the visible latency is a symptom of a different internal mechanism, and the discriminator is lock waits, query plans, pool saturation and commit latency, not a generic \"database slow\" label.\n- **A deploy or configuration change.** A new query pattern or cache configuration can raise database load; the discriminator is the version/config diff and its timing relative to onset.\n- **Traffic or basket-mix change.** A promotion, retry storm or changed checkout path can raise offered load; the discriminator is offered load and accepted-intent counts, not database CPU alone.\n- **A downstream dependency.** Payment or inventory latency can cause checkout retries and secondary database load.\n- **A telemetry or detection gap.** Sampling, clock skew, a changed metric definition or a bad threshold can produce the observation without a real database regression.\n\nNone of these is ruled out in the record. The single root cause is not just under-specified; it is unfalsifiable as written. It also forecloses the most important competing hypothesis created by the response itself: that the cache rollback caused the database spike.\n\nA single root cause can also be incomplete even when the named cause is real. The book's after-action section says: \"A correct after-action record may show multiple contributing causes: one bad config, an untested schema interaction, monitoring blind spots and inadequate failover verification.\" A useful record separates the trigger from contributing conditions, detection gaps and response gaps. The checkout record has one label where it needs that separation.\n\n## 4. The temporal gap: alert timestamps are discovery timestamps\n\nThe incident log's Detection row requires \"Timestamp, source, scope, first symptom and detection uncertainty\" and gives the reason: \"Distinguish occurrence from discovery\". The record has one class of timestamp — when the alert fired — which is at best a discovery time. It does not have:\n\n- **T onset:** when the harmful condition began, which may precede the first symptom.\n- **T first symptom:** when a user or a synthetic check first saw a slow or failed checkout.\n- **T first data change:** the earliest known state change, such as a cache configuration deploy or a database failover.\n- **T detect:** when the alert rule evaluated true.\n- **T notify:** when a human was told.\n- **T action A / T action B:** when the cache rollback and the restart actually happened, separately.\n- **T result A / T result B:** when each action's effect was observed.\n- **T verify:** when user-visible and durable-state checks passed.\n- **T close:** when monitoring aftereffects ended.\n\nAlert-only timestamps supply T detect, and perhaps T notify. They do not supply onset, action times, result times or verification. The consequences are direct:\n\n1. **The exposure window is unknown.** The record cannot say how long checkout was slow, how many users were affected, or whether the condition predated the alert by minutes or hours.\n2. **Causal order is unknown.** Did the database slow down before the cache rollback or after it? Did the restart precede recovery, or did recovery precede the restart?\n3. **Attribution is unknown.** An improvement after the restart could be the restart, cache warm-up, falling traffic, the rollback taking effect late, or natural recovery.\n4. **Detection quality is unknown.** A late alert and an early false positive produce the same one-line record.\n5. **Time-to-contain and time-to-restore are unknown.** The record cannot be compared with any objective or used to learn response speed.\n6. **Pre-existing state is unknown.** A database that was already slow before the incident is indistinguishable from one that became slow during it.\n7. **Clock comparability is unknown.** Without a declared clock, timezone and source, timestamps from different systems may not be orderable.\n\nA concrete inversion shows why this is fatal rather than cosmetic. Consider two histories:\n\n- **History A:** cache configuration changes at 09:55, the cache goes cold, database load rises at 10:00, the alert fires at 10:05, the rollback runs at 10:10, the restart runs at 10:12, and latency is normal at 10:20. Here \"the database was slow\" is a consequence of the cache change, and the rollback is the containment action.\n- **History B:** database contention begins at 09:50, checkout slows at 09:55, the alert fires at 10:05, the rollback runs at 10:10 with no effect, the restart runs at 10:12, and latency is normal at 10:20. Here the database is the cause, the rollback is irrelevant, and the restart is the mitigation.\n\nThe same record — \"database slow; alert 10:05; rollback and restart; recovered\" — fits both histories. The record cannot even identify which harmful path was contained or what state was restored. That is the precise sense in which it supports neither claim.\n\nEven multiple alert timestamps would not fix this: more detection events are still detection events. The chronology needs event classes, not more copies of the same class.\n\n## 5. The action gap: one line cannot attribute two interventions\n\nA cache rollback and a restart are not interchangeable actions. Each has an object, a target, an expected effect, a risk and a verification method.\n\n- **\"Cache rollback\" is ambiguous.** It could mean reverting cache code, reverting a cache configuration version, invalidating cache keys, rolling back a cache cluster, or disabling a cache layer. Each changes a different thing. Reverting code changes behaviour; invalidating keys changes hit rate and source load; rolling back a cluster changes capacity and failure domain. The record does not say which.\n- **\"Restart\" is ambiguous.** It could mean restarting a process, a pod, a host, a database, or a whole service. Each has different effects on in-memory state, connections, locks, queues and durable state.\n- **The targets differ.** A cache rollback acts on a derived layer; a restart acts on process health. The caching page says cache-aside keeps \"source remains clear authority\"; a derived layer is not the authoritative checkout state. The safe-rollout page says \"Restoring old binaries is not restoration of old data.\" A restart can clear a leak or deadlock while leaving stale or unreconciled records untouched; the book's chapter decision says \"A redeployed healthy process can leave divergent state untouched\".\n- **The risks differ.** A cache rollback can increase database load through cold misses; the caching page's stampede section describes exactly that path. A restart can drop in-flight work, lose in-memory state, or mask a recurring fault.\n- **The verification differs.** A cache rollback needs cache-hit, source-load and staleness checks; a restart needs process-health and in-flight-work checks. Neither set is a durable-state reconciliation.\n\nBundling them into one \"actions taken\" line removes six things the incident log requires per intervention: \"Approver, exact version/config/action, expected outcome and rollback plan\" for the intervention, and \"What actually changed, user journey checks, side effects and failed tests\" for the result. It also removes ordering. Without ordering, a reviewer cannot tell whether the second action was needed, whether it helped, whether it harmed, or whether the two interacted. The operations-lead role exists precisely to reduce \"the danger of multiple responders changing the same system independently.\"\n\nThe attribution problem is stark. If latency improved after both actions, the improvement is consistent with:\n\n- the cache rollback stopped stale reads and reduced retries;\n- the cache rollback caused a cold-cache spike that then subsided;\n- the restart cleared a connection leak;\n- the restart masked a deadlock that will recur;\n- traffic fell;\n- the cache warmed;\n- the original transient passed.\n\nA containment claim needs the first (or a named variant) with evidence that the harmful path stopped. A restored-state claim needs the last plus verification that checkout and durable state are correct. One line supplies neither.\n\nThe line also mixes claim types. A cache rollback might be containment (stop serving stale prices), mitigation (reduce database load), or a recovery attempt (restore previous cache behaviour). A restart is usually mitigation or process recovery, not data recovery. The chapter's decision says to \"distinguish containment, mitigation and recovery in the incident record.\" A merged line is the opposite of that distinction: it makes the actions indistinguishable at exactly the point where the claims diverge.\n\n## 6. What the chronology must separate\n\nA usable chronology is not a list of clock readings. It is a set of event classes, each with its own fields and its own evidentiary role.\n\n| Separation | Why it matters for these claims | Minimum fields |\n|---|---|---|\n| Occurrence vs discovery vs notification | Containment and restoration are timed against onset, not against the alert; exposure and detection latency depend on the difference. | Onset estimate, first symptom, earliest known data change, detection, notification, uncertainty. |\n| Observation vs interpretation | \"Database was slow\" is an interpretation; a re-verifiable metric, trace or sample is an observation. | Metric definition, window, source, sample/record revision, access limits. |\n| Hypothesis vs fact | Prevents the first plausible story from becoming the retrospective root cause. | Candidate cause, contrary evidence, discriminating test, owner, status. |\n| Intervention A vs intervention B | Cache rollback and restart have different targets, risks and expected effects; attribution requires separate records. | Approver, exact version/config/action, expected outcome, rollback plan, time. |\n| Intervention vs result | An action is not a result; the record must say what actually changed. | What changed, user-journey checks, side effects, failed tests, time. |\n| Symptom vs restored correctness | A green process, dashboard or index status is not a recovered service. | User-visible checks, durable-state reconciliation, independent oracle, verifier. |\n| Confirmed vs unknown communication | A status update must not become the incident's factual record. | Audience, confirmed impact, unknowns, next update trigger. |\n| Incident action vs follow-up | Response actions and corrective actions have different owners and different acceptance tests. | Remaining risks, prevention, owner, closure evidence. |\n| Clock source and timezone | Timestamps from different systems may not be orderable. | Declared clock, timezone, skew handling. |\n| Failed or abandoned actions | Survivor bias hides what was tried and why it stopped. | Attempted action, reason stopped, observed effect. |\n| Detection uncertainty | A late alert and an early false positive are different incidents. | Threshold, evaluation window, false-positive/false-negative boundary. |\n\nFor the checkout record, the minimum chronology would look like this (synthetic illustration, not a book fact):\n\n- T0: earliest known change or first slow checkout, with source and uncertainty.\n- T1: first user-visible symptom or synthetic-check failure, with scope.\n- T2: alert evaluation and notification, with threshold and detection uncertainty.\n- T3: cache rollback, with exact version/config, approver, expected effect and reversal plan.\n- T4: restart, with object, approver, expected effect and reversal plan.\n- T5: result of each action, separately: what changed, which user journey was checked, what side effects appeared, which tests failed.\n- T6: verification of user-visible correctness and durable state, with the oracle and verifier.\n- T7: monitoring aftereffects under actual demand; closure with remaining risks.\n\nThe book's rehearsal section asks for \"Actual detection, decision, mitigation, restored correctness and communication times from a declared clock.\" That is the standard: separate event classes, each timed, each attributable. A record with only the alert time fails it before the discussion of root cause even begins.\n\n## 7. What competing hypotheses must separate\n\nThe incident log's Hypothesis row requires \"Candidate cause, contrary evidence, test and owner\" and gives the reason: \"Stop guesses from becoming retrospective facts.\" The record has one candidate, no contrary evidence, no test and no owner. It therefore does not have a hypothesis in the usable sense; it has a conclusion.\n\nA usable hypothesis set separates:\n\n1. **Observation from hypothesis.** \"Checkout p99 rose from 800 ms to 4 s\" is an observation. \"The database was slow\" is an interpretation. \"Database contention caused the rise\" is a hypothesis. The record collapses all three.\n2. **Each candidate's mechanism and predictions.** A hypothesis that predicts lock waits predicts different evidence from one that predicts retry amplification or a cold cache.\n3. **Contrary evidence.** Each candidate must record what was observed that it does not explain, not only what it explains.\n4. **A discriminating test and owner.** The test must distinguish this candidate from the alternatives, not merely accumulate more of the same signal.\n5. **Status.** Open, ruled out, supported, unknown — with the evidence that changed the status.\n6. **Trigger, contributing conditions, detection gaps and response gaps.** These are different objects with different follow-ups. A bad cache configuration can be a trigger; an untested mapping can be a contributing condition; a missing freshness alert can be a detection gap; an unverified restart can be a response gap.\n7. **Possible controls from proven fixes.** The after-action section calls prevention ideas \"possible controls, not proven fixes.\" A hypothesis about prevention is not a demonstrated cause.\n\nFor a checkout slowdown, the minimum competing set is:\n\n| Hypothesis | Mechanism | Discriminator the record does not contain |\n|---|---|---|\n| Database resource contention | CPU, I/O, locks or pool exhaustion raises query latency. | Lock waits, query plans, pool saturation, commit vs query latency. |\n| Retry amplification | Failed or slow checkout reads trigger retries, raising database load. | Accepted intents vs retries, error classes, retry counts, database QPS per intent. |\n| Cache rollback cold start / miss storm | Cache loss sends concurrent misses to the database. | Hit rate and source QPS before/after rollback, miss storm, prewarm state. |\n| Cache correctness / invalidation race | Stale values or an old fill overwrite a newer invalidation. | Versioned keys, invalidation order, sampled authoritative comparisons. |\n| Deploy or config regression | A new version or configuration changes query or cache behaviour. | Version/config diff, canary result, timing relative to onset. |\n| Traffic or basket-mix change | More or heavier checkouts raise load. | Offered load, basket mix, promotion calendar, admission controls. |\n| Downstream dependency latency | Payment or inventory latency causes checkout retries and secondary load. | Downstream spans, timeout counts, dependency latency distributions. |\n| Telemetry or detection gap | Sampling, clock skew, metric definition or threshold creates the observation. | Metric definition, sampling, clock comparison, alert history. |\n| Database maintenance or failover | A planned or unplanned database event changes capacity or routing. | Database event log, replication lag, failover records. |\n\nThe record names the first and none of the others. It does not record what would count against the first, what test was run, or what was ruled out. The cache rollback makes the third hypothesis especially important: the response may be the cause. A record that cannot distinguish database contention from a rollback-induced miss storm cannot support a causal claim; a containment claim built on the first may target the wrong layer, and a restored-state claim built on the first may declare victory while the real harmful path continues.\n\nThe book's synthetic incident makes the same point with a different mechanism: the initial diagnosis is \"slow PostgreSQL\", but the harmful path may be an outdated index and retry amplification, and each competing hypothesis \"requires a different discriminator.\" A single root cause is not a shortcut through that requirement; it is a way of skipping it.\n\n## 8. What follow-up must separate\n\nFollow-up is where the record turns an incident into learning or into a repeated failure. The incident log's Follow-up row requires \"Remaining risks, prevention, owner and evidence for eventual closure\" and gives the reason: \"Preserve learning rather than merely writing a report.\" The record's single action line is not follow-up; it is an incident-time action summary.\n\nFollow-up must separate at least these pairs:\n\n| Separation | Why it matters | Required fields |\n|---|---|---|\n| Unresolved evidence and unknowns vs resolved facts | Prevents an unknown from being closed by assertion. | Open questions, evidence gaps, what would resolve them. |\n| Temporary mitigation vs permanent prevention | A rollback or restart may reduce symptoms without removing the cause. | Mitigation expiry, permanent action, residual risk. |\n| Containment vs recovery vs prevention actions | The three have different claims and different acceptance tests. | Action class, intended claim, verification. |\n| Detection/monitoring vs repair/runbook vs design | Different owners and different proof. | Owner, design owner when architecture changes. |\n| Action owner vs responsible reviewer | The person doing the work is not always the person who accepts it. | Named owner, named reviewer. |\n| Acceptance test vs \"monitor for a while\" | Monitoring is not a reproducible acceptance criterion. | Test procedure, expected result, evidence artifact. |\n| Residual risk vs closed risk | A fix can leave a smaller risk behind; that risk must be stated. | Residual-risk statement, expiry/review date. |\n| Closure evidence vs ticket status | A closed ticket is not proof that the issue was remedied. | Evidence link, verification date, re-evaluation trigger. |\n| Re-evaluation triggers | Source versions, workflow and demand change; old fixes expire. | Trigger conditions and review cadence. |\n| Communication commitments vs technical actions | What users were told may differ from what was fixed. | Correction plan, audience, confirmed/unknown status. |\n\nThe book's after-action section is demanding here: \"Every action must have a responsible reviewer, reproducible acceptance test and residual-risk statement.\" It also warns: \"Postmortem publication itself does not ensure issues were remedied; track closure evidence and re-evaluate when source versions, workflow or demand changes.\" And for architecture-changing actions: \"A prevention action without a design owner and acceptance test is a wish, not a control.\"\n\nApplied to the checkout record:\n\n- **Cache rollback follow-up** must ask why the cache configuration reached checkout, whether a canary or prewarm was missing, what cache-correctness test would catch it, and what residual staleness or cold-start risk remains. \"Add monitoring\" is not a substitute for a reproducible test.\n- **Restart follow-up** must ask why the restart helped. If that is unknown, the record should say unknown and add a diagnostic, not convert the restart into a fix. A restart that clears a leak needs a leak fix; a restart that clears a deadlock needs a lock fix; a restart that changes nothing needs to be recorded as ineffective.\n- **Database follow-up** must ask whether the database was a cause or a symptom. If it was a symptom of retry amplification or a cache miss storm, database tuning may be wasted and the real fix is in the cache or checkout path. If it was a cause, the follow-up needs a query, lock or pool fix with a test.\n- **Verification follow-up** must add user-journey and durable-state checks, because the incident record currently has no oracle.\n- **Chronology follow-up** must add a declared clock and event capture, because the record cannot answer \"since when\" or \"which action helped\".\n- **Hypothesis follow-up** must keep the open hypotheses open with owners and discriminating tests, rather than closing them because the service recovered.\n\nThe record's merged action line makes all of this harder: there is no separate action to assign, no separate result to test, and no way to tell which follow-up addresses which action.\n\n## 9. What a record that could support the claims would contain\n\nThe contrast is easiest to see constructively. A record that could support a containment claim and a restored-state claim would look like this (synthetic template, not a claim about a real checkout system):\n\n**Containment block**\n\n- Harmful path: the specific behaviour that harmed users (for example, checkout requests served a stale price or stock value from cache version C1 after a configuration change).\n- Affected population: checkout submit, named region, release, client type, approximate request share, and explicit unknowns.\n- Action: exact cache rollback from C1 to C0 at a named time, by a named approver, with the expected effect and the reversal plan.\n- Stop evidence: the harmful behaviour stopped (no new stale-price checkouts after T+10m), the safe authoritative read path remained available, and the degraded status shown to users was explicit.\n- Residual state: what remained degraded (for example, elevated p99 until the cache warmed) and why that was acceptable.\n- Reversibility: what would have triggered reverting the rollback, and whether that happened.\n\n**Restored-state block**\n\n- User-visible checks: a bounded set of checkouts across payment methods, with correct totals, correct inventory decrement, correct confirmation and no duplicate charge.\n- Durable-state reconciliation: orders, payments and inventory compared for the incident window; counts and sampled fields; exceptions listed.\n- Side effects and failed tests: abandoned carts, pending payments, retries, duplicate effects, tests that did not pass.\n- Oracle and verifier: an independent query or synthetic journey, not the same dashboard that reported the original symptom; named verifier and time.\n- Aftereffects: monitoring under actual demand, with a defined period and closure criteria.\n\n**Causal block**\n\n- A hypothesis table with mechanisms, contrary evidence, discriminators, owners and status.\n- Explicit statements of what was ruled out and how, and what remains unknown.\n- Separation of trigger, contributing conditions, detection gaps and response gaps.\n\n**Action block**\n\n- Each intervention on its own line: approver, exact version/config/action, order, expected outcome, rollback plan, result, side effects, failed tests.\n- No bundling of actions that target different layers.\n\n**Follow-up block**\n\n- Each action with owner, responsible reviewer, reproducible acceptance test, residual-risk statement, closure evidence and re-evaluation trigger.\n- Temporary mitigations separated from permanent prevention.\n- Architecture-changing actions linked to a design owner and a decision record.\n\nA record with these blocks could still be wrong, but it would be **auditable**: a reviewer could ask \"which harmful path?\", \"what stopped it?\", \"what state was verified?\", \"which action did what?\" and find answers. The checkout record as described cannot answer any of those questions, which is why it supports neither claim.\n\n## 10. Boundaries and limits\n\n- **The book's evidence is synthetic.** The incident pages describe a fictional index-divergence incident and a drill plan, not a performed checkout response. The transfer to a checkout slowdown is by mechanism, not by measured fact. No production observation, measurement, review or completed drill is asserted here.\n- **\"Neither\" means not established, not disproven.** The record is consistent with containment and restoration; it simply does not discriminate them from their alternatives. The correct review status is unknown or unverified.\n- **The record may have detail elsewhere.** This answer evaluates the record as described: one root-cause sentence, alert-only timestamps and one merged action line. If a fuller record exists with per-action times, scope and verification, the claims may be supportable; a summary line alone is not evidence.\n- **A root cause is not necessary for containment or restoration.** A record can show that a harmful path stopped, and that user-visible and durable state were verified, without knowing the ultimate cause. Root cause is necessary for prevention. This is why the record's causal defect and its claim defects must be fixed separately.\n- **Correlated improvement is not causation.** Regression to the mean, traffic changes, cache warm-up, a restart, a rollback and an unrelated fix can all coincide with recovery. Only a chronology and a per-action result can separate them.\n- **Alert thresholds and metrics can be wrong.** Detection uncertainty is itself evidence; a late alert or a false positive changes the interpretation of every later timestamp.\n- **Incident records are data products.** They are subject to integrity, privacy and access constraints. Sensitive request bodies, tokens and identifiers should be replaced by safe references with controlled access and retention.\n- **Citation scope.** The claims below are supported by the section keys listed; the book pages are evidence about method, not proof about any real checkout system.\n\n## 11. Evidence map\n\nThe authoritative claim-to-quote map is the claims array in the answer JSON. The thematic map below shows which sections carry which part of the argument.\n\n| Claim group | Claims | Section keys |\n|---|---|---|\n| Alert time is discovery, not onset; chronology needs event classes | C1, C10 | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation; tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure; tycho.page.1810c1f1f11648bdba66aafa5da60d33#7-practice-response-before-production-failure |\n| Containment requires scope, action, stop evidence and safe residue | C2, C19 | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth; tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure |\n| Restored state requires user-visible and durable verification | C3, C13 | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth; tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure; tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth; tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status; tycho.page.1e89567050974052b13ba62b3b44484f#5-recovery-domains-and-two-distinct-objectives |\n| Restart and cache rollback do not restore state | C4, C5 | tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident; tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure; tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices; tycho.page.1810c1f1f11648bdba66aafa5da60d33#original-tabletop-exercise-recovery-must-have-an-oracle; tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status; tycho.page.ded52d8d012347b79d70e608488cf6a4#5-cache-choices-and-invalidation-matrices |\n| Bundling destroys per-action attribution | C6 | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation; tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth |\n| Database latency is a symptom candidate, not a sufficient cause | C7, C9, C17 | tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident; tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause; tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission |\n| Competing hypotheses need contrary evidence, tests and owners | C8 | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation; tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth |\n| Follow-up separates risk, mitigation, prevention and closure | C11, C12 | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation; tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause; tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth |\n| Narrow factual support versus claim support; independence of containment and restoration | C14, C15 | tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure; tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident; tycho.chapter.691463ecbf6f44af84274ab3ff798b3d#decision-and-worked-result; tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth |\n| Records are data products; missing evidence stays unknown | C16, C18, C20 | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation; tycho.page.1e89567050974052b13ba62b3b44484f#5-recovery-domains-and-two-distinct-objectives; tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth; tycho.chapter.691463ecbf6f44af84274ab3ff798b3d#decision-and-worked-result |\n\n## 12. Unknowns\n\nThe record as described leaves these unknown, and they should be recorded as unknowns rather than inferred:\n\n- Whether \"the database was slow\" was a measured fact or an inference from a checkout dashboard.\n- Which metric, window and percentile defined the database slowness.\n- When the slowdown actually began, relative to the alert, the cache rollback and the restart.\n- What \"cache rollback\" changed: code, configuration, keys, cluster version or cache contents.\n- What \"restart\" restarted: process, pod, host, database or service.\n- Who approved each action, in what order, and with what expected effect and reversal plan.\n- Whether the cache rollback preceded or followed the database spike.\n- Whether the restart preceded recovery or followed it.\n- Whether checkout errors, duplicate charges, lost orders or inventory inconsistencies occurred.\n- Whether any user-visible or durable-state verification was performed.\n- Whether the database was a cause, a symptom, or one of several contributing conditions.\n- Whether any competing hypothesis was tested or ruled out.\n- Whether the alert was the first signal or a late signal, and what its false-positive/false-negative boundary was.\n- Whether the record omits details that exist elsewhere; this answer evaluates the record as described.\n\nThese unknowns are not a reason to guess. They are the evidence gaps that a corrected record must close before it can support either claim.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "An alert timestamp records discovery of a threshold crossing, not the onset of the harmful condition, so an alert-only record cannot establish the incident's start, exposure window or causal order.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+          "quote": "An alert is evidence that a condition crossed a configured threshold. It is not automatically proof of a certain root cause or the precise population harmed.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+          "quote": "| Detection | Timestamp, source, scope, first symptom and detection uncertainty | Distinguish occurrence from discovery |",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+          "quote": "| Since when? | First observed symptoms, earliest known data change, detection/notification time and uncertainty |",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "A containment claim requires a named harmful path, affected population, approved reversible action and evidence that the harm stopped while known-safe behaviour remained; a cause label, alert time and merged action line do not supply these.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+          "quote": "if current data accuracy is critical, disable stale search for affected partitions or present explicit stale/partial status, while retaining safe authoritative reads.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+          "quote": "| How extensive? | Affected operation/client/region/version, data sample and explicit unknowns |",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+          "quote": "| What remains safe? | Known correct read-only mode, admission controls, unaffected partitions |",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A restored-state claim requires post-intervention verification of user-visible correctness and durable state; a green process, dashboard or index status is insufficient.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+          "quote": "An index green status is insufficient proof of these user-level checks.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+          "quote": "Incident closure must therefore check user-visible correctness and durable recovery independently of availability.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth",
+          "quote": "Recovery is an explicit step distinct from changing software; it needs a verification gate for customer-visible results and state correctness.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status",
+          "quote": "After rollback / forward fix | Validate authoritative records, queues, duplicate effects and user-visible acceptance; restoration evidence rather than controller green status",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A restart can restore process health while leaving stale or unreconciled state, so restart alone cannot establish recovery.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident",
+          "quote": "A process restart that improves latency without fixing stale citations is not evidence of recovery.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+          "quote": "a process may restart while an interrupted cross-system update remains unreconciled.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1810c1f1f11648bdba66aafa5da60d33#original-tabletop-exercise-recovery-must-have-an-oracle",
+          "quote": "Include an action that restores process health without repairing stale state, so the team must distinguish a green deployment from a recovered service.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A cache rollback changes a derived layer whose authoritative source is elsewhere, so it does not restore authoritative records or reverse committed effects.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#5-cache-choices-and-invalidation-matrices",
+          "quote": "Cache-aside | Cache only requested data; source remains clear authority",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices",
+          "quote": "An \"undo\" control that reverses only application code is not a safe data rollback.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status",
+          "quote": "Restoring old binaries is not restoration of old data.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Bundling a cache rollback and a restart into one action line removes approval, exact version/configuration, ordering, expected outcome and per-action result, so neither action can be credited with containment or restoration.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+          "quote": "| Intervention | Approver, exact version/config/action, expected outcome and rollback plan | Avoid unsafe concurrent changes |",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+          "quote": "| Result | What actually changed, user journey checks, side effects and failed tests | Green process status is not full recovery |",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth",
+          "quote": "reduces the danger of multiple responders changing the same system independently.",
+          "supports": "C6",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Database latency is compatible with being a downstream symptom of retries, cache loss or another fault, so 'the database was slow' is not sufficient causal evidence without a mechanism and a discriminator.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident",
+          "quote": "The initial on-call diagnosis is \"slow PostgreSQL\", but the actual harmful path may be an outdated search index followed by repeated failed lookup/retry; database CPU is not sufficient causal evidence.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident",
+          "quote": "Do not declare database root cause; compare accepted intents and retry amplification",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission",
+          "quote": "When a popular key expires, thousands of concurrent request handlers can all fall through to a slower database, overwhelming a backend that normally handles only a fraction of the offered read traffic.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Competing hypotheses need a candidate cause, contrary evidence, a discriminating test and an owner; without them a guess becomes a retrospective fact.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+          "quote": "| Hypothesis | Candidate cause, contrary evidence, test and owner | Stop guesses from becoming retrospective facts |",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+          "quote": "Competing hypotheses: consumer paused, poison message blocking partition, changed mapping rejecting new field, backend index quota or unrelated request cache. Each requires a different discriminator.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "An after-action record may correctly contain several contributing causes, so collapsing an incident to one root cause can misdirect prevention and detection.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause",
+          "quote": "A correct after-action record may show multiple contributing causes: one bad config, an untested schema interaction, monitoring blind spots and inadequate failover verification.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident",
+          "quote": "blame or a single invented root cause is unsupported.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The chronology must separate occurrence, discovery and notification, observation from interpretation, and each intervention from its result, using a declared clock.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+          "quote": "| Observation | Trace/sample/record revision, window, metric definition, access limitations | A graph or quote must be re-verifiable |",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1810c1f1f11648bdba66aafa5da60d33#7-practice-response-before-production-failure",
+          "quote": "Actual detection, decision, mitigation, restored correctness and communication times from a declared clock.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident",
+          "quote": "Observation (not interpretation)",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Follow-up must separate unresolved evidence and remaining risks from temporary mitigations and permanent corrective actions, with an owner and closure evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+          "quote": "| Follow-up | Remaining risks, prevention, owner and evidence for eventual closure | Preserve learning rather than merely writing a report |",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth",
+          "quote": "records unresolved evidence, temporary mitigations and post-incident corrective actions after stabilization.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Every follow-up action needs a responsible reviewer, reproducible acceptance test, residual-risk statement and closure evidence; publishing the postmortem does not prove remedy.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause",
+          "quote": "Every action must have a responsible reviewer, reproducible acceptance test and residual-risk statement.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause",
+          "quote": "Postmortem publication itself does not ensure issues were remedied; track closure evidence and re-evaluate when source versions, workflow or demand changes.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause",
+          "quote": "action without a design owner and acceptance test is a wish, not a control.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Restoring code, authoritative state and derived data are distinct recovery domains requiring different actions and different acceptance evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1810c1f1f11648bdba66aafa5da60d33#7-practice-response-before-production-failure",
+          "quote": "Whether restoring code, authoritative state and derived data required different actions.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#5-recovery-domains-and-two-distinct-objectives",
+          "quote": "A backup is not a restore result until integrity and application usability are tested.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices",
+          "quote": "Persisted schema/events may not be readable by old code",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The record can support narrow factual statements about what fired and what was attempted, but not a containment or restored-state claim without the missing scope, action and verification evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+          "quote": "An alert is evidence that a condition crossed a configured threshold. It is not automatically proof of a certain root cause or the precise population harmed.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident",
+          "quote": "Postmortems should distinguish **observed** facts, plausible causal explanation, unknowns and specific future tests",
+          "supports": "C14",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Containment and restored state are independent claims, so the record must state which claim each action is meant to support rather than treating a green system as proof of both.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.691463ecbf6f44af84274ab3ff798b3d#decision-and-worked-result",
+          "quote": "A redeployed healthy process can leave divergent state untouched; distinguish containment, mitigation and recovery in the incident record.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+          "quote": "Do not re-enable a broken index solely because the search server responds HTTP 200.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth",
+          "quote": "If diagnosis or recovery fails, restore safe containment rather than assuming that mitigation succeeded.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "An incident record is itself a data product: it must preserve re-verifiable observations and safe references while respecting privacy and access constraints.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+          "quote": "Avoid pasting sensitive request bodies, tokens, private user identifiers or raw diagnostic dumps into broad incident communications.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+          "quote": "Incident systems are themselves data products subject to integrity, privacy and access constraints.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A cache rollback can itself raise database load through cold misses or a miss storm, so the response can create or amplify the symptom it is meant to fix.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission",
+          "quote": "When a popular key expires, thousands of concurrent request handlers can all fall through to a slower database, overwhelming a backend that normally handles only a fraction of the offered read traffic.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission",
+          "quote": "load selected expensive keys before a planned restart, while controlling total database demand and source version.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Missing evidence must be recorded as an evidence gap or unknown rather than converted into a passing claim.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#5-recovery-domains-and-two-distinct-objectives",
+          "quote": "Unknown recoverability is an evidence gap, not a passing RPO check.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+          "quote": "neither yet proves the cause.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Containment does not strictly require a full root cause, but it does require the harmful path and scope; restored state does not strictly require a root cause, but it does require an outcome and durable-state oracle.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+          "quote": "if current data accuracy is critical, disable stale search for affected partitions or present explicit stale/partial status, while retaining safe authoritative reads.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+          "quote": "prove that a known subset of trail edits becomes searchable at an accepted freshness window, no revoked entries are exposed, alerts correctly identify lag, and the ability to revert/forward repair is documented.",
+          "supports": "C19",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The book's incident material is a fictional design and drill plan, not a performed response, so it constrains method rather than supplying facts about a real checkout incident.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+          "quote": "Everything here is a **fictional design and drill plan**, not a performed response.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.691463ecbf6f44af84274ab3ff798b3d#decision-and-worked-result",
+          "quote": "This is an editorial conclusion drawn from the linked manuscript and its original examples, not a newly executed experiment.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+    "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+    "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+    "tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth",
+    "tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status",
+    "tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident",
+    "tycho.page.1810c1f1f11648bdba66aafa5da60d33#original-tabletop-exercise-recovery-must-have-an-oracle",
+    "tycho.page.ded52d8d012347b79d70e608488cf6a4#5-cache-choices-and-invalidation-matrices",
+    "tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices",
+    "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission",
+    "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause",
+    "tycho.page.1810c1f1f11648bdba66aafa5da60d33#7-practice-response-before-production-failure",
+    "tycho.page.1e89567050974052b13ba62b3b44484f#5-recovery-domains-and-two-distinct-objectives",
+    "tycho.chapter.691463ecbf6f44af84274ab3ff798b3d#decision-and-worked-result"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

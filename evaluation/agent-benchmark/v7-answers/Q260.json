@@ -1,0 +1,462 @@
+{
+  "task_id": "Q260",
+  "answer": "# Q260 — Does a user count and a vendor table select a graph store and a columnar store? What the second representation costs, and what the selection record must fix first\n\n**Short answer.** No. A population figure (\"five million users\") is a numerator with no workload attached, and a vendor comparison table is a claim about relative capability under the vendor's own conditions, not a measurement of this catalogue's query mix, hop depth, dashboard freshness window, dataset or cost. Neither artifact separates the proposed three-store design from a single relational store with recursive queries, materialized views and a read replica, nor from one added store instead of two. The proposal is not forbidden — the book calls the additive shape \"a valid possible design\" — but it is undetermined by the evidence offered. If it is executed, every added store becomes a second representation of data whose authority stays in the relational database, and therefore a standing synchronization contract: freshness bound, rebuild path, deduplication key, schema-compatibility window, reconciliation owner and failure recovery. Those costs are per store and do not shrink because the relational database remains the system of record; they grow with each derived store. Before any migration starts, the selection record must fix the measured baseline and workload contract, the invariants and canonical queries, the simpler alternatives with their measured results, the per-store synchronization and operational contract with named owners, the evidence status of every claim including explicit unknowns, the decision status, and the review/reversal trigger plus the rollback boundary.\n\n## 0. Onboarding, layers and scope\n\n`describe` was run first. It reports collection `tycho`, snapshot `4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a`, coverage `complete`, 555 documents and 3132 sections, a draft pattern registry (145 entries), ranker `tycho-section-fts5-bm25-v5`, citation scheme `tycho.section-key.v2`, and content trust `untrusted-evidence`.\n\nLayers this question needs:\n\n- **book** — primary. The question is conceptual and comparative: workload contracts, storage-model fit, decision records.\n- **atlas** — admissible. The candidate design is an instance of *Polyglot Persistence* and *CQRS*; the cards give decision conditions and hard contraindications, and state that a card is not the owner page.\n- **modeling-and-simulation** — checked, not used. Searches returned only layer and route pages; no V12 decision artifact decides store selection. The usable decision-record form came from the book's decision pages, and that layer's own boundary applies: a decision record there is a proposal unless accepted.\n\nBoundaries carried into the answer: book text is evidence, not production proof; zero search results do not prove absence; the atlas registry is `draft` and its coverage is not independent review. The catalogue in the question is hypothetical — no production measurement of it exists in the corpus — so what follows is a decision procedure and a list of required evidence, not a verdict on the proposal's merits.\n\n## 1. Facet matrix\n\n| # | Facet | Query formulations used | Evidence read |\n|---|---|---|---|\n| F1 | Does a headline population figure constrain a storage choice? | \"five million users scale does not determine storage choice\"; \"million users claim does not establish workload demand\"; \"workload profile access pattern read write ratio\" | `tycho.page.06363f8c...`#8-safe-selection-process-and-insufficient-evidence; `...f784d6ef...`#record-the-boundary-before-the-number; `...f784d6ef...`#decision-question |\n| F2 | Is a vendor comparison table selection evidence? | \"vendor comparison table benchmark bias criteria\"; \"benchmark numbers from vendor documentation not reproducible\"; \"total cost of ownership license support staffing\" | `...06363f8c...`#6-cross-model-trade-off-matrix; `...c75a11f9...`#overview; `...95bf2e08...`#quantified-reported-outcome-with-non-transferable-denominators |\n| F3 | Do multi-hop relationship queries require a graph store? | \"multi-hop relationship traversal graph database recursive query\"; \"recursive common table expression hierarchy adjacency list relational\"; \"graph database adoption criteria traversal benefit evidence\" | `...6d8377d6...`#3-graph-traversal-and-relational-joins-can-express-similar-answers; `...6d8377d6...`#4-query-specification-must-include-semantics-and-bounds; `...ee2dd008...`#5-olap-time-series-and-graph-data |\n| F4 | Do dashboards require a separate columnar store? | \"columnar store analytical dashboard read replica separation\"; \"dashboard reporting aggregate query over transactional data\"; \"materialized view precomputed aggregate dashboard staleness\" | `...ee2dd008...`#5-olap-time-series-and-graph-data; `...7b980e67...`#1-start-from-the-workload-and-invariant-not-a-database-brand |\n| F5 | Why is an added store a second representation that must be synchronized? | \"dual write two representations synchronization derived store\"; \"change data capture outbox consistency between systems of record\"; \"reconciliation drift divergence\" | `...06363f8c...`#7-multiple-databases-create-a-new-synchronization-problem; `...06363f8c...`#bounded-pattern-ownership-notes; `...ace968ab...`#1-boundaries-why-the-naive-dual-write-is-unsafe; `...6a386512...`#overview; `...5c7d9171...`#overview |\n| F6 | What must the selection record before migration? | \"decision record architecture decision requirements acceptance criteria\"; \"selection record written before implementation starts\"; \"migration plan exit criteria rollback before migration starts\" | `...629374fc...`#5-one-decision-record-multiple-views; `...09cb3135...`#migration-and-validation; `tycho.decision.c089ea2f...`#decision-record-and-rejection-criteria...; `...c089ea2f...`#selection-matrix-which-migration-method-is-justified; `...c089ea2f...`#four-different-meanings-of-migration-complete |\n\nSection keys are abbreviated in this table for width; each full section key, of the form tycho.page.<document-id>#<anchor>, appears verbatim in the claim ledger (the JSON claims array) and in the evidence map in section 7. Search stopped when two consecutive queries added no new section. The decision-record facets were the last to converge, because the corpus stores decision material both as book pages and as `tycho.decision.*` documents.\n\n## 2. Why the evidence does not select a store\n\n### 2.1 The population figure is a numerator with no workload attached\n\nThe book treats this exact move as a textbook non-argument. Its worked example is: \"Our product has 5 million users and wants a fast dashboard, so should we migrate everything from PostgreSQL to Cassandra, MongoDB and ClickHouse?\" The verdict is stated flatly — no determination is possible — because \"user count and the word 'fast' do not establish the authority, query mix, dataset, costs, latency window, migration compatibility or consistency requirements.\"\n\nThat list is not rhetorical. Each item is a decision input, and none of them is a function of how many people have accounts:\n\n- **Authority and transaction scope** decide whether a derived store may exist at all, and who owns the write.\n- **Query mix** — here, how much of the catalogue traffic is actually multi-hop, and how deep — decides whether a graph-shaped access path is the common case or a rare one.\n- **Dataset shape** decides whether the columnar scan is actually cheaper; the book insists on growth \"by cardinality, key, index and partition rather than total rows alone.\"\n- **Latency window** decides the freshness contract for dashboards, which is a *design constraint on the pipeline*, not a property of the store.\n- **Costs and operational capacity** decide whether a second and a third engine can be run at all.\n- **Migration compatibility** decides whether the relational database can stay authoritative while two more representations exist.\n\nA workload contract is a distributional, per-operation-class record: unique active users, offered requests per second, successful and failed exits, transaction boundaries and transactions per second, concurrent in-flight requests, bytes per request and response, key popularity and tenant skew, peak-to-median arrival ratio, growth assumptions, downstream resource budgets — plus percentile latency and error rate per operation class rather than as aggregate averages. \"Five million users\" is one field of that record, at its least informative end, and it is the field that says least about storage.\n\nThe reason it cannot be extrapolated is distribution. The book's synthetic counterexample is decisive: \"1,000 offered requests/s with a 90/10 tenant distribution is not equivalent to a uniformly distributed 1,000 requests/s workload when one tenant's writes serialize on one key.\" If equal totals are not equal workloads, a total cannot be converted into a workload by multiplication. The book's answer to \"what evidence distinguishes scale-out strategies\" is a measured workload profile, not a threshold — and a profile is what the proposal has not produced.\n\n### 2.2 A vendor comparison table is a capability claim, not a measurement\n\nThree separate problems, and the corpus names all three.\n\n**The artifact is not the kind of thing that can select.** The chapter that hosts the comparison matrix says of itself: it is \"a **bounded comparative architecture primer**, not a vendor ranking, empirical TCO calculation or claim of testing production databases.\" That is the same class of artifact as a vendor table, and it is explicitly disclaimed. The matrix itself closes with the stronger statement: \"This is **architecture reasoning**, not a numerical product comparison; no benchmark scores, release prices or generic 'winner' are asserted.\" A table whose columns are \"strong workload fit / central boundary and failure cost / measure before adopting\" is useful precisely because it refuses to collapse those columns into a ranking. A vendor table that *does* collapse them has performed the step the book declines, without saying how.\n\n**The numbers do not transfer.** Where the corpus does quote published multipliers, it immediately bounds them: the reported gains are real *as published*, but \"the blog does not give enough reproducible benchmark method, traffic composition, hardware mix, sample duration or independent replication to generalize the multipliers.\" A vendor's own benchmark has, at best, the vendor's workload, the vendor's hardware and the vendor's query set. None of those is this catalogue. Even a perfectly honest vendor number is evidence about a different system.\n\n**Capability is not fitness.** A row that says an engine supports multi-hop traversal, or aggregate scans, is a statement about what the engine can express. The matrix pairs every such row with a \"measure before adopting\" cell — actual traversal depth and fan-out versus SQL alternatives; query selectivity, merge cost, lag, retention and correctness — because the capability is a precondition for the measurement, not a substitute for it.\n\nSo the vendor table does not select a store; at best it nominates candidates whose fitness is still unmeasured. That is a legitimate use, and it is not the use being made of it.\n\n### 2.3 What the two artifacts cannot discriminate\n\nEven taken together and taken at face value, the two artifacts do not separate the live options:\n\n1. **Three stores vs one.** A single relational database with recursive CTEs, materialized views, a read replica and precomputed adjacency can answer multi-hop questions and dashboard aggregates. The book's table lists the relational option next to the graph option for arbitrary-depth reachability, and notes that for complex transactional work the relational engine \"may be strong fit\" while \"graph engine needs its own ACID/consistency verification.\"\n2. **Two stores vs three.** Nothing in the evidence says both additions are needed. The known first step is to profile the existing relational query plans and workload, then \"consider a single purpose-built projection only if the evidence supports it.\" One projection is not two.\n3. **Add now vs add later.** The book's decision tree routes \"separate analytic or search access materially different?\" through \"no evidence\" to \"keep authoritative system and indexes,\" and only a measured need to the specialized view. Scale of the user base does not move that branch, because the branch tests measured access-path difference, not population.\n\nThe proposal is therefore under-determined in a specific, actionable way: the evidence is compatible with every one of those three options, so it cannot be the reason for choosing the most expensive one.\n\n### 2.4 What the book actually permits — and what it withholds\n\nIt matters that the corpus does not reject the architecture. The additive shape is described as \"a valid possible design\" — a single authoritative registration database plus a graph/search/OLAP projection. The polyglot pattern is `applicable-under-conditions`, and its good-fit conditions include \"materially different access patterns\" and \"one store cannot meet a measured requirement.\"\n\nSo the honest verdict is not \"no\" and not \"yes.\" It is: the design is admissible, the evidence offered does not establish its admissibility conditions, and the conditions are exactly the things a selection record exists to write down. Calling the proposal wrong would overclaim; accepting it on this evidence would launder a preference into a decision.\n\n## 3. Why each added store is a second representation that must be synchronized\n\n### 3.1 The count is representations, not engines\n\nThe core statement is short: a single authoritative database plus projections means \"there are **two data representations**, not two automatically consistent sources of truth.\" With two additions — graph and columnar — there are three representations and, at minimum, two synchronization contracts, two rebuild paths, two lag budgets, two reconciliation accounts and two operational surfaces. Nothing about those contracts is shared merely because both derive from the same authority; each has its own schema, its own failure mode and its own rebuild cost.\n\n### 3.2 The write path, and where it breaks\n\nThe authoritative write does not update the derived stores. The sequence is: commit to the authority → emit a durable change (outbox or CDC) → apply the projection → serve reads from the projection. Every arrow is a place where the derived representation diverges from the authority:\n\n- **Between commit and publish.** \"Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification.\" Reversing the order produces the converse: a consumer sees a change that never committed. The response from the API and the broker acknowledgement each prove nothing about the pair.\n- **Between publish and apply.** The projection is behind. That is normal, not exceptional — which is why \"the response needs a freshness contract, and the write owner must be named.\"\n- **At the consumer.** Redelivery is normal, so the write must be idempotent; the deduplication key must survive redelivery and the marker must commit with the derived write.\n- **At schema change.** \"The database schema and DDL commands are not replicated,\" so projection, event and authority schemas each carry a compatibility window, and an unknown version must be rejected rather than coerced.\n- **At conflict.** A replication conflict that raises an error stops the pipeline and must be resolved against data or permissions; it does not self-heal.\n- **At rebuild.** A rebuild must read the authority, not the projection, and must record the position it applied.\n\n### 3.3 The invariant that must be written before the projection serves traffic\n\nThe pattern's precondition is a four-part invariant plus explicit failure recovery: freshness, rebuild, deduplication, schema migration. The point is not bureaucracy — it is that each part can be silently omitted in a demo and only surfaces in production:\n\n- **Freshness.** \"Eventual\" is not a bound. The owner publishes a freshness bound and the caller-visible meaning of a stale read.\n- **Rebuild.** The path back from authority to projection must exist before it is needed, with a recorded position.\n- **Deduplication.** The dedup key survives redelivery.\n- **Schema migration.** Version compatibility is explicit on both sides.\n\nAnd the recovery rule is blunt: a half-migrated projection \"fails the freshness contract and is unavailable, not merely stale.\" A projection that cannot be trusted is withdrawn, the last applied position recorded, disagreement reconciled against the authority, and reads re-enabled only afterwards.\n\n### 3.4 What each proposed store adds specifically\n\n**Graph store, for the multi-hop catalogue queries.** The queries remain answerable in the authority via recursive CTE with cycle detection and limits; the graph buys a different execution path, not a new capability. What it adds is a second representation of every relationship edge, maintained through the same pipeline. Its own costs are path explosion and hub degree — \"a high-degree hub can make a path search expensive even if the graph holds few total nodes\" — plus the query-semantics contract any traversal needs (edge types and direction, hop limits, result limits, repeat policy, snapshot validity, filters, all-paths vs any-path vs shortest-path, over-budget behaviour). Those bounds have to be specified either way; the graph does not specify them for you. It also adds an authorization surface: linked structure can leak through edge labels and relationship counts, so scope must be enforced at query execution, not at display.\n\n**Columnar store, for the dashboards.** It fits aggregate scans over append-oriented high-volume data, and the corpus is clear that this \"should not be assumed to support a transactional seat-allocation invariant with the same semantics as an OLTP database.\" The dashboards are read-only derived views, so the risk is not write correctness but lag, merge/ingest architecture, retention, and the fact that a separate authority now exists for the numbers on the screen. The justification threshold is stated: separate derived storage is warranted \"only after actual evidence.\"\n\n### 3.5 Why keeping the relational database as the system of record makes this harder, not easier\n\nIt is tempting to think that leaving the authority in place is the conservative option. It is conservative for *correctness* and demanding for *operations*: it makes every other store permanently subordinate, so each one must have a rebuild path from the authority, a recorded position, and a freshness bound that the API can honour. The authority keeps changing underneath them, and its schema changes are not replicated. The write owner must be named, or the freshness contract has no author.\n\nThe pattern's contraindications apply directly and are worth quoting as a checklist: \"Reject when one store meets the requirement, when no authoritative owner exists, when cross-store consistency or reconciliation ownership is undocumented, or when the team cannot operate the additional store.\" CQRS carries the same shape: \"Reject when one model meets both needs, when every read requires immediate consistency with no version-wait or authority-read path, or when projection maintenance has no owner.\"\n\nTwo additions therefore double the number of ways the answer \"yes, but the numbers are five minutes old\" can be true, and double the on-call surface that has to know it.\n\n## 4. What the selection record must contain before any migration starts\n\nThe record is not a justification memo. It is the artifact that makes the decision falsifiable and reversible. The corpus supplies both the fields and the refusal conditions.\n\n### 4.1 Required content\n\n| Section | Must record | Why this, not less |\n|---|---|---|\n| Decision status | Proposed, with approver and date; explicitly not approved by being written | The book's example ADR is \"PROPOSED; not approved for a real system\" — a record can exist without authorizing work |\n| Invariant under test | Which invariant the change is meant to preserve: identity, value equality, operation order, referential consistency, side-effect exactly-once, or bounded freshness | Comparisons are meaningless until the invariant is named; a row-count match proves different things in each case |\n| Workload baseline | The full workload contract — offered RPS, TPS, concurrency, bytes, key/tenant skew, peak-to-median, growth, downstream budgets; percentile latency and error rate per operation class; measured query plans for the actual multi-hop and dashboard queries, including hop depth and fan-out | This is the only substitute for \"five million users,\" and it is the evidence the book demands before any specialized engine is considered |\n| Dataset and growth | Size and growth by cardinality, key, index and partition; retention and deletion obligations | Total rows are the least informative dimension and the easiest to quote |\n| Invariants and boundaries | Transaction scope, security/compliance, authorized deletion and retention, audit context | Migration can silently change audit and authorization semantics |\n| Alternatives | The simpler single-database option (recursive CTE, materialized view, read replica, precomputed adjacency) with its measured result, and the evidence that would reverse the choice | Without a measured simpler alternative, the comparison has only one arm |\n| Per-store synchronization contract | Freshness bound and stale-read meaning; rebuild path and recorded position; deduplication key; schema-compatibility window; conflict and failure recovery; reconciliation owner; named write owner | These are the four-part invariant plus recovery, and they are per store |\n| Operational cost | Staffing, backup and restore, topology, upgrade cadence, support and licence constraints, monitoring, incident ownership | \"Can the team operate the additional store\" is a hard contraindication, not a soft factor |\n| Evidence status | For each claim: measured here, measured elsewhere, vendor-reported, inferred, or unknown — with the source read | The corpus keeps vendor documentation separate from benchmarks; a record that blurs them cannot be reviewed |\n| Decision consequences and review trigger | What becomes harder; the condition that reopens the decision (confirmed ownership, measured capacity constraint, incompatible operational boundary) | A decision without a reversal trigger is a permanent accident |\n| Rollback and cutover boundary | Last safe phase, whether a reverse-write path exists, what stops serving if freshness fails, what is declared unavailable rather than stale | Once a new-only feature is accepted, readers may no longer be able to return to old rows |\n\nThe gate table in the migration case adds the same content in acceptance form, and one line deserves quotation because it is the direct antidote to the proposal's evidence: before accepting a workload claim, require \"actual traffic mix, failure modes and capacity baseline; no invented p99.\" The same table requires an inventory of dependent clients and an authorized owner, domain invariants with dual-state reconciliation, and an operability case with error budgets, runbooks and incident ownership — and it holds the line that migration must \"keep authoritative old representation until proven.\"\n\n### 4.2 The refusal gate\n\nThe record also has to be able to say no. The corpus lists the conditions under which the migration is refused: identity mapping undefined; production-authoritative writes not recoverable after rollback; source snapshots differing in unmeasured ways; audit or authorization context changing; a comparison oracle that covers only happy-path counts. To that it adds the honesty rule: \"Record unknowns and solicit domain-owner evidence; do not manufacture a p99 result, source revision or independent signoff.\"\n\nApplied here, that means the record must be able to state, in writing, that the catalogue's hop-depth distribution, dashboard refresh requirement and peak query mix are unknown — and that the vendor table is vendor-reported, not measured. Those statements are results, not omissions.\n\n### 4.3 Order of work the record implies\n\n1. Name the invariant and the authority. Keep the relational store as the sole write authority.\n2. Measure the baseline: actual query plans, per-operation latency and error, skew, growth; the multi-hop queries with their real depth and fan-out; the dashboard queries with their real selectivity and refresh tolerance.\n3. Test the simpler alternatives against that baseline — recursive CTE, materialized view, read replica, precomputed adjacency — and record their measured results.\n4. Only where a measured requirement still fails, add **one** projection, with its freshness bound, rebuild path, dedup key, schema window and reconciliation owner written before it serves traffic.\n5. Add the second projection only if it passes the same test independently. Two additions are two decisions, not one.\n6. Record the decision as proposed, with its unknowns, its reversal trigger and its rollback boundary.\n\n## 5. Mechanism, compactly\n\nPopulation figure → no workload → no discriminating claim about access paths → the proposal is compatible with one store, two stores or three → therefore the figure cannot select. Vendor table → capability under vendor conditions → no measurement of this catalogue → nominates candidates, selects none. Added store → authority unchanged, representation duplicated → asynchronous production → lag → freshness contract; no shared transaction → dual-write hazard → outbox/idempotency; independent schema → drift → compatibility window; independent failure → partial projection → withdraw-and-reconcile. Selection record → freezes the baseline, the alternatives, the per-store contract, the evidence status and the reversal trigger → migration may then start, and not before.\n\n## 6. Boundaries, contradictions and unknowns\n\n- **Unknown: the catalogue's workload.** No query mix, hop depth, fan-out, dashboard refresh window, dataset size or growth is given. This is the central unknown and the reason no verdict is possible.\n- **Unknown: whether the relational baseline was measured.** The corpus prescribes profiling actual query plans first; nothing in the question says this was done.\n- **Unknown: the vendor table's content and provenance.** I did not inspect any vendor document, and the corpus offers no benchmark of graph or columnar engines for this workload. Its numbers are therefore unverified here, and treated as vendor-reported at best.\n- **Not claimed:** that the three-store design is wrong, or that the relational store will meet the requirement. Both are open.\n- **Contradiction handled, not hidden:** the corpus both calls the additive design \"a valid possible design\" and sets hard contraindications for polyglot persistence. These are consistent once \"valid\" is read as \"admissible shape\" and the contraindications as \"admissibility conditions\" — but the record must carry both, or it will read as approval.\n- **Transfer limits:** the quoted published multipliers (search-latency gains, indexing throughput) belong to a different subsystem and a different organization's workload; the corpus itself warns against transferring one subsystem's numbers to another. Nothing here is a production observation of the catalogue.\n- **Layer limit:** the V12 layer contains no decision artifact for store selection; had one existed, its validation status would still be a proposal state, not acceptance.\n\n## 7. Evidence map\n\nC1–C3 and C30 (selection insufficiency and the required comparison set) rest on `...06363f8c...`#8-safe-selection-process-and-insufficient-evidence. C4–C6 (workload contract, distribution, measured profile) rest on `...f784d6ef...`#record-the-boundary-before-the-number and `...f784d6ef...`#decision-question. C7–C9 (the matrix is not a product comparison; scope disclaimer; non-transferable numbers) rest on `...06363f8c...`#6-cross-model-trade-off-matrix, `...c75a11f9...`#overview and `...95bf2e08...`#quantified-reported-outcome-with-non-transferable-denominators. C10–C14 (traversal expressible relationally; bounded traversal; graph query semantics; no proof of speed; columnar fit and evidence threshold) rest on `...6d8377d6...`#3-..., `...6d8377d6...`#4-... and `...ee2dd008...`#5-olap-time-series-and-graph-data. C15–C20 (two representations; freshness; per-store cost; dual write; rebuild and schema drift; half-migrated projection) rest on `...06363f8c...`#7-..., `...06363f8c...`#bounded-pattern-ownership-notes and `...ace968ab...`#1-.... C21–C23 (polyglot and CQRS contraindications) rest on `...6a386512...`#overview and `...5c7d9171...`#overview. C24 (three shapes are not three databases) rests on `...7b980e67...`#1-.... C25–C29 (decision-record fields; migration gates; refusal conditions; no universal row; name the invariant) rest on `...629374fc...`#5-..., `...09cb3135...`#migration-and-validation and three `tycho.decision.c089ea2f...` sections.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A user-population count plus the adjective 'fast' is explicitly insufficient to determine a storage architecture: it establishes neither the authority boundary, the query mix, the dataset, the costs, the latency window, migration compatibility nor the consistency requirements.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+          "quote": "User count and the word \"fast\" do not establish the authority, query mix, dataset, costs, latency window, migration compatibility or consistency requirements.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The book states the verdict on the near-identical question ('our product has 5 million users and wants a fast dashboard') as an unanswered architecture choice, not as a decision to migrate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+          "quote": "**No determination is possible.**",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A credible selection compares invariants and transaction scope, canonical queries with actual volume and distribution, data growth by cardinality and key rather than total rows, consistency and freshness obligations, operational cost, measured performance on representative data, and a simpler single-database alternative.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+          "quote": "A simpler single-database alternative and the evidence that could reverse the decision.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+          "quote": "Data size and growth by cardinality, key, index and partition rather than total rows alone.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A workload contract is a distributional, per-operation-class record: active users, offered RPS, exits, TPS, concurrency, bytes per request, key and tenant skew, peak-to-median ratio, growth and downstream budgets, with percentile latency and errors per operation class.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+          "quote": "A workload contract should record: unique active users; offered requests per second (RPS); successful and failed exits; transaction boundaries and transactions per second (TPS); concurrent in-flight requests; bytes per request and response; key popularity and tenant skew; peak-to-median arrival ratio; growth assumptions; and downstream resource budgets.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+          "quote": "Record percentile latency and error rate **per operation class**, not only aggregate averages.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Equal totals at different skew are not equivalent workloads, so a population figure cannot be converted into load by arithmetic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+          "quote": "A synthetic example: 1,000 offered requests/s with a 90/10 tenant distribution is not equivalent to a uniformly distributed 1,000 requests/s workload when one tenant's writes serialize on one key.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The evidence that distinguishes scale-out choices is a measured workload profile, not a universal requests-per-second threshold.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#decision-question",
+          "quote": "The answer is a **measured workload profile**, not a universal requests-per-second threshold.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "The book's own cross-model matrix refuses to function as a product comparison: it asserts no benchmark scores, no release prices and no generic winner, and gives a 'measure before adopting' column because capability rows do not decide fitness.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#6-cross-model-trade-off-matrix",
+          "quote": "This is **architecture reasoning**, not a numerical product comparison; no benchmark scores, release prices or generic \"winner\" are asserted.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "The chapter scope statement disclaims being a vendor ranking or an empirical total-cost-of-ownership calculation, so it cannot be used as a vendor comparison table that selects.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c75a11f9786442a5b5456f11c2412df4#overview",
+          "quote": "This is a **bounded comparative architecture primer**, not a vendor ranking, empirical TCO calculation or claim of testing production databases.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Published vendor-reported numbers lack the reproducible method, traffic composition, hardware mix and independent replication needed to generalize or transfer their multipliers to another system.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.95bf2e08c056472f92faf870de8f1357#quantified-reported-outcome-with-non-transferable-denominators",
+          "quote": "The blog does not give enough reproducible benchmark method, traffic composition, hardware mix, sample duration or independent replication to generalize the multipliers.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Multi-hop relationship questions are expressible in the relational model: arbitrary-depth reachability is a recursive CTE with cycle detection and limits, and complex transactional work may fit relational integrity better than a graph engine, which needs its own ACID verification.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers",
+          "quote": "| Arbitrary-depth reachability | Recursive CTE with cycle detection and limits | Variable-length traversal with path/cycle constraints |",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers",
+          "quote": "Graph engine needs its own ACID/consistency verification",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Traversal cost is driven by degree and path explosion and must be explicitly bounded; a graph store does not remove that cost, because a high-degree hub can dominate even a small graph.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers",
+          "quote": "A high-degree hub can make a path search expensive even if the graph holds few total nodes.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers",
+          "quote": "Traversal can generate many possible paths in dense/cyclic graphs. Limit max depth, result cardinality, type/direction, visited-state and request resources.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A graph store also forces a query-semantics contract (edge types and direction, hop limits, result limits, repeat policy, snapshot validity, filters, path-vs-reachability output, over-budget behaviour); the same questions must be answered for any relational replacement, so 'graph' is not the differentiator.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d8377d616c548ef9c3b213d8a2df934#4-query-specification-must-include-semantics-and-bounds",
+          "quote": "A graph question needs more than a starting node:",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A graph model supports explicit multi-hop traversal but does not prove the queries will be faster or cheaper than a relational recursive query or a precomputed adjacency structure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ee2dd008d4f445eaa9b20998f855a786#5-olap-time-series-and-graph-data",
+          "quote": "This supports explicit multi-hop traversal queries; it does not prove such queries will always be faster or cheaper than a relational recursive query or precomputed adjacency structure.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A columnar engine fits aggregate scans over append-oriented high-volume data but must not be assumed to carry a transactional invariant with the same semantics as the relational system of record; a derived analytical store is justified only after actual evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ee2dd008d4f445eaa9b20998f855a786#5-olap-time-series-and-graph-data",
+          "quote": "This architecture is especially relevant to high-volume analytical scans and aggregates, but it should not be assumed to support a transactional seat-allocation invariant with the same semantics as an OLTP database.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ee2dd008d4f445eaa9b20998f855a786#5-olap-time-series-and-graph-data",
+          "quote": "Those workloads have different access paths and may justify separate **derived** storage only after actual evidence.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Adding a store beside a single authoritative database yields two data representations, not two automatically consistent sources of truth.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+          "quote": "there are *two data representations*, not two automatically consistent sources of truth",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The derived view can lag the authority, so the response needs a freshness contract, and freshness, rebuild, deduplication, schema migration and failure recovery must be defined explicitly.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "A projection view may lag; the response needs a freshness contract, and the write owner must be named.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+          "quote": "Define freshness, rebuild, deduplication, schema migration and failure recovery explicitly.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Each store has its own schema, failure mode and rebuild cost, so the synchronization burden scales with the number of stores rather than being paid once.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "Each store has its own schema, failure mode and rebuild cost.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The naive dual write is unsafe because a database commit and an external publication do not share one transaction; a crash between them leaves committed state without its derived effect, and the reverse order leaves an effect without committed state.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+          "quote": "Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Rebuild must read the authority rather than the projection and must record the position it applied, and schema changes are not replicated so projection, event and authority schemas each need a compatibility window.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "rebuild reads the authority, not the projection, and records the",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "The database schema and DDL commands are not",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "A half-migrated or failing projection is not a valid serving state: it must be withdrawn, the last applied position recorded, disagreement reconciled against the authority, and reads re-enabled only after that.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "a half-migrated projection is not a valid",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "A projection that is half migrated fails the freshness contract and is unavailable, not merely stale.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Polyglot persistence has hard contraindications: reject it when one store meets the requirement, when no authoritative owner exists, when cross-store consistency or reconciliation ownership is undocumented, or when the team cannot operate the additional store.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6a386512b280490da745f1ae2c416c58#overview",
+          "quote": "Reject when one store meets the requirement, when no authoritative owner exists, when cross-store consistency or reconciliation ownership is undocumented, or when the team cannot operate the additional store.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The pattern requires the four-part invariant (freshness, rebuild, deduplication, schema migration) and explicit failure recovery to be a precondition of the choice, not an afterthought of the build.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6a386512b280490da745f1ae2c416c58#overview",
+          "quote": "the four-part invariant (freshness, rebuild, deduplication, schema migration) and failure\nrecovery are explicit",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "CQRS-style read separation has its own contraindications: reject it when one model meets both needs, when every read needs immediate consistency with no version-wait or authority-read path, or when projection maintenance has no owner; the write model stays the only authority.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+          "quote": "Reject when one model meets both needs, when every read requires\nimmediate consistency with no version-wait or authority-read path, or when projection\nmaintenance has no owner.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "Three distinct query and invariant shapes are not proof that three databases are necessary, and specialized engines should be added only after measuring volume, retention, selectivity, ingest rate, aggregation and traversal cost, update mix and operational cost.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7b980e671a324f769064bc5233761c62#1-start-from-the-workload-and-invariant-not-a-database-brand",
+          "quote": "These are three **query/invariant shapes**, not proof that three different databases are necessary.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7b980e671a324f769064bc5233761c62#1-start-from-the-workload-and-invariant-not-a-database-brand",
+          "quote": "Before adding specialized engines measure data volume, retention, selectivity, ingest rate, aggregation and traversal costs, write/update mix and operational cost.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "A decision record carries status, context, alternatives, decision, consequences, evidence and a review trigger; in the book's example the status is proposed and the evidence line states that architecture sources explain representations rather than workload feasibility, with no benchmark existing.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#5-one-decision-record-multiple-views",
+          "quote": "**Review trigger:** confirmed independent ownership, measured capacity/deployment constraint, or incompatible operational boundary.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#5-one-decision-record-multiple-views",
+          "quote": "**Evidence:** architecture sources explain representations, not workload feasibility; no benchmark exists.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "A migration gate demands, before accepting a change, an inventory of dependent clients and an authorized owner, the actual traffic mix and capacity baseline with no invented p99, domain invariants with dual-state reconciliation, and an operability case with error budgets and incident ownership; the authoritative old representation is kept until the new one is proven.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#migration-and-validation",
+          "quote": "Actual traffic mix, failure modes and capacity baseline; no invented p99",
+          "supports": "C26",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#migration-and-validation",
+          "quote": "Keep authoritative old representation until proven",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "The migration must be refused when identity mapping is undefined, when authoritative writes are not recoverable after rollback, when snapshots differ in unmeasured ways, when audit or authorization context changes, or when the comparison oracle covers only happy-path counts; unknowns are recorded rather than manufactured.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+          "quote": "**Refuse either migration** when identity mapping is undefined, production-authoritative writes are not recoverable after rollback, source snapshots differ in unmeasured ways, audit/authorization context changes, or the comparison oracle covers only happy-path counts.",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+          "quote": "Record unknowns and solicit domain-owner evidence; do not manufacture a p99 result, source revision or independent signoff.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "No row of the migration selection matrix establishes a universal choice: alternatives are analytical, and each row is paired with the evidence that would justify it.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+          "quote": "No row in this table establishes a universal choice; alternatives are **analytical**, not unpublished historical ADRs.",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "Before any comparison, the record must name which invariant is under test: identity, value equality, operation order, referential consistency, side-effect exactly-once, or bounded freshness.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "For a new design, first identify whether the business invariant is *identity*, *value equality*, *operation order*, *referential consistency*, *side-effect exactly-once*, or *bounded freshness*.",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C30",
+      "text": "The prescribed first step is to profile the actual relational query plans and workload, and to consider a single purpose-built projection only if that evidence supports it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+          "quote": "Start by profiling actual PostgreSQL query plans and workload; consider a single purpose-built projection only if the evidence supports it.",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#decision-question",
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#6-cross-model-trade-off-matrix",
+    "tycho.page.c75a11f9786442a5b5456f11c2412df4#overview",
+    "tycho.page.95bf2e08c056472f92faf870de8f1357#quantified-reported-outcome-with-non-transferable-denominators",
+    "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers",
+    "tycho.page.6d8377d616c548ef9c3b213d8a2df934#4-query-specification-must-include-semantics-and-bounds",
+    "tycho.page.ee2dd008d4f445eaa9b20998f855a786#5-olap-time-series-and-graph-data",
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+    "tycho.page.6a386512b280490da745f1ae2c416c58#overview",
+    "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+    "tycho.page.7b980e671a324f769064bc5233761c62#1-start-from-the-workload-and-invariant-not-a-database-brand",
+    "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#5-one-decision-record-multiple-views",
+    "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#migration-and-validation",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

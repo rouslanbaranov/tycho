@@ -1,0 +1,623 @@
+{
+  "task_id": "Q287",
+  "answer": "# Q287 \u2014 Why a V12 decision record refuses one weighted score across success rate, p95 latency, cost per success and operability\n\n## Scope and layers\n\nThe question is about the representation a V12 decision record accepts, not about pattern discovery. Layers used:\n\n- **modeling-and-simulation (v12)**: the decision-record contract, the checkout worked example, the insufficient-evidence page, the scenario metric contract, the evidence vocabulary, the validation gates, the run-provenance contract and the volume landing.\n- **book**: the V01 page on operational readiness, used only to confirm that operability is an acceptance gate rather than a measurable simulation output.\n\nAtlas was not needed: the question does not ask for a pattern identity, family or coverage state, and a pattern card would not change which fields a decision record must expose. All CLI reads used snapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a, ranker tycho-section-fts5-bm25-v5 and citation scheme tycho.section-key.v2.\n\n## Facet matrix\n\n| # | Facet | Query formulations tried | Evidence |\n|---|---|---|---|\n| F1 | The contract-level refusal: why a decision record is not a score | \"weighted score decision record composite ranking alternatives\"; \"single composite score scalarization multi-objective dominance\" | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score`; `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes` |\n| F2 | Hard constraints versus tradeable preferences | \"checkout candidates success rate p95 latency cost per success\"; \"checkout decision record candidate A B C recommendation\" | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences`; `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints` |\n| F3 | Metric commensurability and hidden normalization | \"metric business-comparable flag unit direction latency cost\" | `tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics` |\n| F4 | Operability as a non-quantitative constraint | \"operability ranking recommendation decision\"; \"operability existing team operational review runbook\" | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences`; `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints`; `tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence` |\n| F5 | What a composite hides; failure modes of scoring | \"Pareto frontier tradeoff no single ranking weights normalize\" | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes`; `tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes`; `tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do` |\n| F6 | Evidence status, calibration and uncertainty | \"evidence status model-verified calibrated synthetic production verified\" | `tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records`; `tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields`; `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results` |\n| F7 | The fields that must stay separate and the status vocabulary | \"decision-supported proposed rejected status what a decision may claim\" | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure`; `tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity` |\n\n## Short answer\n\nA V12 decision record refuses the composite because the composite is not a summary of the decision; it is a second, hidden decision. Four of the review board's inputs are not one quantity. Cost per success and p95 latency are hard acceptance ceilings in this record, success rate is a business-comparable proportion, and operability is a condition the model cannot measure at all. Collapsing them requires weights and a normalization that the record never declared, lets candidate C buy its way past its cost and latency failures with a stronger success rate, and forces the unverified operability constraint into a number. What the score hides is exactly the audit trail: the weights and their author, the eliminated candidate, the missing measurement, the calibration and simulation status, the uncertainty, the A-versus-B tradeoff, the conditional status of the recommendation and the reversal triggers. For the recommendation to be reviewable, the record keeps constraints (hard, soft, non-quantitative), candidates and their runs, metrics (identifier, unit, direction, business-comparable flag), evidence statuses (model verification, calibration, simulation, sources), outcome (recommendation, rationale, non-quantitative constraints), reversal triggers, limitations and pattern links in separate fields, and carries a status from the closed vocabulary proposed / decision-supported / insufficient-evidence / rejected.\n\n## 1. Why the record refuses the representation\n\n### 1.1 A weighted score hides the decision inside arithmetic\n\nThe contract names three hazards directly: \"A weighted score can make a decision look objective while hiding the weights. A hard constraint can be traded away for a small gain in a composite number. A missing measurement can be replaced by a plausible value and forgotten.\" A review board that receives one number receives a conclusion with its premises removed. The record's answer is not a better score but a different shape: \"The decision record prevents those moves by keeping constraints, evidence statuses and unknowns in separate fields.\"\n\nThe volume states the same stance as a boundary of what V12 does: it does \"report uncertainty, convergence and sensitivity rather than one number\", and it does not \"hide a hard constraint inside a weighted score.\"\n\n### 1.2 Hard constraints are gates, not weighted terms\n\n\"A hard constraint is a condition a candidate must satisfy.\" The checkout record makes this concrete. In the worked example C4 is \"cost per 1000 successes at most 3.0\" and C5 is \"p95 latency at most 1.5 seconds\"; the contract's example excerpt abbreviates them as \"cost <= 3.0\" and \"p95 latency <= 1.5 s\". C reports 3.63 cost and a 1.769-second p95, so \"C4 eliminates C: 3.63 is above 3.0. C5 also eliminates C: 1.769 is above 1.5. A and B pass both constraints.\" C's success rate, 0.9679, is higher than A's 0.9218, and the contract's own illustration is that \"If candidate C exceeds a declared cost ceiling, C is eliminated even if it has the highest success rate.\"\n\nIn a weighted score, C's over-performance on success would partially pay for its constraint violations. That is not a hypothetical: the insufficient-evidence page lists it as a named failure mode, \"Score to the rescue\", and states that \"A weighted score converts a hard constraint failure into a small penalty.\" Elimination is binary and it precedes comparison. A candidate that fails a hard constraint is not a low-scoring alternative; it is out.\n\n### 1.3 The four quantities are not commensurable without a declared exchange rate\n\nSuccess rate is a proportion, p95 latency is a duration in seconds, cost per success is a ratio in cost units per 1000 successes, and operability is not a measured quantity at all. The scenario contract requires every metric to carry a direction and a unit, and defines business comparability by the absence of hidden normalization: \"A metric is business-comparable when two candidates can be compared without hidden normalization.\" A weighted score is precisely a hidden normalization: it converts seconds, cost units and proportions into one unitless number using weights that the record does not contain. The contract attaches a validation consequence: \"A decision record that uses a metric not declared in the scenario is a validation failure.\" A composite would also be an undeclared metric.\n\n### 1.4 Operability cannot be a term in the score\n\n\"A non-quantitative constraint is a condition the model cannot measure, such as operability by the existing team or a regulatory approval.\" In the checkout record, C3 is \"operable by the existing team\" and it is not tested. The record \"marks C3 unverified\", says that \"the operability constraint remains unverified and requires an operational review\", and concludes that \"The recommendation is therefore conditional.\" To put operability into a weighted score, an analyst must invent a value for the untested condition, which is the contract's third hazard: a missing measurement \"can be replaced by a plausible value and forgotten\".\n\nThe V01 page makes the same point from the acceptance side. An operational acceptance record must name owners, runbook and recovery evidence, access restrictions, version support, budget and revisit triggers, and \"Unknown critical evidence blocks unconditional approval.\" A score cannot represent \"unknown\" without converting it into an average.\n\n### 1.5 A ranking is the wrong shape for this outcome\n\nThe board asks for a ranking of three candidates. The record cannot produce one without distorting the case in two ways. First, C is eliminated. Putting C third would turn a constraint violation into a low score and make the violation tradeable; dropping C from the list would hide that a candidate was removed and why. Second, A and B are a tradeoff, not an ordering: B wins on success and cost per success, A wins on p95 latency inside the ceiling, and the contract calls the recommendation a tradeoff \"rather than a failed constraint\".\n\nThe record's own outcome structure is not a scale: status is one of proposed, decision-supported, insufficient-evidence or rejected, and \"A record with recommendation none can still be insufficient-evidence; it is not an invalid record.\" The V12-E gate treats both the checkout record (decision-supported) and the modernization record (insufficient evidence) as valid outcomes. A ranking forces a total order that only a declared priority can license, and it has no way to express \"insufficient evidence\" at all.\n\n## 2. What such a score can hide\n\n| Hidden item | How the composite conceals it | Where the record keeps it separate |\n|---|---|---|\n| 1. The weights | A score publishes weights only if the analyst chooses to; the contract's first hazard is that it can look objective \"while hiding the weights\" | The declared priority is stated in the outcome rationale, where it can be argued with |\n| 2. Who chose the weights | Choosing weights is itself the decision; hiding them hides the author and the authority | The rationale states the priority; reversal triggers state when it would flip |\n| 3. The eliminated candidate | \"A composite score hides the weights and the eliminated candidates.\" C's 3.63 cost and 1.769-second p95 collapse into a penalty | Candidates remain listed with their scenarios, runs and violated constraints |\n| 4. The hard ceilings | A score replaces \"must be at most 3.0\" with a slope | The constraints field keeps C4 and C5 as testable predicates |\n| 5. The missing measurement | Operability and every assumed input can become \"a plausible value ... forgotten\" | C3 stays unverified; calibration status is a separate field |\n| 6. The evidence status | The model is uncalibrated and the workload is synthetic; a score has no place for \"model-verified, uncalibrated\" | Model verification, calibration and simulation statuses are recorded separately |\n| 7. The uncertainty | Runs carry replication counts, standard errors, confidence intervals and convergence; a composite reduces a distribution to a point | The run record carries those fields; the decision record repeats the status |\n| 8. The tradeoff | B is better on success and cost, A is better on p95; a weighted total makes one of these vanish into the net | The record states both and calls the choice a tradeoff \"rather than a failed constraint\" |\n| 9. The conditional status | Operability is unverified, so the recommendation is conditional; a score is unconditional by construction | The non-quantitative constraint and its status are kept separate |\n| 10. The outcome status | A score cannot say insufficient-evidence, rejected or recommendation none | Status is a closed vocabulary; both decision-supported and insufficient evidence are valid |\n| 11. The reversal triggers | \"A cost weight under which B no longer beats A per successful request\" is a condition on the decision; fixed weights cannot express when their own ordering changes | Reversal triggers are their own field, with measurements and ranges |\n| 12. The declared metric set | A composite is an undeclared metric and an undeclared normalization | Every metric carries identifier, unit, direction and a business-comparable flag |\n| 13. The model-versus-world boundary | Forbidden inferences include \"The decision record recommends B, so B is safe to deploy\" and \"The confidence interval excludes zero, so the business case is proven\" | Limitations and evidence layers keep the boundary explicit |\n\nTwo further points sit behind the table. First, a ranking of candidates is not a sensitivity ranking. The worked example uses the sensitivity screen to identify what to measure first; it does not use it \"to support a production claim\". Second, a composite makes the result unfalsifiable in the way the matter most: no single measurement can contradict a weighted total without also contesting the weights, whereas a constraint violation or a fired trigger is directly checkable.\n\n## 3. Which fields must stay separate for the recommendation to be reviewable\n\nThe contract's required structure is the answer. For the recommendation to be reviewable, at least these groups must not be collapsed:\n\n| Field group | Required content | Why it cannot be merged into a score |\n|---|---|---|\n| Identity and status | id, version, title, status (proposed, decision-supported, insufficient-evidence, rejected) | Status is a judgment about the evidence, not a magnitude |\n| Question and context | the bounded question and its setting | Without it the weights have no referent and no scope |\n| Constraints | hard, soft and non-quantitative, each with an identifier and statement | Hard constraints must remain predicates; only soft constraints may be traded; non-quantitative constraints must be able to stay \"unverified\" |\n| Candidates | identifier, scenario, runs, pattern identifiers and owner pages | Elimination must remain visible; a candidate list is not a leaderboard |\n| Metrics | identifier, unit, direction and business-comparable flag | The composite replaces the declared set and hides sign, scale and normalization |\n| Evidence | model verification, calibration, simulation and source identifiers, with statuses | A decision-supported outcome on an uncalibrated model is explicitly a conditional result |\n| Outcome | recommendation, rationale and non-quantitative constraints | The rationale is where the priority is declared and can be attacked; it is not a weight vector |\n| Reversal triggers | the measurements and ranges that would change the outcome | These are the record's falsification surface |\n| Limitations | what the run and the model do not establish | A score has no place for a boundary |\n| Pattern links | one-way references to pattern identifiers and owner pages | A link is not a promotion and does not change coverage, source ledger or review status |\n\nA linked run record supplies a further group that must stay at the run level: value, unit, replication count, standard error and confidence interval; convergence status, metric, relative error and threshold; the uncertainty method; the sensitivity indices; and limitations. Replay proves reproducibility, not validity: \"It does not prove that the model is valid, that the inputs are measured or that the decision is correct.\"\n\n### The reviewability test\n\nA board can audit each group independently: did C violate C4? Is the metric declared and business-comparable? Is the model calibrated? Is operability verified? Is the recommendation consistent with the priority stated in the rationale? Does a reversal trigger fire? A single score permits exactly one audit: check the arithmetic, or accept the ranking. It cannot distinguish a wrong weight from a wrong measurement from a violated constraint, and no measurement can contradict it without renegotiating the weights.\n\n## 4. The checkout case at a glance\n\n| Candidate | Success (95% CI) | p95 latency | Cost per 1000 successes | C4 cost <= 3.0 | C5 p95 <= 1.5 s | C3 operability |\n|---|---|---|---|---|---|---|\n| A | 0.9218 (0.9211-0.9226) | 0.870 s | 1.81 | pass | pass | unverified |\n| B | 0.9996 (0.9995-0.9997) | 1.206 s | 1.34 | pass | pass | unverified |\n| C | 0.9679 (0.9595-0.9764) | 1.769 s | 3.63 | fail | fail | unverified |\n\nThe record's order is: fix the workload, seeds and metrics; eliminate C on C4 and C5; compare A and B on the declared business-comparable metrics; declare that the decision prioritizes successful completions and cost per success over the latency difference inside the ceiling; keep C3 unverified and make the recommendation conditional; list what would reverse it. The triggers are a measured arrival rate above 22 requests per second or a mean service time above 0.65 seconds, a tail that pushes B above 1.5 seconds, \"A cost weight under which B no longer beats A per successful request\", a failed operability review, and a retry rate materially above the modeled 1.003. The record also says what would not reverse it: \"a narrower confidence interval on the synthetic workload\", because \"More replications would make the synthetic estimate more precise, not more representative.\"\n\nA one-number ranking would have to encode four columns plus a value for operability. It would produce an ordering that the record deliberately refuses to assert, and it would make the recommendation look stronger than it is: B is recommended for the synthetic workload under declared constraints, not ranked first overall.\n\n## 5. Boundaries of this answer\n\n- The numeric values are synthetic model output, not production measurements. Every model is uncalibrated, the confidence intervals use a normal approximation, and the sensitivity screen is a quadratic response-surface approximation.\n- The V12 pages are self-checked and source-linked. V12-F is a separate independent-review gate; owner acceptance and pattern promotion remain outside the pages read.\n- The validation gates do not establish that decisions are accepted by the owner, nor CI, deployment or production behavior.\n- The refusal is representational, not a blanket ban on naming a weight. The record itself names \"a cost weight under which B no longer beats A\" as a reversal trigger, which shows that an explicit, declared weight can be used as a sensitivity or a trigger. What is refused is an undeclared composite that stands in for the decision. This reading is an inference, not a sentence of the contract.\n- A composite could conceivably be used after the record exists as a derived communication aid, provided the separated fields remain the decision and the score is labelled as derived. The corpus does not state this; it is an inference and is not a source claim.\n- I did not observe the machine-readable decision record JSON through the CLI: artifact results were empty and the decision excerpt is explicitly non-normative and non-schema-valid. The field list is reconstructed from the contract, the excerpt and the V12-E gate description.\n\n## 6. Evidence map\n\n| Claim | Section key |\n|---|---|\n| C1 | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score` |\n| C2 | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score` |\n| C3 | `tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do` |\n| C4 | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences` |\n| C5 | `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints` |\n| C6 | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences` |\n| C7 | `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints` |\n| C8 | `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints`; `tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence` |\n| C9 | `tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes` |\n| C10 | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes` |\n| C11 | `tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics` |\n| C12 | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure` |\n| C13 | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure` |\n| C14 | `tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records` |\n| C15 | `tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration` |\n| C16 | `tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields`; `tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves` |\n| C17 | `tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences` |\n| C18 | `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation` |\n| C19 | `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree` |\n| C20 | `tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity` |\n| C21 | `tycho.chapter.2147ec1471d027ef256437a345f9c1e7#purpose-and-mission`; `tycho.chapter.2147ec1471d027ef256437a345f9c1e7#pages-and-reasoning-route` |\n| C22 | `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#overview` |\n| C23 | `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results`; `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation` |\n| C24 | `tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers` |\n| C25 | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result` |\n| C26 | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back` |\n| C27 | `tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish` |\n| C28 | `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#example-excerpt` |\n| C29 | `tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers` |\n| C30 | `tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance` |\n| C31 | `tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment` |\n| C32 | `tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome` |\n| C33 | `tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure`; `tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence` |\n\n## 7. Unknowns and unverified points\n\n1. **The weights.** The record declares a priority, not an exchange rate among success, latency and cost. No weight vector is published in the pages read, so no score can be reproduced from them.\n2. **The operability review.** No method, owner or pass criterion is stated. The record only says the constraint remains unverified and requires an operational review.\n3. **The machine-readable fields.** The decision JSON was not observed through the CLI; the excerpt is non-normative and non-schema-valid, so exact field names in the artifact remain unverified.\n4. **The board's authority.** Whether a review board may impose weights as a decision is not addressed. V12 says a contested objective or metric ranking is a ground for insufficient evidence, not for averaging.\n5. **Production behavior.** Whether B would remain preferable under measured arrival rate, service time or retry rate is unknown; those are exactly the reversal triggers.\n6. **The atlas layer.** Not consulted, and no pattern claim is made here.\n7. **Independent review and acceptance.** The V12-F report and owner acceptance were not read; the volume and chapter say acceptance remains open.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A V12 decision record treats a weighted score as a representational hazard because it can look objective while hiding the weights, trade away a hard constraint and replace a missing measurement with a plausible value.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+          "quote": "A weighted score can make a decision look objective while hiding the weights.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+          "quote": "A hard constraint can be traded away for a small gain in a composite number.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+          "quote": "A missing measurement can be replaced by a plausible value and forgotten.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The record defends against those moves structurally, by keeping constraints, evidence statuses and unknowns in separate fields.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+          "quote": "The decision record prevents those moves by keeping constraints, evidence statuses and unknowns in separate fields.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "V12 states that it reports uncertainty, convergence and sensitivity rather than one number and that it does not hide a hard constraint inside a weighted score.",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do",
+          "quote": "report uncertainty, convergence and sensitivity rather than one number",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do",
+          "quote": "hide a hard constraint inside a weighted score.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A hard constraint is a condition a candidate must satisfy, and a cost-ceiling violation eliminates a candidate even when it has the highest success rate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "A hard constraint is a condition a candidate must satisfy.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "If candidate C exceeds a declared cost ceiling, C is eliminated even if it has the highest success rate.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "In the checkout comparison C4 and C5 eliminate candidate C, while A and B pass both constraints.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "C4 eliminates C: 3.63 is above 3.0. C5 also eliminates C: 1.769 is above 1.5. A and B pass both constraints.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A soft constraint is a preference that can be traded, while a non-quantitative constraint is a condition the model cannot measure, such as operability by the existing team.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "A soft constraint is a preference that can be traded.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "A non-quantitative constraint is a condition the model cannot measure, such as operability by the existing team or a regulatory approval.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Between the surviving candidates the ordering is a declared priority: B has higher success and lower cost per success, A has lower p95 latency, and the prioritization is a decision rather than a simulation fact.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "B has higher success (0.9996 versus 0.9218) and lower cost (1.34 versus 1.81). A has lower p95 latency (0.870 versus 1.206).",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "That prioritization is a decision, not a fact produced by the simulation.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Because C3 operability is untested, the checkout recommendation is conditional and requires an operational review.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "The record says the operability constraint remains unverified and requires an operational review.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "The recommendation is therefore conditional.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "The checkout record does this for operability: it recommends B under the quantitative constraints and marks C3 unverified.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A weighted score converts a hard-constraint failure into a small penalty, which V12 records as the score-to-the-rescue failure mode.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+          "quote": "A weighted score converts a hard constraint failure into a small penalty.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Score laundering hides the weights and the eliminated candidates, and a recommendation without constraints can pick the best average while ignoring a hard constraint.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+          "quote": "A composite score hides the weights and the eliminated candidates.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+          "quote": "A candidate is recommended because it has the best average, while a hard constraint is ignored.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Metrics are business-comparable only when candidates can be compared without hidden normalization; the scenario marks every metric with a direction and a unit, and a decision metric not declared in the scenario is a validation failure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+          "quote": "A metric is business-comparable when two candidates can be compared without hidden normalization.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+          "quote": "The scenario contract marks every metric with a direction and a unit.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+          "quote": "A decision record that uses a metric not declared in the scenario is a validation failure.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The required structure separates constraints (hard, soft, non-quantitative), candidates and their runs, metrics (identifier, unit, direction, business-comparable flag), evidence, outcome (recommendation, rationale, non-quantitative constraints), reversal triggers, limitations and pattern links.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "constraints: hard, soft and non-quantitative",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "candidates: identifier, scenario, runs, pattern identifiers and owner pages",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "metrics: identifier, unit, direction and business-comparable flag",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "outcome: recommendation, rationale and non-quantitative constraints",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "reversal triggers, limitations and pattern links",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Decision status is a closed vocabulary of proposed, decision-supported, insufficient-evidence or rejected, and a record with no recommendation can still be a valid insufficient-evidence record.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "The status is one of proposed, decision-supported, insufficient-evidence or rejected.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "A record with recommendation none can still be insufficient-evidence; it is not an invalid record.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A decision record separates model-verification, calibration and outcome statuses, and a decision-supported outcome with an uncalibrated model is explicitly a conditional result.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision record separates three statuses:",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision-supported outcome with an uncalibrated model is a conditional result.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Every V12 model is uncalibrated; the model contracts and decision records repeat the parameter statuses and no production claim is made.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+          "quote": "Every model is uncalibrated. The model contracts list each parameter's evidence status and the missing measurement. The decision records repeat the status. No production claim is made.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The run record, not the decision record, carries metric unit, replication count, standard error and confidence interval, and replay proves reproducibility rather than model validity or decision correctness.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "metrics: value, unit, replication count, standard error and confidence interval",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+          "quote": "It does not prove that the model is valid, that the inputs are measured or that the decision is correct.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "V12 lists as forbidden inferences that a recommendation of B means B is safe to deploy and that a confidence interval excluding zero proves the business case.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "The decision record recommends B, so B is safe to deploy.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "The confidence interval excludes zero, so the business case is proven.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The reversal triggers are a separate field and include a cost weight under which B no longer beats A per successful request; a narrower synthetic confidence interval would not reverse the recommendation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "A cost weight under which B no longer beats A per successful request.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "The record also says what would not reverse it: a narrower confidence interval on the synthetic workload.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The decision order is hard constraints first, then comparison of survivors on success and cost, then the non-quantitative constraint deciding whether the recommendation is conditional or bounded, then reversal triggers.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree",
+          "quote": "Text alternative: candidates that fail a hard constraint are eliminated. Survivors are compared on success and cost. An unverified non-quantitative constraint keeps the recommendation conditional. Reversal triggers are recorded either way.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The V12-E decision-validity gate enumerates the separated fields, including business-comparable metrics with units and non-quantitative constraints kept separate, and treats both decision-supported and insufficient-evidence outcomes as valid.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+          "quote": "business-comparable metrics with units",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+          "quote": "non-quantitative constraints kept separate",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+          "quote": "The checkout record is decision-supported under its declared constraints. The modernization record is insufficient evidence. Both are valid outcomes.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "The decision-integration chapter's purpose is to keep hard constraints separate from weighted preferences and to make insufficient evidence a first-class outcome, and its reading route says to read the insufficient-evidence page before forcing a score.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#purpose-and-mission",
+          "quote": "keeps hard constraints separate from weighted preferences, and makes insufficient-evidence a first-class outcome",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#pages-and-reasoning-route",
+          "quote": "Read the insufficient-evidence page before forcing a score.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The checkout comparison fixes the workload, seed scheme and metrics, eliminates a candidate that violates hard constraints, compares survivors on business-comparable metrics, and records the non-quantitative constraint that the model cannot test.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#overview",
+          "quote": "The comparison fixes the workload, seed scheme and metrics, eliminates a candidate that violates hard constraints, compares the survivors on business-comparable metrics, and records the non-quantitative constraint that the model cannot test.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Narrow confidence intervals do not make synthetic inputs measured, and more replications would make the synthetic estimate more precise rather than more representative.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "Narrow intervals do not make the inputs measured.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "More replications would make the synthetic estimate more precise, not more representative.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The five evidence layers are separate rather than a ladder, and a decision record can be decision-supported while the model remains uncalibrated if the record states the condition.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+          "quote": "The labels are not a ladder, and a later layer never upgrades an earlier one automatically.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+          "quote": "A decision record can be decision-supported while the underlying pattern remains unchanged and while the model remains uncalibrated, as long as the record states the condition.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "A decision record can conclude that the evidence is insufficient, and for the modernization record that is the correct outcome rather than a recommendation to cut over.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+          "quote": "The correct outcome is insufficient evidence, not a recommendation to cut over and not a claim that modernization is impossible.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "A pattern link is one-way and is not a promotion: it does not change the pattern's coverage state, source ledger or review status.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back",
+          "quote": "A pattern link is not a promotion. It does not change the pattern's coverage state, source ledger or review status.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "The validation gates do not establish owner acceptance, CI, deployment or production behavior.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "They do not establish that the decisions are accepted by the owner.",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "They do not establish CI, deployment or production behavior.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "The published checkout excerpt is explicitly non-normative and non-schema-valid; the full record adds candidates, metrics, evidence, limitations, reversal triggers and pattern owner pages.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#example-excerpt",
+          "quote": "The excerpt is a non-normative, non-schema-valid fragment; the full record adds candidates, metrics, evidence, limitations, reversal triggers and pattern owner pages.",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "The V12 volume keeps five evidence layers separate, and a model-verified label does not imply calibration.",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "The layers are separate.",
+          "supports": "C29",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "A `model-verified` label does not imply calibration.",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C30",
+      "text": "Operational readiness is an acceptance gate that must name owners, runbook and recovery evidence, access restrictions, version support, budget and revisit triggers, and unknown critical evidence blocks unconditional approval.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance",
+          "quote": "An operational acceptance record should name actual owners, runbook/recovery evidence, access restrictions, version support, budget and revisit triggers.",
+          "supports": "C30",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance",
+          "quote": "Unknown critical evidence blocks unconditional approval.",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C31",
+      "text": "The three candidates were run on the same Poisson workload for 1,800 seconds after a 300-second warmup with 30 replications and a shared seed base, which is the precondition for any comparison.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "quote": "Three candidates receive the same Poisson workload at 20 requests per second for 1,800 seconds after a 300-second warmup.",
+          "supports": "C31",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "quote": "Each uses 30 replications with the seed base 20261029.",
+          "supports": "C31",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C32",
+      "text": "An insufficient-evidence record must be actionable and name the measurement, the range that would support or reject the decision, the measurement owner, the consequence of the current state and the next review trigger.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "quote": "A useful insufficient-evidence record is actionable.",
+          "supports": "C32",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "quote": "the range that would support or reject the decision",
+          "supports": "C32",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C33",
+      "text": "A contested objective or metric ranking is itself a ground for insufficient evidence, because two stakeholders can disagree about the objective and then no metric ranking is valid.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+          "quote": "two stakeholders disagree about the objective, so no metric ranking is valid",
+          "supports": "C33",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "the objective or metric ranking is contested",
+          "supports": "C33",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#pages-and-reasoning-route",
+    "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#purpose-and-mission",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#overview",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#example-excerpt",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+    "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

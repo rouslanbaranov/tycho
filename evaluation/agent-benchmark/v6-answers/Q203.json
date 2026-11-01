@@ -1,0 +1,206 @@
+{
+  "task_id": "Q203",
+  "answer": "**Onboarding note.** The question needs the canonical book layer: v08/C08 (discovery, routing and health, connection lifetimes), v02/C05 (effect identity, deadlines and retries) and the outbox/idempotency material. The atlas and modeling layers were not needed, because the question asks for a mechanism and an operator contract rather than a registry identity or a model run.\n\n## Direct answer\n\nRemoval from the load balancer is a membership decision: it changes which instance an observer may choose next. It is not a connection event, not a work-completion event and not an outcome record. Established HTTP/2 connections keep carrying streams, cached routes keep selecting the instance for a bounded period, and requests already admitted by the process are untouched. Sending the shutdown signal in the same instant then closes live connections without a GOAWAY last-stream boundary, so the peer cannot separate streams that were never processed from streams that may have committed: a mid-stream reset is reported as failure while the publish may be durable. The operator must require the ordered sequence (ineligible, converge, graceful shutdown, bounded drain, record unresolved operation IDs, retire) plus a per-instance drain record and a per-operation resolution that turns an ambiguous failure report into a settled committed or not-committed result.\n\n## Mechanism and justification\n\n**Different layers carry different identities.** The book's first move is to refuse the collapse: \"A connection, an HTTP/2 stream, one request attempt and a logical business operation have different identities.\" Membership, transport, attempt and effect are four objects with four lifetimes. Removal edits the first; the resets damage the second and third; the commit question lives in the fourth. Reading a connection reset as an operation outcome crosses layers without evidence.\n\n**Removal does not wait for observers to converge.** A TTL or a health-check interval is a cache and polling contract, not a drain: \"A DNS TTL governs a DNS record's caching contract; it is not an application transaction deadline or a guarantee that every client stops using an existing connection at that instant.\" The routing page adds that \"a stale membership view can outlive a rollout.\" The discovery failure matrix names the symptom as a removed backend still cached, where \"Removal and connection shutdown require coordinated policy,\" observable as \"Attempts to the removed endpoint after route publication.\" Health checks narrow rather than close the gap, because withdrawal itself can require a bounded number of consecutive failures, and \"a cached healthy answer can keep sending traffic to a draining instance.\" Convergence must be measured after publication, not inferred from it.\n\n**A selector cannot drain work it already dispatched.** \"A request-aware selector could redistribute new eligible requests, but cannot move an already executing operation without a protocol for interruption.\" The selection page keeps a backend in a draining state while existing work \"completes or reconciles,\" and says plainly that \"a draining backend may still own existing work.\" Only the transport shutdown protocol can bound what the process does with streams it has already accepted.\n\n**The shutdown boundary is what makes a reset interpretable, and an immediate close destroys it.** RFC 9113 sections 6.8 and 8.7, as summarized on the connections page, define shutdown with a last stream identifier: \"Streams above that boundary were not processed by the sending endpoint; streams at or below it may have been processed. A missing response is not evidence that the application rolled back.\" A close or reset without GOAWAY supplies no boundary at all, so every in-flight stream becomes unknown instead of a bounded mix of not-processed and maybe-processed.\n\n**The publish is a commit-ambiguity problem, not a transport problem.** The worked trace is this scenario: the server sends GOAWAY with last-stream ID 5, and \"Stream 5, a command to publish an object, may already have committed. Its correct recovery lookup uses the same logical operation identity.\" The identity page separates the logical operation ID from the transport attempt ID and flags \"New ID created for every retry\" as the dangerous confusion. The outbox matrix then requires \"Retry with same K and recover committed R; prove no duplicate R,\" and the effect-identity page names the missing capability outright, \"Outcome discovery: If an acknowledgment disappears, can the caller obtain a durable record of the original result?\" The retry page agrees from the other side: \"Cancellation is not proof that a previously committed effect was undone,\" so one should \"prefer explicit outcome lookup for an ambiguous durable command, rather than treating every timeout as nothing happened.\"\n\n**Deployment status is not request outcome.** The rollout material separates them: request outcomes can diverge from deployment status, and recovery needs \"restoration evidence rather than controller green status.\" A controller reporting the instance replaced has said nothing about whether publish K committed.\n\n## Sequence the operator must require\n\n1. Mark the instance ineligible for new work through the selector that actually routes traffic, not a parallel registry nobody reads. This is step 1 of the book's bounded drain procedure and the only sense in which removal is early.\n\n2. Keep serving while the removal propagates; do not send the shutdown signal yet. The window must cover route-cache age, resolver TTL, proxy snapshot refresh and health-check withdrawal, and the acceptance check is the discovery page's discriminating observation: no new connection or attempt reaches the instance after the publication timestamp.\n\n3. Start protocol-appropriate graceful shutdown with time for route caches and active work (step 2): send GOAWAY with the last stream identifier, stop accepting new streams on that connection, and leave streams at or below the boundary running.\n\n4. Drain admitted work inside its declared budget (step 3). The drain condition is outstanding admitted operations, not connection count: one connection can multiplex many requests, and an idle connection holds none.\n\n5. Before any forced termination, record the unresolved operation IDs and expose the reconciliation path (step 4). This is the step that makes the incident resolvable rather than merely reported.\n\n6. Retire the instance only after the drain condition or an explicit bounded timeout (step 5), and mark the termination forced when the deadline fired, because \"a hard shutdown deadline may leave unknown effects; it cannot manufacture atomic cancellation.\"\n\n7. Resolve before retrying: re-read the authoritative result under the same logical operation ID K, retry only if the record says not committed, and prove no duplicate was created.\n\n## Record the operator must require\n\n**A per-instance drain and termination record.** It must carry the publication event and the selector that emitted it; convergence evidence, meaning the timestamp of the last new connection or stream relative to publication and the route-cache or probe age at shutdown; the GOAWAY emission time and last-stream-id; admitted, completed and unresolved counts sampled when shutdown began; the declared deadline and whether it expired; the unresolved logical operation IDs; and the exit status. The book states step 4 outright and supplies the diagnostic set for the rest: \"Compare connection ages, active streams, close reasons, GOAWAY code/boundary, retry volume and operation outcomes.\"\n\n**A resolution record per ambiguous operation.** For each unresolved ID it must show the scoped logical operation key, the authoritative result read after the event, whether a duplicate exists, which path performed the read and when. That converts \"the publish failed\" into \"K committed and is visible\" or \"K did not commit and is safe to replay\" with evidence rather than inference.\n\n**What the operator must refuse as a substitute.** A green controller or deployment status, an error-free shutdown log, a successful restart, or the absence of a response. The completion gate archives release facts and metrics and demands restoration evidence rather than controller green status; the connection page says a missing response is not evidence of rollback.\n\n## Boundaries and trade-offs\n\nThe procedure is explicitly proposed, not observed: \"This is a proposed procedure. The exact proxy/runtime determines signal ordering, propagation and stream behavior.\" A proxy that terminates TLS may own GOAWAY emission, in which case the application's sequence is only half the boundary. Some clients ignore GOAWAY and reconnect immediately, moving load back onto an instance trying to retire; some proxies strip or regenerate the frame. A long drain window buys outcome certainty at the cost of rollout speed and reserved capacity; a short one converts the same certainty into an unbounded set of unresolved IDs. Recording unresolved IDs preserves the unknown rather than resolving it, so the reconciliation path must exist and be exercised. Finally, if the application has no logical operation identity and no durable commit record, no shutdown discipline recovers the outcome afterwards; the key and the durable result are prerequisites that a graceful-shutdown change will not supply.\n\nThe mechanism holds where membership is cached or polled and connections outlive a single request. It holds less cleanly where every request uses a fresh connection with no retry, where the load balancer performs connection draining itself, or where the operation is a harmless repeatable read; there the sequencing still helps, but the commit-ambiguity record is unnecessary.\n\n## Evidence map\n\n| Claim | Section key |\n\n|---|---|\n\n| Connection, stream, attempt and operation are different layers; GOAWAY boundary; missing response is not rollback | tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer |\n\n| Publish on a boundary stream may have committed; resolve with the same logical operation identity | tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write |\n\n| Five-step drain procedure, including recording unresolved IDs before forced termination | tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure |\n\n| Observation set for shutdown diagnosis | tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings |\n\n| DNS TTL is not a drain; control path versus data plane | tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries |\n\n| Selector cannot move an executing operation; draining backend still owns work | tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work |\n\n| Removed backend still cached; readiness, draining and permanent removal are separate | tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery |\n\n| Stale membership outlives a rollout | tycho.page.07904f22ca8249069cedc8c2e1140630#the-routing-contract |\n\n| Readiness semantics; cached healthy answers; bounded failure counts; drain before removal | tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring |\n\n| Outcome discovery and resolve-same-identity retry | tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication |\n\n| Cancellation is not rollback; prefer explicit outcome lookup | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets |\n\n| Commit before reply: same K, committed R, no duplicate R | tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix |\n\n| Logical operation ID versus transport attempt ID | tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities |\n\n| Request outcomes diverge from deployment status; restoration evidence | tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status |\n\n| Client cancellation can occur after commit | tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery |\n\n## Unknowns and confidence\n\nWhether publish K committed is not answerable from the reset; only the resolution record settles it, and the sources deliberately preserve that gap rather than assume one branch. This platform's load balancer and proxy behavior (whether GOAWAY is passed through, generated or suppressed, and how long route caches actually persist) is product-specific; the book states that no DNS convergence bound was measured and that the drain procedure is original reasoning rather than a tested deployment. A defensible maximum drain duration and its capacity reservation cannot be derived from these pages. Confidence is high on the mechanism and the ordering, which follow from the transport boundary and the membership-versus-work distinction; it is medium on the exact field list of the record, because only the unresolved-ID requirement is stated outright and the other fields are composed from the diagnostic guidance and the rollout evidence gates.",
+  "facets": [
+    {
+      "facet": "Removal from discovery is a membership decision, not a work or connection decision (layer separation)",
+      "query_formulations": [
+        "connection draining deregistration load balancer shutdown",
+        "instance lifecycle state draining termination",
+        "endpoint removal does not close existing connections"
+      ],
+      "evidence": [
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#the-routing-contract",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer"
+      ]
+    },
+    {
+      "facet": "Propagation and staleness: removal takes effect only after caches, TTLs and health checks converge",
+      "query_formulations": [
+        "route cache propagation removal backend still selected",
+        "readiness probe not a drain in-flight",
+        "graceful termination warm-down readiness before shutdown"
+      ],
+      "evidence": [
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#failure-and-recovery",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries"
+      ]
+    },
+    {
+      "facet": "Long-lived HTTP/2 connections and the GOAWAY last-stream boundary after which a reset is interpretable",
+      "query_formulations": [
+        "GOAWAY last stream identifier processed streams",
+        "graceful shutdown GOAWAY in-flight requests",
+        "connection age active streams close reasons GOAWAY boundary diagnosis"
+      ],
+      "evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#evidence-and-review",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work"
+      ]
+    },
+    {
+      "facet": "The publish as commit ambiguity: logical operation identity and outcome lookup instead of retry",
+      "query_formulations": [
+        "publish retry idempotency unknown commit outcome",
+        "logical operation identity deduplicate retry effect",
+        "publish outcome unknown client reconciliation authoritative result"
+      ],
+      "evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+        "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+        "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets"
+      ]
+    },
+    {
+      "facet": "The sequence the operator must require: ineligible, converge, GOAWAY, bounded drain, record unresolved IDs, retire",
+      "query_formulations": [
+        "unresolved operation IDs reconciliation path forced termination",
+        "in-flight work completes or reconciles draining backend",
+        "removal is not a drain"
+      ],
+      "evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work"
+      ]
+    },
+    {
+      "facet": "The record the operator must require, and the status signals that must not substitute for it",
+      "query_formulations": [
+        "shutdown record audit evidence deployment drain",
+        "release record archive facts metrics review completion",
+        "error response is not evidence of rollback"
+      ],
+      "evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+        "tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status",
+        "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings"
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings",
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#evidence-and-review",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#the-routing-contract",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#failure-and-recovery",
+    "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+    "tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status",
+    "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery"
+  ],
+  "evidence": [
+    {
+      "claim": "Connection, stream, request attempt and logical operation have separate identities; layer must be named before interpreting an error.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+      "note": "Observed: \"A connection, an HTTP/2 stream, one request attempt and a logical business operation have different identities.\""
+    },
+    {
+      "claim": "RFC 9113 last-stream-id semantics: above the boundary not processed, at or below may have been processed; a missing response is not evidence of rollback.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+      "note": "Observed summary of sections 6.8 and 8.7 on the page; both boundary outcomes and the non-rollback rule are stated."
+    },
+    {
+      "claim": "A publish on a boundary stream may already have committed, and recovery must use the same logical operation identity.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+      "note": "Observed: synthetic streams 3/5/7 with last-stream ID 5; stream 5 is the publish. The trace is labelled fictional."
+    },
+    {
+      "claim": "Bounded drain procedure: ineligible, graceful shutdown with time for route caches, completion within budget, record unresolved IDs, remove after drain or timeout.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+      "note": "Observed five steps; page calls the procedure proposed and says a hard deadline cannot manufacture atomic cancellation."
+    },
+    {
+      "claim": "Unresolved operation IDs must be recorded before forced termination with a reconciliation path exposed.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+      "note": "Observed verbatim as step 4; this is the only record field stated outright, the rest of the field list is inference."
+    },
+    {
+      "claim": "Shutdown diagnosis uses connection ages, active streams, close reasons, GOAWAY code/boundary, retry volume and operation outcomes.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings",
+      "note": "Observed list; used as the evidence set the termination record should carry."
+    },
+    {
+      "claim": "DNS TTL is a caching contract, not a transaction deadline or a guarantee that clients stop using an existing connection; discovery is a control path distinct from data-plane requests.",
+      "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+      "note": "Observed, including \"A DNS change alone is neither a drain procedure nor a database failover protocol.\""
+    },
+    {
+      "claim": "A selector can redistribute new eligible requests but cannot move an already executing operation; a draining backend may still own existing work.",
+      "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+      "note": "Observed in the worked design and its topology diagram (backend C draining, existing work completes or reconciles)."
+    },
+    {
+      "claim": "A removed backend can remain cached and selected; removal and connection shutdown need coordinated policy; readiness, draining and permanent removal are separate definitions.",
+      "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+      "note": "Observed failure-matrix row plus the separate-definitions sentence."
+    },
+    {
+      "claim": "Readiness answers whether an instance may receive new work; cached healthy answers reach draining instances; targets are withdrawn only after bounded consecutive failures; drain before removal.",
+      "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+      "note": "Observed probe semantics, cached-health sentence, AWS bounded-failure description and drain-before-removal guidance."
+    },
+    {
+      "claim": "A stale membership view can outlive a rollout; route, membership, connection destination and selected backend must be described separately.",
+      "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#the-routing-contract",
+      "note": "Observed verbatim."
+    },
+    {
+      "claim": "Outcome discovery is distinct from HTTP method semantics and application effect identity; a retry after a lost acknowledgement must resolve the recorded operation rather than recreate it.",
+      "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+      "note": "Observed: three notions plus crash-window row \"After durable record, before response arrives ... Retry must resolve same identity, not recreate.\""
+    },
+    {
+      "claim": "Cancellation is not proof that a committed effect was undone; an ambiguous durable command needs explicit outcome lookup.",
+      "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+      "note": "Observed verbatim in the deadlines and retry-contract text."
+    },
+    {
+      "claim": "After a local commit and before a reply, the client cannot infer success; the recovery contract is retry with the same K, recover committed R and prove no duplicate R.",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+      "note": "Observed in the failure matrix recovery-contract column."
+    },
+    {
+      "claim": "Logical operation ID and transport attempt ID are different identifiers; minting a new ID per retry is the dangerous confusion.",
+      "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+      "note": "Observed five-identity table."
+    },
+    {
+      "claim": "Request outcomes can diverge from deployment status; recovery needs restoration evidence rather than controller green status; completion archives release facts and metrics.",
+      "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status",
+      "note": "Observed sequence and safety-gate table."
+    },
+    {
+      "claim": "Client cancellation can occur after a commit; returning a connection to the pool or throwing a timeout does not prove the operation was undone.",
+      "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+      "note": "Observed in the cancellation and transaction-correctness note."
+    },
+    {
+      "claim": "An immediate close without GOAWAY erases the shutdown boundary, and the full termination-record field set is composed rather than stated as a schema.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+      "note": "Inference: derived from the stated last-stream boundary plus the absence of any boundary on a bare close; the page does not itself describe a bare-close shutdown."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

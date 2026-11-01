@@ -1,0 +1,143 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "modeling-and-simulation",
+  "items": [
+    {
+      "question": "a review board asks for one weighted score across success rate, p95 latency, cost per success and operability so the three checkout candidates can be ranked. why does a v12 decision record refuse that representation, what can such a score hide, and which fields must stay separate for the recommendation to be reviewable?",
+      "required_evidence": [
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints"
+      ],
+      "core_claims": [
+        "A weighted score can make a decision look objective while hiding the weights it used, and it lets a hard-constraint failure be traded for a small gain in the composite number.",
+        "A missing measurement can be replaced by a plausible value inside a score and then forgotten, whereas the record keeps constraints, evidence statuses and unknowns in separate fields.",
+        "Hard constraints are elimination conditions, soft constraints are tradable preferences, and a non-quantitative condition such as operability cannot be tested by the model and must be recorded separately.",
+        "The record's status distinguishes proposed, decision-supported, insufficient-evidence and rejected outcomes, so an insufficient-evidence record with recommendation none is complete rather than invalid.",
+        "Score laundering is a named failure mode: the record must expose the declared weights and eliminated candidates rather than a single composite, while recommendation without constraints, evidence inflation and promotion by mention remain separate failures."
+      ],
+      "optional_claims": [
+        "In the checkout record, c is eliminated by cost 3.63 above 3.0 and p95 1.769 above 1.5 seconds; a and b pass, and b wins success 0.9996 versus 0.9218 and cost 1.34 versus 1.81 while a wins p95 0.870 versus 1.206.",
+        "The hard constraint c4 (cost at most 3.0) and hard constraint c5 (p95 at most 1.5 seconds) are pass-or-eliminate conditions, not weights in a ranking."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "a reviewer accepts candidate b's recommendation because its confidence interval is narrow, and asks only for a general caveat that the decision could change. why is that not a reversal trigger, what must a usable trigger name, and which measured changes would actually reverse the recommendation while more replications would not?",
+      "required_evidence": [
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence"
+      ],
+      "core_claims": [
+        "Reversal triggers are a required field of the decision record, and a record with no condition under which it should be revisited is a named failure mode.",
+        "A usable trigger names a quantity and threshold that would change the recommendation, such as a measured arrival rate above 22 requests per second, a mean service time above 0.65 seconds, a p95 service time whose tail pushes b above 1.5 seconds, a retry rate materially above the modeled 1.003, or a failed operability review.",
+        "A narrower confidence interval on the synthetic workload is explicitly not a reversal trigger: more replications make the synthetic estimate more precise, not more representative of the inputs or of production.",
+        "The calibration record turns the same triggers into a measurement agenda: an arrival trace, a service-time sample including the tail, a measured timeout and retry policy, and measured deployment capacity and cost.",
+        "Where evidence is insufficient, the usable trigger is what would resolve it, such as measured dual-write lag, measured reconciliation capacity, a rehearsed rollback and measured divergence below the business threshold; a general caveat names none of these."
+      ],
+      "optional_claims": [
+        "The checkout record leaves operability unverified, so a failed operational review can reverse the recommendation even when every modeled metric passes.",
+        "The record also states what would not reverse it, which stops a reader from treating extra synthetic precision as new evidence."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a migration team keeps the target in shadow mode for two weeks: the dashboard is green, error rates are zero and the target is declared ready, so the cutover is scheduled. why can a shadow phase look healthy while the target's write path is untested, which coexistence states and stocks must the model expose, and what evidence would a supported cutover require instead?",
+      "required_evidence": [
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover"
+      ],
+      "core_claims": [
+        "Coexistence is a sequence of states (legacy only, dual write, shadow, cutover, rollback) with different failure modes, not a single date or traffic percentage.",
+        "A shadow state can look healthy while the target's write path is untested, a dual-write state can diverge silently, and a cutover can expose a reconciliation backlog that legacy ownership had hidden.",
+        "The model must expose target and legacy traffic shares, dual-write backlog, reconciliation capacity, accumulated divergence and the rollback timer; backlog grows with target throughput times the declared lag and drains only at reconciliation capacity.",
+        "Rollback is a state with a drain, not merely a duration: the model records whether it completed within the horizon, the trigger-to-drain time or a censored value, and the maximum divergence before the trigger, so an incomplete drain is a finding about declared capacity rather than a model failure.",
+        "A supported cutover needs a measured dual-write lag with a bounded upper confidence limit, measured reconciliation capacity under target load, a rehearsed rollback that completes inside the observation window, measured divergence below the business threshold over a sustained period, and a confirmed continuity and reconciliation runbook."
+      ],
+      "optional_claims": [
+        "The staged scenario's rollback completes in only 10% of replications, and its maximum divergence of 8,925.5 records is far outside any plausible business threshold.",
+        "The fluid model does not represent individual records, schema compatibility or deployment orchestration, and those omissions are part of its validity limit."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a model contract marks every verification check as pass, but gives no test paths, and one expected value was copied from the previous run's output. why is that matrix not verification evidence, what must each case record, and what does a passing matrix still not establish about the model or a production scheduler?",
+      "required_evidence": [
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified"
+      ],
+      "core_claims": [
+        "Each verification case must record an identifier, description, expected result, observed result, pass/fail/not-run status and a test path; a case without a test path is not a verification case, and a pass without an observed result is a claim rather than evidence.",
+        "An expected value copied from the current output creates a moving target that can never fail, so the case cannot detect the regression it exists to detect.",
+        "The test matrix binds named checks to an actual test file, so a renamed test must update the model contract's verification case path or the recorded evidence no longer points at the executed test.",
+        "A passing matrix covers conservation, non-negativity, boundaries, event ordering, timeout interaction, retry conservation and deterministic replay, but it does not prove operational validity or that the chosen priority order matches a production scheduler.",
+        "The recorded limits are explicit: the service-time distribution is not fitted to a real sample, the arrival process is not tested against a production trace, the queue is fifo only with no priority or preemption, dependency calls are absent, the sensitivity screen is not a full sobol estimator, and confidence-interval coverage is not tested over many synthetic samples."
+      ],
+      "optional_claims": [
+        "A test that only asserts the function returns, or that passes one steady-state run while zero arrivals or saturation fails, is a named failure mode.",
+        "The matrix records separate timeout-before-completion and completion-before-timeout checks, so the stale-event path is exercised even though scheduler fidelity is not."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "a team computes one joint sample in which arrival rate and service mean move together, then feeds those rows into the 48-row quadratic screen to rank the inputs. why does the engine reject that screen, what does the screen actually decompose, and how must correlated inputs be propagated to keep the ranking honest?",
+      "required_evidence": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity"
+      ],
+      "core_claims": [
+        "Independent draws are a modelling assumption, not a neutral default; a known correlation must be declared, because ignoring it narrows the output distribution and makes the decision look more certain than it is.",
+        "The sensitivity indices decompose output variance into a main effect for an input alone and a total effect that includes every interaction involving it; a first-order index near zero does not mean the input is irrelevant because it may act only through an interaction.",
+        "The v12 screen fits a quadratic response surface over 48 input rows and decomposes the fitted variance into main effects plus an interaction term; it requires independent inputs and the engine rejects a correlated screen.",
+        "Correlated inputs are propagated by a separate monte carlo run with a declared method such as a gaussian copula, not by the independent-input variance decomposition.",
+        "The screen is a bounded approximation whose indices hold under the declared distributions and quadratic form, not a full sobol analysis and not proof that an input is dominant in production."
+      ],
+      "optional_claims": [
+        "The modernization scenario shows the intended pattern: it declares a -0.4 correlation between dual-write lag and reconciliation capacity and records the gaussian-copula method with correlated_inputs true.",
+        "A run that fails the 0.02 relative-error threshold is not used as converged evidence, and a converged screen is still an approximation rather than a precision estimate."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a service completion and a timeout are scheduled at the same instant. two runs with the same seed disagree after an engine refactor changes how equal timestamps are ordered, and the team calls the new order an implementation detail. why must priority and tie-breaking be declared as part of the model, and why can a deterministic ordering test still not show that the order matches a production scheduler?",
+      "required_evidence": [
+        "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering"
+      ],
+      "core_claims": [
+        "Events at the same timestamp can produce different results depending on which is processed first: a completion at t=1.0 makes the request succeed, while a timeout at t=1.0 fails the attempt and may schedule a retry.",
+        "A model that relies on dictionary iteration order or an unstable sort is not reproducible, so the engine needs a total order such as time, then priority, then a monotonically increasing insertion sequence.",
+        "The priority assignment is a declared modeling choice, not a universal rule; v12 uses 0 for completion and timeout, 1 for arrival and 2 for retry, and a different system may need a different order that must be declared and tested.",
+        "The event-order test schedules equal-time events with different priorities and checks the processed order, so it proves the implemented order is deterministic and the timeout state machine is self-consistent, but it does not prove that the chosen priority matches a production scheduler.",
+        "Unstable tie-breaking is a named failure mode, and a stale event must never change the outcome: the engine checks request state when a stale timeout or completion is processed rather than deleting it from the heap."
+      ],
+      "optional_claims": [
+        "The engine rounds scheduled times to 12 decimal places and compares event times as floats, which is sufficient for the synthetic scenarios but would need a declared tolerance for much smaller time units.",
+        "A timeout event that arrives after a completion is stale and ignored, while a completion that arrives after a timeout must not free a second server."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

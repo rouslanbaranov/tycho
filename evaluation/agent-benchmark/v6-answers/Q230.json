@@ -1,0 +1,321 @@
+{
+  "task_id": "Q230",
+  "layers": [
+    "book",
+    "atlas"
+  ],
+  "snapshot": "4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a",
+  "answer": "# Q230 — Six stamps, one identity service, one primary database\n\n## Onboarding and layers\n\ndescribe ran before retrieval: snapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a,\ncoverage complete, 555 documents and 3132 sections, pattern registry draft with 145\nentries. The question needs two layers: book for failure-domain placement, tenant\nisolation, control planes and data migration; atlas for the Deployment Stamps,\nCell-Based Architecture and tenant-isolation cards. The modeling-and-simulation\nlayer was not needed: the returned metadata exposes no model, scenario, run or\ndecision artifact about this topology, and the relevant fault tests are marked\nproposed, not executed [ACCEPT].\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1 Stamp invariant and replication | \"stamp invariant self-contained failure domain\"; \"deployment stamp\"; \"stamp upgrade rollback cohort\" | STAMP, OWNER, CELLDEP, CHDEC |\n| F2 Shared primary database / state authority | \"single primary database shared write endpoint\"; \"state authority single writer\"; \"database primary failure domain\" | CELLDEP, FD1, FD2, CHDEC, STATIC |\n| F3 Shared identity service | \"shared identity service blast radius coupling\"; \"identity service shared authentication outage\"; \"authentication tier shared service\" | CELLDEP, STATIC, FAILMAT, LAYERS, MTEN |\n| F4 Tenant directory and routing key | \"tenant routing key directory mapping\"; \"global routing control plane directory\"; \"routing directory tenant mapping\" | OWNER, ROUTE, MIGRATE, ROLLBACK |\n| F5 Hand upgrades and drift | \"configuration drift manual per-stamp upgrade\"; \"manual deployment automation repeatable\"; \"immutable infrastructure drift\" | STAMP, OWNER, IMMUT, XREGION |\n| F6 Enumerate/own and cell comparison | \"claimed isolation independence evidence\"; \"cell-based architecture decision card\"; \"blast radius enumerate dependencies\" | OWNER, CELLDEP, ACCEPT, CELLCARD, CELLCOST, TBRCARD |\n\n### Citation labels\n\n| Label | section_key |\n|---|---|\n| STAMP | tycho.page.30d7c7363ec26491f644977876c16ea4#overview |\n| OWNER | tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes |\n| CELLDEP | tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph |\n| ACCEPT | tycho.page.1849584c8a3fadc9e06c8d2edead5789#proposed-acceptance-and-evidence |\n| CELLCOST | tycho.page.1849584c8a3fadc9e06c8d2edead5789#cost-and-alternatives |\n| ROLLBACK | tycho.page.1849584c8a3fadc9e06c8d2edead5789#failure-and-recovery-policies |\n| FD1 | tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels |\n| FD2 | tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing |\n| CHDEC | tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result |\n| STATIC | tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability |\n| FAILMAT | tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility |\n| XREGION | tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract |\n| ROUTE | tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks |\n| MIGRATE | tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#5-movement-between-isolation-levels-is-a-data-migration |\n| MTEN | tycho.page.1db0a6e1679448e392ee8422eb5a3beb#multitenant-isolation |\n| MTENOVER | tycho.page.1db0a6e1679448e392ee8422eb5a3beb#overview |\n| TBRES | tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation |\n| LAYERS | tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers |\n| AXES | tycho.page.31cda61d174248eaa326559d256ce352#purpose-and-mission |\n| CELLCARD | tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory |\n| TBRCARD | tycho.page.bd9428f9bf6044048c48eb0aa67d1e3f#overview |\n| MTENCARD | tycho.page.e09a0f31b3fe312d435b581072d244a6#overview |\n| IMMUT | tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview |\n\n## 1. Direct answer\n\nSix copies of the stack are six deployments, not six stamps. Replication copies\nartifacts; the stamp invariant is a property of the dependency graph. A stamp must\nhave an explicit routing key and state authority, be operable and upgradeable\nindependently, and carry an enumerated, owned rule for every shared global\ndependency [STAMP, OWNER]. This design fails those tests in a way that compounds:\n\n- durable state has one authority, the shared primary database, so no stamp owns its\n  data, its write path or its restore path [CELLDEP, FD1, FD2];\n- identity is a shared runtime dependency on the request path, so an identity outage,\n  key-rotation failure or bad policy change crosses every stamp [CELLDEP, STATIC];\n- the directory is a shared placement dependency whose availability, cache\n  freshness and split-brain behavior must be declared [ROUTE, MIGRATE, ROLLBACK];\n- hand upgrades leave no versioned definition, ordered rollout or tested rollback,\n  so version state, drift and recovery are unproven [STAMP, OWNER, IMMUT].\n\nThe correct conclusion is not that six is the wrong number. It is that the isolation\nclaim is false for the failures that decide the user journey: database, identity,\ndirectory and rollout. Only the stateless compute tier is duplicated. If the team\nneeds the claim, it must partition state and scope identity; otherwise it must\ndowngrade the claim to \"stamps survive compute or zone failure, not database or\nidentity failure\" and own and test that residual [CELLDEP, OWNER].\n\n## 2. Mechanism and justification\n\n### 2.1 The invariant is independent failure and change, not topology\n\nThe atlas card states four good-fit conditions: \"Each stamp can be operated and\nupgraded independently; a routing key and a state authority are explicit; shared\nglobal dependencies are enumerated and owned; duplication cost is acceptable.\" Its\nhard contraindications reject stamps that share \"a hidden global dependency\", or\nwhere \"routing, state, upgrade or tested rollback is unowned\" [STAMP]. The owner\nsection sharpens the invariant: a routing key, a state authority, a deployment and\nupgrade process, and a rule for shared global dependencies. Routing key and state\nauthority are \"one ownership decision, not two\" [OWNER].\n\nThat is why counting deployments is the wrong test. A cell or stamp is \"a boundary\nin the dependency graph\"; naming a group of workers a cell does not isolate a shared\ndatabase, queue, cache or configuration publisher [CELLDEP]. The same sentence\napplies to stamps. The question is which failures stop at the boundary, and the\nanswer must be demonstrated: \"Independent\" means independent against specified\nfailures [CELLDEP].\n\n### 2.2 The primary database removes the state-authority split\n\nThe stamp model assumes state follows the split: independent stamps implicitly shard\ndata, and moving a tenant moves its data [OWNER]. With one primary database, neither\nis true. The directory can say \"tenant T belongs to stamp 3\", but every write from\nevery stamp lands in the same authority. The mapping becomes a front-end label over a\nshared system.\n\nThis is the durable-state escape path in the boundary table: the required argument\nis \"cell-owned partitions and connection budgets\", and the typical escape is \"all\ncells share one saturated write endpoint\" [CELLDEP]. A single primary database is\nexactly that escape. The invariant does not literally demand one database per stamp;\nit demands an explicit state authority and a rule for shared dependencies [OWNER]. A\nshared primary can be explicit and still be a shared failure domain. What it cannot\nsupport is the isolation claim: the routing key no longer governs state, and the\nstamp cannot be operated or moved independently for data. A database outage, failover, lock convoy, migration or bad\nschema change is then a global event; a hot tenant can saturate the shared write path\nfor all stamps; and per-stamp restore, RPO/RTO and tenant movement are not real\noperations, because there is one authority to restore and one writer to fence\n[CELLDEP, FD1, FD2].\n\nThe failure-domain page states the general rule: an availability design must say\nwhich faults it survives \"without violating state authority\", and placing web\nworkers in different zones while retaining one unreplicated database does not\nsatisfy a whole-journey zonal objective [FD1]. Two API replicas in separate placement\ndomains still depend on a shared state authority and gateway [FD2]; the chapter\nconcludes that two zones can still depend on one datastore or control path, so\nnominal placement diversity does not demonstrate surviving user journeys [CHDEC].\nSix regional stamps over one primary database are the same shape at a larger radius.\nThe regional dimension sharpens it: if the stamps exist for latency or residency, a\nsingle primary database makes every write cross a region and places the database's\nregion in the path of every stamp, while geographic partitioning carries cross-region\ntransactions, failover jurisdiction and legal or recovery constraints [ROUTE]. A\nstamp chosen for locality [STAMP] does not deliver locality for writes when the write\nauthority is elsewhere.\n\nThere is a weaker variant worth naming. If each stamp has its own schema or\npartition on one cluster, logical tenant scoping may be enforceable, but the cluster\nis still one failure domain. Logical separation is not failure isolation, and the\ndatabase failover or restore blast radius still crosses every stamp. That\ndistinction is my inference from the boundary principle, not a measured result.\n\n### 2.3 The identity service is a declared common failure, not an isolated one\n\nIdentity is one of the potentially shared elements: the page lists \"database\nprimary, storage quorum, coordination service or failover policy\" and \"common\nservice identity, DNS, external API and global rate quota\" [FD1]. The cells page is\nexplicit that independence is only against specified failures: \"A shared regional\nnetwork or identity dependency remains a common failure mode and needs its own\ndeclared behavior\" [CELLDEP]. A single identity service therefore does not by itself\nprove the stamps are fake; it proves the claim cannot include identity failure\nunless the service is scoped or its loss is designed for.\n\nIt is also a runtime dependency, not only a management one. A functionally correct\ndata plane can still depend on control-plane services for bootstrapping credentials,\nrouting, discovery, certificate renewal, replacement instances or configuration\nfetches, and those dependencies must be measured under loss, not waved away [STATIC].\nThe capacity thought experiment makes authentication an explicit invalidator: a\nshared database limit, inability to steer traffic, or unavailable authentication\ninvalidates the premise [STATIC]. The failure matrix lists an unreachable secret\nservice as a row where cold or replacement nodes cannot start even when running\nreplicas are fine [FAILMAT].\n\nThe isolation argument is layered. Tenancy, authorization, domain ownership and\nruntime isolation are different axes, so a deployment label cannot establish any of\nthem [AXES]. Tenant isolation is a property of every query, cache key, queue\nconsumer and credential, not a deployment label [MTENOVER]; the four non-equivalent\nlayers are authentication, object authorization, data placement and infrastructure\nor resources [LAYERS]. A shared identity service sits at the\nauthentication layer for all tenants. Even with correct token validation and tenant\nscoping, an identity outage, key-rotation failure, revocation storm or bad policy\npush is a common failure. Whether existing sessions continue, whether tokens are\nverified locally, and whether the service is regionalized are exactly the \"declared\nbehavior\" the source demands; absent that, the dependency is unowned and the hard\ncontraindication applies [STAMP, CELLDEP].\n\n### 2.4 The tenant directory is the routing half of the invariant\n\nThe directory is not automatically a violation; the invariant expects a routing key\nand a routing service that resolves the tenant-to-stamp mapping [OWNER]. The question\nis how it fails. Directory or lookup routing carries three named costs: control-plane\navailability, routing-cache freshness and split-brain mappings [ROUTE]. A lost\nmapping or stale tenant-router cache can write into both old and new homes, and an\nunguarded dual writer breaks both isolation and correctness [MIGRATE]. The required\ndesign is cached placement with explicit epochs and a validity rule, so a\ncontrol-plane outage freezes new placement changes while existing assignments remain\nusable [ROLLBACK].\n\nIf every request synchronously consults a global directory, the directory is a data\nplane dependency and its outage stops all stamps. If it is consulted only on\nplacement changes and serving uses a cached mapping, it is a control-plane\ndependency whose loss is survivable within the validity window. The design must say\nwhich it is. \"Routes tenants through a directory\" is not enough to know whether the\ndirectory is a thin routing layer or a global request-path choke point\n[CELLDEP, STATIC, ROUTE].\n\n### 2.5 Hand upgrades leave the rollout boundary unproven\n\nThe invariant requires a deployment and upgrade process, and the owner section\nrequires \"a versioned definition, an ordered rollout and a tested rollback path\"\n[OWNER]. The public stamp guidance also says operators should automate and fully\nrepeat their deployment processes; Tycho's synthesis is that independently operated\nstamps still need version identity and rollback evidence [OWNER].\n\nHand upgrades are not automatically disqualifying. A documented, versioned,\nrepeatable manual runbook with drift detection and a tested rollback could satisfy\nthe process requirement in principle. But \"by hand\" as described leaves three gaps:\nthe six stamps can drift to different versions and configurations; a bad change is\nnot attributable to an artifact; and rollback is untested, so recovery is a hope\nrather than evidence. The named failure path is \"configuration drift or split state\nacross stamps\" [OWNER], and the limit is blunt: \"a stamp without a data authority or\nupgrade owner becomes a snowflake\" [OWNER]. The immutable-infrastructure card points\nthe same way: artifacts versioned and recorded, drift detected and remediated,\nreplacement, rebuild and rollback automated [IMMUT].\n\nThis matters for the isolation claim because rollout is one of the five boundaries:\nindependent cohorts and staged promotion are the required argument; \"one bad\nrevision reaches all cells simultaneously\" is the escape path [CELLDEP]. Hand\nupgrades make it likely that a bad revision reaches stamps in an unplanned order,\nwith no cohort evidence and no tested abort.\n\n### 2.6 Why the combination is worse than any single item\n\nAny one shared dependency narrows the claim. Together they remove the three things\nthat make a stamp a stamp: a per-stamp state authority, a per-stamp failure boundary\nand a per-stamp change boundary. The directory still provides a routing key, but it\nroutes to front ends over one database and one identity service. The compute tier\ncan fail independently; the user journey cannot. That is the distinction between\nnominal placement and a surviving journey [CHDEC], and between a deployment label\nand a property of every path [MTENOVER].\n\nThe duplication cost is also paid without the isolation benefit. The card makes\n\"duplication cost is acceptable\" a condition, not a virtue [STAMP]. Six stamps that\nshare a database, an identity service and a rollout process pay the cost of\nduplication and keep the failure domain of one system.\n\n## 3. What must be enumerated and owned before isolation is claimed\n\n\"Enumerated and owned\" is the card's own phrase [STAMP]. The shared-dependency rule\nis to enumerate every shared global dependency, state which failures cross the stamp\nboundary, and reject the design when an unowned shared dependency dominates the\nisolation benefit [OWNER]. The following is the minimum inventory I would require.\n\n### 3.1 Enumerate\n\n1. The boundary inventory. For each of compute, durable state, asynchronous work,\n   rollout and routing, state the required isolation argument and the escape path\n   [CELLDEP]. Compute means bounded queues, concurrency and work per request; durable\n   state means stamp-owned partitions and connection budgets; asynchronous work means\n   separate capacity or enforced reservations; rollout means independent cohorts and\n   staged promotion; routing means cached placement and explicit epochs [CELLDEP].\n2. Shared global dependencies. At minimum: identity, DNS and certificates, secret\n   material, ingress and network paths, the orchestration control plane and artifact\n   registry, global rate quotas, and operator recovery access [FD1]. The cross-region\n   contract adds network routing, DNS and certificates, identities and secrets, state\n   and backup permissions, egress, release artifacts and immutable provenance,\n   database schema and CDC or event versions, retention and write roles, the runbook\n   owner and control-plane fallback, and tenant and personal-data residency rules\n   [XREGION].\n3. Tenant placement and routing. The tenant-to-stamp directory, the routing key, the\n   cache and its validity, the placement epoch, stale-router behavior and split-brain\n   handling [CELLDEP, ROUTE]. A stale mapping or unguarded dual writer is a\n   correctness failure, not a routing inconvenience [MIGRATE].\n4. State and data. The write authority and its fencing, per-stamp partitions and\n   connection budgets, restore paths and RPO/RTO, and the full tenant-owned set:\n   records, indexes, events, exports, caches and projections [MIGRATE]. \"Copy the\n   database\" is not the inventory. The tenant-effects page requires copying and\n   reconciling all tenant-owned records, indexes, events and related exports,\n   validating cross-tenant references, switching routing with a versioned mapping,\n   and verifying old caches and consumers no longer reach the old placement\n   [MIGRATE]. Per-tenant encryption, backup and deletion are part of the isolation\n   contract, not only query predicates [MTEN].\n5. Identity and credentials. The authentication boundary (subject, issuer, audience\n   verification), token and session lifetime, the revocation path, local validation\n   and key-refresh behavior, the degraded mode if the identity service is\n   unreachable, and the service credentials used by asynchronous consumers\n   [STATIC, LAYERS]. The four-layer walkthrough treats authentication as one\n   independent boundary, not a substitute for object authorization, data placement\n   or resource isolation [LAYERS].\n6. The upgrade and rollback record. The stamp definition version, artifact digests,\n   rollout order and cohorts, drift state, the tested rollback path, and which\n   versions each stamp actually runs [OWNER, IMMUT].\n7. The evidence set. The fault tests and their oracles, not only the topology\n   [ACCEPT].\n\n### 3.2 Own\n\nOwnership is not a team name in a diagram. For each enumerated item, one accountable\nowner must be able to answer: what failure crosses this boundary, what is the\ndeclared degraded behavior, what test demonstrates it, and what is the rollback or\nrepair path. The specific ownership rules in the sources are:\n\n- Routing key and state authority are one ownership decision [OWNER]. Splitting them\n  between a network team and a database team is how mapping and state drift apart.\n- Routing, state, upgrade and tested rollback must not be unowned; the card rejects\n  the design when they are [STAMP].\n- Each shared dependency needs a declared crossing behavior and an owner; an unowned\n  shared dependency that dominates the isolation benefit is a rejection condition,\n  not a risk to note [OWNER].\n- A stamp without a data authority or upgrade owner becomes a snowflake [OWNER].\n- The runbook owner, on-call and approval channel, maintenance access and\n  control-plane fallback are part of the cross-region contract, not operational\n  trivia [XREGION].\n- The isolation claim itself needs an owner who can state which failure classes it\n  covers and which it explicitly does not.\n\n### 3.3 What \"before isolation is claimed\" means\n\nThe claim is an evidence claim, not a diagram claim. The cells page proposes the\nfault set: a poison input, a saturated shared dependency, an unavailable control\nplane, a stale router, an interrupted migration and a failed recovery destination.\nThe oracle checks that write ownership has one valid epoch, queue and connection\nbudgets remain bounded, and unrelated cells retain their declared service envelope\n[ACCEPT]. It also says to count shared failures explicitly rather than attributing\nevery slowdown to the affected cell, and it records that no such fault test was\nexecuted here [ACCEPT].\n\nFor this design, the equivalent evidence would have to show: stamp A's database or\nidentity failure does not change stamp B's declared service; a directory outage\nleaves cached placement usable and does not create a second writer; a hand upgrade\nhas an artifact identity and a tested rollback; and a hot tenant cannot saturate the\nshared write path for the other stamps. Without those, \"isolation\" is unsupported.\n\n### 3.4 The honest downgrade\n\nThere is a legitimate middle claim: the stamps are independent against compute and\nzone failure, while the database and identity service are declared common failures\nwith owned degraded behavior. That claim is narrower, and it can be true. It is not\nthe stamp invariant's isolation claim, and it must not be described as one. The\ndecision is between partitioning state and scoping identity, or narrowing the claim\nand owning the residual [CELLDEP, OWNER].\n\n## 4. When a cell-based design is the better comparison\n\nThe stamp card names the alternative directly: \"Cell-based architecture when fault\nisolation is the primary goal, or one shared deployment when isolation does not\njustify duplication\" [STAMP]. The owner section repeats it: a cell-based deployment\nis the alternative when isolation is the main goal and scale is secondary [OWNER].\nThe first condition is purpose, not size.\n\nA cell-based design is the better comparison when all of the following hold:\n\n1. Fault isolation is the primary objective, and scale or locality is secondary.\n   The cell card's decision question is bounded blast radius and independent\n   operation, not throughput [CELLCARD]. The owner page defines a cell as a bounded\n   population with its own capacity and failure domain [CELLDEP].\n2. Tenants can be assigned to a cell and the workload routed by a partition key. The\n   card's good-fit conditions are: workloads can be routed to a cell; a cell is a\n   dependency boundary; cell failover and migration are owned [CELLCARD].\n3. State can be partitioned per cell. This is the decisive difference from the\n   current design. A cell-based architecture runs multiple copies of the serving\n   stack, each with a routing key and a data partition [CELLDEP]. A shared primary\n   database would have to become per-cell partitions; otherwise the cell boundary is\n   cosmetic and the same escape path applies.\n4. The cost is acceptable. Dedicated cells increase idle headroom and operational\n   objects; the comparison must include that cost, not only the isolation benefit\n   [CELLCOST]. The cell card rejects the design when duplicate-cell cost is\n   prohibitive [CELLCARD].\n5. The remaining global dependency is declared. A cell design does not repeal\n   identity. The cell card rejects the design when \"a single global dependency\n   defeats isolation\", when cell routing is unowned, or when cost is prohibitive\n   [CELLCARD]. The owner page says the boundary is only real if every dependency is\n   cell-scoped; a shared database, queue, cache, control plane or configuration\n   publisher can make all cells fail together [CELLDEP]. If identity must remain\n   global, the cell comparison still improves database and compute blast radius, but\n   the claim must exclude identity failure or the identity service must be scoped\n   and tested.\n\nThe comparison is also the honest one for this specific design because the cell\ncard's competing alternative is \"single shared deployment or deployment stamps\nwithout isolation\" [CELLCARD]. That is what six front ends over one database and one\nidentity service are: deployment stamps without isolation. Comparing them to cells\nforces the missing question, \"where does tenant state live?\", instead of arguing\nabout the number of regions.\n\nWhen cells are not the better comparison:\n\n- Isolation is not required. If the goal is locality or scale, one shared deployment\n  or properly operated stamps may be the right comparator; cells add placement,\n  data-partition and control-plane cost [CELLCOST, CELLCARD].\n- Partitioning state creates more risk than the failure it removes, or the smallest\n  viable cell is too large for the tenant population; the owner page says to reverse\n  the cell decision in those cases [CELLCOST].\n- The global dependency cannot be scoped and its failure is unacceptable. Then cells\n  do not deliver the claimed isolation; the real choice is a single shared\n  deployment with strong per-tenant admission and an explicit shared-failure policy,\n  or a larger investment in scoping identity [CELLCOST, CELLDEP].\n\nA compact rule: stamps are for independent operation of deployments; cells are for\nbounded blast radius with partitioned state. The current design has neither the\nstate partition nor the independent change process, so the cell comparison exposes\nthe gap rather than renaming it.\n\n## 5. Boundaries and trade-offs\n\n- Sharing is not forbidden; unowned sharing is. The stamp source itself allows\n  shared components, and the canary guidance warns about shared failure domains; the\n  rule is enumeration, declared crossing failures and ownership [OWNER]. A design\n  with a shared identity service can be legitimate if the claim excludes identity\n  failure and the degraded behavior is tested. The primary database is harder\n  because it removes the state-authority split that the stamp model depends on\n  [OWNER, CELLDEP].\n- Logical isolation is not failure isolation. Per-stamp schemas on one cluster may\n  enforce tenant predicates, but the cluster remains a common failure domain. This\n  is my inference from the boundary principle, not a measured result.\n- The sources are design evidence, not measurements. The stamp card is applicable\n  under conditions; the cells page says no fault test was executed; the tenant cards\n  carry partial-bounded coverage and self-checked limits [STAMP, ACCEPT, TBRCARD].\n  Nothing here proves this specific six-stamp design fails in production; it proves\n  the claim is unsupported without the enumerated evidence.\n- Manual is not the same as uncontrolled. A versioned, repeatable manual runbook\n  with drift detection and a tested rollback could satisfy the upgrade-process\n  requirement in principle. The question's \"by hand\" is a risk signal, not a\n  categorical violation [OWNER, IMMUT].\n- The directory can be a feature. A thin, cached routing layer with explicit epochs\n  is exactly what the invariant expects [CELLDEP]. The failure is treating it as\n  free: its availability, freshness and split-brain behavior are part of the claim\n  [ROUTE].\n- Cells are not free either. They add headroom, operational objects and placement\n  complexity; the reversal conditions are real [CELLCOST].\n- The tenant cards add a separate axis. Tenant isolation is a property of every\n  query, cache key, queue consumer and credential, not a deployment label\n  [MTENOVER]; the bounded share is a per-resource contract, and a quota that the\n  resource does not enforce is not isolation [TBRES]. The multitenant card treats\n  compute, data, identity and network as separate isolation layers [MTENCARD]. A\n  stamp or cell boundary does not by itself prove tenant scoping.\n\n## 6. Evidence map\n\n- A stamp needs a routing key, a state authority, a deployment and upgrade process,\n  and a rule for shared global dependencies.\n  section_key: tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes\n- The atlas card's good-fit conditions require independent operation and upgrade,\n  explicit routing and state, enumerated and owned shared dependencies, and\n  acceptable duplication cost.\n  section_key: tycho.page.30d7c7363ec26491f644977876c16ea4#overview\n- The card rejects stamps that share a hidden global dependency or leave routing,\n  state, upgrade or tested rollback unowned.\n  section_key: tycho.page.30d7c7363ec26491f644977876c16ea4#overview\n- A cell or stamp is a boundary in the dependency graph; naming workers a cell does\n  not isolate a shared database, queue, cache or configuration publisher.\n  section_key: tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph\n- Durable state needs cell-owned partitions and connection budgets; sharing one\n  saturated write endpoint is the escape path.\n  section_key: tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph\n- Independence is only against specified failures; a shared identity dependency\n  remains a common failure and needs its own declared behavior.\n  section_key: tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph\n- Two replicas in separate placement domains still depend on a shared state\n  authority and gateway.\n  section_key: tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing\n- An availability design must state which faults it survives without violating state\n  authority; one unreplicated database defeats a whole-journey zonal objective.\n  section_key: tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels\n- Two zones can still depend on one datastore or control path; nominal placement\n  diversity does not demonstrate surviving user journeys.\n  section_key: tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result\n- A functionally correct data plane can depend on control-plane services for\n  credentials, routing and discovery; measure those dependencies under loss.\n  section_key: tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability\n- Unavailable authentication or a shared database limit invalidates the capacity\n  premise.\n  section_key: tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability\n- State-owner, secret-service and control-plane failures are explicit failure-matrix\n  rows.\n  section_key: tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility\n- Directory routing costs are control-plane availability, routing-cache freshness\n  and split-brain mappings.\n  section_key: tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks\n- A lost mapping, stale tenant-router cache or unguarded dual writer breaks\n  isolation and correctness; migration needs a versioned mapping and one writer.\n  section_key: tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#5-movement-between-isolation-levels-is-a-data-migration\n- Cross-region deployment must reproduce routing, DNS, identities, secrets, state\n  and backup permissions, schema and event versions, runbook ownership, control-\n  plane fallback and residency rules.\n  section_key: tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract\n- Infrastructure as code reduces manual divergence only if its state, credentials and\n  artifacts survive the failure class being tested.\n  section_key: tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract\n- Hand upgrades need a versioned definition, ordered rollout and tested rollback;\n  drift is the named failure path and an unowned stamp becomes a snowflake.\n  section_key: tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes\n- Immutable-infrastructure good fit: versioned artifacts, drift detected and\n  remediated, automated rebuild and rollback.\n  section_key: tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview\n- Tenant isolation is a property of every query, cache key, queue consumer and\n  credential, not a deployment label.\n  section_key: tycho.page.1db0a6e1679448e392ee8422eb5a3beb#overview\n- The bounded share is a per-resource contract, not a deployment label; a quota the\n  resource does not enforce is not isolation.\n  section_key: tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation\n- The four non-equivalent layers are authentication, object authorization, data\n  placement and infrastructure or resources; migration needs authoritative tenant\n  inventory.\n  section_key: tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers\n- Tenancy, authorization, domain ownership and runtime isolation are different axes.\n  section_key: tycho.page.31cda61d174248eaa326559d256ce352#purpose-and-mission\n- The cell card's good fit is routable workloads, a dependency boundary and owned\n  failover or migration; it rejects a single global dependency, unowned routing or\n  prohibitive cost.\n  section_key: tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory\n- The cell card's competing alternative is a single shared deployment or deployment\n  stamps without isolation.\n  section_key: tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory\n- The stamp card makes cell-based architecture the alternative when fault isolation\n  is primary, or one shared deployment when isolation does not justify duplication.\n  section_key: tycho.page.30d7c7363ec26491f644977876c16ea4#overview\n- A cell-based deployment is the alternative when isolation is the main goal and\n  scale is secondary.\n  section_key: tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes\n- Fault-injection oracles: one valid write epoch, bounded queues and connections,\n  unaffected cells retain their service envelope; no fault test was executed here.\n  section_key: tycho.page.1849584c8a3fadc9e06c8d2edead5789#proposed-acceptance-and-evidence\n- Cell cost and reversal: idle headroom and operational objects; a shared service\n  with strong per-tenant admission may suffice; reverse if partitioning risk or cell\n  size dominates.\n  section_key: tycho.page.1849584c8a3fadc9e06c8d2edead5789#cost-and-alternatives\n- A control-plane outage freezes new placement changes while existing assignments\n  remain usable within their validity rules.\n  section_key: tycho.page.1849584c8a3fadc9e06c8d2edead5789#failure-and-recovery-policies\n- Tenant-based isolation's limits: quotas, noisy-neighbour and cross-tenant tests are\n  costs, not deployment details.\n  section_key: tycho.page.bd9428f9bf6044048c48eb0aa67d1e3f#overview\n- Multitenant isolation keeps tenant data and effects separate inside a shared\n  application; a missing predicate in one path defeats the saving, and per-tenant\n  encryption, backup and deletion are part of the contract.\n  section_key: tycho.page.1db0a6e1679448e392ee8422eb5a3beb#multitenant-isolation\n- The multitenant card treats compute, data, identity and network as separate\n  isolation layers.\n  section_key: tycho.page.e09a0f31b3fe312d435b581072d244a6#overview\n\n## 7. Unknowns and confidence\n\nUnresolved gaps:\n\n1. Directory call pattern. The question does not say whether the directory is\n   consulted per request, per session or only on placement changes. That determines\n   whether it is a data-plane single point of failure or a control-plane dependency\n   with a usable cache. The sources give the design requirement, not this topology\n   [ROUTE, ROLLBACK].\n2. Identity topology. Whether the identity service is regionalized, whether tokens\n   are validated locally with cached keys, and whether loss fails open or closed are\n   not stated. A declared fail-closed mode with local validation narrows the blast\n   radius; a synchronous global check does not [STATIC, CELLDEP].\n3. Database topology. \"One primary database\" could mean one writer cluster, one\n   logical primary with per-stamp schemas, or one primary with read replicas. The\n   first is a global failure domain; the second may give logical tenant scoping but\n   still one cluster failure domain; the third does not fix writes. This changes the\n   severity but not the direction of the verdict [CELLDEP, FD1].\n4. Upgrade control. Whether the hand upgrades are scripted, versioned and\n   drift-detected, or ad hoc, is not stated. The answer treats \"by hand\" as the\n   weaker case; a documented manual runbook with a tested rollback would move this\n   facet from fail to partial [OWNER, IMMUT].\n5. Tenant distribution and workload. No noisy-neighbour measurements, tenant sizes\n   or write mix are supplied, so the shared-write-endpoint contention is a design\n   risk, not a measured failure [CELLDEP, TBRES].\n6. Residency and recovery objectives. Regional stamps often imply residency or\n   latency goals; the question does not state them, and one primary database may\n   conflict with jurisdiction or RTO/RPO requirements [XREGION, ROUTE].\n7. The evidence base. The stamp card is applicable under conditions; the cells page\n   is an original design with synthetic examples and no executed fault test; the\n   tenant cards are partial-bounded and self-checked, not independently reviewed\n   [STAMP, ACCEPT, TBRCARD]. This answer is an evidence-based design judgment, not a\n   production finding.\n\nConfidence:\n\n- High that replication alone does not satisfy the stamp invariant. The invariant is\n  explicit, and the failure-domain and cell material independently support the\n  dependency-graph reading [STAMP, OWNER, CELLDEP, FD1].\n- High that one shared primary database defeats the state-isolation claim. The\n  durable-state escape path and the state-authority rule are direct [CELLDEP, FD1,\n  FD2].\n- Medium on how much the shared identity service alone invalidates the claim. It is\n  clearly a declared-common-failure obligation; whether it is fatal depends on local\n  validation, regionalization and degraded behavior, none of which the question\n  states [CELLDEP, STATIC].\n- Medium on the manual-upgrade facet. The requirement is clear; whether this team's\n  manual process is versioned and tested is unknown [OWNER, IMMUT].\n- Low on whether the team actually needs isolation rather than locality or scale.\n  If it does not, the right comparison is one shared deployment, not cells or\n  stamps, and the duplication is the main finding [STAMP, CELLCOST].\n\nWhat would change the answer: per-stamp data partitions with one writer per\npartition and a tested tenant-move protocol; a regionalized identity service with\ndeclared fail-closed behavior and local token validation; a versioned upgrade\npipeline with drift detection and a tested rollback; and fault tests showing that a\ndatabase, identity or directory failure in one stamp leaves the others inside their\ndeclared service envelope. With those, the design could support a narrower,\nevidence-backed isolation claim. Without them, the replication is a deployment\npattern, not a stamp invariant.",
+  "citations": [
+    "tycho.page.30d7c7363ec26491f644977876c16ea4#overview",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#proposed-acceptance-and-evidence",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cost-and-alternatives",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#failure-and-recovery-policies",
+    "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+    "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+    "tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result",
+    "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability",
+    "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract",
+    "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+    "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#5-movement-between-isolation-levels-is-a-data-migration",
+    "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#multitenant-isolation",
+    "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#overview",
+    "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+    "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+    "tycho.page.31cda61d174248eaa326559d256ce352#purpose-and-mission",
+    "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+    "tycho.page.bd9428f9bf6044048c48eb0aa67d1e3f#overview",
+    "tycho.page.e09a0f31b3fe312d435b581072d244a6#overview",
+    "tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview"
+  ],
+  "facets": [
+    {
+      "facet": "F1 Stamp invariant and why replication alone is insufficient",
+      "queries": [
+        "stamp invariant self-contained failure domain",
+        "deployment stamp",
+        "stamp upgrade rollback cohort"
+      ],
+      "evidence": [
+        "tycho.page.30d7c7363ec26491f644977876c16ea4#overview",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+        "tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result"
+      ]
+    },
+    {
+      "facet": "F2 Shared primary database and state authority",
+      "queries": [
+        "single primary database shared write endpoint",
+        "state authority single writer",
+        "database primary failure domain"
+      ],
+      "evidence": [
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+        "tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result"
+      ]
+    },
+    {
+      "facet": "F3 Shared identity service as a common failure",
+      "queries": [
+        "shared identity service blast radius coupling",
+        "identity service shared authentication outage",
+        "authentication tier shared service"
+      ],
+      "evidence": [
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+        "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability",
+        "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+        "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+        "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#multitenant-isolation"
+      ]
+    },
+    {
+      "facet": "F4 Tenant directory and routing key",
+      "queries": [
+        "tenant routing key directory mapping",
+        "global routing control plane directory",
+        "routing directory tenant mapping"
+      ],
+      "evidence": [
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+        "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#5-movement-between-isolation-levels-is-a-data-migration",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#failure-and-recovery-policies"
+      ]
+    },
+    {
+      "facet": "F5 Hand upgrades, drift and rollout boundary",
+      "queries": [
+        "configuration drift manual per-stamp upgrade",
+        "manual deployment automation repeatable",
+        "immutable infrastructure drift"
+      ],
+      "evidence": [
+        "tycho.page.30d7c7363ec26491f644977876c16ea4#overview",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes",
+        "tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract"
+      ]
+    },
+    {
+      "facet": "F6 What to enumerate and own, and when cells are the better comparison",
+      "queries": [
+        "claimed isolation independence evidence",
+        "cell-based architecture decision card",
+        "blast radius enumerate dependencies"
+      ],
+      "evidence": [
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#proposed-acceptance-and-evidence",
+        "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cost-and-alternatives"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "claim": "A stamp's invariant requires a routing key, a state authority, a deployment and upgrade process, and a rule for shared global dependencies; routing key and state authority are one ownership decision.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes",
+      "note": "The owner section labels the invariant as Tycho synthesis and adds the versioned-definition, ordered-rollout and tested-rollback rule.",
+      "status": "observed"
+    },
+    {
+      "claim": "The atlas card's good-fit conditions are independent operation/upgrade, explicit routing key and state authority, enumerated and owned shared dependencies, and acceptable duplication cost.",
+      "section_key": "tycho.page.30d7c7363ec26491f644977876c16ea4#overview",
+      "note": "Card text under Good-fit conditions; decision state applicable-under-conditions.",
+      "status": "observed"
+    },
+    {
+      "claim": "The atlas card rejects stamps that share a hidden global dependency or leave routing, state, upgrade or tested rollback unowned.",
+      "section_key": "tycho.page.30d7c7363ec26491f644977876c16ea4#overview",
+      "note": "Card text under Hard contraindications.",
+      "status": "observed"
+    },
+    {
+      "claim": "A cell or stamp is a boundary in the dependency graph; naming workers a cell does not isolate a shared database, queue, cache or configuration publisher.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+      "note": "Opening paragraph of the section, with the five-boundary table.",
+      "status": "observed"
+    },
+    {
+      "claim": "Durable state needs cell-owned partitions and connection budgets; all cells sharing one saturated write endpoint is the escape path.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+      "note": "Table row Durable state.",
+      "status": "observed"
+    },
+    {
+      "claim": "Independence is only against specified failures; a shared regional network or identity dependency remains a common failure mode and needs its own declared behavior.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+      "note": "Paragraph after the boundary table.",
+      "status": "observed"
+    },
+    {
+      "claim": "Two API replicas in separate placement domains still depend on a shared state authority and gateway.",
+      "section_key": "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+      "note": "Text alternative for the synthetic topology.",
+      "status": "observed"
+    },
+    {
+      "claim": "An availability design must state which faults it survives without violating state authority; placing workers in different zones while retaining one unreplicated database does not satisfy a whole-journey zonal objective.",
+      "section_key": "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+      "note": "Shared-element list and closing paragraph.",
+      "status": "observed"
+    },
+    {
+      "claim": "Two zones can still depend on one datastore or control path; nominal placement diversity does not demonstrate surviving user journeys.",
+      "section_key": "tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result",
+      "note": "Chapter-level decision and worked result.",
+      "status": "observed"
+    },
+    {
+      "claim": "A functionally correct data plane can depend on control-plane services for credentials, routing, discovery and certificate renewal; those dependencies must be measured under loss.",
+      "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability",
+      "note": "Definition of control and data planes and the dependency warning.",
+      "status": "observed"
+    },
+    {
+      "claim": "A shared database limit, inability to steer traffic or unavailable authentication invalidates the capacity premise.",
+      "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability",
+      "note": "Synthetic capacity thought experiment, explicitly not a recommendation.",
+      "status": "observed"
+    },
+    {
+      "claim": "The failure matrix treats a state owner outage, an unreachable secret service and a stopped deployment control plane as distinct rows with different outcomes.",
+      "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+      "note": "Failure matrix table.",
+      "status": "observed"
+    },
+    {
+      "claim": "Directory/lookup routing carries control-plane availability, routing-cache freshness and split-brain mapping costs.",
+      "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+      "note": "Partition-strategy table row Directory/lookup routing.",
+      "status": "observed"
+    },
+    {
+      "claim": "A lost mapping, stale tenant-router cache or unguarded dual writer can break isolation and correctness; migration requires a versioned mapping, one writer and verification that old paths no longer reach the old placement.",
+      "section_key": "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#5-movement-between-isolation-levels-is-a-data-migration",
+      "note": "Checklist and closing warning.",
+      "status": "observed"
+    },
+    {
+      "claim": "Cross-region deployment must reproduce routing, DNS, identities, secrets, state and backup permissions, artifacts and provenance, schema/event versions, retention, runbook owner, control-plane fallback and residency rules.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract",
+      "note": "Bulleted reproduction list.",
+      "status": "observed"
+    },
+    {
+      "claim": "Infrastructure as code reduces manual divergence only if the state backend, credentials and artifacts remain operable during the failure class being tested.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract",
+      "note": "Paragraph after the list.",
+      "status": "observed"
+    },
+    {
+      "claim": "Each stamp needs a versioned definition, ordered rollout and tested rollback; configuration drift or split state is the named failure path; an unowned stamp becomes a snowflake.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes",
+      "note": "Deployment and upgrade process plus Limits paragraphs.",
+      "status": "observed"
+    },
+    {
+      "claim": "Immutable-infrastructure good fit requires versioned artifacts, detected and remediated drift, externalized state, and automated replacement, rebuild and rollback.",
+      "section_key": "tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview",
+      "note": "Atlas card under Good-fit conditions.",
+      "status": "observed"
+    },
+    {
+      "claim": "Tenant isolation is a property of every query, cache key, queue consumer and credential, not a deployment label.",
+      "section_key": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#overview",
+      "note": "Page overview.",
+      "status": "observed"
+    },
+    {
+      "claim": "The bounded share is a per-resource contract, not a deployment label; a quota that the resource does not enforce is not isolation.",
+      "section_key": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+      "note": "Tycho reading in the Bounded share paragraph.",
+      "status": "observed"
+    },
+    {
+      "claim": "The four non-equivalent layers are authentication, object authorization, data placement and infrastructure/resources; migration from shared rows to separate databases needs authoritative tenant inventory, dual read/write compatibility, audit, backup and a no-return boundary.",
+      "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+      "note": "Layer table and migration paragraph.",
+      "status": "observed"
+    },
+    {
+      "claim": "Tenancy, authorization, domain ownership and runtime isolation are different axes.",
+      "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#purpose-and-mission",
+      "note": "Purpose and mission paragraph.",
+      "status": "observed"
+    },
+    {
+      "claim": "The cell card's good fit is a routable workload, a dependency boundary and owned failover/migration; it rejects a single global dependency, unowned routing or prohibitive cost.",
+      "section_key": "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+      "note": "Cell-Based Architecture entry in the atlas chapter inventory.",
+      "status": "observed"
+    },
+    {
+      "claim": "The cell card's competing alternative is a single shared deployment or deployment stamps without isolation.",
+      "section_key": "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+      "note": "Competing alternative field of the Cell-Based Architecture entry.",
+      "status": "observed"
+    },
+    {
+      "claim": "The stamp card names cell-based architecture as the alternative when fault isolation is primary, or one shared deployment when isolation does not justify duplication.",
+      "section_key": "tycho.page.30d7c7363ec26491f644977876c16ea4#overview",
+      "note": "Competing alternative field.",
+      "status": "observed"
+    },
+    {
+      "claim": "A cell-based deployment is the alternative when isolation is the main goal and scale is secondary.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes",
+      "note": "Failure path paragraph in the Deployment Stamps ownership notes.",
+      "status": "observed"
+    },
+    {
+      "claim": "The proposed fault set covers poison input, saturated shared dependency, unavailable control plane, stale router, interrupted migration and failed recovery; the oracle checks one valid write epoch, bounded queues/connections and unaffected cells; no test was executed.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#proposed-acceptance-and-evidence",
+      "note": "Acceptance section, including the explicit no-test-executed limit.",
+      "status": "observed"
+    },
+    {
+      "claim": "Dedicated cells add idle headroom and operational objects; a shared service with strong per-tenant admission may suffice; reverse the cell decision if state partitioning risk or minimum cell size dominates.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cost-and-alternatives",
+      "note": "Cost and alternatives section.",
+      "status": "observed"
+    },
+    {
+      "claim": "A control-plane outage freezes new placement changes while existing assignments remain usable within their validity rules.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#failure-and-recovery-policies",
+      "note": "Second paragraph of failure and recovery policies.",
+      "status": "observed"
+    },
+    {
+      "claim": "Tenant-based resource isolation's limits: quotas, noisy-neighbour isolation and cross-tenant test paths are costs, and quotas that the resource does not enforce are not isolation.",
+      "section_key": "tycho.page.bd9428f9bf6044048c48eb0aa67d1e3f#overview",
+      "note": "Atlas card Limits and failure text.",
+      "status": "observed"
+    },
+    {
+      "claim": "Multitenant isolation keeps tenant data and effects separate inside a shared application; a missing predicate in one background path defeats the shared-deployment saving; per-tenant encryption, backup and deletion are part of the contract.",
+      "section_key": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#multitenant-isolation",
+      "note": "Owner section for the multitenant card.",
+      "status": "observed"
+    },
+    {
+      "claim": "The multitenant card treats compute, data, identity and network as separate isolation layers.",
+      "section_key": "tycho.page.e09a0f31b3fe312d435b581072d244a6#overview",
+      "note": "Card decision question and good-fit conditions.",
+      "status": "observed"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

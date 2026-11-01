@@ -1,0 +1,95 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q202",
+      "question": "After a rolling restart, a dashboard that differences cumulative request counters shows a brief negative rate and then a traffic collapse, and the team concludes that capacity was lost. Why is the counter reading not a business event, and what must the pipeline and query preserve to make the interval usable?",
+      "required_evidence": [
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write"
+      ],
+      "preliminary_claims": [
+        "A cumulative monotonic counter changes its start time on restart or stream reset, so a decrease across that boundary is not a negative operation; rate calculation needs reset handling and a valid observation window.",
+        "Delta and cumulative temporality are not interchangeable: conversion needs state for overlapping intervals, missing intervals and multiple writers, and a reset or temporality mismatch must not be read as genuine work.",
+        "A series name, value and timestamp are insufficient to interpret a measurement, and a metric stream can double-count retries without establishing the authorized business outcome."
+      ]
+    },
+    {
+      "task_id": "Q210",
+      "question": "Two offline replicas each approve a different person for the last remaining seat and merge by last-writer timestamp. Why can the merged state converge while the capacity invariant is already broken, and what must happen to an authority-dependent approval instead?",
+      "required_evidence": [
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#start-with-the-invariant-then-choose-the-merge",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#three-original-workload-decisions",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#normal-operation-failure-and-recovery"
+      ],
+      "preliminary_claims": [
+        "Convergence is not preservation of an application invariant: a last-writer selection hides one of two concurrent approvals after the fact but cannot undo an external action already performed on it.",
+        "A last-writer register chooses one value by a deterministic total order, yet clock order is not evidence of user intent, and a timestamp tie needs a documented tie-breaker that a clock adjustment cannot make permanently dominant.",
+        "Finite-resource assignment, publication and permissions must be held as pending commands, revalidated against the authority on reconnect, and exposed as completion or visible rejection rather than merged locally."
+      ]
+    },
+    {
+      "task_id": "Q218",
+      "question": "A team replaces an in-process reservation repository adapter with a remote service behind the same application port, and the port's contract tests still pass. Why is interface conformance insufficient to prove the substitution safe, and what must the adapter contract and tests add?",
+      "required_evidence": [
+        "tycho.chapter.c5f8456752f34dd6a5b6b5c7e3e14715#decision-and-worked-result",
+        "tycho.page.f375bfcea48045d2a5d1f46014ca7758#2-a-port-is-an-application-contract-not-automatically-a-network-port",
+        "tycho.page.f375bfcea48045d2a5d1f46014ca7758#4-choose-the-correct-core-boundary",
+        "tycho.page.65f9616c034643f9bf5f297037f027e4#3-original-fictional-example-a-shared-workshop-equipment-scheduler",
+        "tycho.page.65f9616c034643f9bf5f297037f027e4#6-failure-and-test-matrix"
+      ],
+      "preliminary_claims": [
+        "A port inverts source dependencies; it does not make a multi-resource transaction atomic or remove the runtime dependency and its independent failures.",
+        "A remote substitution introduces deadlines and ambiguous outcomes, so the contract needs a stable logical operation identity, error classification, and retry or reconciliation rules.",
+        "Tests must exercise the actual backend's locking, isolation, and failure behavior; an in-memory adapter cannot prove those properties."
+      ]
+    },
+    {
+      "task_id": "Q226",
+      "question": "A three-stage pipeline validates an order, writes an audit record, and publishes a confirmation. After the audit record commits, the confirmation stage fails before publishing, and the broker redelivers the original message a day later. Why does the pipeline's non-transactional filter fail to preserve the completed stage, and what must the stage identity, ordering scope and recovery checkpoint record so the redelivery neither duplicates the audit record nor loses the confirmation?",
+      "required_evidence": [
+        "tycho.page.7082c6b84e0f4d04bec339b06fe600fc#overview",
+        "tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+        "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview"
+      ],
+      "preliminary_claims": [
+        "A simple filter is not transactional: an error before the message reaches the output channel loses it, and a failed middle stage leaves earlier effects already applied, so the pipeline must own ordering, partial completion and recovery rather than any one stage.",
+        "A stage must commit its deduplication marker with its local effect in one transaction, scope the identity to the consumer and message, and retain the marker through the maximum broker redelivery, dead-letter replay and historical replay horizon, because an expired identity turns a redelivery into a new message.",
+        "A parallel or multi-instance stage can reorder messages unless the pipeline declares an ordering scope and a resequencer, and per-stage idempotency, backpressure and a completion checkpoint are Tycho guidance rather than a source guarantee, so a pipeline without a checkpoint owner becomes an unowned distributed workflow."
+      ]
+    },
+    {
+      "task_id": "Q234",
+      "question": "A scheduled availability probe passes for a checkout journey while customers receive rejects, and when the probe does fail the alert fires only after three successive failures. Why can a green probe coexist with a broken user journey, why does the retry rule suppress a real signal, and what must the probe declare before its result is used as evidence?",
+      "required_evidence": [
+        "tycho.page.77e5d6cab6c083335efb7fc74b423809#overview",
+        "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations"
+      ],
+      "preliminary_claims": [
+        "A probe proves only the path, identity, target, location, frequency and success criteria it declares; a privileged identity, a shallow endpoint or an internal route can let the probe pass while the user-visible journey fails, so probe blindness is a declared limit rather than an anomaly.",
+        "Retrying a failed probe and reporting only after successive failures suppresses transient failures, and the cited availability-test documentation notes that most failures disappear on retry, so the policy trades detection for noise and must be stated rather than read as evidence of health.",
+        "A green signal can coexist with rejected business operations when the indicator counts only admitted successes and excludes rejects before the handler, so the eligible population, exclusion policy, deadline and durable result must be fixed before measurement, and recovery means the correct journey is restored and sustained."
+      ]
+    },
+    {
+      "task_id": "Q242",
+      "question": "The V12 order-intake model fixes a 0.1-second integration step in its model contract instead of leaving it to the engine. Why must the step be a declared model input, and how can a coarse step produce behavior that is only an artifact?",
+      "required_evidence": [
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model"
+      ],
+      "preliminary_claims": [
+        "The step determines how much arrival and service volume each update applies, so a coarse step can overshoot, serve more than the available backlog, or drive the stock negative.",
+        "The step is declared with the dynamics and non-negativity is asserted after every update, which makes the step part of the model's resolution rather than an engine setting.",
+        "A different step produces a different discrete approximation, so reporting a coarse-step overshoot as system behavior is a step-size artifact."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,239 @@
+{
+  "task_id": "Q236",
+  "answer": "# Direct answer\n\nThe mode is unsafe because it is not visible degradation but disguised success. A response shaped exactly like a complete recommendation answer asserts that the result is complete and current, while the service knows the recommendation computation was skipped, timed out or refused under overload. That collapses two different facts — \"this request has no recommendations\" and \"recommendations could not be produced now\" — into one indistinguishable payload, at the moment the distinction matters most. A safe degraded mode must declare three contracts before it may run: a measured, bottleneck-specific entry condition with a named owner, an audited override and the protected outcome; a caller-visible and machine-readable status, plus a user-facing label, separate counters and SLI accounting, that never lets the reduced response pass as complete; and a recovery rule with a sustained below-threshold window, bounded probes, a staged ramp and a defined exit without restart. When no reduced result preserves the correctness contract, an explicit error is better than a complete-looking substitute: it is true, actionable, countable and safe with respect to caching.\n\n# Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. Why format-identical degradation is unsafe | \"hidden degradation silently drops correctness\"; \"fallback impersonate primary\"; \"unknown is not success\" | tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes; tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities; tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping |\n| F2. What the entry condition must declare | \"degraded mode entry condition owner audited override\"; \"circuit breaker threshold minimum volume\"; \"kill switch safe default\" | tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes; tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes; tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview |\n| F3. What the visible status must declare | \"caller-visible state declared\"; \"pending is not completed status contract\"; \"machine distinguishable errors\" | tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission; tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post; tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population; tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level |\n| F4. What recovery hysteresis must declare | \"recovery hysteresis stabilization window flapping\"; \"half-open bounded probe\"; \"exit degraded mode without restart\" | tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate; tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs; tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes; tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview |\n| F5. Why an explicit error can be better | \"explicit overload do not retry\"; \"consistent subset clients receive errors\"; \"never cache unknown backend error as absent\" | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes; tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization; tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview |\n| F6. Why \"never run in production\" changes the claim | \"code path you never use does not work\"; \"exercise alternate under load\"; \"fault injection envelope\" | tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes; tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested; tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs |\n\n# Why the disguised mode is unsafe\n\n**It destroys the information the caller needs to act.** A bare empty list is already ambiguous: it can mean no matches, a cold-start user, a deleted item or a failed lookup. The book's negative-caching analysis insists on distinguishing no-entry, cached-negative and actual deletion, and on deciding \"whether unknown data-source errors may be cached at all\" (tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization). The adapter guidance states the same principle: mapping every timeout to \"not found\" is an unsafe shortcut, and \"Unknown is not success\" (tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping). Formatting the degraded result exactly like a complete one goes further than an ambiguous empty list: it removes the only remaining signal that anything was withheld.\n\n**It converts a capacity failure into a semantic success.** The service-level indicator material is explicit that the outcome classes must be defined before measurement and that \"Pending is not silently equivalent to completed; status contract matters\"; a capacity rejection is evidence of service inability under a declared demand envelope (tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population). A 200-shaped \"complete\" response makes the rejection disappear from availability, from the error budget and from the alerting path. AWS's practice, quoted in the chapter's ownership notes, is the inverse: a rejection is instrumented and treated as something that \"reduces the availability of a service\" rather than a silent success (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes). Silent loss of correctness is worse than an explicit failure.\n\n**It lets a substitute impersonate the primary.** The fallback ownership notes say a fallback must preserve the same correctness contract and that \"a plausible substitute that hides its limits is a correctness failure; do not let the alternate impersonate the primary\" (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes). The overload chapter names the exact misuse under optional-feature degradation: \"Present missing mandatory data as a complete result\" (tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities). If recommendations are required for the journey, a copy formatted as complete is not a degraded success; it is a wrong answer that looks right.\n\n**It can persist the failure beyond the overload.** A cached or downstream-stored \"complete\" empty result outlives the incident. The book's rule is blunt: never cache an unknown backend error as \"absent\" (tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization). A disguised response invites exactly that storage because nothing marks it as unrepresentative.\n\n**It has never executed, so its behavior is a hypothesis.** Google SRE's warning, retained in the chapter, is that \"the code path you never use is the code path that (often) doesn't work\", that complex degradation can cause a server to \"trip into a degraded mode when it is not desired, or enter feedback cycles at undesired times\", and that operators need monitoring plus \"a way to quickly turn off complex graceful degradation or tune parameters if needed\" (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes). First production activation would therefore be the first execution, under the worst conditions, with no operational muscle memory — and, in this design, with no observable marker that it happened.\n\n# What the mode must declare\n\n## Entry condition\n\n- **The protected outcome and the scarce resource.** Degradation removes optional capability to protect an essential one under overload; it is \"a product decision, not an automatic consequence of a timeout\" (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission). Name the outcome that must survive and the resource (pool, queue, downstream budget) being defended.\n- **A measured trigger, not an exception.** One named bottleneck signal, a threshold, a minimum request volume and an evaluation window. A rate threshold without a volume gate is meaningless: the circuit-breaker notes record that with nine calls against a minimum of ten the breaker \"will not trip open even if all 9 calls have failed\" (tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes). Rejected and degraded calls must be counted separately from dependency failures.\n- **Scope and content.** Which capability is reduced, which stays mandatory, and exactly what the reduced response contains — nothing, a stale personalised list, or a generic list — with its freshness, authority and label declared (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission).\n- **Owner, override and audit.** Each mode needs an entry condition, a visible status, an owner and an audited override for emergency use (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes; tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview). A kill switch should have an owner, an expiry, a safe default on evaluation failure and an observable, audited evaluation (tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview).\n- **Alertability and reversibility.** Operators must be alerted when \"too many servers enter these modes\", and the mode must be tunable or switchable off quickly (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes). If activation is invisible, all of the above is unenforceable.\n\n## Visible status\n\n- **A distinct, machine-readable outcome.** Complete, partial and degraded must be different states, not one payload shape. The response should carry a reason code (overload), the scope of what is missing, freshness or coverage, and retry guidance — an explicit overload result with a retry class, not a generic failure (tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets).\n- **A status the receiving client can actually interpret.** The API chapter shows the trap: returning PENDING is unsafe when an old client \"interprets any 2xx as final confirmation\", and errors must remain machine distinguishable (tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post). A status field that existing clients ignore is not visibility; either negotiate the semantics or use a failure mode the client already understands.\n- **A user-facing label where the user decides.** A fallback must name its freshness, authority and user-visible label (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission). Showing \"you have no recommendations\" — or invented filler presented as personalisation — when the recommender failed is a product lie, not a degraded experience.\n- **Operational accounting.** Degraded responses and activations need their own counters and outcome class: rejected calls measured separately (tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview), attempt/admission/final states recorded including explicit unknown and timeout (tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level), and the degraded class must be declared in the SLI rather than counted as a good event (tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population).\n- **Cache directives.** If an intermediary may store the response, it must be told that the degraded form is not authoritative; otherwise the \"complete\" empty result is cached as truth (inference from tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization).\n\n## Recovery hysteresis\n\n- **A sustained exit rule.** Remain degraded until the trigger metric stays below threshold for a sustained stabilization window, then restore service and re-test the essential path (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes). Circuit-breaker recovery uses bounded, safe probes rather than a single success: open is a hypothesis, half-open admits a bounded number of probes, and a permitted failure can still return the breaker to open (tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes; tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview).\n- **A staged ramp.** Permit bounded trial probes, then increase flow only after stable correct responses (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation). Watch backlog, queue age, retries and in-flight state, not only CPU, and verify the user-facing core journey independently (tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate).\n- **Flap control.** Declare a re-entry rule and a maximum number of transitions per window. A flapping mode is worse than a stable degraded state; the Kubernetes stabilization-window comparison is the relevant precedent (tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview).\n- **A defined exit, and a bound on it.** After the fault is removed the service must be able to leave degraded mode without a manual restart; if it cannot, the required action, its authorization and the risk of leaving protection active too long must be recorded (tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs). An excessive cooldown strands healthy capacity, so recovery needs an upper bound as well as a lower one (tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate).\n- **Evidence of recovery.** A successful health check is not proof that stale derived reads are safe or that earlier accepted work completed; recovery must be demonstrated with end-to-end observations (tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate). Record dwell time, activation count and re-entry count so the hysteresis can be tuned and the mode's rarity proven (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes).\n\n# Why an explicit error is sometimes the better outcome\n\n- **An error is true; a complete-looking empty is false.** When no reduced result preserves the correctness contract, an explicit error is \"the remaining option\" (tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview), and hidden degradation that silently drops correctness is worse than an explicit failure (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission).\n- **It preserves the caller's policy.** Under broad overload the caller should receive an explicit overload result and decide; a specific \"overloaded; do not retry\" signal beats a generic error that every layer retries (tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets). With an error the caller can serve cached recommendations, omit the module, queue, or fail over. With a fake complete response it cannot even know that a choice exists.\n- **It keeps the failure countable.** Errors burn the error budget, trip alerts and appear in the eligibility population; disguised success keeps the objective green while users receive nothing (tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population).\n- **It is cache-safe.** An error is not stored as an absence; a complete-looking empty list is (tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization).\n- **It can be cheaper under extreme overload.** Google SRE notes that a service under extreme overload \"might not even be able to compute and serve degraded responses\" and \"may have no immediate option but to serve errors\"; its alternative is graceful load shedding that chooses \"a consistent subset of clients to receive errors\" (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes). Generating a plausible complete answer precisely when capacity is exhausted spends the protected resource on the least honest output.\n- **It is the honest contract boundary.** Where clients cannot represent a new partial state, an explicit incompatible-version refusal can be safer than a subtle protocol change that old clients misread (tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post).\n\n# Boundaries and trade-offs\n\n- **Genuine empty is not degradation.** A cold-start user or a filtered catalogue can legitimately have no recommendations. Erroring that case is also wrong, so the response contract needs enumerated causes and the mode may only replace the unavailable cause (inference from tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization).\n- **Erroring the page is not always right.** If recommendations are decorative, the preferred degraded form is core success with \"explicit absent recommendations\" (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation), not a failed core journey. If the data is mandatory or safety-relevant, a clearly denied or unknown result may be required instead of a stale substitute (tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work).\n- **Errors can cause retry storms.** The error needs a retry class, jitter/backoff guidance and, under broad overload, a consistent-subset shedding policy (tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets).\n- **Degradation has a cost.** Protective capacity, higher rejection ratios, alerting and on-call effort, and possibly lower peak throughput are part of the decision, and the mechanism is justified only when the user contract accepts the reduced outcome (tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs).\n- **Hysteresis is not free.** A long stabilization window protects recovery but delays restored capacity; declare both a minimum dwell and a maximum cooldown (tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate).\n- **A status field is a contract change.** Legacy clients may ignore it or treat the response as final success; visibility only exists if the receiving population understands it (tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post).\n- **Declarations do not prove behavior.** The alternate must be exercised under the same load profile as the primary and its activation rate recorded (tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes). Fault injection has a defined envelope: a slow-down test proves parent deadlines, a partial outage proves explicit-error behavior, and neither proves the other classes (tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested).\n\n# Evidence map\n\n| Claim | Section key | Type |\n|---|---|---|\n| Degradation requires an explicitly less accurate result, a declared caller-visible state, and defined and exercised recovery/hysteresis | tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview | observed |\n| Degradation that cannot be communicated or silently changes correctness is contraindicated; an explicit error is the fallback when no degraded response exists | tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview | observed |\n| Hidden degradation that silently drops correctness is worse than explicit failure; a fallback must name freshness, authority and user-visible label or fail explicitly | tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission | observed |\n| Safe walkthrough behaviour is core success with explicit absent recommendations; recovery admits bounded probes and ramps only after stable correct responses | tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation | observed |\n| Do not let an alternate impersonate the primary; exercise it under the primary's load and record activation; each mode needs entry condition, visible status, owner, audited override, and hysteresis with a sustained window | tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes | observed |\n| Under extreme overload even degraded responses may be impossible, leaving errors (or a consistent error subset) as the alternative | tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes | observed |\n| Presenting missing mandatory data as a complete result is the named dangerous misuse of optional-feature degradation | tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities | observed |\n| Circuit-breaker thresholds need minimum volume; rejected calls are counted separately; half-open probes are bounded; a fallback that hides the outage is a contraindication | tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes; tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview | observed |\n| Recovery needs stability windows and progressive recovery; excessive cooldown strands capacity; a health check is not proof | tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate | observed |\n| Exit without manual restart must be declared or the required action/authorization recorded; degradation is justified only when the user contract accepts it | tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs | observed |\n| Broad overload should return an explicit overload result and an \"overloaded; do not retry\" signal, leaving the decision to the caller | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets | observed |\n| Errors must remain machine distinguishable; a new state read as final success by old clients is an unsafe shortcut | tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post | observed |\n| Mapping a timeout to \"not found\" is unsafe; unknown is not success; partial conversions must be marked | tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping | observed |\n| Unknown backend errors must not be cached as absence; no-entry, cached-negative and deletion are distinct states | tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization | observed |\n| Pending is not equivalent to completed; capacity rejection indicates inability and must be a declared outcome class | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population | observed |\n| Instrumentation must record attempt, admission and final states including explicit unknown/timeout | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level | observed |\n| A fault-injection experiment needs a safe abort and only establishes the class it exercises | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested | observed |\n| Kill switch needs owner, expiry, safe default on evaluation failure, observable evaluation and audited override | tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview | observed |\n| Formatting a degraded response as a complete one leaves callers unable to retry, cache or omit the module selectively | (inference) tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post | inference |\n\n# Unknowns and confidence\n\n- **Service-specific facts are absent.** The question does not state whether recommendations are mandatory or decorative, which clients receive the response, whether the empty form is cached, what signal would trigger the mode, or whether it is reachable at all. The choice between a labelled partial response and an explicit error therefore cannot be settled for this service from the corpus alone.\n- **No production or modeled evidence exists here.** The sources are public SRE, vendor documentation and engineering guidance, not benchmarks or measurements (tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview), and the modeling-and-simulation layer returned no structured model, run or decision artifact for this degraded mode.\n- **Confidence.** High on the normative requirements, which converge across the atlas card, the overload chapter, the API-contract chapter, the SLI chapter and the negative-caching rule. Medium on which remedy fits this particular service, because that depends on the user contract and on client capabilities. Low on any quantitative threshold: none of the sources establishes one for this scenario.\n- **What would change the answer.** Evidence that the reduced response carries an explicit status understood by every deployed client; load-exercise and activation-alert evidence proving the mode works; and measurements showing that an explicit error produces worse user outcomes than a clearly labelled partial result. Without those, claiming the disguised mode is \"safe\" would be an untested assertion.",
+  "facets": [
+    {
+      "facet": "Why format-identical degradation is unsafe",
+      "queries": [
+        "hidden degradation silently drops correctness",
+        "fallback impersonate primary",
+        "unknown is not success"
+      ],
+      "evidence": [
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+        "tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping"
+      ],
+      "finding": "It converts an unknown/capacity failure into a false complete-result claim, hides the loss from callers, SLIs and caches, and does so on a path never exercised."
+    },
+    {
+      "facet": "What the entry condition must declare",
+      "queries": [
+        "degraded mode entry condition owner audited override",
+        "circuit breaker threshold minimum volume",
+        "kill switch safe default"
+      ],
+      "evidence": [
+        "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+        "tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview"
+      ],
+      "finding": "A named protected outcome and bottleneck signal, threshold with minimum volume and window, exact reduced content, owner, audited override, alerting and reversibility."
+    },
+    {
+      "facet": "What the visible status must declare",
+      "queries": [
+        "caller-visible state declared",
+        "pending is not completed status contract",
+        "machine distinguishable errors"
+      ],
+      "evidence": [
+        "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level"
+      ],
+      "finding": "A distinct machine-readable outcome with reason, scope, freshness and retry class; a user-facing label; separate counters and SLI accounting; a form the deployed clients actually understand."
+    },
+    {
+      "facet": "What recovery hysteresis must declare",
+      "queries": [
+        "recovery hysteresis stabilization window flapping",
+        "half-open bounded probe",
+        "exit degraded mode without restart"
+      ],
+      "evidence": [
+        "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+        "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+        "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview"
+      ],
+      "finding": "Sustained below-threshold window with sample volume, bounded safe probes, staged ramp, flap/re-entry rule, automatic exit or recorded authorization, upper cooldown bound, and independent re-test."
+    },
+    {
+      "facet": "Why an explicit error can be better",
+      "queries": [
+        "explicit overload do not retry",
+        "consistent subset clients receive errors",
+        "never cache unknown backend error as absent"
+      ],
+      "evidence": [
+        "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview"
+      ],
+      "finding": "An error is true, lets the caller retry/fall back/omit, is countable in the error budget, is not cached as absence, and can be cheaper than computing plausible filler under exhaustion."
+    },
+    {
+      "facet": "Why never having run in production changes the claim",
+      "queries": [
+        "code path you never use does not work",
+        "exercise alternate under load",
+        "fault injection envelope"
+      ],
+      "evidence": [
+        "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+        "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested",
+        "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs"
+      ],
+      "finding": "An unexercised path is unproven and may fail, cycle or trip unintentionally; safety claims require load exercise, activation alerts, a kill switch and bounded fault experiments."
+    }
+  ],
+  "citations": [
+    "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+    "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+    "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+    "tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping",
+    "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested",
+    "tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview",
+    "tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview"
+  ],
+  "evidence": [
+    {
+      "claim": "A degraded response must be explicitly less accurate or contain less data, the reduced outcome and caller-visible state must be declared, and recovery and hysteresis must be defined and exercised.",
+      "section_key": "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview",
+      "note": "Observed: Graceful Degradation card good-fit conditions."
+    },
+    {
+      "claim": "Degradation that cannot be communicated or silently changes correctness is contraindicated, and an explicit error is the remaining option when no degraded response can be computed.",
+      "section_key": "tycho.page.f13601692470d89f22c2549bdbb3cd5b#overview",
+      "note": "Observed: card hard contraindications."
+    },
+    {
+      "claim": "A fallback must preserve the correctness contract; a cached, fabricated or partial value is not an authoritative success; freshness, authority and a user-visible label must be named or the system must fail explicitly.",
+      "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission",
+      "note": "Observed: purpose-and-mission fallback definition."
+    },
+    {
+      "claim": "Declare which outcomes remain mandatory, which become unavailable and how callers observe the reduced state; hidden degradation that silently drops correctness is worse than explicit failure.",
+      "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission",
+      "note": "Observed: purpose-and-mission graceful-degradation definition."
+    },
+    {
+      "claim": "In the synthetic walkthrough the safe response is core success with explicit absent recommendations; the unsafe behaviour is retrying the stalled optional call, and recovery permits bounded probes then ramps only after stable correct responses.",
+      "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+      "note": "Observed: engineering walkthrough table."
+    },
+    {
+      "claim": "A plausible substitute that hides its limits is a correctness failure; do not let the alternate impersonate the primary; exercise it under the primary's load profile and record how often it activates.",
+      "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+      "note": "Observed: fallback ownership notes."
+    },
+    {
+      "claim": "Each degraded mode needs an entry condition, visible status, owner and audited override; recovery hysteresis means remaining degraded until the trigger stays below threshold for a sustained window, then restoring and re-testing the essential path.",
+      "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+      "note": "Observed: Tycho judgment in bounded ownership notes."
+    },
+    {
+      "claim": "Under extreme overload a service may be unable to compute even degraded responses and may have to serve errors; a consistent subset of clients receiving errors is the stated alternative.",
+      "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+      "note": "Observed: SRE quotes inside bounded ownership notes."
+    },
+    {
+      "claim": "The named dangerous misuse of optional-feature degradation is presenting missing mandatory data as a complete result.",
+      "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+      "note": "Observed: responsibilities table."
+    },
+    {
+      "claim": "A mandatory or safety-relevant missing value may require a clearly denied or unknown result rather than a stale substitute.",
+      "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work",
+      "note": "Observed: section on the optional-dependency failure."
+    },
+    {
+      "claim": "Circuit-breaker thresholds need a minimum volume, rejected calls are counted separately, half-open admits a bounded probe, and a fallback that hides the outage is a contraindication.",
+      "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+      "note": "Observed: circuit-breaker ownership notes."
+    },
+    {
+      "claim": "Recovery needs stability windows and progressive recovery; an excessive cooldown strands healthy capacity; restoration evidence includes backlog, queue age, retries, completeness and independent core-journey checks; a health check is not proof.",
+      "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+      "note": "Observed: section 6 recovery and hysteresis."
+    },
+    {
+      "claim": "A degraded mode must be exitable without manual restart, or the required action and authorization must be recorded; recovery must avoid a queue avalanche; degradation is justified only when the user contract accepts the reduced outcome.",
+      "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+      "note": "Observed: section 7 experiments and acceptance criteria."
+    },
+    {
+      "claim": "Under broad overload a service should return an explicit overload result and a specific overloaded-do-not-retry signal, letting the caller decide rather than issuing a generic retryable error.",
+      "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+      "note": "Observed: local versus broad overload."
+    },
+    {
+      "claim": "Errors must remain machine distinguishable and compatible with the client's interpretation; a new state that an old client reads as final success is an unsafe shortcut.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+      "note": "Observed: mixed-client walkthrough."
+    },
+    {
+      "claim": "Mapping every timeout to not-found is an unsafe shortcut; unknown is not success; partial or unsupported conversions must be marked.",
+      "section_key": "tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping",
+      "note": "Observed: adapter semantic contract table."
+    },
+    {
+      "claim": "Unknown data-source errors must not be cached as absence; no-entry, cached negative and actual deletion are distinct states.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed: negative caching rules."
+    },
+    {
+      "claim": "Pending is not silently equivalent to completed and status contract matters; capacity rejection indicates service inability and must be a declared outcome class.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+      "note": "Observed: SLI population section 1."
+    },
+    {
+      "claim": "Instrumentation must record attempt, admission and final outcome states including explicit unknown and timeout.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+      "note": "Observed: SLI section 3."
+    },
+    {
+      "claim": "A fault-injection experiment must define a safe abort and only establishes the failure class it exercises.",
+      "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested",
+      "note": "Observed: benchmark controls section 5."
+    },
+    {
+      "claim": "A kill switch needs an owner, expiry, safe default on evaluation failure, observable evaluation and audited overrides.",
+      "section_key": "tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview",
+      "note": "Observed: feature-flag card."
+    },
+    {
+      "claim": "Degraded calls and rejections must be measured separately and a mode's half-open probe bounded and safe, or a fallback can hide the outage.",
+      "section_key": "tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview",
+      "note": "Observed: Circuit Breaker card."
+    },
+    {
+      "claim": "A format-identical degraded response leaves callers unable to retry, serve a cached result or omit the module selectively.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+      "note": "Inference: follows from machine-distinguishable error requirement and from the caller-decides overload rule; not a stated source claim."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,279 @@
+{
+  "task_id": "Q204",
+  "question": "A platform sells a tenant 100 requests per second but enforces it with a 100-token-per-second bucket in each of six replicas. Under uneven routing the tenant exceeds the sold rate, and during a quota-store outage the replicas keep admitting. Why is the sold limit not enforced, and what must the limiter contract state about scope, accounting failure and the difference between rate and concurrency?",
+  "agent": "fresh-v6-independent",
+  "layer": "book",
+  "snapshot": "4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a",
+  "method": {
+    "onboarding": "Ran scripts/agent_session_cli.py describe; layers book, atlas, modeling-and-simulation. This question is conceptual/comparative, so the book layer was used; no pattern-registry identity, run, model or decision artifact was needed.",
+    "layer_note": "Search and reads used the default book layer (response layer=book). The CLI maps --volume to a volume-code filter: --volume book returned status no-results with filters.volume=book (e.g. queries 'token bucket' and 'rate limit token bucket'), so subsequent searches used the default layer, which is the same canonical layer per describe.",
+    "facets": 6,
+    "stopping_rule": "Stopped after two consecutive search rounds added no new section keys.",
+    "reads": "All cited sections were read with read/page, not cited from snippets."
+  },
+  "answer": "# Why the sold limit is not enforced\n\n**Direct answer.** The sold limit is a tenant-scoped promise; the limiter enforces a\nreplica-scoped budget. Six independent 100-token/s buckets do not compose into a 100/s\ncap, they define an envelope of up to 600 admissions/s whose real value depends on\nrouting, replica count and, during a quota-store outage, on whichever permissive\nfallback each replica chooses. No component holds the tenant's aggregate, so the sold\nnumber is never the object being counted. The outage does not create the gap; it\nremoves the only place where the gap could have been detected and corrected. The\nlimiter contract therefore has to state three things explicitly: the enforced scope\nand its owner, the accounting-failure behavior with a numeric overshoot budget and a\nreconciliation rule, and rate, concurrency and queue limits as separate dimensions\nwith units, deadlines and enforcement points.\n\n## 1. Scope: the limit is enforced on the wrong object\n\nA token bucket is a budget for one accounting scope. The platform sells a budget for\nthe tenant and configures a bucket for the process. Those are different objects, so\nthe deployment's replica count becomes an undeclared multiplier: with N replicas the\naggregate allowance is at most N x 100 tokens/s, and the book states the general rule\n- four replicas independently granting the same bucket approach four times the\nintended scope, because a per-instance bucket's aggregate allowance \"changes with\nreplicas and routing\" (admission-resource#local-limits). Scaling out from six to seven\nreplicas would raise the sold 100/s to 700/s without any contract change; a canary\ndeployment adds a seventh budget for its lifetime.\n\nThe book names the alternatives and their prices: \"A global quota needs atomic shared\naccounting, coordinated budget leases or a deliberately documented approximation.\"\nEach choice moves the problem rather than deleting it. A central atomic bucket buys an\nexplicit shared scope and pays with quota-store latency, hot-key behavior and a new\navailability dependency. Leased local budgets reduce shared operations but must \"never\ngrant overlapping spend\" and must account for unused or lost allocations. Approximate\ndistributed counts scale but must bound the permitted overshoot and name the invariant\nthey protect. The current design has taken the per-instance row of that table, which\ngives local protection and no tenant guarantee, while advertising the tenant-level\npromise.\n\nThere is a second scope error underneath. Admission has to precede the expensive\noperation and protect the resource that actually caps useful completed work; more\napplication instances \"do not relax a shared database quota or single-key transaction\nbottleneck\" (admission-resource#1). If the sold 100/s protects a downstream dependency\nor a cost envelope, then six local buckets protect six CPUs and nothing else. The\nlimit is enforced where it is cheap to enforce, not where the scarce resource or the\nbilling commitment lives.\n\n## 2. Routing decides how far above 100 the ceiling sits\n\nLet B = 100 tokens/s per replica and let the tenant's offered rate be lambda, split\nacross replicas with shares p_i. Admitted throughput is approximately\nsum over i of min(B, p_i x lambda). That expression has a wide range:\n\n- all traffic to one replica: 100/s, the only routing that happens to match the sale;\n- lambda = 600 spread evenly over six replicas: 600/s, six times the sold rate;\n- lambda = 600 with a 50/30/20 split over three replicas: 100 + 100 + 100 = 300/s;\n- first rejection appears only when p_max x lambda > 100, so with a 50% hot replica\n  the tenant is not throttled until roughly 200/s - twice what it bought.\n\nRouting is not a stable input. Selectors that balance connection counts can still\nproduce a 90/1/1 request split (discovery-balancing#original-worked-design), affinity\n\"may overload one backend when a key becomes hot\", and each client \"sees only a\npartial view\" of unfinished work elsewhere. Sticky sessions reduce movement but are\n\"not a failover proof\" (session-consistency#failure-cost-and-alternatives). A tenant\npinned to one replica consumes one bucket and is safe by accident; the same tenant\nafter a rebalance or failover is served by three replicas and its ceiling triples.\nThe limiter's behavior is therefore a function of a component it does not own and\ncannot observe.\n\nThe result is the worst of both directions. Under spread, the tenant exceeds the sold\nrate and the platform cannot see it, because the evidence is also partitioned: each\nreplica's counters look compliant. Under skew, capacity is stranded on idle replicas\nwhile the hot one rejects - and with a bucket capacity smaller than an instantaneous\nburst, even a conforming tenant can be rejected at the hot replica while its aggregate\nis at or below 100/s. Unused tokens on idle replicas are not transferable, so the sale\nis both unenforceable as a ceiling and unreliable as a guarantee.\n\n## 3. Accounting failure: the outage removes the only possible check\n\nA quota store is not automatically in the admission path. If replicas hold their own\nbuckets and consult the store only to refresh counts, then the store's outage changes\nnothing observable: the replicas keep admitting at the old per-replica rate because a\nlocal bucket is a permission, not a check. That is exactly the described symptom. It\nalso means the system has two indistinguishable states - normal operation, already up\nto six times over the sold rate, and outage, still up to six times over - so the\noutage is a visibility failure, not the root cause.\n\nIf the store is authoritative, the outage forces a choice the contract must already\nhave made. For a quota protecting a hard external limit, unavailable shared accounting\n\"may require rejecting new work or using only a known unused local allocation\"\n(admission-resource#local-limits). The book is explicit that \"a shared limiter adds a\ndependency; its timeout must not become permission to spend an unlimited budget\", and\nthat the permitted overshoot and the recovery reconciliation must be stated, because\n\"the labels fail-open/fail-closed do not answer this design question.\" A fallback on\nthe quota path is a degraded admission mode, and the resilience evidence says a\nfallback \"can hide the outage\" and must have a defined fail-fast or fallback contract\n(circuit-breaker#overview).\n\nConcretely, the failure clause needs: the authority that counts; the timeout and\nerror classes that count as \"accounting unavailable\"; the degraded ceiling (reject\nbeyond a pre-granted unused lease, or a fixed fraction such as B/N per replica, or a\nsingle declared fleet-wide cap); the maximum overshoot in requests and in time; how\nunused, lost and duplicated leases are accounted so that spend never overlaps; and\nhow counts reconcile on recovery so that the return of the store does not create a\nsynchronized refill and retry wave - \"randomized backoff must not cause all replicas\nto refill and retry in the same wave.\" Reopening budgets is itself a recovery policy:\na controlled ramp with per-tenant limits and hysteresis, not one global switch.\n\n## 4. Rate is not concurrency\n\nThe two limits constrain different populations. A token bucket \"constrains arrival\nover time according to configured tokens and burst capacity; a concurrency semaphore\nlimits simultaneous resident work. These solve related but different problems.\nNeither prevents unbounded work within the other dimension unless combined with\ndeadlines and measured downstream budgets\" (admission-resource#3). A concurrency cap\n\"limits resident work\" and requires permits to be released after termination, with\nstuck work distinguished from completed work (admission-resource#1).\n\nThe arithmetic is Little's law, L = lambda x W. At a fixed 100/s admission and a mean\n0.15 s, 15 requests are in flight (the book's own example: 200/s at 0.15 s gives 30).\nIf latency rises to 1.5 s at the same 100/s, 150 requests are in flight and the\ndownstream pool is exhausted while the rate limiter reports perfect compliance. That\nis why a connection pool \"is a limit on concurrent access\" and says nothing about how\nlong each transaction holds a connection (fleet-budgets#1), and why a fleet of four\ninstances with 25 connections each is a 100-connection bound that becomes 125 with a\nfifth replica. The concurrency dimension has the same scope bug as the rate\ndimension: six replicas times a per-replica permit count is the real fleet permit\ncount.\n\nA 100 rps sale also says nothing about cost. Operations with unequal costs cannot be\ncontrolled solely by requests per second (admission-resource#2), and the book models\nwork units where an operation costs five units against a 20-unit/s refill, so a\n\"request\" limit can still admit six times the intended resource. The contract must\nstate whether the unit is requests, work units or both, and how estimated and actual\ncost reconcile without letting a client choose an artificially cheap class.\n\n## 5. What the limiter contract must state\n\n1. **Subject and scope.** The tenant (and route, class or method) is the accounting\n   subject; name the component that enforces it and the aggregation rule. If\n   enforcement is per replica, write N into the contract and state that the effective\n   cap is N x B and how N changes under autoscaling, canaries, failover and\n   rebalancing.\n2. **Unit and cost.** Requests, work units or weighted cost; how cost is estimated,\n   reconciled and bounded; whether rejected and retried work consumes the budget\n   (retries must consume the same tenant budget, not a fresh one).\n3. **Rate semantics.** Refill rate, bucket capacity (the burst bound, since admitted\n   cost is at most capacity + rate x t only if a single logical bucket is enforced),\n   measurement window, clock source and skew tolerance, and whether the limit applies\n   at admission or at completion.\n4. **Concurrency semantics.** Maximum resident work, permit acquisition and release\n   on every termination path including cancellation and timeout, plus a bounded queue\n   with both a maximum item count and a maximum age.\n5. **Deadline.** The per-request deadline that makes a late admission useless; a fast\n   rejection is safer than admitting work that cannot finish, but it must not be\n   reported as success.\n6. **Accounting authority and mechanism.** Atomic shared counter, non-overlapping\n   leases with explicit accounting for unused and lost allocations, or a documented\n   approximation with its bound; hot-key behavior and store latency budget.\n7. **Accounting failure.** Degraded ceiling, permitted overshoot in requests and\n   time, reconciliation on recovery, hysteresis before reopening, and the invariant\n   that timeout is never permission to spend an unlimited budget.\n8. **Rejection contract.** Which work was not accepted, whether a retry can help, how\n   long to wait, and retry guidance consistent with the remaining budget and deadline\n   so that every client does not immediately recreate the overload.\n9. **Fairness.** Per-tenant outstanding work and maximum age, how spare capacity may\n   be borrowed, reservation for quiet tenants, and authenticated priority that cannot\n   starve ordinary work.\n10. **Observability.** Offered, rejected, admitted and correctly completed work per\n    tenant and class; queue age; shared-store failures; aggregate admitted cost\n    compared with the sold value, not only per-replica success rates. Per-replica\n    quantiles cannot be averaged into a global view and counters need reset-aware\n    deltas (metric-semantics#2).\n11. **Change control and acceptance.** Who may raise a limit, how the change is\n    published atomically across replicas, and the tests: route one tenant across all\n    replicas, change the replica count, partition the quota store, duplicate a lease,\n    cancel admitted work, restart a permit owner, and verify actual aggregate admitted\n    cost, bounded overshoot and progress for a quiet tenant. The book's own limitation\n    is that these are proposed tests, with \"no load test or distributed-limiter\n    execution performed\" (admission-resource#local-limits).\n\n## 6. Boundaries and trade-offs\n\n- **Per-replica limits are not wrong; using them as the tenant cap is.** Each replica\n  still needs a local guard for its own CPU, memory and pool. The design needs both\n  layers and must not present the local one as the sold one.\n- **Central accounting is not free.** A single atomic bucket has correct scope but\n  adds a synchronous dependency and a hot key; the store becomes part of the\n  availability budget. That is why leases and approximations exist, but they are only\n  honest when their overshoot bound is stated and monitored.\n- **Leases trade precision for load.** Fewer shared operations, but unused\n  allocations are stranded, lost leases are spend, and the lease quantity times the\n  replica count is the real ceiling during normal operation.\n- **Pinning a tenant to one placement can make per-replica equal per-tenant**, but\n  only while the mapping is authoritative and stable; failover, rebalance, autoscaling\n  or a stale placement cache restores the multiplier, and pinning trades availability\n  for enforcement.\n- **The right failure mode depends on the protected invariant.** If 100/s protects a\n  hard external quota or a contractual penalty, reject rather than overspend; if it is\n  a fairness knob for a best-effort feature, a bounded degraded ceiling may be\n  acceptable. The contract must say which, with numbers.\n- **The labels are not the design.** Fail-open and fail-closed describe a default, not\n  an overshoot bound, a reconciliation rule or a recovery ramp.\n- **The evidence does not establish this platform's facts.** The book's page is\n  source-linked for the mechanisms, but its bucket arithmetic is invented and\n  self-reviewed, not measured; it supports the reasoning, not a claim about this\n  deployment's actual traffic.\n\n## Facet matrix and search record\n\n| Facet | Queries | Evidence |\n|---|---|---|\n| F1 scope | quota per tenant; global limit across replicas | admission-resource local |\n| F2 routing | per-instance limit; routing skew; hot shard | discovery-balancing; multitenant |\n| F3 failure | fail open; permitted overshoot; stale budget | admission-resource; breaker |\n| F4 rate vs conc. | in-flight; bucket burst; Little's law | admission-resource 3; fleet 1 |\n| F5 contract | limiter contract units scope failure | admission-resource; multitenant |\n| F6 verify | per-replica metrics; replica skew | admission-resource; metric-semantics |\n\nTwo closing search rounds (quota enforcement at the resource; oversell promised\ncapacity; limit scope mismatch process versus tenant; rate limiter shared state\ncounter atomic) added no section beyond those listed, which is the stopping\ncondition used.\n\n## Evidence map\n\n- Sold 100/s is tenant-scoped; per-instance buckets give up to N x 100/s and change\n  with replicas and routing -> admission-resource#local-limits.\n- Global scope requires atomic accounting, leases or a documented approximation ->\n  admission-resource#local-limits.\n- A shared limiter's timeout must not become permission to spend ->\n  admission-resource#local-limits.\n- Accounting unavailability: reject or spend only known unused allocation; state\n  permitted overshoot; fail-open/fail-closed labels are insufficient ->\n  admission-resource#local-limits.\n- Token bucket vs semaphore bound different dimensions; neither bounds the other ->\n  admission-resource#3.\n- Concurrency cap limits resident work; release permits; stuck vs completed ->\n  admission-resource#1.\n- Bucket bound is capacity + rate x t under one logical bucket ->\n  admission-resource#local-limits.\n- Pool size is a concurrency limit; duration matters; N replicas multiply it ->\n  fleet-budgets#1.\n- L = lambda x W; in-flight grows with latency at fixed rate -> workload-shape#2.\n- Selector can produce 90/1/1; affinity overloads a hot backend; partial view ->\n  discovery-balancing#original-worked-design.\n- Sticky sessions are not a failover proof -> session-consistency#failure-cost.\n- Skew makes headroom unusable; do not spread an overloaded tenant fleet-wide ->\n  multitenant#resource-arithmetic; multitenant#proposed-acceptance.\n- Contract promises a bounded deadline or explicit overload; per-tenant budgets ->\n  multitenant#workload-and-service-contract.\n- Quotas must be enforceable and observable at the resource; quota bypass is the\n  failure mode -> tenant-based-resource-isolation#overview.\n- Fallback can hide an outage; fallback contract must be defined ->\n  circuit-breaker#overview.\n- Rejection needs retry guidance and declared quotas; track offered/rejected/admitted\n  and shared-store failures -> overload#purpose-and-mission;\n  admission-resource#local-limits.\n- Proposed tests: route across all replicas, change replica count, partition store,\n  duplicate lease; no execution performed -> admission-resource#local-limits.\n- Per-replica quantiles cannot be averaged; reset-aware counters ->\n  metric-semantics#2.\n\n## Unknowns and confidence\n\nUnknown: the bucket capacity per replica (only the 100/s refill is given), so the\nburst bound and the possibility of rejecting a conforming tenant remain unresolved.\nUnknown: whether the quota store is authoritative for admission or only for reporting,\nwhich determines whether the outage is a visibility failure or an active fail-open.\nUnknown: whether 100/s is a guaranteed capacity or a ceiling, whether billing counts\noffered or admitted requests, whether N is fixed, and what downstream resource the 100\nprotects. Unknown: whether the tenant is pinned by placement, and whether an edge\nlayer already sees all of its traffic.\n\nConfidence is high on the mechanism: per-replica budgets cannot enforce a tenant cap,\nthe ceiling is sum of min(B, p_i x lambda), and a rate limit does not bound\nconcurrency. Confidence is medium on the recommended design point (central accounting\nor leases plus a bounded degraded mode), because it depends on the store's availability\nbudget and the downstream invariant. Confidence is low on any numeric claim about this\nplatform's actual behavior: the book's arithmetic is synthetic and no distributed\nlimiter was executed. What would change the answer: evidence of a tenant-scoped\ngateway with shared accounting, a fixed one-tenant-per-replica placement, or a quota\nstore whose outage is already fail-closed with a stated overshoot - each would move\nthe diagnosis from scope mismatch to a narrower failure-contract defect.",
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "Scope of the sold limit: tenant aggregate versus replica-local budget",
+      "queries": [
+        "quota per tenant",
+        "global limit across replicas",
+        "limit scope mismatch process versus tenant"
+      ],
+      "section_keys": [
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission"
+      ]
+    },
+    {
+      "id": "F2",
+      "facet": "Uneven routing: aggregate ceiling as a function of replica shares and replica count",
+      "queries": [
+        "per-instance limit",
+        "load balancing skew hot shard",
+        "routing skew uneven traffic distribution replicas"
+      ],
+      "section_keys": [
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+        "tycho.page.4856fd39b7e1bfa3b7430427192179fa#resource-arithmetic-and-placement-decision",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#failure-cost-and-alternatives"
+      ]
+    },
+    {
+      "id": "F3",
+      "facet": "Accounting failure: quota-store outage, fail-open fallback, overshoot and reconciliation",
+      "queries": [
+        "fail open degraded default allow",
+        "permitted overshoot quota",
+        "stale local budget unused allocation"
+      ],
+      "section_keys": [
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+        "tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview"
+      ]
+    },
+    {
+      "id": "F4",
+      "facet": "Rate versus concurrency: different populations, units and Little's law",
+      "queries": [
+        "concurrency limit in-flight requests",
+        "token bucket burst capacity",
+        "Little's law queue depth"
+      ],
+      "section_keys": [
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+        "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+        "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation"
+      ]
+    },
+    {
+      "id": "F5",
+      "facet": "Limiter contract content: units, scope, failure behavior, fairness, observability",
+      "queries": [
+        "limiter contract units scope failure",
+        "workload and service contract",
+        "tenant isolation quota enforcement"
+      ],
+      "section_keys": [
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+        "tycho.page.4856fd39b7e1bfa3b7430427192179fa#workload-and-service-contract",
+        "tycho.page.bd9428f9bf6044048c48eb0aa67d1e3f#overview"
+      ]
+    },
+    {
+      "id": "F6",
+      "facet": "Verification and detection across replicas, routing changes and store partitions",
+      "queries": [
+        "per-replica metrics aggregate view",
+        "admission control replica skew",
+        "capability degradation explicit"
+      ],
+      "section_keys": [
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+        "tycho.page.4856fd39b7e1bfa3b7430427192179fa#proposed-acceptance-and-alternatives",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations"
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+    "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#failure-cost-and-alternatives",
+    "tycho.page.4856fd39b7e1bfa3b7430427192179fa#resource-arithmetic-and-placement-decision",
+    "tycho.page.4856fd39b7e1bfa3b7430427192179fa#proposed-acceptance-and-alternatives",
+    "tycho.page.4856fd39b7e1bfa3b7430427192179fa#workload-and-service-contract",
+    "tycho.page.bd9428f9bf6044048c48eb0aa67d1e3f#overview",
+    "tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview",
+    "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations"
+  ],
+  "evidence": [
+    {
+      "claim": "A per-instance bucket changes the aggregate allowance with replica count and routing; four replicas can approach four times the intended scope.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+      "note": "Observed text: 'With four replicas each independently granting the same bucket, the aggregate allowance can approach four times the intended scope'; table row 'Per-instance bucket ... Aggregate allowance changes with replicas and routing'.",
+      "type": "observed"
+    },
+    {
+      "claim": "A tenant-scoped quota needs atomic shared accounting, non-overlapping leases or a documented approximation.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+      "note": "Observed text: 'A global quota needs atomic shared accounting, coordinated budget leases or a deliberately documented approximation.'",
+      "type": "observed"
+    },
+    {
+      "claim": "A shared limiter adds a dependency, and its timeout must not become permission to spend an unlimited budget.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+      "note": "Observed sentence; also the row 'Central atomic bucket ... Quota-store latency/outage and hot-key behavior'.",
+      "type": "observed"
+    },
+    {
+      "claim": "On accounting unavailability a hard-limit quota may require rejecting work or spending only a known unused local allocation; permitted overshoot and reconciliation must be stated and the fail-open/fail-closed labels are insufficient.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+      "note": "Observed paragraph 'Failure and recovery': reject or use only a known unused local allocation; 'State the permitted overshoot and recovery reconciliation; the labels fail-open/fail-closed do not answer this design question.'",
+      "type": "observed"
+    },
+    {
+      "claim": "Admitted cost is bounded by bucket capacity plus refill rate times interval only if one logical bucket and its update rules are enforced.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+      "note": "Observed arithmetic example: 20 units/s refill, 40-unit capacity, 5-unit operation, bound 40 + 20t. Values stated as invented.",
+      "type": "observed"
+    },
+    {
+      "claim": "A token bucket bounds arrival over time while a concurrency semaphore bounds simultaneous resident work; neither bounds the other dimension without deadlines and downstream budgets.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+      "note": "Observed text, including 'These solve related but different problems.'",
+      "type": "observed"
+    },
+    {
+      "claim": "A rate cap, concurrency cap and queue bound constrain different populations; a concurrency cap limits resident work and permits must be released after termination with stuck work distinguished from completed work.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+      "note": "Observed enrichment-contract sentence and the 'Concurrency cap' table row.",
+      "type": "observed"
+    },
+    {
+      "claim": "More instances do not relax a shared downstream quota; protect the resource that limits useful completed operations.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+      "note": "Observed: 'More application instances do not relax a shared database quota or single-key transaction bottleneck.'",
+      "type": "observed"
+    },
+    {
+      "claim": "Operations with unequal costs cannot be controlled solely by requests per second.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+      "note": "Observed: the section cites Google SRE Handling Overload for this point and treats the local limit as unproven.",
+      "type": "observed"
+    },
+    {
+      "claim": "A per-instance pool size is a concurrency limit, says nothing about hold time, and N replicas multiply the fleet-wide bound (4x25=100 becomes 125 with a fifth).",
+      "section_key": "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+      "note": "Observed: 'The number of connections allowed by a pool is a limit on concurrent access; it says nothing about how long each transaction holds a connection'; synthetic arithmetic 4 x 25 = 100.",
+      "type": "observed"
+    },
+    {
+      "claim": "Little's law L = lambda x W means in-flight work grows with latency at a fixed admission rate.",
+      "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+      "note": "Observed: 200 requests/s at 0.15 s gives 30 in flight; the section warns this is not a connection count. The finite-window caveat is stated on the V12 queue-and-resource page.",
+      "type": "observed"
+    },
+    {
+      "claim": "Routing selectors can produce heavily skewed request splits, affinity can overload a hot backend, and each client sees only a partial view of load.",
+      "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+      "note": "Observed: 90/1/1 request split with equal connection counts; 'Affinity may preserve a local working set but overload one backend when a key becomes hot'; partial-view caveat.",
+      "type": "observed"
+    },
+    {
+      "claim": "Sticky sessions reduce movement but are not a failover proof.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#failure-cost-and-alternatives",
+      "note": "Observed sentence in 'Failure, cost and alternatives'.",
+      "type": "observed"
+    },
+    {
+      "claim": "Adequate aggregate sums do not make capacity usable when tenant skew, placement and budgets intervene; do not spread an overloaded tenant fleet-wide.",
+      "section_key": "tycho.page.4856fd39b7e1bfa3b7430427192179fa#resource-arithmetic-and-placement-decision",
+      "note": "Observed: seven cells sum to 11,200 units/s but 'state placement, per-tenant skew, connection budgets and migration time may prevent using it'; 'Never spread an overloaded tenant fleet-wide merely because the sum looks adequate.'",
+      "type": "observed"
+    },
+    {
+      "claim": "Reverse the design when tenant skew makes cell headroom unusable.",
+      "section_key": "tycho.page.4856fd39b7e1bfa3b7430427192179fa#proposed-acceptance-and-alternatives",
+      "note": "Observed reversal/alternative paragraph.",
+      "type": "observed"
+    },
+    {
+      "claim": "The service contract promises a bounded response deadline or an explicit overload response, not unlimited successful work, and includes per-tenant work and concurrency budgets.",
+      "section_key": "tycho.page.4856fd39b7e1bfa3b7430427192179fa#workload-and-service-contract",
+      "note": "Observed contract paragraph.",
+      "type": "observed"
+    },
+    {
+      "claim": "Tenant quotas must be enforceable and observable at the resource; quota bypass is a named failure mode and unenforceable quotas a contraindication.",
+      "section_key": "tycho.page.bd9428f9bf6044048c48eb0aa67d1e3f#overview",
+      "note": "Observed: good-fit includes 'quotas/isolation can be enforced and observed'; hard contraindication 'when quotas cannot be enforced at the resource'; failure list starts with 'Quota bypass'.",
+      "type": "observed"
+    },
+    {
+      "claim": "A fallback can hide the outage and needs a defined fail-fast or fallback contract; an open breaker is a hypothesis, not recovery.",
+      "section_key": "tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview",
+      "note": "Observed in Good-fit ('the fallback or fail-fast contract is defined') and Failure and recovery ('a fallback can hide the outage').",
+      "type": "observed"
+    },
+    {
+      "claim": "Rejection needs retry guidance and declared quotas; a retry hint every client follows immediately recreates the overload; track offered, rejected, admitted and completed work per tenant plus shared-store failures.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+      "note": "Observed closing paragraphs: 'Advertise retry guidance ... Randomized backoff must not cause all replicas to refill and retry in the same wave'; 'Track offered, rejected, admitted and correctly completed work per class/tenant, plus queue age and shared-store failures.'",
+      "type": "observed"
+    },
+    {
+      "claim": "The proposed tests are exactly this failure space - route one tenant across all replicas, change replica count, partition the quota store, duplicate a lease - and no load test or distributed-limiter execution was performed.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+      "note": "Observed 'Proposed tests' paragraph and the limitation sentence 'No load test or distributed-limiter execution was performed.'",
+      "type": "observed"
+    },
+    {
+      "claim": "Per-replica quantiles cannot be averaged into a global view and counters need reset-aware deltas.",
+      "section_key": "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+      "note": "Observed table rows: 'Averaging service p99 quantiles across replicas as though they were samples'; 'Using raw counter delta across reset without reset-aware processing'.",
+      "type": "observed"
+    },
+    {
+      "claim": "Six replicas x a 100-token/s bucket yields an aggregate ceiling of up to 600/s plus burst, so a sold 100/s is exceeded whenever the tenant's traffic is served by more than one replica above the busiest bucket's headroom.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+      "note": "Inference: arithmetic applied to the question's numbers (6 x 100 = 600) using the section's per-replica multiplier and sum-of-min argument; the book's own example uses four replicas and invented values.",
+      "type": "inference"
+    },
+    {
+      "claim": "If the quota store is only a reporting path, its outage changes nothing observable because the local bucket is already the authority; the outage and normal operation are indistinguishable at six times the sold rate.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+      "note": "Inference: combines the per-instance row (local bucket is the grant) with the shared-limiter dependency warning; the section does not state this platform's topology.",
+      "type": "inference"
+    },
+    {
+      "claim": "At 100/s with 0.15 s mean latency about 15 requests are in flight; at 1.5 s the same rate implies about 150, which a rate limiter cannot prevent.",
+      "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+      "note": "Inference: L = lambda x W applied to the question's 100/s with the section's illustrative service time; finite-window caveat applies.",
+      "type": "inference"
+    }
+  ],
+  "abstain": false,
+  "confidence": {
+    "mechanism": "high",
+    "remedy": "medium",
+    "platform_specifics": "low"
+  },
+  "unknowns": [
+    "Bucket capacity per replica is not given, so the burst bound and whether a conforming tenant can be rejected at a hot replica are unresolved.",
+    "Whether the quota store is authoritative for admission or only for reporting is not established; this decides whether the outage is a visibility failure or an active fail-open.",
+    "Whether 100/s is a guaranteed capacity or a ceiling, and whether billing counts offered or admitted requests, is not established.",
+    "Whether the replica count is fixed, and whether the tenant is pinned by placement, is not established.",
+    "Which downstream resource the 100/s protects (external quota, cost envelope, fairness) is not established.",
+    "The book's bucket arithmetic and the 6 x 100 = 600 application are synthetic reasoning; no load test or distributed-limiter execution was performed."
+  ],
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

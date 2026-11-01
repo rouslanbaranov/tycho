@@ -1,0 +1,451 @@
+{
+  "task_id": "Q252",
+  "answer": "# Q252 — Wide-partition skew: why blanket splitting is the wrong lever, and what must hold before a split serves traffic\n\n## 0. Onboarding and scope\n\nI ran `describe` first. Collection `tycho`, snapshot `4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a`, 555 documents and 3,132 sections, ranker `tycho-section-fts5-bm25-v5`, citation scheme `tycho.section-key.v2`.\n\nLayers this question needs:\n\n- **book** (primary): partition-key mechanics, skew, resharding transitions, query-identity and cache/routing prose.\n- **atlas**: the Sharding card supplies the pattern-level contraindication, which is the right granularity for \"should every partition be split\".\n- **modeling-and-simulation**: the question begins from a provisioning estimate and simulations, so the V12 evidence-layer boundary (model-verified is not calibrated; simulation is not production proof) is part of the answer, not decoration.\n\nMethod: six decision-relevant facets, 2-3 formulations each (exact terms, synonyms, conceptual), `outline` on the partition-key topic, and every cited section read through `read`/`page` before quoting. Search snippets were never cited. The search stopped when a further round of synonym and conceptual formulations returned only sections already read or pages that added no new mechanism. The outline also surfaced adjacent telemetry time-series pages (metrics label cardinality); they own a different question and were excluded rather than mixed into a physical-partition argument.\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. Why the estimate and simulations aged badly | \"Cassandra partition key\"; \"provisioning estimate future distribution\"; \"Monte Carlo workload estimate\"; \"average hides tail percentile partition bytes\" | `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#from-a-correct-provisioning-estimate-to-an-incorrect-future`, `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#why-over-partitioning-and-wide-partitions-can-both-harm-the-same-system`, `tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers` |\n| F2. Why \"split every partition\" is the wrong lever | \"hot partition skew\"; \"over-partitioning read amplification\"; \"partition strategies drawbacks\"; \"every partition split\" | `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#why-over-partitioning-and-wide-partitions-can-both-harm-the-same-system`, `tycho.page.0d34dd26886340b89fd4f1499d790a81#applied-m9-evidence-what-transfers-and-what-does-not`, `tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps` |\n| F3. Future-slice reconfiguration | \"repartitioning time slice bucket density\"; \"future slices histogram percentiles\"; \"time bucket width change\" | `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#two-different-levers-for-different-skew-shapes`, `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#safety-and-trade-off-analysis` |\n| F4. Per-ID split | \"hot ID extreme partition split metadata\"; \"immutable partition checksum\"; \"async split planner checkpoint\" | `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#two-different-levers-for-different-skew-shapes`, `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#distinct-runtime-algorithms-not-one-global-rewrite` |\n| F5. Query identity stability | \"query contract identity compatibility\"; \"cursor pagination page token\"; \"logical query identity routing sidecar\" | `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity`, `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#operational-checks-and-unknowns` |\n| F6. Read routing and cutover proof | \"read routing lookup metadata cache\"; \"bloom filter false positive routing\"; \"shadow traffic comparison old new read path\"; \"dual read cutover compatibility window\" | `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#shadow-read-parity-and-additional-safeguards`, `tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#architectural-selection-and-migration-falsification`, `tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition`, `tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete` |\n\n## 2. The answer\n\n### 2.1 Why \"split every partition\" is the wrong lever\n\n**It fixes the wrong unit.** The incident is not \"partitions are too big\"; it is \"a few high-volume IDs are much wider than the distribution the design assumed, while many other slices are already small\". The case page describes both failure directions in one system: a wide partition multiplies read cost, garbage collection, queues and worst-case latency, and an aggressively split table causes read amplification. In the reported dataset, average queries can be single-digit milliseconds while outlier partitions take seconds: the average is precisely the statistic that cannot see the problem (C1, C2). Applied to the slices that already hold under 10 KB, the same splitting action makes fan-out worse; applied to the healthy middle of the distribution, it pays rewrite and routing cost for no measured benefit.\n\n**It is a rewrite-shaped fix for a skew-shaped problem.** Splitting every partition means rewriting historical immutable data whose only defect is that it was sized from a stale estimate. The case's own decision rule is conditional: adjust future time slices when many IDs share the density problem and avoid rewriting old data; use a checkpointed per-ID split only for the small set of legitimate keys that are extremely wide (C4). The book is explicit that the published results do not license \"split everything\": Netflix's reported gains do not mean every Cassandra partition should be dynamically split, and the gains do not transfer to another dataset (C3).\n\n**It contradicts the evidence behind the original estimate.** Key selection cannot be made from average RPS. In the book's synthetic counterexample, one owner carries 1,500 of 2,000 attempts/s; distributing the other 500 across shards leaves the hot owner untouched. A single global histogram also hides key-conditional skew, and a uniform-key load test can look healthy while the production hot key stays serialized (C5). The provisioning simulation assumed the future distribution resembled its inputs; a year of real traffic falsified that assumption for a few IDs, not for the whole keyspace (C1).\n\n**It adds a new failure surface instead of retiring one.** Every split creates routing state to keep correct: which physical partitions belong to a logical ID, which split plan version is complete, which page tokens remain valid. Directory/lookup routing (which is what a split map is) buys placement control at the price of control-plane availability, routing-cache freshness and split-brain mappings. An application routing label is not a database table partition, and the migration is a multi-state transition, not a one-shot layout change (C15, C16).\n\n**It skips the measurement step.** The book refuses to derive a distribution decision from a record count: without growth, actual key and query distributions, hot tuples, disk and index IO, transactional ownership, restore objectives and a measured comparison of simpler improvements, the answer is \"cannot determine\" (C21). The same logic applies to \"the fleet has wide partitions, so split them all\".\n\nA defensible framing is therefore: keep the partition key design as a hypothesis under continuous review (C22), repair density going forward for the many-ID case, and surgically split the few anomalous IDs, each behind its own validation gate.\n\n### 2.2 Future-slice reconfiguration versus per-ID splits\n\nThey are different levers with different scopes, triggers, costs and failure modes — not two settings of one knob.\n\n| Dimension | Future-slice reconfiguration | Per-ID asynchronous split |\n|---|---|---|\n| Unit of change | The bucketing rule applied to *future* time slices of the dataset | One physical partition (or event-bucket set) of one anomalous ID |\n| Trigger | Background inspection of Cassandra partition histograms and estimated density | Read-path byte counts above a threshold, emitted as an event |\n| What it can repair | Over- or under-sized slices that have not been written yet; it works when many IDs share the same excessive or insufficient partition size | An already-written wide partition that is slow now |\n| What it cannot repair | Already-written immutable wide partitions, including the ones causing today's multi-second reads | A fleet-wide density error, and it does not prevent the first slow request that triggered detection |\n| Cost profile | Cheap, forward-only, no historical rewrite | Expensive: full read of source, planner, copy, validation, metadata and routing change |\n| Evidence in the book | (C6), (C7) | (C8), (C9) |\n\n**Future-slice reconfiguration** is a dataset-level, forward-only control loop. A worker reads partition histograms, estimates density and adjusts the *next* slices' bucketing, which avoids rewriting already written history. Its target is workload-dependent: the reported example configures roughly 2-10 MiB, explicitly not a universal Cassandra target, and the page illustrates a change from 60-second to 604,800-second buckets after observing histogram percentiles. That is a huge, legitimate swing — and it still cannot repair a partition that is already immutable and already wide (C6, C7).\n\n**A per-ID split** is a surgical repair with a lifecycle. The read path detects an anomalously wide ID by bytes read and emits an event; a background planner reads the source partition, stores checkpoints and split metadata, adds event buckets while preserving the total sort order, and caps fan-out. The published design deliberately starts with immutable partitions because concurrent writes would otherwise invalidate ordering and copy assumptions; mutable partitions are recorded as future work (C8, C9).\n\nThe decision rule that separates them is diagnostic, not stylistic: profile partition-byte percentiles and read fan-out. Many IDs mis-sized → reconfigure future slices. A few legitimate extreme IDs → checkpointed per-ID split with immutable-source safeguards and explicit query-equivalence checks. If completeness is mandatory, partial results are not an option; blocking \"spam\" IDs must never silently block valid high-volume customers (C4).\n\n### 2.3 What must stay stable about query identity\n\nA split changes where bytes live. It must not change what a query means.\n\nThe book's formulation is that a logical query keeps stable `dataset + entity + interval + ordering + page token` semantics; a routing sidecar may resolve that identity to one ordinary partition or to several completed split partitions, but physical routing stays an implementation detail (C11). The caller keeps naming the logical key; the sidecar resolves it, so no client should learn that a split happened. Four things follow:\n\n1. **Entity and interval identity.** `(dataset, entity, interval)` addresses the same logical event set before and after the split. The split may add event buckets inside the ID, but it may not redefine the ID or the interval boundaries the caller supplied.\n2. **Ordering.** The split must preserve the original event ordering and sort semantics; the planner adds event buckets \"while preserving total sort order\". If ordering changes, a cursor is no longer a cursor (C10, C9).\n3. **Page tokens.** A token issued before split completion must either remain interpretable against the new layout or force an explicit resumable result. Silently continuing under a changed ordering can duplicate or skip events. The split must therefore be invisible to the query contract, including in-flight pagination (C12).\n4. **Completeness.** A query for a complete interval must return the complete set. Checksum equality proves a chosen projection; it does not prove query completeness if the checksum scope omits user-visible metadata (C10).\n\nThe corollary is that \"the partition moved\" is not a client-visible event. If a client can tell that an ID was split, the identity boundary leaked.\n\n### 2.4 What must be true about read routing before a split partition serves traffic\n\nRouting is the safety-critical part of the change, because a wrong route returns wrong data quickly.\n\n1. **Authoritative completed state, not a probabilistic hint.** A Bloom filter is a candidate test that triggers a metadata lookup. A positive result is not proof a split exists; consistency and fallback require authoritative completed state (C13).\n2. **Validation gate before publication.** Pre- and post-split checksums must match, and completion must be marked only after they match; only then is read routing updated to the split partitions (C13). Checksum equality is necessary but not sufficient when metadata is excluded, so a byte-for-byte shadow comparison under real predicates is the independent oracle (C10).\n3. **The original remains the fallback.** The source physical partition is retained, and reads re-read it when split routing or split data is unavailable. The retained original is the safety path while a split is incomplete or unproven (C14). It costs storage and cannot erase errors already exposed by an unsafe cutover, but it is what makes the transition reversible.\n4. **Staged cohort exposure.** Shadow-serve both paths, compare answers, enable the new route for selected cohorts, and preserve the fallback until the old representation can be retired safely (C14). Do not activate new routing while checksum or byte-shadow parity fails; fall back on stale metadata, filter-memory budget overrun, excessive query fan-out, or retention that makes old and new incomparable (C14).\n5. **Fencing and versioning.** Old and new routing must coexist during copy and cutover, and stale writers and stale mapping caches must be fenced at cutover. A client that cached the old routing epoch and commits after the switch is the book's dangerous counterexample (C15). The routing map needs an epoch, and the split plan needs a unique version with idempotent event handling (C14, C15).\n6. **Named invariant.** State which property the split preserves — identity, value equality, operation order, referential consistency, exactly-once effects, or bounded freshness. \"Migration complete\" means different things for each, and each needs its own oracle (C20). For a time-series split the load-bearing ones are identity, order and completeness.\n\nA practical gate sequence follows the book's synthetic transition: record the pre-split source manifest and row identity; create a unique split plan version with idempotent event handling; execute a checkpointed copy using immutable intervals; reconcile content, order and metadata rather than byte counts alone; shadow-serve both paths under real predicates; enable the new route for selected cohorts; keep a fallback until the old representation can be retired safely (C14). If any step cannot produce a consistent fallback, do not switch the read path.\n\nBefore activation the team should be able to answer the case's adversarial list: duplicate Kafka detection; planner crash before checkpoint; partial write after checkpoint; checksum collision or excluded metadata; Bloom false positive; missing split metadata; stale read-cache state; a retention job dropping source data; changing consistency levels; pagination across a split; and a previously immutable partition receiving a late write. If any case cannot produce a consistent fallback, the correct action is to return insufficient evidence and do not switch the read path (C23).\n\nAfter activation, compare p99 by partition-size percentile, read queue depth, retries and timeouts, metadata cache hit behavior, storage read amplification and cost, by dataset rather than fleet means (C22).\n\n### 2.5 What the reported outcome does and does not prove\n\nThe reported before/after is scoped: average latency for *affected wide-partition reads* fell from seconds to low double-digit milliseconds and tails to roughly 200 ms, with fewer timeouts. That is not the full TimeSeries read p99 and not an independent A/B study. The same article keeps a negative boundary: a 500 MB+ partition still returned paginated data in roughly 41 seconds. Partitioning improves availability and common tails; it does not guarantee a millisecond SLO for pathological data (C17).\n\nAnd the estimate that started it all belongs to the modeling layer: a model-verified label does not imply calibration, simulation results never promote a pattern to sufficient, and a simulation does not prove production behavior. The follow-up to \"the estimate was wrong\" is therefore observed partition-size and latency distributions, not a bigger simulation; that recommendation is an inference from the evidence boundary, not a source prescription (C18).\n\n## 3. Boundaries and what would change the answer\n\n- **If most IDs were genuinely over-sized**, future-slice reconfiguration would be the primary lever, and per-ID splitting would be premature.\n- **If the hot IDs were invalid, test or spam traffic**, blocking them (with care) could be cheaper than splitting; the book warns that blocking must never silently become blocking valid high-volume customers (C4).\n- **If partial results were acceptable under the external API**, a bounded-latency partial-return strategy would be a legitimate alternative; it is unacceptable when completeness is mandatory (C4).\n- **If the partitions were mutable or still receiving writes**, the published per-ID design would not directly apply; mutable partitions are explicitly future scope, and the plan would need a different fencing story (C8, C9).\n- **If the new route cannot be validated against a named invariant**, the correct outcome is to keep serving the original partition, not to cut over and hope (C20, C14).\n\n## 4. Unknowns and honesty notes\n\n- The reported latency numbers, density range and bucket-width change are source-reported and dataset-specific; I did not reproduce them and the book does not present them as a controlled experiment.\n- The specific provisioning model, its Monte Carlo inputs and the production distributions are not present in the cited evidence; the claim is about the *class* of assumption (future resembles inputs), not about the team's actual parameters.\n- The safe-transition sequence and the adversarial test list are Tycho synthesis, not a disclosed operator runbook; they are recommendations to verify, not observed practice.\n- No production observation, benchmark or independent review is claimed here.\n\n## 5. Evidence map\n\nThe machine-readable ledger in this JSON is the canonical evidence map. Claims C1-C23 each carry at least one section read through the CLI, with a verbatim fragment and the claim it supports; `citations` is exactly the unique set of those section keys, and the facet matrix in section 1 groups the same keys by facet. Short forms, for reading only:\n\n- C1 - the estimate and simulation assumed the future resembles their inputs.\n- C2 - wide partitions and over-partitioning are opposite failures.\n- C3 - \"split everything\" is not licensed by the evidence.\n- C4 - the lever follows the measured skew shape.\n- C5 - average RPS cannot select a partition key.\n- C6 - future-slice reconfiguration is forward-only and dataset-level.\n- C7 - it cannot repair immutable wide partitions, and density is workload-dependent.\n- C8 - a per-ID split is detected on the read path and starts with immutable partitions.\n- C9 - the planner is checkpointed, preserves sort order and caps fan-out.\n- C10 - ordering and completeness outrank checksum equality.\n- C11 - stable logical query identity behind a routing sidecar.\n- C12 - in-flight page tokens must stay interpretable or fail resumably.\n- C13 - completed metadata is authoritative; a Bloom filter is only a candidate test.\n- C14 - staged shadow cutover with a retained original and explicit stop gates.\n- C15 - resharding is a multi-state transition with fencing.\n- C16 - lookup routing has control-plane and cache failure modes.\n- C17 - reported gains are scoped; the 500 MB+ exception remains.\n- C18 - simulation is neither calibration nor production proof.\n- C19 - pattern contraindications cover hot tenants and unverifiable migrations.\n- C20 - \"complete\" depends on the invariant under test.\n- C21 - distribution decisions need measured distributions.\n- C22 - partitioning is continuously revisited and monitored by dataset.\n- C23 - adversarial cases must produce a consistent fallback or block activation.\n\n## 6. Direct answer in one paragraph\n\nSplitting every partition is the wrong lever because the failure is a skew-shaped mismatch between a stale provisioning distribution and a few real IDs, not a fleet-wide size error: blanket splitting rewrites healthy immutable history, amplifies reads through fan-out, and adds routing state without touching the IDs that are actually slow. Future-slice reconfiguration changes the bucketing of not-yet-written slices and is cheap and forward-only, so it repairs density for many IDs but cannot repair already-written wide partitions; a per-ID split is a targeted, checkpointed, immutable-first rewrite of one anomalous partition that can repair what is already slow, at the cost of metadata, ordering and routing complexity. Before a split partition serves traffic, query identity must remain stable — dataset, entity, interval, ordering and page-token semantics, with physical routing as an implementation detail — and read routing must be authoritative, versioned, cohort-staged, shadow-validated and backed by the retained original, with a named invariant and an explicit fallback; activation is refused while parity fails.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The original partition keys were derived from workload estimates plus Monte Carlo simulations, a method that assumes the future distribution resembles the input estimates; after a year, real traffic, retention or a few valid high-volume IDs can invalidate that assumption without the original key design having been wrong at design time.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#from-a-correct-provisioning-estimate-to-an-incorrect-future",
+          "quote": "Its initial provisioning pipeline used workload estimates and simulations to derive partitioning. This is sensible until traffic distribution, retention or individual high-volume IDs deviate from the estimate.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#why-over-partitioning-and-wide-partitions-can-both-harm-the-same-system",
+          "quote": "That approach assumes the future distribution resembles the input estimates.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The two observed symptoms are opposite sizing failures that can coexist in one fleet: a wide partition magnifies read cost, garbage collection, queueing and worst-case latency, while over-partitioning turns a read into fan-out over many sub-10 KB partitions. The correct direction therefore depends on which partitions are wrong, not on a global rule.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#from-a-correct-provisioning-estimate-to-an-incorrect-future",
+          "quote": "**Wide partitions** then magnify read cost, garbage collection, queues and worst-case query latency; splitting every table aggressively also causes read amplification.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#why-over-partitioning-and-wide-partitions-can-both-harm-the-same-system",
+          "quote": "An **over-partitioned** dataset whose generated time buckets contain **under 10 KB** forces a read to fan out across many small partitions",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Splitting every partition is the wrong lever because it applies a rewrite-shaped, fleet-wide fix to a shape problem: most partitions are healthy, historical data is expensive to rewrite, and the case evidence explicitly refuses the inference that every partition should be split.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#why-over-partitioning-and-wide-partitions-can-both-harm-the-same-system",
+          "quote": "Neither “always smaller partitions” nor “always bigger partitions” is a rational policy.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0d34dd26886340b89fd4f1499d790a81#applied-m9-evidence-what-transfers-and-what-does-not",
+          "quote": "**Not established by this report/playbook:** Netflix results do not mean every Cassandra partition should be dynamically split, or that reported gains apply to another dataset.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The choice between levers is diagnostic: adjust future time slices when most IDs share a density problem, and use a checkpointed per-ID split when only a small set of legitimate keys are extremely wide; rewriting old data is avoided in the first case from the start.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#architectural-selection-and-migration-falsification",
+          "quote": "If most IDs share a density problem, adjust new time slices and avoid rewriting old data. If only a small set of legitimate keys are extremely wide, use a checkpointed per-ID split with immutable-source safeguards and explicit query-equivalence checks.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#safety-and-trade-off-analysis",
+          "quote": "| Change future time-slice width | Most IDs under/over partitioned | Cannot repair already immutable huge partitions |",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A provisioning estimate is an average-shaped artifact; partition-key selection cannot be made from average throughput because one hot owner stays hot after the rest of the keys are distributed, and a global request histogram hides key-conditional skew such as a uniform load test that never exercises the real hot key.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+          "quote": "Average across 100 workshops is 20 attempts/s but profoundly misrepresents the hottest owner.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+          "quote": "Even distribution of the other 500 attempts across shards does not split the 1,500/s single-owner workload.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+          "quote": "A single global request histogram is not a substitute for such conditional samples.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Future-slice reconfiguration is a forward-only, dataset-level lever: a background worker reads partition histograms, estimates density and changes the bucketing of the next time slices, so it repairs the density for future writes without rewriting immutable history, and it fits when many IDs share the same mis-sizing.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#two-different-levers-for-different-skew-shapes",
+          "quote": "**Future-slice reconfiguration:** a background worker inspects Cassandra partition histograms, estimates density and adjusts the *next time slices'* bucketing. This avoids expensive rewriting of already written historical data and works when many IDs share the same excessive or insufficient partition size.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Future-slice reconfiguration cannot repair the already-written wide partitions that produce today's multi-second reads, and its target density is workload-dependent rather than a universal constant; the reported example uses roughly 2-10 MiB and illustrates a change from 60-second to 604,800-second buckets after observing percentiles.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#two-different-levers-for-different-skew-shapes",
+          "quote": "The Netflix example describes a configurable density often around **2–10 MiB**, not a universal Cassandra target.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#why-over-partitioning-and-wide-partitions-can-both-harm-the-same-system",
+          "quote": "the report describes an illustrative change from **60-second to 604,800-second** time buckets for future time slices after observing histogram percentiles.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A per-ID split is a targeted, asynchronous repair: the read path detects anomalously wide IDs by bytes read, emits an event, and a background planner splits the partition with checkpoints, starting with immutable partitions so ordering and concurrent-write hazards are bounded.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#two-different-levers-for-different-skew-shapes",
+          "quote": "**Per-ID asynchronous split:** for a few anomalously wide IDs, detect high read byte counts and emit events. Plan/split in the background, focusing initially on **immutable partitions** to simplify ordering and correctness.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#distinct-runtime-algorithms-not-one-global-rewrite",
+          "quote": "| Per-ID hot-partition detector | **Read path** bytes exceed configured threshold | Emits Kafka event with time slice, ID, existing buckets, immutability and version | Current request may already be slow; per-read detection does not prevent first spike |",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#shadow-read-parity-and-additional-safeguards",
+          "quote": "Netflix deliberately restricted the first implementation to **immutable old partitions**, reducing the likelihood that concurrent writes would invalidate the split.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The planner is checkpointed and bounded: it reads the source partition fully, stores progress and split metadata, adds event buckets while preserving the total sort order, and caps the split fan-out; mutable partitions remain a harder, later scope.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#distinct-runtime-algorithms-not-one-global-rewrite",
+          "quote": "| Async planner + split strategy | Full read of source partition, checkpoints in `wide_row` metadata | Adds event buckets while preserving total sort order; caps split fan-out | Mutable partitions remain a harder future scope |",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A split is correct only if it preserves original event ordering, sort semantics and query completeness; pre/post checksum equality is necessary but not sufficient when the checksum omits user-visible metadata, so a byte-level shadow comparison of real predicate results is an independent oracle.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#safety-and-trade-off-analysis",
+          "quote": "A split must preserve original event ordering, sort semantics and query completeness. Checksum equality is necessary but not a complete proof if the checksum definition omits user-visible metadata.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#shadow-read-parity-and-additional-safeguards",
+          "quote": "a checksum captures a chosen projection while byte-for-byte shadow reads can expose differences in the actual query encoding, ordering or pagination.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Splitting a partition changes physical layout, so the logical query identity must stay stable: a query remains dataset plus entity plus interval plus ordering plus page token, and a routing sidecar may resolve that identity to one ordinary partition or to several completed split partitions, with physical routing treated as an implementation detail.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+          "quote": "Tycho recommends that a logical query use stable `dataset + entity + interval + ordering + page token` semantics. A routing sidecar may resolve that identity to one ordinary partition or multiple completed split partitions, but physical routing must remain an implementation detail.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A page token issued before a split completes must remain interpretable or produce an explicit resumable result; silently continuing under a changed ordering can duplicate or skip events, which makes cursor/pagination semantics part of the split contract rather than a client concern.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+          "quote": "A page token produced before split completion must either remain interpretable or cause an explicit resumable result; silently continuing in a changed ordering could duplicate or skip events.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Read routing may switch to split partitions only after split metadata is marked complete by a validation gate; the original partition is the fallback, and a Bloom filter is only a candidate test that triggers a metadata lookup, never the authoritative source of truth about whether a split exists.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#shadow-read-parity-and-additional-safeguards",
+          "quote": "A positive Bloom result merely triggers a metadata lookup; it must not be equated with proof that a split exists. Query consistency and fallback require authoritative completed state, not a probabilistic filter as source of truth.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#two-different-levers-for-different-skew-shapes",
+          "quote": "Verify pre- and post-split checksums, mark completion only after matching, and update read routing (including Bloom-filter lookup) to split physical partitions.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Cutover is staged, not a flag flip: shadow-serve both paths and compare real answers, enable the new route for selected cohorts, keep the original representation until expiry and recovery are resolved, and refuse activation while checksum or byte-shadow parity fails. The retained original costs extra storage and cannot erase errors already exposed by an unsafe cutover, but it is the safety path that makes the transition recoverable.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+          "quote": "fifth shadow serve both paths to compare answers under real predicates; sixth enable the new route for selected cohorts; seventh preserve a fallback until the old representation may be retired safely.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#architectural-selection-and-migration-falsification",
+          "quote": "do not activate new routing while checksum/byte-shadow parity fails; refuse partial results for complete-history contracts; fall back if metadata is stale, filter memory exceeds budget, split introduces excessive query fan-out, or retention makes old/new incomparable.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+          "quote": "first record pre-split source manifest and row identity; second create a unique split plan version with idempotent event handling; third execute a checkpointed copy using immutable intervals; fourth reconcile **content, order and metadata**, not only byte counts",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#distinct-runtime-algorithms-not-one-global-rewrite",
+          "quote": "| Original-data fallback | Source physical partition retained | Re-read original when split routing/data unavailable | Costs extra storage; cannot erase errors already exposed by an unsafe cutover |",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+          "quote": "If any case cannot produce a consistent fallback, return **insufficient evidence** and do not switch the read path.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "This is an instance of resharding as a multi-state data transition: a correct target topology is insufficient because clients, source stores, backfill state and destination ownership must stay consistent during the move, old and new routing must coexist, and stale writers and stale mapping caches must be fenced at cutover.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition",
+          "quote": "A correct target topology is insufficient: clients, source stores, replica/backfill state, transaction changes and destination ownership must remain consistent **during** migration.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition",
+          "quote": "Fence stale writers and stale mapping caches at cutover.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+          "quote": "**Migration:** can an old and new routing scheme coexist during data copy and cutover?",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The directory/lookup routing that a split design implies has its own failure surface: control-plane availability, routing-cache freshness and split-brain mappings; an application-level routing label is not the same object as a database table partition.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+          "quote": "| Directory/lookup routing | Can deliberately place particular owners and manage hot tenants | Control-plane availability, routing cache freshness and split-brain mappings |",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+          "quote": "An **application-shard label** and a **DB table partition** are not identical.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The reported gains are scoped to affected wide-partition reads (seconds to low double-digit milliseconds average, tails near 200 ms), not a fleet p99, and the same source keeps an extreme 500 MB+ partition that still took roughly 41 seconds; even a correct per-ID split is not an SLO guarantee for pathological data.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#reported-gains-and-one-extreme-exception",
+          "quote": "the **average latency for affected wide-partition reads** fell from **seconds** to **low double-digit milliseconds**",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#reported-gains-and-one-extreme-exception",
+          "quote": "the same article includes an extreme **500 MB+** partition read returning paginated data while still taking roughly **41 seconds** in its example.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Simulation and estimate artifacts have a hard evidence boundary: a model-verified label does not imply calibration, simulation results never promote a pattern to sufficient, and a simulation does not prove production behavior; the partition estimate must therefore be re-grounded in observed partition-size and read-latency distributions.",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "Simulation results never promote a pattern to `sufficient`.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "A `model-verified` label does not imply calibration.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do",
+          "quote": "claim that a simulation proves production behavior",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "At pattern level, splitting or sharding is contraindicated when the key creates hot tenants or when a failed migration cannot be detected and verified, which is exactly the condition an untested blanket split would create.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e59ddfc6c410468ab44119cedbe4c171#overview",
+          "quote": "**Hard contraindications.** Reject when one node suffices, when the key creates hot\ntenants, when cross-shard joins/transactions dominate, or when a failed migration\ncannot be detected and verified.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Before a split partition serves traffic the team must name which invariant is under test, because migration completeness means different things: identity, value equality, operation order, referential consistency, exactly-once side effects or bounded freshness, each with a different oracle.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "first identify whether the business invariant is *identity*, *value equality*, *operation order*, *referential consistency*, *side-effect exactly-once*, or *bounded freshness*.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+          "quote": "| Large engine migration with key hotspots | Partition checkpoints, old/new read verification, hot-key tests and staged primary switch |",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "The blanket proposal also lacks decision evidence: a claim that a dataset size forces a distribution scheme cannot be determined without growth, actual key and query distributions, hot tuples, IO, transactional ownership, restore objectives and a measured comparison of simpler improvements.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#5-alternatives-before-sharding",
+          "quote": "Cannot determine. Need growth, actual key and query distributions, hot tuples, disk and index IO, transactional ownership, compliance constraints, restore objectives, operational support and a measured comparison of simpler improvements.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Partitioning is a continuously revisited architecture decision rather than a one-time key-design exercise; the durable contract is topology plus data correctness while physical repartitioning remains allowed, and after any change p99 is compared by partition-size percentile, queue depth, retries/timeouts, metadata cache behavior, storage read amplification and cost by dataset rather than fleet means.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#operational-checks-and-unknowns",
+          "quote": "partitioning is a continuously revisited architecture decision, not a one-time key design exercise. Maintain a topology/data correctness contract while allowing physical repartitioning.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#operational-checks-and-unknowns",
+          "quote": "Compare p99 by partition-size percentile, read queue depth, retries/timeouts, metadata cache hit behavior, storage read amplification and cost, all by dataset, not only fleet means.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "A split is not ready to serve traffic until the adversarial cases have a consistent answer: duplicate detection events, planner crash before checkpoint, partial write after checkpoint, checksum collision or excluded metadata, Bloom false positive, missing split metadata, stale read-cache state, retention dropping source data, changed consistency levels, pagination across a split, and a late write to a previously immutable partition; if any case cannot produce a consistent fallback, activation must stop.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+          "quote": "**Adversarial tests:** duplicate Kafka detection; planner crash before checkpoint; partial write after checkpoint; checksum collision or excluded metadata; Bloom false positive; missing split metadata; stale read-cache state; a retention job dropping source data; changing consistency levels; pagination across a split; and a previously immutable partition receiving a late write.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+          "quote": "If any case cannot produce a consistent fallback, return **insufficient evidence** and do not switch the read path.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+    "tycho.page.0d34dd26886340b89fd4f1499d790a81#applied-m9-evidence-what-transfers-and-what-does-not",
+    "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+    "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+    "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition",
+    "tycho.page.94165346d83c4ff79634d4400f4a9ba7#5-alternatives-before-sharding",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#architectural-selection-and-migration-falsification",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#distinct-runtime-algorithms-not-one-global-rewrite",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#from-a-correct-provisioning-estimate-to-an-incorrect-future",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#operational-checks-and-unknowns",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#reported-gains-and-one-extreme-exception",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#safety-and-trade-off-analysis",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#shadow-read-parity-and-additional-safeguards",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#two-different-levers-for-different-skew-shapes",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#why-over-partitioning-and-wide-partitions-can-both-harm-the-same-system",
+    "tycho.page.e59ddfc6c410468ab44119cedbe4c171#overview",
+    "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

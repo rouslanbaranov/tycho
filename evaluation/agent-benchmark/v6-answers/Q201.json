@@ -1,0 +1,236 @@
+{
+  "task_id": "Q201",
+  "question": "A capacity review computes a fleet p99 by averaging each instance's p99, keeps only hourly rollups after seven days, and then reports that a ten-minute queue crisis did not affect the tail. Why can each step produce a false improvement, and what must be retained or recomputed before that claim is made?",
+  "layers": [
+    "book"
+  ],
+  "snapshot": "4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a",
+  "answer": "# Q201 — Fleet p99, hourly rollups and a ten-minute queue crisis\n\n## 1. Direct answer\n\nA capacity review that (a) averages per-instance p99s, (b) keeps only hourly rollups after seven days, and (c) concludes that a ten-minute queue crisis did not affect the tail has computed three statistics that are each structurally incapable of answering the question. Each transformation can lower the reported number without any change in the system.\n\n- **Averaging per-instance p99s is not a fleet p99.** A p99 is a quantile of a request distribution. The mean of per-instance quantiles has no request denominator, gives a tiny instance the same weight as the instance that serves most of the fleet, and moves when fleet size, membership or traffic mix changes. When the damage is concentrated in a minority of instances — the usual shape of a capacity problem — averaging divides it by the number of instances and reports a value below the pooled fleet quantile. Constructed example: two equal-traffic instances, one with 4% slow requests and one with 0%. The mean of their p99 values sits between the fast and slow values, while the pooled fleet has 2% slow requests and its true p99 is at the slow value. The average looks better than the fleet it describes.\n- **An hourly rollup is a different statistic, and after seven days it is the only one left.** Ten minutes is one sixth of an hour. A rollup that stores an average of sub-bucket p99s attenuates the excursion by roughly that factor; one p99 per hour cannot localize the ten-minute interval; and if the crisis pushed only a small share of the hour's requests above the threshold (one queue, shard or operation class, or only the requests that survived), the hourly p99 can stay at baseline. Deleting the raw tier then removes the only evidence that could answer the ten-minute question, so 'no effect' becomes unfalsifiable. The incident looks clean because the data vanished.\n- **'Did not affect the tail' is a negative, window-specific, population-specific claim inferred from a statistic that cannot see the window.** A monthly p99 is set at the 1% boundary of the whole month, not at the incident; with uniform traffic, ten minutes of a 30-day window is about 0.02% of the requests, so an extreme ten-minute slice moves the monthly cut only marginally. Overload also changes the measured population: timed-out, rejected and shed requests may leave the completed-request histogram, so the surviving distribution is faster exactly when the queue is worst. The absence of a signal in an insensitive statistic is not evidence of no effect.\n\n**Before the claim is made**, the review must retain or recompute:\n\n1. a published, versioned measurement contract — boundary, eligible population, denominator, window, aggregation and exclusions;\n2. per-instance histograms with compatible bucket boundaries and observation counts at a resolution at least as fine as the shortest event of interest, plus per-bucket maxima;\n3. the incident window's high-resolution data or a frozen snapshot kept past the seven-day cliff;\n4. a count-weighted pooled p99 recomputed for the incident window and for a matched baseline, never an average of quantiles;\n5. inclusion of failed, timed-out and rejected eligible requests, with queue age and depth, rejection and timeout counters as corroboration;\n6. if the resolution is gone, an explicit 'insufficient evidence', not 'no effect'.\n\n## 2. Mechanism and justification\n\n### 2.1 Step 1: the mean of p99s is a number without a population\n\nThe book's metrics page states the rule directly: 'The p99 of a globally pooled histogram is **not** an average of per-instance p99 values.' The metrics-representation page lists 'averaging service p99 quantiles across replicas as though they were samples' and 'combining incompatible per-instance quantiles as one global quantile' as failures to avoid, and the retention page adds that 'averaging percentiles across groups is generally invalid.'\n\nThree independent reasons make the average unusable as a fleet tail:\n\n1. **No denominator.** A quantile is defined on a population of requests. Averaging per-instance quantiles drops the request counts. Equal weights are arbitrary; weighting by traffic restores the counts but still does not produce a quantile, because a weighted mean of quantiles is not the quantile of the weighted mixture.\n2. **Composition sensitivity.** The average changes when instances are added, removed, drained or rebalanced, even when every request's latency is unchanged. A scale-out, the replacement of a degraded host, or a shift of traffic toward a fast pool lowers the average. That is movement in fleet composition, not a latency improvement.\n3. **Minority-tail dilution.** The pooled quantile is set by the shape of the worst-covered part of the population. When one instance or one operation class carries the slow requests, its p99 enters the average with weight 1/N, not with its share of requests. The average can sit far below the pooled p99, and in other compositions it can sit above it, so neither a rise nor a fall is interpretable. The tails page adds that dependencies can be correlated through a shared database, GC event, network congestion or regional fault, so per-instance quantiles can each look acceptable while the fleet has a synchronized slow cohort.\n\n### 2.2 Step 2: inside the hour, and after the cliff\n\nThe metrics page is explicit: 'Rolling raw 10-second latency buckets into hourly averages may erase evidence of short-lived user-visible incidents.' The retention page gives the exact failure: 'a daily series average can hide a 10-minute queue crisis.'\n\nTwo distinct losses occur:\n\n- **Transform loss.** If the hourly value is a mean of sub-bucket p99s (or a mean latency), the excursion contributes one sixth of the hour's weight and its deviation from baseline is attenuated by about six. A ten-minute, 500 ms tail added to fifty normal minutes becomes a small bump in an hourly average. If the rollup stores a single quantile summary, the distribution is gone entirely; the book warns that 'if retaining coarse histograms, the chosen bucket schema constrains the precision of reconstituted percentiles', and that 'deleting buckets removes resolution for later quantile estimation.'\n- **Resolution loss.** Even a correctly merged hourly histogram answers 'p99 over the hour', not 'p99 over 14:10-14:20'. Ten minutes is 16.7% of an hour, so an all-slow crisis would move an hour-level p99; but a queue crisis usually slows only the requests that waited, and if they are under 1% of the hour's requests, the hourly p99 remains at baseline while those requests were badly delayed. The hour-level statistic cannot distinguish 'no slow requests' from 'slow requests below the 1% cut'.\n\nSeven days makes both losses irreversible. The raw tier is deleted and the surviving tier is the average. A later query cannot recover the sub-hour quantile, and the book's failure table names the outcome: 'Expired retention | Past incident looks clean because data vanished | Record known retention and separate long-lived source/audit evidence.' The same page records the downsampling failure as 'p99 appears improved' and requires verifying 'histogram/quantile mathematics and preserved boundary.' The pipeline page puts the same error in its reject list: the interpretation 'a downsampled p99 equals p99 of original raw durations' is invalid.\n\nThere is a further trap after the rollup: combining hourly values across a month. The rule that 'a p99 computed from 5-minute buckets cannot be averaged to obtain the day's p99' applies at every level. Averaging 720 hourly p99s gives each hour equal weight regardless of its request count and produces neither the month's request-weighted p99 nor the p99 of any actual population.\n\n### 2.3 Step 3: the claim, the denominator and the population\n\n'Did not affect the tail' requires a statistic sensitive to the event at the event's own window, over a population held constant. Both conditions fail here.\n\n- **Window.** The tails page requires the observation window and 'whether timed-out requests are included, how sampling works, and whether successful, rejected and failed requests share the same population.' A monthly p99 is a statement about a month of requests; a ten-minute event is a small slice of that population and cannot be expected to move the monthly cut. Reporting the monthly number as evidence about the ten-minute window is a category error, not a measurement.\n- **Population.** During a queue crisis, admission control sheds load and slow requests time out. If latency is computed over completed requests only, the slowest work leaves the histogram and the observed p99 can fall. The overload page names the inference: 'Client-side throttling | Declining backend offered traffic; local client rejections | Server capacity improved automatically.' The latency-measurement page requires including 'the failed or timed-out intended user operations' and warns 'do not silently omit requests that never entered the measured service.' The SLI page warns that 'changing the denominator can manufacture an apparent improvement' and that 'exclusion policy cannot change retrospectively to improve the score.'\n- **Comparison.** The claim is comparative, but no matched baseline at the same window, population and demand level is recomputed. The benchmark page shows that an apparent improvement can be 'simply missing demand' and requires recording 'distribution confidence, not only p99 and a headline RPS.' A result that is inconclusive because 'variance is high, samples are insufficient' is valid evidence, not a stronger negative claim.\n\n## 3. Boundaries and trade-offs\n\n- **Averaging can overstate as well as understate.** The argument is not that the average is always too low; it is that the average has no fixed relationship to the pooled quantile, so it cannot support either a worse or a better conclusion. The review's error is treating a compositional statistic as a measurement.\n- **Histograms are not automatically safe.** A histogram merged across incompatible bucket boundaries 'can misrepresent the merged distribution', and coarse buckets limit the precision of any reconstituted percentile. Compatible buckets with counts are the usable form; summaries carrying per-instance quantiles are not mergeable.\n- **Hourly histograms can show an all-slow hour.** The defect is not the one-hour boundary by itself. A correct hourly histogram can reveal a ten-minute event that dominates the hour; it cannot localize it, and it cannot reveal an event that affected less than the quantile's tail fraction of the hour's requests. Mean-like rollups lose the event even when it dominated the interval.\n- **Retention is a cost trade-off.** Keeping raw samples forever is expensive and is not required. The book's requirement is to choose retention from the questions to be answered and to 'record what each retention tier cannot answer after downsampling.' The review must extend high-resolution retention over the period in which it will make tail claims, snapshot or export the incident window before expiry, or accept that the claim cannot be made.\n- **Instance-level p99 is still the right local view.** If the question is which instance is unhealthy, per-instance p99 is appropriate; if it is what users experienced, the pooled request distribution is required. The review needs both levels, not an average that erases the difference.\n- **Logs and traces are corroboration, not a substitute.** The book states that 'log and trace correlation are separate tasks, not substitutes for lost metric samples.' They can explain the incident, but they do not restore a deleted latency histogram; and if the collector itself saturated, 'an incident may saturate the collector and remove exactly the samples needed to diagnose the incident.'\n- **The claim can be true at one window and false at another.** A monthly p99 may genuinely be unchanged. The correct statement is window-scoped: the fleet p99 over the ten-minute incident window, for population P, computed from tier T, changed by X — or insufficient evidence at ten-minute resolution.\n\n## 4. Evidence map\n\n| Claim | section_key | Basis |\n|---|---|---|\n| A pooled p99 is not the mean of per-instance p99s. | tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection | quoted |\n| Averaging per-replica quantiles and combining incompatible quantiles are named failures. | tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations | quoted |\n| Averaging percentiles across groups is invalid; a daily average can hide a ten-minute queue crisis. | tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design | quoted |\n| Sums and counts cannot reconstruct an arbitrary high-percentile distribution. | tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design | quoted |\n| Hourly averaging of raw 10-second buckets erases short incidents; bucket schema limits reconstituted precision. | tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss | quoted |\n| Retention tiers answer different questions and their limits must be recorded. | tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss | quoted |\n| Misconfigured downsampling makes p99 appear improved; expired retention makes past incidents look clean. | tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics | quoted |\n| A downsampled p99 is not the p99 of raw durations. | tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage | quoted |\n| A percentile needs a defined window, inclusion rules and a named population. | tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request | quoted |\n| Failed and timed-out intended operations must be included, and baseline/treatment compared at equal offered demand. | tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low | quoted |\n| Changing the denominator can manufacture an apparent improvement. | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population | quoted |\n| Population, window, aggregation and exclusions are a fixed contract; exclusions cannot change retrospectively. | tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes | quoted |\n| Histograms support SLO computation only under bucket and aggregation constraints; one p99 without rejected or timed-out populations cannot prove experience. | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level | quoted |\n| Shedding or throttling can look like automatic capacity improvement; a queue does not create capacity. | tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery | quoted |\n| Apparent improvement can be missing demand; record distribution confidence, not only p99. | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior | quoted |\n| High variance or insufficient samples justify an inconclusive result, not a stronger conclusion. | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together | quoted |\n| Queueing delay grows near capacity and tails depend on burstiness and service variability. | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#measurement-model | quoted |\n| Closed-loop or blocked measurement can omit waits that external arrivals would have created. | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load | quoted |\n| Missing metrics are themselves an incident, and alerts need enough observations to separate low traffic. | tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety | quoted |\n\n## 5. Unknowns and confidence\n\n- **High confidence in the mechanism.** The book states the percentile-averaging and downsampling failures directly and the population/exclusion failure directly. No production metric store, SLO, incident or capacity measurement was observed here; the pages label their own examples synthetic.\n- **Unknown: what the review actually computed.** If its fleet p99 was already a merged-histogram quantile, step 1 is sound and the defect lies only in retention and population. If the hourly tier stores histograms rather than means, the ten-minute event may remain visible at hour resolution but cannot be localized.\n- **Unknown: the affected share.** If the crisis slowed every request for ten minutes, an hourly histogram would show it while a monthly p99 would still be nearly blind. If it slowed only a subset, even the hourly p99 can be blind. The review must publish the affected cohort and its share.\n- **Unknown: whether exclusions or timeouts changed the denominator.** This is the most likely source of a 'tail improved' result during a queue crisis and cannot be settled from the retention description alone.\n- **What would change the answer.** Retained per-instance histograms with compatible buckets and counts at ten-second or one-minute resolution, covering the incident with the same population before and during, would allow the claim to be tested. If that recomputation shows no change in the incident-window p99, the claim would be supported for that window, though still not for the month without a separate monthly quantile.",
+  "facets": [
+    {
+      "facet": "Fleet aggregation validity: is the reported fleet p99 a quantile of the pooled request population?",
+      "queries": [
+        "average of per-instance p99 percentiles fleet",
+        "percentile of percentiles invalid pooled distribution quantile",
+        "fleet-wide aggregation replicas instance level tail visibility"
+      ],
+      "evidence": [
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request"
+      ],
+      "finding": "The mean of per-instance p99s is not the pooled fleet p99; it has no request denominator, is sensitive to fleet composition, and dilutes a tail carried by a minority of instances."
+    },
+    {
+      "facet": "Quantile arithmetic and mergeability: what must replace the average, and which representations can be merged?",
+      "queries": [
+        "merging histograms percentiles weighted by request count",
+        "histogram buckets aggregation resolution latency SLO compute",
+        "histogram bucket boundaries merge quantile estimation error"
+      ],
+      "evidence": [
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level"
+      ],
+      "finding": "Only histograms (or equivalent distribution sketches) with compatible bucket boundaries and observation counts can be merged into a pooled quantile; sums and counts reconstruct a mean but not an arbitrary high percentile, and coarse buckets bound the reconstituted precision."
+    },
+    {
+      "facet": "Rollup resolution and the seven-day cliff: what does the hourly transform destroy, and what does expiry make unrecoverable?",
+      "queries": [
+        "hourly rollup destroys short incident evidence retention",
+        "seven day retention downsampling tier raw samples lost",
+        "retention policy raw samples seven days aggregated long term"
+      ],
+      "evidence": [
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+        "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage"
+      ],
+      "finding": "A mean-like hourly rollup attenuates a ten-minute excursion by about one sixth; a one-value-per-hour tier cannot localize the interval; and deleting the raw tier removes the only data that could answer the ten-minute question, making the incident look clean."
+    },
+    {
+      "facet": "Population and denominator shifts during the crisis: which requests leave the measured distribution and make the tail look better?",
+      "queries": [
+        "SLO error budget window evaluation short incident",
+        "measurement artifact number improves while system unchanged",
+        "percentile estimate sample size confidence low traffic"
+      ],
+      "evidence": [
+        "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes"
+      ],
+      "finding": "Timeouts, admission rejections and shed load can remove the slowest work from completed-request latency, so the observed p99 can improve precisely when the queue is worst; changing the denominator or exclusions can manufacture the same apparent improvement."
+    },
+    {
+      "facet": "Retention contract: what must be kept so that a ten-minute claim remains testable?",
+      "queries": [
+        "retention raw resolution incident diagnosis short window",
+        "max over buckets preserves peak rollup average hides spike",
+        "retention tier raw 7 days hourly"
+      ],
+      "evidence": [
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+        "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write"
+      ],
+      "finding": "Retain the measurement contract, per-instance histograms with compatible buckets and counts at sub-event resolution, per-bucket maxima, and the incident window's high-resolution data or a frozen snapshot; record what each tier cannot answer and label gaps as unknown rather than clean."
+    },
+    {
+      "facet": "Recomputation and claim discipline: what must be recomputed, and how must a negative tail claim be stated?",
+      "queries": [
+        "headroom planning tail latency capacity decision",
+        "capacity review percentile fleet instance fleet-level SLO",
+        "capacity planning headroom p99 fleet aggregate dilution"
+      ],
+      "evidence": [
+        "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+        "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+        "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+        "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load"
+      ],
+      "finding": "Recompute the count-weighted pooled p99 for the incident window and a matched baseline from merged histograms, including failed, timed-out and rejected eligible requests; report counts, variance and the tier used, or state insufficient evidence."
+    }
+  ],
+  "citations": [
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+    "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+    "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+    "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+    "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#measurement-model",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load"
+  ],
+  "evidence": [
+    {
+      "claim": "The p99 of a globally pooled histogram is not an average of per-instance p99 values.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+      "note": "Quoted: 'The p99 of a globally pooled histogram is **not** an average of per-instance p99 values.' The section also requires endpoint, time budget, observation point and outcome population for a latency objective."
+    },
+    {
+      "claim": "Averaging service p99 quantiles across replicas as though they were samples and combining incompatible per-instance quantiles are failures to avoid.",
+      "section_key": "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+      "note": "Quoted table rows: histogram failure 'Averaging service p99 quantiles across replicas as though they were samples'; summary failure 'Combining incompatible per-instance quantiles as one global quantile'. Histograms give 'estimable quantiles under known boundaries'."
+    },
+    {
+      "claim": "Averaging percentiles across groups is generally invalid, and a daily series average can hide a ten-minute queue crisis.",
+      "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+      "note": "Quoted: 'averaging percentiles across groups is generally invalid; deleting buckets removes resolution for later quantile estimation' and 'a daily series average can hide a 10-minute queue crisis'. The same paragraph warns that incompatible bucket boundaries misrepresent the merged distribution."
+    },
+    {
+      "claim": "Sums and counts reconstruct a mean under compatible populations but cannot reconstruct an arbitrary high-percentile distribution.",
+      "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+      "note": "Quoted: 'A sum and count can reconstruct the mean under compatible populations; they cannot reconstruct an arbitrary high-percentile distribution.' Basis for merging histograms instead of averaging quantiles."
+    },
+    {
+      "claim": "Hourly averages of raw 10-second buckets can erase short-lived incidents, and the bucket schema bounds reconstituted precision.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+      "note": "Quoted: 'Rolling raw 10-second latency buckets into hourly averages may erase evidence of short-lived user-visible incidents' and 'If retaining coarse histograms, the chosen bucket schema constrains the precision of reconstituted percentiles.'"
+    },
+    {
+      "claim": "Hourly means of per-host means are not the fleet mean unless weighted by observation counts, and a p99 from 5-minute buckets cannot be averaged into a day's p99.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+      "note": "Quoted: 'An hourly mean of per-host means is not generally the fleet-wide mean unless correctly weighted by observation counts. A p99 computed from 5-minute buckets cannot be averaged to obtain the day's p99.'"
+    },
+    {
+      "claim": "Retention must be chosen from the questions to be answered, and each tier's unanswered questions must be recorded.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+      "note": "Quoted: retention should reflect high-resolution diagnosis, SLO accountability and long-range trends; 'Record what each retention tier cannot answer after downsampling.' Also: 'Log and trace correlation are separate tasks, not substitutes for lost metric samples.'"
+    },
+    {
+      "claim": "Misconfigured downsampling can make p99 appear improved, and expired retention makes a past incident look clean.",
+      "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+      "note": "Quoted failure table: 'Misconfigured downsampling | p99 appears improved | Verify histogram/quantile mathematics and preserved boundary'; 'Expired retention | Past incident looks clean because data vanished | Record known retention and separate long-lived source/audit evidence.'"
+    },
+    {
+      "claim": "A downsampled p99 is not the p99 of the original raw durations.",
+      "section_key": "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+      "note": "Quoted failure interpretation to reject for the time-series store: 'A downsampled p99 equals p99 of original raw durations.'"
+    },
+    {
+      "claim": "A percentile needs a defined observation window, timeout inclusion and a named request population.",
+      "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+      "note": "Quoted: 'A percentile is a value of a **distribution**, not a single request's maximum. Define the observation window, whether timed-out requests are included, how sampling works, and whether successful, rejected and failed requests share the same population.'"
+    },
+    {
+      "claim": "Failed and timed-out intended operations must be included, and comparisons need equal offered demand and confidence limits.",
+      "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+      "note": "Quoted: 'Include the failed or timed-out intended user operations when computing success and latency SLOs; do not silently omit requests that never entered the measured service' and 'Compare baseline and treatment at equivalent offered demand ... with confidence/variance limits.'"
+    },
+    {
+      "claim": "Changing the denominator can manufacture an apparent improvement.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+      "note": "Quoted: the treatment must be documented before measurements begin, 'otherwise changing the denominator can manufacture an apparent improvement.'"
+    },
+    {
+      "claim": "Population, numerator, denominator, window, aggregation and exclusions are a fixed contract, and exclusions cannot be changed retrospectively to improve the score.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+      "note": "Quoted: the SRE Book warns 'we often aggregate raw measurements. This needs to be done carefully'; 'exclusion policy cannot change retrospectively to improve the score'; Tycho rule: 'fix the eligible population, numerator, denominator, window, aggregation and exclusions before measurement.'"
+    },
+    {
+      "claim": "Histograms support SLO computation only within bucket and aggregation constraints, and one recorded p99 without rejected or timed-out populations cannot prove user experience.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+      "note": "Quoted: 'A histogram can support latency SLO computation under its bucket/exemplar resolution and aggregation constraints. One recorded p99 without rejected/timed-out populations cannot prove user experience.'"
+    },
+    {
+      "claim": "Shedding or client-side throttling can look like automatic capacity improvement, and a queue does not create capacity.",
+      "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+      "note": "Quoted table row: 'Client-side throttling | Declining backend offered traffic; local client rejections | Server capacity improved automatically'; also 'A queue does not create capacity: if offered work exceeds drain rate, backlog and age grow even while every worker is busy.'"
+    },
+    {
+      "claim": "An apparent improvement can be missing demand, and distribution confidence must be recorded rather than only p99.",
+      "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+      "note": "Quoted: 'Run B's apparent improvement might simply be missing demand'; 'Declare warmed, cold and recovery phases rather than discarding inconvenient transients'; 'Record test duration, environment, failures and distribution confidence, not only p99 and a headline RPS.'"
+    },
+    {
+      "claim": "High variance or insufficient samples justify an inconclusive result, not a stronger conclusion.",
+      "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+      "note": "Quoted: 'A result can be **inconclusive** because variance is high, samples are insufficient, the generator saturated, or the system differs too much from the target environment. That is valuable evidence and should lead to a better scoped experiment, not a stronger conclusion.'"
+    },
+    {
+      "claim": "Queueing delay grows near capacity, and tails depend on service variability and arrival burstiness.",
+      "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#measurement-model",
+      "note": "Quoted: 'Queueing delay grows as utilization approaches a bottleneck's capacity, but service-time variability and arrival burstiness affect tails.' Supports focusing the recomputation on the high-utilization window."
+    },
+    {
+      "claim": "Closed-loop or blocked measurement omits waits that an external arrival schedule would have created.",
+      "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load",
+      "note": "Quoted: 'When a blocked load generator stops scheduling requests, recorded latency excludes waits that would have occurred under the intended arrival schedule.' The same section requires recording both raw observations and the intended schedule."
+    },
+    {
+      "claim": "Missing metrics are themselves an observable incident, and alerts need enough observations to distinguish low traffic.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+      "note": "Quoted: 'An exporter outage may look like a quiet service; missing metrics are themselves an observable incident'; alerts need 'enough observations / confidence to distinguish low traffic'. Supports treating a post-expiry gap as unknown, not healthy."
+    },
+    {
+      "claim": "Collector or telemetry saturation can remove exactly the samples needed to diagnose the incident.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write",
+      "note": "Quoted: 'An incident may saturate the collector and remove exactly the samples needed to diagnose the incident'; pipeline health must be monitored independently."
+    }
+  ],
+  "abstain": false,
+  "notes": "Layers: the question is a book-layer conceptual/comparative question (V07 performance, V09 observability). The v11 atlas alias was consulted only through the SLI/SLO owner page read as book prose; the modeling-and-simulation layer (v12 alias) was not needed because no model, scenario, run or decision artifact is required to answer a measurement-methodology question. Evidence comes only from the read-only agent_session_cli search/read/page commands; no corpus, qrels, labels, other answers or rankings were read, and no book/atlas/index file was edited.",
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "a service's latency turns bimodal after a move to larger instances, and flame graphs, jfr and jit probes show the same code paths on fast and slow nodes; after the team pads an internal jvm structure the slow cohort disappears but throughput remains near 150 requests per second per node against a goal of about 250. why can the profiler be accurate and still miss the cause, why is losing the slow cohort not evidence that the bottleneck is gone, and what keeps the second fix from being adopted safely?",
+      "required_evidence": [
+        "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss",
+        "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#competing-diagnoses-and-falsifiable-tests",
+        "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#two-distinct-fixes-not-one-miracle-patch",
+        "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates"
+      ],
+      "core_claims": [
+        "Flame graphs, JFR and JIT probes describe where application code spends time, so they can look identical on fast and slow nodes while hardware counters show the difference.",
+        "The discriminating evidence was in performance counters and disassembly: extra cycles per instruction, cache churn and machine clears pointed to false sharing between writes to a secondary-superclass cache and reads of an adjacent field on the same x86 cache line.",
+        "Each competing diagnosis needs an observation that would argue against it; for false sharing, padding the adjacent fields must remove both the latency bimodality and the coherence events, otherwise the hypothesis fails.",
+        "Padding removed the slow cohort but left throughput near 150 requests per second per node against the 250 goal, so removing that symptom exposed a second bottleneck rather than confirming the capacity assumption.",
+        "The second bottleneck was true sharing, where multiple cores wrote the same cached state, and bypassing those secondary-superclass-cache writes behind a JVM flag raised throughput to about 350 requests per second at the same CPU target.",
+        "The two changes are different interventions, one altering memory layout and the other JDK behavior, so safe adoption needs a feature flag, a reversible JDK image and separate gates for unchanged Java behavior under altered layout and altered cache behavior under representative class hierarchies and concurrency."
+      ],
+      "optional_claims": [
+        "The reported up-to-3.5x improvement and the 150, 250 and 350 requests-per-second figures belong to one service with a specific hardware and JDK configuration, so they are not a portable speedup.",
+        "A canary that sends equal request counts to large and small nodes can miss the regression, because the larger node must also carry the per-instance load it is expected to absorb and throughput must be normalized to the autoscaling CPU target.",
+        "For another runtime the test matrix must add class-loader changes, concurrent subtype checks, dynamically generated proxy types, long-running mixed workloads, end-to-end correctness and upstream and downstream latency, recorded for the exact JDK commit and CPU architecture."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a team replaces relational reads of a social-style object graph with a fixed typed-association api and a follower and leader cache tier because a large deployment reports over a billion reads per second. why does that success depend on the access pattern rather than on modeling the data as a graph, why can the read path still return a stale association after a write, and what must the team count before adopting the same design?",
+      "required_evidence": [
+        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#evolution-of-the-api-and-the-real-failure-being-solved",
+        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#adopt-only-for-matching-access-patterns-tycho-original"
+      ],
+      "core_claims": [
+        "The published API supports typed objects and directed associations through point, creation-time range and optional count reads, and can maintain inverse links, but it deliberately does not expose generic SQL joins, arbitrary multi-hop traversal or server-side set intersection.",
+        "The migration was chiefly a read-dominated cache and API ownership decision: the earlier application-hosted API invalidated a whole cached association list when one item changed, transferred a much larger cached value to fetch a few associations, and let independent application-side invalidation produce stale results, hot-object thundering herds and inconsistent reads.",
+        "The workload basis is cheap, predictable point, range and count access, and the social graph is still stored as typed rows in sharded MySQL, so a directed-graph domain model does not by itself justify a specialized graph API.",
+        "A read reaches a follower cache that misses to a leader cache tier able to fetch from MySQL, and a write travels through the follower to the leader with successful responses updating caches along that path, so a read may be served by a cache that has not yet observed a concurrent change.",
+        "One primary region per shard owns durable updates, secondary regions receive MySQL replication and forward their writes to that primary, and the default is eventual consistency with read-your-writes pursued at high probability through write-through caching rather than guaranteed globally.",
+        "Adoption should be decided by counting positive and negative relationship lookups, elements returned, cache churn, hot-item skew, required ordering, write freshness and multi-region semantics, and by piloting the facade against the existing authoritative store."
+      ],
+      "optional_claims": [
+        "A stronger per-client consistency option exists at extra processing and availability cost, and switching the primary region is an availability mechanism whose fencing and stale follower reads still need verification.",
+        "The reported more-than-one-billion reads per second and millions of writes per second characterize the 2013 deployment, not portable per-shard capacity.",
+        "Ordinary SQL plus a managed cache may be simpler when datasets are small, association queries vary or strong multi-record transactions dominate, and a graph database is for applications that genuinely need arbitrary traversal."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a team moves an unchanged sql schema and client api from one mysql storage engine to another by building a replica, converting its tables and promoting that node after it starts and replays representative queries. why is a clean start and identical query text not evidence that the two engines are semantically equivalent, what two observed failures must the promotion gate catch, and what must remain in place before the last old-engine region is removed?",
+      "required_evidence": [
+        "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+        "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+        "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria"
+      ],
+      "core_claims": [
+        "A binary version upgrade and an engine migration are different procedures: the version upgrade rolls through follower, other followers, leader, next partition, next region, while an engine migration needs a newly built replica and table conversion, so availability, data checks and rollback do not transfer between them.",
+        "One observed failure was a conversion interrupted by out-of-memory during handler commit that left a table missing after restart, which before-and-after table counts and checksums detected where an ostensibly completed ALTER would not.",
+        "The other observed failure was a reproduced SQL request producing a different result under the two engines (defect PS-7722), so identical query text and client API did not guarantee identical semantics.",
+        "A matching table checksum proves only the checked representation under its defined snapshot, so promotion needs a value-level read oracle, backup and row-count validation and runtime query replay in addition to structural checks.",
+        "Promotion proceeds one converted follower at a time with a temporarily mixed replica set; a successful follower check is not proof of leader or write equivalence, and another region should stay on the old engine as a failover option until read and write, replica-lag and failover tests pass.",
+        "The gate must stop on a missing table after ALTER, a different query result on replay, backup incompatibility, unsustainable CPU or compaction I/O, an unexplained read tail, or a rollback whose old-engine copy can no longer represent accepted new writes."
+      ],
+      "optional_claims": [
+        "The published outcome is partial and mixed: over 30 percent less disk usage with higher CPU and I/O on some instances, with all Schemaless but only some Docstore instances migrated as of 2022, so a capacity reduction is not a fleet-wide total-cost reduction.",
+        "If actual workload and recovery evidence cannot be obtained, the correct result is insufficient evidence rather than selecting an engine from a public percentage.",
+        "LSM storage savings trade against compaction and lookup economics, so retaining and tuning the legacy architecture or tuning compression remains a legitimate alternative when capacity and correctness already meet requirements."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "an edge proxy terminates tls, adds a principal header for the backend, and the team treats a successful handshake as proof that the caller was authenticated for the object it requests. why does that chain not establish the application's authority, what must each hop name, and what must the rotation plan and acceptance tests separate?",
+      "required_evidence": [
+        "tycho.page.37a28a568f7e987941749e198c03439a#the-trust-question",
+        "tycho.page.37a28a568f7e987941749e198c03439a#original-fictional-boundary-contract",
+        "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ",
+        "tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance"
+      ],
+      "core_claims": [
+        "In a client to edge to gateway to application path, the certificate the client sees normally identifies the TLS endpoint it contacted, not the final application process, and it does not authorize a particular object.",
+        "When encryption terminates at a proxy, the next connection needs its own declared protection, and forwarded identity may come only from an authenticated trusted intermediary; a caller-supplied identity header or network location must not become permission.",
+        "Identity inputs must be enumerated and ambiguity rejected: a proxy that strips one principal header while a backend consumes a second alternate header still delivers a confused identity to the application, and adding another encryption layer does not fix it.",
+        "Resource authorization stays at the boundary that owns the resource, because removing every backend check creates a privileged bypass path unless network and identity contracts actually exclude direct backend calls.",
+        "Routine rotation and compromise are different: rotation overlaps producers, verifiers, caches and long-lived connections and verifies the new chain before it becomes the only accepted path, while during compromise continuing to accept an old key may violate the threat contract and requires an explicit incident decision.",
+        "Acceptance must record denied versus unavailable rather than only a handshake success rate, and test untrusted direct-backend requests, stale certificate chains, wrong audience or issuer, forged forwarded context, revoked object access and policy distribution delay."
+      ],
+      "optional_claims": [
+        "A control-plane outage must not silently remove authentication or refresh unknown credentials indefinitely; already established sessions and locally verifiable credentials can continue within their original validity and policy horizon.",
+        "A simpler reverse proxy is preferable when it meets the contracts, service-mesh identity is justified by the number and dynamism of service relationships, and a mesh name is not an assurance argument."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "a team replaces a local copy script with a queue-backed object migration, and its controller declares the migration complete once every object key has been enqueued under an at-least-once delivery contract. why does that completion claim not establish that the objects arrived intact, what do the reported duplicate defenses actually cover, and when does the queued design not pay for its extra cost?",
+      "required_evidence": [
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case",
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice"
+      ],
+      "core_claims": [
+        "At-least-once queue delivery plus failures or late acknowledgments to a durable coordinator after an object was already transferred are the two named duplicate causes, so duplicate work is a property of the contract rather than a rare accident.",
+        "The four reported defenses are sequential listing identifiers that short-circuit competing enumerations, a per-key transfer lock whose successful completion removes the key from tracking, transactional accounting that couples key insert or delete with pending counts, and a destination existence check using publish time.",
+        "Those defenses bound duplicate work; they are not an atomic end-to-end transfer between source and destination, and destination existence plus timestamps do not prove byte equality, metadata correctness, same-version source identity or authorization.",
+        "A controller must distinguish all queued, all acknowledged, all verified and all failed or review-needed before declaring completion, because a lifecycle consumer can report completion while a transfer is delayed or work has moved to a dead-letter queue.",
+        "Queued orchestration adds partitioned coordinator state, asynchronous acknowledgments, poison messages, idempotency rules, recovery operations and versioned historical job data, so it is attractive only when that cost buys useful concurrency and restartability at scale.",
+        "The proof of concept was slower for a few hundred objects and matched or beat the old design only at very large object counts, and the published 75,000-object comparison of 15 minutes 30 seconds against 3 minutes 25 seconds, described as up to 5x, is one selected sample rather than a universal or p99 speedup."
+      ],
+      "optional_claims": [
+        "The rollback boundary differs before and after consumers switch: while the old source remains authoritative, queue production can be suspended, but once consumers write to the target independently, returning to the source may need reverse synchronization and the article specifies no universal two-way protocol.",
+        "If source mutability, object versioning, target overwrite policy or authorization cannot be audited, the correct result is insufficient evidence rather than a claim of safe migration."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a migration program points a coding agent at a deprecated dataset's downstream consumers, reports the number of pipelines it discovered as the number migrated, and lets the agent choose the most common mapping when a field's business meaning is ambiguous. why are discovery, patch generation, testing and merge distinct acceptance states, why must an ambiguous mapping stop instead of be inferred, and what must each transformation contract and cohort gate carry?",
+      "required_evidence": [
+        "tycho.page.acfab58bfa6b470ca28010ac561dfeef#iteration-three-failure-boundaries",
+        "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+        "tycho.page.acfab58bfa6b470ca28010ac561dfeef#quantitative-claims-and-why-they-cannot-be-mixed",
+        "tycho.page.acfab58bfa6b470ca28010ac561dfeef#counterevidence-and-decision-transfer"
+      ],
+      "core_claims": [
+        "The article separates discovering affected repositories, generating patches, testing semantic correctness and merging or rolling out, so a generated patch does not prove that a pipeline was migrated or that its data values kept their business meaning.",
+        "The cited roughly 1,800 direct pipelines are an impact estimate for two datasets, and the 240 rolled-out PRs are a narrower cohort, so neither number proves that every affected pipeline migrated or that the earlier cross-fleet PR total applies here.",
+        "Missing field semantics produced wrong inferred mappings until explicit mapping tables were written, and the correct response to a transformation with ambiguous business meaning is to leave it unchanged, record it for a human owner and count it as a refusal.",
+        "Framework variability and test availability bound automation: a highly variable framework was excluded from the wave, more standardized runners could be handled with narrower context, and repositories with little or no build-time unit testing required owners to test manually before merge.",
+        "A versioned transformation contract should carry original fields and types, replacement mappings, acceptable null and default transformations, the affected query engine, data-owner-approved invariants, an executable verification procedure, a repository or source revision and a refusal policy, readable by both a coding agent and a downstream owner.",
+        "When data governance cannot define equivalence the correct output is insufficient evidence, and a failed mapping, deferred framework or PR awaiting owner action is a first-class result that stays proposed rather than migrated."
+      ],
+      "optional_claims": [
+        "An agent is not automatically safe because its input is structured; the architecture is lineage plus bounded transformation context plus a supervised pull-request workflow, not unattended code generation.",
+        "The roughly 10 engineering weeks is a hypothetical manual-effort estimate, and the earlier 60 to 90 percent development-time saving is self-reported rather than an audited defect rate or measured saving."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

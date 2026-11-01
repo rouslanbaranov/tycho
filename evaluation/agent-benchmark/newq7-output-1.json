@@ -1,0 +1,142 @@
+{
+ "status": "ai-generated-not-human",
+ "layer": "book",
+ "items": [
+  {
+   "question": "a booking commits to the primary database, an operational log emitted before that commit says 'reservation accepted', and the warehouse lineage graph shows the bookings table feeding a usage report that actually contains only anonymized counts. why is neither the log line nor the lineage edge evidence of accepted state or of the report's contents, and what must an authoritative audit record bind?",
+   "required_evidence": [
+    "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+    "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+    "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval"
+   ],
+   "core_claims": [
+    "Operational logs, traces, business audits, dataset lineage and retention records answer different questions, so a log drop or a log line cannot by itself establish that a business event occurred or did not occur.",
+    "A log emitted before commit is diagnostic context rather than evidence of accepted state, and an unavailable log sink can coexist with an operation that committed successfully.",
+    "An authoritative audit record must bind a stable effect identity, an actor or role reference, tenant or resource scope, the operation, the target state revision, commit time and an integrity mechanism, while sensitive-field admissibility and retention remain policy decisions.",
+    "Lineage records job, run and input/output dataset identity, so inferring an input-to-output edge for every output of a multi-output job misstates provenance, and an output dataset's existence does not establish validity or freshness.",
+    "Neither a diagram nor a lineage facet creates atomicity or consistency between an audit record and the business transaction; claiming that an audit reflects committed state requires an actual implementation of that boundary."
+   ],
+   "optional_claims": [
+    "The OpenTelemetry log data model standardizes timestamps, severity, resources, scope and attributes but does not guarantee atomic recording with a business transaction.",
+    "A missing lineage facet is treated as unknown rather than as justification for an invented provenance property.",
+    "A lineage start event is not completion proof, so a run's start must not be read as a finished or valid output."
+   ],
+   "abstention_expected": false,
+   "difficulty": "hard"
+  },
+  {
+   "question": "a modular monolith replaces a direct module call with an in-process domain event and moves its notification listener to AFTER_COMMIT so a listener failure cannot roll back a reservation. the process then dies after the reservation commits but before the listener runs, and a later redelivery sends the confirmation twice. why is firing after commit not a durability or delivery contract, and what must each event style declare about transaction scope, loss and duplicate effects?",
+   "required_evidence": [
+    "tycho.page.07bb1f96bdd94195ac8e31644527a217#2-original-synthetic-example-community-workshop-reservation",
+    "tycho.page.07bb1f96bdd94195ac8e31644527a217#3-internal-events-have-multiple-execution-and-durability-contracts",
+    "tycho.page.07bb1f96bdd94195ac8e31644527a217#4-transaction-boundary-determines-which-outcome-is-correct"
+   ],
+   "core_claims": [
+    "A direct synchronous module call, an in-process synchronous event, a post-commit listener, a transactional publication registry and an external broker each answer a different question about transaction scope, durability and delivery.",
+    "AFTER_COMMIT runs after the transaction has already completed, so a database update performed inside such a listener has no later commit and may appear to participate in the original context without one.",
+    "If notification may be lost, reservation truth can remain correct but the loss policy must be disclosed; if delivery must eventually be attempted, in-memory-only dispatch is insufficient and needs durable publication with retry handling.",
+    "A listener that performs an irreversible external effect before commit can leave an effect describing a booking that the transaction later aborts.",
+    "Duplicate delivery of an accepted event needs stable event and effect identities plus bounded retry and reconciliation, with deduplication scoped to business identity rather than to one process lifetime.",
+    "The event name should describe past successful meaning and carry an event ID, aggregate identity and schema or state version needed for replay and deduplication."
+   ],
+   "optional_claims": [
+    "Spring's transaction-bound event listeners default to AFTER_COMMIT, but that timing does not prove an event survives a crash between commit and listener processing.",
+    "A publication registry's guarantees depend on its version and storage implementation and must be checked rather than assumed.",
+    "Event publication durability is separate from external side-effect identity, so a retried listener can duplicate a notification without its own deduplication."
+   ],
+   "abstention_expected": false,
+   "difficulty": "hard"
+  },
+  {
+   "question": "a request handler forks two child tasks in one structured scope: one reserves stock through a remote service, the other fails validation. the scope cancels the sibling and the caller's deadline expires, so the handler returns an error. why does the cancellation not undo the committed reservation, and what must the task contract and any durable job record define before an error is returned to the caller?",
+   "required_evidence": [
+    "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#1-four-distinct-concurrency-boundaries",
+    "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#2-executorservice-and-cooperative-cancellation",
+    "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#3-structured-concurrency-is-a-task-lifetime-mechanism"
+   ],
+   "core_claims": [
+    "Business operation, logical task, execution thread and scarce dependency are distinct concurrency boundaries, and an accepted task may still be queued after the user-visible deadline.",
+    "Cancellation through a Future or shutdownNow is best-effort and cooperative, and neither completion nor cancellation says that an external effect was reversed.",
+    "Structured scopes make it clearer that child tasks do not silently outlive their parent, but they do not make remote writes atomic or remove database and pool limits; cancelling a child after it committed cannot undo the effect and needs a business-level saga or recovery contract.",
+    "A task contract must name the parent operation ID and total deadline, input validation and authorization state, required child joins, response, error and cancellation propagation, timeout and resource-release behavior, effect reversibility, and per-dependency queue or concurrency budgets.",
+    "Durably accepted background work belongs in an independently tracked job with a stable identifier rather than an unbounded in-process queue, because a task can keep running after the caller disconnects."
+   ],
+   "optional_claims": [
+    "Java 25 structured concurrency is a preview feature that requires preview support and may change in future releases.",
+    "A parent timeout cannot reverse committed state, so the returned error must describe an outcome rather than imply rollback.",
+    "Child results that must join before responding belong to the parent's result semantics rather than to each child independently."
+   ],
+   "abstention_expected": false,
+   "difficulty": "medium"
+  },
+  {
+   "question": "a team proposes moving the catalogue's multi-hop relationship queries to a graph database and its dashboards to a columnar store while keeping the relational database as the system of record, citing 'five million users' and a vendor comparison table. why does that evidence not select a store, why does each added store create a second representation that must be synchronized, and what must the selection record before any migration starts?",
+   "required_evidence": [
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#6-cross-model-trade-off-matrix",
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence"
+   ],
+   "core_claims": [
+    "The cross-model matrix explains a model's fit through a strong workload, a central boundary or failure cost, and a measurement to take, and it explicitly avoids benchmark scores, prices and a declared winner.",
+    "User count and the word 'fast' do not establish authority, query mix, dataset size, latency window, consistency needs or migration cost, so no store determination is possible from them.",
+    "A relational authority plus a graph, search or OLAP projection is a valid design that creates two data representations; the derived view may lag and needs an explicit freshness contract plus rebuild, deduplication, schema migration and failure-recovery rules.",
+    "A safe selection compares invariants and transaction scope, real query and write patterns, data size by cardinality and key, consistency and coordination obligations, lifecycle cost, measured performance on comparable datasets, and a simpler single-store alternative with evidence that could reverse the choice.",
+    "Each model's central cost, such as cross-document links for document stores, hot partitions and rigid queries for wide-column, traversal depth for graphs, and merges and freshness for columnar, must be measured against the relational alternative rather than assumed away."
+   ],
+   "optional_claims": [
+    "Query plans, transactions and the actual read and write mix on the existing relational store are the proper starting evidence before a purpose-built projection is considered.",
+    "Total row count alone is a weaker sizing input than cardinality, key and partition growth.",
+    "The pattern atlas treats polyglot persistence as conditional rather than as a default target."
+   ],
+   "abstention_expected": false,
+   "difficulty": "hard"
+  },
+  {
+   "question": "an incident review of a checkout slowdown records 'the database was slow' as the single root cause, timestamps only when the alert fired, and files a cache rollback and a restart under one 'actions taken' line. why can that record support neither a containment claim nor a restored-state claim, and what must the chronology, competing hypotheses and follow-up each separate?",
+   "required_evidence": [
+    "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+    "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+    "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause"
+   ],
+   "core_claims": [
+    "An incident log must separate detection, observation, hypothesis, intervention, result, communication and follow-up, because mixing them turns guesses into retrospective facts and conflates when an event occurred with when it was discovered.",
+    "Each observation entry needs the trace, sample or record revision, the window, the metric definition and the access limitations so that a later reader can re-verify it.",
+    "Containment is not restored state: a serving process returning HTTP 200, or an index reporting green, does not prove the user journey or the correctness of authoritative state.",
+    "Recovery verification must show that a known subset of changes becomes visible within an accepted freshness window, that revoked entries are not exposed, that alerts identify lag, and that a revert or forward repair is documented.",
+    "A useful after-action record can show several contributing conditions, and each prevention action must name an owner, a reproducible acceptance test and a residual-risk statement rather than one invented root cause.",
+    "Publishing a postmortem does not prove remediation, so closure needs tracked evidence and re-evaluation when source versions, workflow or demand change."
+   ],
+   "optional_claims": [
+    "Sensitive request bodies, tokens, private identifiers and raw diagnostic dumps should be replaced by safe references with controlled access and retention.",
+    "An architecture-changing prevention action should be linked to the decision-record owner, because an action without a design owner and acceptance test is not a control.",
+    "A search server that answers HTTP 200 is not evidence that its freshness invariant works."
+   ],
+   "abstention_expected": false,
+   "difficulty": "medium"
+  },
+  {
+   "question": "an owner publishes a workshop recording behind a seven-day bearer link and retires it from the catalogue the next day, but the object keeps a prior version and an edge cache copy. why does hiding the catalogue entry neither revoke the issued capability nor remove the bytes, and what must the access, retirement and deletion decisions each own?",
+   "required_evidence": [
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#original-cost-and-failure-comparison"
+   ],
+   "core_claims": [
+    "An object key names a storage location, and an unguessable key is not an authorization design, so address, access and retention are separate properties.",
+    "A temporary capability permits use until expiry under the service's validation rules, and revoking catalogue permission does not automatically invalidate capabilities already issued; the requirement must state whether immediate revocation, bounded exposure or public distribution is intended.",
+    "Publication-to-retirement requires authoritative metadata for object version, owner, status and lifecycle policy, capability minting after caller resolution with object and action scope and lifetime, no tokens in general telemetry, and downstream caches following the same exposure contract.",
+    "Hiding a catalogue entry is immediate application behavior, while removal requires separate decisions about versions, derived objects and retained copies.",
+    "A deletion inventory must account for current and noncurrent versions, previews, transcodes, temporary parts, replication targets, edge caches, search references and backups, and a current-name delete can differ from removal of all retained versions.",
+    "A leaked capability is a security event rather than a cache miss, and a missing key can make encrypted data unavailable even when every byte replica is healthy, so retired references, pending deletion, orphan candidates and inaccessible-but-retained payloads need separate metrics."
+   ],
+   "optional_claims": [
+    "Shorter capability validity reduces exposure but increases renewal traffic and dependence on the issuer.",
+    "Deletion should not be driven by an eventually consistent secondary index's absence alone, because a published version temporarily missing from one index snapshot is not an abandoned candidate.",
+    "Provider-specific versioning, object-lock, expiry and capability rules require exact documentation before an implementation recipe is chosen."
+   ],
+   "abstention_expected": false,
+   "difficulty": "hard"
+  }
+ ]
+}

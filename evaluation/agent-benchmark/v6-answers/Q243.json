@@ -1,0 +1,296 @@
+{
+  "task_id": "Q243",
+  "answer": "# Q243 - Uncalibrated V12 model: a complete declared status and the run's remaining license\n\n## 1. Direct answer\n\n\"Uncalibrated\" is a complete declared status because the V12 model contract requires a\ncalibration block with a status, per-parameter evidence and limits, and the page states\nthat a status of uncalibrated is \"a complete value, not a missing one\". The value asserts\na definite state - no parameter has been measured against the target system - and names\nthe measurement that is missing. Completeness is a property of the declaration: all\nrequired fields present, every parameter labelled, every validity limit stated. It is not\na property of the world. A calibration number is a different object: a measurement with a\nsource, method, sample size and period. Supplying a number without that evidence would be\nthe failure the contract exists to catch.\n\nThe run remains licensed to support five things. (1) The conditional result: under the\ndeclared inputs, the model produces the reported result. (2) Reproducibility: the stored\nmodel, scenario, engine version and seed reproduce the stored metrics and result hash on\nthe same platform family. (3) Comparative and hard-constraint claims on a fixed synthetic\nworkload: in the checkout comparison, C is eliminated by declared cost and latency\nceilings, A and B are compared, and B is recommended under declared priorities. (4) A\nsensitivity screen used to order what to measure first. (5) A decision-supported outcome,\nbut only as an explicitly conditional record with unverified constraints and reversal\ntriggers. The run is not licensed to support absolute production magnitudes, operational\nvalidity, calibrated uncertainty or coverage, deployability or safety, or pattern\npromotion.\n\nIf a citation needs a calibrated or production claim, the claim is outside the run's\nlicense. The correct response is to narrow the claim, or to record insufficient evidence\nwhen a decision turns on a missing input. It is not to treat a complete record as\nincomplete, and it is not to invent a calibration number.\n\n## 2. Facet matrix\n\n| Facet | Query formulations | Evidence | Finding |\n|---|---|---|---|\n| F1. Status is a required schema value | \"uncalibrated model calibration status\"; \"calibration status complete value not missing\"; \"model contract calibration status field\" | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview; tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure | A missing field fails the strict schema; declared uncalibrated passes and is complete. |\n| F2. Status carries per-parameter content | \"assumed parameter missing measurement\"; \"calibration validation model run\" | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table | Four statuses, named missing measurements, and every model declared uncalibrated. |\n| F3. Layers stay separate | \"uncalibrated decision-supported conditional result\"; \"simulation evidence is not production evidence\" | tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers; tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records; tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers | A decision-supported record may coexist with an uncalibrated model when conditional. |\n| F4. Conditional and replay license | \"run conditional claim cite\"; \"what a run does not establish\"; \"conditional result declared assumptions\" | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits; tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves; tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves | The run supports a conditional result and reproducibility, not truth. |\n| F5. Comparative, sensitivity and decision license | \"calibration number before run may be cited\"; \"run conditional claim cite\" | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change | Comparison, constraint elimination and a measurement agenda are licensed. |\n| F6. Production and calibrated claims are not licensed | \"reviewer calibration number incomplete contract\"; \"calibration laundering precision without accuracy\" | tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes; tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish | Production and calibrated-coverage claims are forbidden; an invented number is laundering. |\n\n## 3. Mechanism and justification\n\n### 3.1 The status is a required, enumerated value\n\nThe contract's required structure includes \"calibration: status, per-parameter evidence\nand limits\", and the same page says: \"A calibration status of uncalibrated is a complete\nvalue, not a missing one.\" The short answer adds that \"the strict schema rejects missing\nor unexpected fields\". Omission and declaration are therefore different failures. A\nrecord that omitted the calibration block would be incomplete; a record that declares\nuncalibrated and enumerates the per-parameter evidence is complete on the contract's own\ntest. The stored checkout model has exactly that shape: calibration.status is\nuncalibrated, all nine parameters are marked assumed, and the note says no production\ntrace or service-time sample was used. The run record repeats that the workload is\nsynthetic and no production measurement is claimed (artifact observation; the contract\npage documents the required shape).\n\n### 3.2 The status carries content: per-parameter evidence and named gaps\n\nCalibration is not one scalar. V12 uses four input statuses - measured, assumed, derived\nand unknown - and a parameter can change status only with new evidence. Repeating an\nassumed value in a decision record does not make it measured. The V12 input table lists\neach input, its status and the specific missing measurement: an arrival trace, a\nservice-time sample and tail, a measured deployment capacity, a client deadline and retry\npolicy, a dual-write lag distribution, reconciliation throughput. That is why the status\nis informative rather than empty: it says which evidence is absent. A demand for a single\ncalibration number is therefore ill-posed for a nine-parameter model.\n\n### 3.3 Contract completeness is inspectability, not calibration\n\nThe contract's job is inspectability. \"The contract does not prove the model is useful.\nIt makes the model's claims inspectable.\" The validator checks the schema, identifiers,\ncross-references and the measured-source rule; it cannot check that a source actually\nsupports a parameter. Completeness is therefore a declaration property, not a measurement\nproperty. What is incomplete is the evidence about the world, and that\nincompleteness is itself declared. The vocabulary page makes the same point about\nvalidation: the absence of operational validation \"is not a hidden failure. It is a\ndeclared condition that shapes what a decision record may claim.\" The reviewer is\nmeasuring the contract by a property it never claimed.\n\n### 3.4 The layers do not upgrade each other\n\nThe five evidence layers - source and claim, verification, calibration, simulation,\ndecision - are separate. \"The labels are not a ladder, and a later layer never upgrades\nan earlier one automatically.\" A model can be verified without being calibrated, and a\nverified engine is not a validated system. The volume states that a decision-supported\nrecord may coexist with an uncalibrated model when the decision is explicitly\nconditional, and the vocabulary page calls that a conditional result that \"does not say\nthe assumptions are true.\" If calibration were a precondition for citing any run, every\nV12 run would be uncitable, because every model in the volume is uncalibrated. That would\nerase the volume's declared simulation and decision evidence rather than complete it.\n\n### 3.5 What the run remains licensed to support\n\n- **Conditional result.** The valid claim is \"under the declared inputs, the model\n  produces the reported result\"; the invalid claim is \"that the result describes a real\n  system.\" A validity limit is a \"condition on the result's use\", not a disclaimer.\n- **Replay.** Replay proves that \"the stored inputs, engine version and seed produce the\n  stored metrics on the same platform family.\" It does not prove that the model is valid,\n  that the inputs are measured or that the decision is correct.\n- **Comparison under a common workload.** The checkout experiment fixes workload, seed\n  scheme and metrics. Strictly, the comparison is carried by the set of runs and the\n  decision record, not by one run alone. C is eliminated by hard cost and latency\n  constraints. B beats A on success and cost, A beats B on p95 latency, and B is\n  recommended because the record declares that prioritization: \"That prioritization is a\n  decision, not a fact produced by the simulation.\" Narrow replication intervals \"do not\n  make the inputs measured.\"\n  My inference, not a source claim, is that a ranking under shared assumptions can be\n  more defensible than absolute levels; the sources do not quantify that robustness.\n- **Sensitivity ordering.** The screen says service mean explains more fitted variance\n  \"in the sampled range\" and \"does not prove that service time is the dominant\n  production factor.\" The record uses the ranking \"to identify what to measure first.\"\n  The screen is a quadratic approximation over 48 rows, not a full Sobol' analysis.\n- **Decision support and reversal.** A decision-supported record with an uncalibrated\n  model is conditional; the checkout record leaves operability unverified and lists\n  reversal triggers: a measured arrival rate above 22 requests/second, a mean service time\n  above 0.65 seconds, a different cost weight, a failed operability review, or a measured\n  retry rate materially above the modeled 1.003.\n- **Measurement agenda and limits.** \"The model can still rank what to measure first; it\n  cannot substitute for the measurement.\" The gates do not establish that the models\n  match a real system, that decisions are owner-accepted, or that deployment and\n  production behavior follow.\n\n### 3.6 What the run does not license\n\nThe run does not license absolute production values (0.9996 success, 1.206-second p95,\n1.34 cost as forecasts); operational validity; calibrated uncertainty (\"a confidence\ninterval across replications is a sampling interval, not a metrological coverage\ninterval\"); safety, deployability or compliance; pattern promotion; or cross-platform\nbit-identical behavior. The forbidden-inference list names the exact leaps: verified means\ncorrect, source support means measured parameter, simulation success means production\nsuccess, a recommendation means safe to deploy, a pattern mention means promotion, and a\nconfidence interval excluding zero means a proven business case. A bounded result is\n\"useful as a bounded, conditional result, not as a certificate.\"\n\n### 3.7 Why a calibration number is the wrong remedy\n\nA calibration number would not repair the contract for three reasons. First, a number\nwithout a named source, method, sample size and period is not a measurement; the failure\nmode is literally \"assumed as measured: a parameter is labeled measured because it has\na number.\" Second, copying an assumed value into a measured field is \"calibration\nlaundering\", one of the contract's named failure modes. Third, validity is purpose- and\ndomain-dependent: a model calibrated for one workload is not thereby valid for another,\nso even a genuine number would license only claims inside the measured domain. The honest\noptions are to narrow the citation or commission the measurement, not to manufacture a\nnumber.\n\n## 4. Boundaries and trade-offs\n\n- The reviewer is right if the proposed citation is a production prediction, a calibrated\n  coverage statement, or a safety/deployability claim. The run is not licensed for those.\n- The reviewer is also right when a decision turns on an assumed hard input whose range\n  spans the decision boundary: the correct outcome is insufficient evidence, not a\n  conditional recommendation. The modernization record is the example; the checkout\n  record stays conditional only because its missing constraint is explicitly\n  non-quantitative and stated.\n- Withholding the run is the wrong remedy. The record is complete and useful as a bounded\n  result; barring citation until calibration would make every V12 run uncitable, since\n  every model is uncalibrated.\n- The comparative claim is not a guarantee. The sensitivity screen is local, the\n  convergence-stress run is insufficient-sample at 0.032 relative error and is not used\n  as converged evidence, and a ranking from an unstable sample can reverse. The licensed\n  comparison is bounded to the sampled range and declared distributions.\n- Review and acceptance are separate gates. A local gate pass is not independent review,\n  CI, owner acceptance or production validity; none of those changes the calibration\n  status.\n- What would change the answer: a calibration record with named measurement, method,\n  sample and period for the relevant parameters; or a decision whose hard constraint\n  depends on an assumed input, which would move the run to insufficient evidence.\n\n## 5. Evidence map\n\n- The contract requires a calibration block and treats uncalibrated as a complete value - tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure\n- The strict model schema rejects missing or unexpected fields - tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview\n- The contract makes claims inspectable; it does not prove the model useful - tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram\n- The four calibration statuses change only with new evidence - tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses\n- The input table names each assumed input and its missing measurement - tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table\n- Every V12 model is uncalibrated and no production claim is made - tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration\n- The valid claim is conditional; the invalid claim is that the result describes a real system - tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview\n- A validity limit is a condition on the result's use - tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits\n- The five layers are separate and are not a ladder - tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers\n- A decision-supported outcome with an uncalibrated model is conditional and does not assert the assumptions are true - tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records\n- The forbidden inferences include production, deployability and promotion leaps; a bounded result is not a certificate - tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences\n- The volume permits decision-supported with uncalibrated when the decision is explicitly conditional - tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers\n- Replay proves reproducibility, not model validity, measured inputs or decision correctness - tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves\n- The checkout experiment fixes workload and seeds, eliminates C on hard constraints and makes B a declared prioritization - tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints\n- Narrow replication intervals do not make the inputs measured - tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results\n- The sensitivity ranking is used to identify what to measure first, not to claim production dominance - tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty\n- A replication confidence interval is a sampling interval, not a metrological coverage interval - tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language\n- The named failure modes include assumed-as-measured, precision without accuracy and calibration laundering - tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes; tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes\n- Insufficient evidence is correct when a hard input is assumed and its range spans the decision boundary - tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence\n- A verified engine is not a validated system - tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation\n- The sensitivity screen is a quadratic approximation over 48 rows, not a full Sobol' analysis - tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen\n- The gates do not establish that models match a real system or that production behavior follows - tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish\n- The convergence-stress run is insufficient-sample at 0.032 relative error and is not used as converged evidence - tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity\n- A ranking from an unstable sample can reverse - tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case\n- Inference: a common-workload comparison is more defensible than absolute levels, but no input-error bound is reported - tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment\n- The model can rank what to measure first but cannot substitute for the measurement - tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change\n\n## 6. Unknowns and confidence\n\n- Magnitude of the gap between assumed inputs and any real system: the artifacts contain\n  no measurement, so the gap cannot be estimated from the sources.\n- Robustness of the candidate ranking to plausible input error: the screen is a local\n  quadratic approximation and no global uncertainty analysis over the assumed ranges is\n  reported. My common-workload argument is an inference, not a measured bound.\n- The reviewer's citation policy: whether a calibrated claim is required is external to\n  the volume; the sources define what the run supports, not who may cite it for what.\n- Whether a future measurement would preserve the recommendation: that depends on the\n  measured values themselves and is exactly what the reversal triggers are for.\n- Confidence: high that uncalibrated is a complete declared status, that the layers are\n  separate, and that the conditional and replay claims are licensed; high that production\n  and calibrated-coverage claims are not licensed; medium on the robustness of the\n  comparative ranking, because that part is inference rather than a reported result.",
+  "citations": [
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation"
+  ],
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "Is 'uncalibrated' a schema-valid complete value or a missing field?",
+      "queries": [
+        "uncalibrated model calibration status",
+        "calibration status complete value not missing",
+        "model contract calibration status field"
+      ],
+      "evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure"
+      ],
+      "finding": "The strict schema requires a calibration block; uncalibrated is an enumerated complete value, and omission is the incomplete case."
+    },
+    {
+      "id": "F2",
+      "facet": "What content does the uncalibrated status declare?",
+      "queries": [
+        "assumed parameter missing measurement",
+        "calibration validation model run"
+      ],
+      "evidence": [
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table"
+      ],
+      "finding": "Per-parameter statuses and named missing measurements; calibration is not a single scalar."
+    },
+    {
+      "id": "F3",
+      "facet": "Can decision evidence coexist with an uncalibrated model?",
+      "queries": [
+        "uncalibrated decision-supported conditional result",
+        "simulation evidence is not production evidence"
+      ],
+      "evidence": [
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers"
+      ],
+      "finding": "Yes, when the decision record states the condition; the layers do not upgrade each other."
+    },
+    {
+      "id": "F4",
+      "facet": "What does the run license directly?",
+      "queries": [
+        "run conditional claim cite",
+        "what a run does not establish",
+        "conditional result declared assumptions"
+      ],
+      "evidence": [
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves"
+      ],
+      "finding": "The conditional result and reproducibility; not truth, measurement or decision correctness."
+    },
+    {
+      "id": "F5",
+      "facet": "What comparative, sensitivity and decision claims survive?",
+      "queries": [
+        "calibration number before run may be cited",
+        "run conditional claim cite"
+      ],
+      "evidence": [
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change"
+      ],
+      "finding": "Fixed-workload comparison, hard-constraint elimination, sensitivity ordering and a conditional decision with reversal triggers."
+    },
+    {
+      "id": "F6",
+      "facet": "What is not licensed, and is a calibration number the right remedy?",
+      "queries": [
+        "reviewer calibration number incomplete contract",
+        "calibration laundering precision without accuracy"
+      ],
+      "evidence": [
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+      ],
+      "finding": "Production and calibrated-coverage claims are forbidden; an invented number would be assumed-as-measured or calibration laundering."
+    }
+  ],
+  "evidence": [
+    {
+      "claim": "The model contract requires a calibration block and treats uncalibrated as a complete value.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+      "note": "Observed. Quote: \"A calibration status of uncalibrated is a complete value, not a missing one.\" Required fields include \"calibration: status, per-parameter evidence and limits\".",
+      "kind": "observed"
+    },
+    {
+      "claim": "The strict model schema rejects missing or unexpected fields.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview",
+      "note": "Observed. Short answer: \"The strict schema rejects missing or unexpected fields.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "Contract completeness means inspectability, not proof of usefulness.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+      "note": "Observed. Quote: \"The contract does not prove the model is useful. It makes the model's claims inspectable.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "Calibration has four per-parameter statuses and changes only with new evidence.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+      "note": "Observed. Measured, assumed, derived, unknown; \"A parameter can change status only with new evidence\"; repeating an assumed value does not make it measured.",
+      "kind": "observed"
+    },
+    {
+      "claim": "The V12 input table names each assumed input and the specific missing measurement.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+      "note": "Observed. Nine rows, all assumed, each with a missing measurement such as an arrival trace or a service-time sample and tail.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Every V12 model is uncalibrated and the volume makes no production claim.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+      "note": "Observed. \"Every model is uncalibrated... The decision records repeat the status. No production claim is made.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "The valid claim is conditional on the declared inputs; the invalid claim says the result describes a real system.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+      "note": "Observed. Quote: \"The valid claim is conditional: under the declared inputs, the model produces the reported result. The invalid claim is that the result describes a real system.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "A validity limit is a condition on the result's use, not a disclaimer.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+      "note": "Observed. Quote: \"A validity limit is not a disclaimer appended to a result. It is a condition on the result's use.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "The five evidence layers are separate and no later layer upgrades an earlier one automatically.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+      "note": "Observed. \"The labels are not a ladder, and a later layer never upgrades an earlier one automatically.\" Also \"A model can be verified without being calibrated.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "A decision-supported outcome with an uncalibrated model is a conditional result that does not assert the assumptions are true.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+      "note": "Observed. Quote: \"A decision-supported outcome with an uncalibrated model is a conditional result. It says the decision follows from the declared assumptions and constraints. It does not say the assumptions are true.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "The forbidden inferences include production-success, deployability and pattern-promotion leaps; a bounded result is not a certificate.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+      "note": "Observed. The page lists those invalid inferences and says the decision record is \"useful as a bounded, conditional result, not as a certificate.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "The volume explicitly permits a decision-supported record with an uncalibrated model when the decision is conditional.",
+      "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+      "note": "Observed. Quote: \"A decision-supported record may coexist with an uncalibrated model when the decision is explicitly conditional.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "Replay proves reproducibility only: stored inputs, engine and seed produce stored metrics on the same platform family, not validity or measurement.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+      "note": "Observed. Quote: \"Replay proves that the stored inputs, engine version and seed produce the stored metrics on the same platform family.\" It does not prove the model is valid, the inputs measured or the decision correct.",
+      "kind": "observed"
+    },
+    {
+      "claim": "The checkout comparison fixes workload and seeds, eliminates C on hard constraints, and recommends B as a declared prioritization rather than a simulation fact.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+      "note": "Observed. C is eliminated by cost 3.63 and p95 1.769; B beats A on success and cost; \"That prioritization is a decision, not a fact produced by the simulation.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "Narrow replication intervals do not make the inputs measured.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+      "note": "Observed. Quote: \"The confidence intervals are narrow because the workload is synthetic and the replications are independent. Narrow intervals do not make the inputs measured.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "The sensitivity screen identifies what to measure first and does not establish production dominance.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+      "note": "Observed. \"It does not prove that service time is the dominant production factor.\" The record \"uses it to identify what to measure first.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "A replication confidence interval is a sampling interval, not a metrological coverage interval.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+      "note": "Observed. Quote: \"A confidence interval across replications is a sampling interval, not a metrological coverage interval.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "The named failure modes include assumed-as-measured, precision without accuracy and calibration laundering.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+      "note": "Observed. \"Assumed as measured. A parameter is labeled measured because it has a number\" and \"Precision without accuracy.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "Calibration laundering is a named contract failure mode.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+      "note": "Observed. \"Calibration laundering. An assumed value is copied into a measured field.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "Insufficient evidence is the correct outcome when a hard input is assumed and its range spans the decision boundary.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+      "note": "Observed. Checklist item: \"a hard input is assumed and its range spans the decision boundary\"; the page also separates conditional decisions for non-quantitative missing evidence.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A verified engine is not a validated system.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+      "note": "Observed. Quote: \"A verified engine is not a validated system.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "The sensitivity screen is a quadratic approximation over 48 rows and is not a full Sobol' analysis.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+      "note": "Observed. The screen draws 48 rows, fits a quadratic surface and decomposes fitted variance; \"The screen is not a full Sobol' analysis.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "The gates do not establish that the models match a real system or that production behavior follows.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+      "note": "Observed. The page says the gates do not establish that the models match a real system, that decisions are owner-accepted, or that CI, deployment or production behavior follow.",
+      "kind": "observed"
+    },
+    {
+      "claim": "The convergence-stress run is insufficient-sample and is not used as converged evidence.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+      "note": "Observed. \"A separate two-replication convergence-stress run is marked insufficient-sample\"; a run failing the 0.02 relative-error threshold is not used as converged evidence.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A ranking from an unstable sample can reverse.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+      "note": "Observed. Quote: \"A ranking from an unstable sample can reverse; the stress run records the instability instead of hiding it.\"",
+      "kind": "observed"
+    },
+    {
+      "claim": "A common-workload comparison is more defensible than absolute levels, but no input-error bound is reported.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+      "note": "Inference. The fixed workload, seed scheme and metrics support a comparative reading; the sources report no bound on how input error would move the ranking.",
+      "kind": "inference"
+    },
+    {
+      "claim": "The model can rank what to measure first but cannot substitute for the measurement.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+      "note": "Observed. Quote: \"The model can still rank what to measure first; it cannot substitute for the measurement.\"",
+      "kind": "observed"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,393 @@
+{
+  "task_id": "Q222",
+  "question": "A device-status stream drops after the server sends sequence 41 but before the consumer acknowledges it, and the client reconnects with the last sequence it durably processed. Why can the resumed stream still contain duplicates or a gap, and what must the stream contract define before resume is a supported guarantee?",
+  "answer": "# Q222 — Why a resumed device-status stream can still duplicate or skip sequence 41\n\n**Question.** A device-status stream drops after the server sends sequence 41 but before the consumer acknowledges it, and the client reconnects with the last sequence it durably processed. Why can the resumed stream still contain duplicates or a gap, and what must the stream contract define before resume is a supported guarantee?\n\n**Basis.** Book layer (`--volume book`), snapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a, 555 documents / 3132 sections, coverage complete. The device-status walkthrough itself is marked as a **synthetic scenario** and its protocol as **proposed, not implemented**; I keep that label and mark my own design inference explicitly. No implementation, benchmark or production observation is claimed.\n\n## 1. Direct answer\n\nThe missing acknowledgement does not tell the server whether 41 was applied; it only proves the server never learned that 41 was applied. On reconnect there are exactly two possible server behaviours and no third: replay from the client's durable position, which can re-deliver 41 and everything after it, or continue from a position the server cannot prove the client reached, which can skip 41. Duplicate and gap are therefore the two sides of the ambiguity created by the drop, not two independent bugs.\n\nDuplicates are also structural. The client's durable cursor, the applied business effect and the server's acknowledgement state are three separate commits. When an acknowledgement is missing, at-least-once redelivery is the only safe default, and the correctness obligation moves to a duplicate rule at the receiver. The receiver's deduplication is itself a bounded local authority: it works only while event identity is stable, the dedup record survives restart and concurrency, and its retention covers the whole replay horizon.\n\nA gap is structural for a second reason. \"The last sequence it durably processed\" is a single scalar that silently asserts three things: that there is exactly one ordering domain, that the checkpoint was recorded atomically with the effect, and that the sequence space is contiguous and never renumbered. None of those is true unless the contract says so. Sequence 41 may be per-connection, per-device or global; it may be legitimately skipped by coalescing or compaction; its epoch may have changed after a server restart; and it may already be outside retained history.\n\nResume becomes a supported guarantee only when the contract fixes, before the first reconnect: (1) stream and partition identity plus ordering scope; (2) the exact meaning of the resume token, including whether the named position is re-sent and whether one token covers several partitions; (3) the meaning of acknowledgement — transport receipt, consumer processing or committed business effect — and its order relative to the durable effect; (4) the delivery mode together with a duplicate rule (stable event identity, restart-safe and concurrency-safe dedup, retention at least the replay horizon); (5) the gap rule: how a gap is detected, which numbering gaps are legal, and what happens (buffer and resequence with a declared timeout, reset to snapshot, or explicit failure); (6) the retention and replay horizon, epoch validation, and an explicit \"resnapshot required\" outcome when replay is impossible. Without all six, the only honest promise is \"at-least-once delivery with explicit gap signalling inside a declared window\", not \"resume is lossless and duplicate-free\".\n\n## 2. Why the resumed stream can contain duplicates\n\n### 2.1 \"Sent but unacknowledged\" is an ambiguous outcome, and something must absorb it\n\nThe server wrote 41 and did not receive the acknowledgement. From its side that state is indistinguishable from: 41 never reached the client; 41 reached the client and was rejected; 41 reached the client, was applied, and the acknowledgement was lost. The book states the general form of this hazard: a streaming transport may deliver bytes reliably while the application still loses its business outcome after an ambiguous acknowledgement (purpose-and-mission). It also states that completion of a framework write call does not necessarily mean the bytes reached the remote application, and that sending into a framework buffer is not downstream consumption or a committed business effect (stream interaction, section 2).\n\nGiven that ambiguity, replay from the last acknowledged or last durable position necessarily re-delivers 41 when it was in fact applied — a duplicate. The alternative, continuing at 42 because 41 was \"sent\", silently skips an item the client may never have seen — a gap. The server has no third option unless the contract supplies one (for example an idempotent replay whose duplicates are provably harmless, or a snapshot handoff that makes position irrelevant).\n\n### 2.2 Cursor, effect and acknowledgement are three separate commits\n\nThe walkthrough says a resumable durable subscription lets the \"client resume from last durably processed sequence; dedup and replay required\" (walkthrough table). But \"durably processed\" is a client-local statement about a cursor record, while the effect that matters may be committed in a different authority.\n\nThe offsets page gives both failure directions directly: committing the position before the external effect \"can cause that effect to be silently lost after a crash\", committing it after the effect \"can cause duplicates\", and \"no perfect ordering of two independent commits creates an automatic global transaction\" (offsets, section 4). Its consumer diagram has the crash between the effect and the position commit causing replay, with the external store's own deduplication making the duplicate harmless.\n\nApplied to the scenario: if the client persisted 41's effect but not its cursor, or persisted them in different transactions, it reconnects saying \"last durably processed = 40\" and receives 41 again although the effect is already durable — a duplicate. If it advanced the cursor at receipt but had not applied the effect, it reconnects saying 41 and never sees it again — a gap. The phrase \"the last sequence it durably processed\" hides which of these the client actually recorded.\n\n### 2.3 At-least-once is the designed default, not a defect\n\nThe book quotes Kafka's documented default, \"Kafka guarantees at-least-once delivery by default\", and treats the acknowledgement as a separate uncertain step (inbox atomicity). Publish-subscribe is described as a delivery contract rather than fire-and-forget: each current subscriber gets its own cursor, a subscriber absent during publication sees nothing unless the subscription is durable, and \"redelivery follows an effect that committed before its acknowledgement; the opposite order loses work\" (publish-subscribe note). Each consumer therefore needs an effect key, a deduplication rule and an acknowledgement policy. Point-to-point queues say the same: \"a publisher confirmation does not prove the consumer committed its effect\", and a worker crash after the effect but before the acknowledgement causes redelivery (point-to-point note).\n\nUnder an at-least-once contract, a duplicate at the reconnect boundary is the expected outcome. Correctness depends on the receiver, not on the transport.\n\n### 2.4 Deduplication is a bounded window and a local authority, not a stream property\n\nIdempotent Receiver requires messages to carry stable identity, the effect and identity to be recorded atomically, retention to cover the redelivery window, and concurrent duplicates to be handled; it is contraindicated when identity is unstable or deduplication state cannot be retained (Idempotent Receiver). Transactional Inbox adds the retention rule: \"the marker lifetime must cover the maximum broker redelivery, DLQ replay and historical replay horizon; a shorter window turns an expired identity into a new message and can duplicate the effect\", with post-expiry behaviour \"reconcile or reject, never silently treat it as new\" (inbox atomicity). The same section states that an in-memory set is not sufficient when the contract requires restart-safe deduplication, and that identity must include the subscriber and event scope.\n\nThe idempotency-key route states the boundary plainly: a key \"is only useful while its outcome record is retained; after expiry, historical deduplication is no longer guaranteed\" (idempotency-key route).\n\nSo a client that deduplicates by sequence still duplicates if its dedup state is per-session and is lost in the very restart that triggers the resume; if the event identity is not stable across reconnects (server renumbering, sequence reset, regenerated IDs); or if the replay horizon is longer than the dedup retention.\n\n### 2.5 Reconnect can overlap the session it believes is dead\n\nA drop is detected by timeout, not by the peer's death. If the client reconnects before the server has torn down the old subscription, two subscriptions can replay from the same position concurrently. The book requires dedup designs to handle concurrent duplicates (Idempotent Receiver; inbox atomicity; the saga test list includes \"duplicate deliveries processed concurrently\") and warns that a lease or lock does not make a paused process disappear: the destination must reject stale epochs \"or the operation remains explicitly unsafe\" (fencing). Without an explicit subscription or session identity and a takeover rule, \"resume\" can mean two live streams, which duplicates every item delivered between the reconnect and the old session's teardown.\n\n### 2.6 The duplicate may be at a batch boundary, not at 41\n\nIf acknowledgements are per batch or cumulative, a lost acknowledgement re-delivers the whole batch, not only 41. This is the same mechanism as 2.1 at a different granularity, and it is why the contract must name the acknowledgement granularity as well as the meaning.\n\n## 3. Why the resumed stream can contain a gap\n\n### 3.1 Position advanced before the effect\n\nThis is the loss direction of the same two-commit problem. Commit the position, crash before the effect, and the successor resumes after the position while the effect never happened. The offsets failure matrix names consumer-group rebalances as the moment where in-flight work, offset commits and business effect identity diverge, and lists \"retention or compaction removes needed history\" as the condition under which a late or rebuilding consumer cannot reconstruct required state (offsets, section 5). The general warning is that \"a consumer group offset is a replay position, not proof that every user-visible effect succeeded\" (offsets, section 4).\n\n### 3.2 The resume-token convention is unstated: inclusive or exclusive\n\n\"Reconnects with the last sequence it durably processed\" does not say whether the server must re-send that sequence or start after it. The book's proposed protocol asks for a \"monotonically interpreted position within a declared partition\" (walkthrough) and for a cursor or checkpoint with an exact ordering scope (durable resume, section 4), but it does not impose a universal convention; this paragraph is my inference. Both obvious implementations are defensible: treat N as \"done\" and start at N+1, or treat N as \"resume at N\". If the client means \"I have received through 40 and applied 40\" but the contract is exclusive in the other direction, 41 is skipped; if the contract re-sends, 41 is duplicated. Either way an unstated convention is a latent off-by-one at exactly this boundary, so the contract must name the convention and its granularity (event, batch, partition).\n\n### 3.3 One scalar cannot describe a multi-partition or per-device sequence domain\n\nThe walkthrough's proposed protocol scopes the position to \"a declared partition\" and requires stream_id, schema version, snapshot ID and retention boundary (walkthrough). Resequencer requires sequence numbers that are \"reliable and scoped to the ordering domain, with known predecessors and successors\", and rejects producers that can assign non-unique or non-monotonic values (Resequencer). Kafka agreement is per partition, and \"per-key ordering is not a topic-wide total order\" (causal ordering note).\n\nIf updates for many devices are multiplexed on one connection, \"sequence 41\" is ambiguous: the 41st frame of the connection, the 41st update of one device, or a global position? A client that resumes with one global scalar will re-request already-delivered items for fast keys (duplicates) or advance past undelivered items for slow keys (gaps). The contract must define whether the token names one domain or a vector of per-domain positions, and what the server does when some partitions are ahead and others behind.\n\n### 3.4 Not every numeric gap is loss, and not every contiguous run is complete\n\nDevice-status data is naturally a \"latest value\" feed, so a server may legitimately coalesce intermediate updates and skip numbers: only the newest value per device matters. The walkthrough separates a transient live feed, where a missing or duplicate 41 \"may be acceptable, explicitly labeled\", from a resumable durable subscription (walkthrough table). Telemetry is described as a pipeline that may drop or transform signals and is \"not proof of end-to-end lossless delivery by default\" (telemetry pipeline). Compaction removes intermediate records while retaining the metadata needed to prevent removed data from returning (compaction and recovery).\n\nConversely, contiguous numbering is not proof of completeness if the server never persisted 41: a publisher restart can rebuild a cursor only from a durable authority and \"cannot replay what was never persisted\" (walkthrough table; durable resume, section 4). Gap detection therefore cannot be \"expected 42, got 44\". The contract must say which numbering gaps are legal (coalescing, compaction, filtering) and which mean loss, and how the consumer can distinguish them — a declared per-key version, an explicit watermark or end-of-range marker, or an authoritative snapshot.\n\n### 3.5 Retention expiry and silent reset\n\nIf the client was offline longer than the retained history, the resume position may no longer exist. The offsets page: if the requested offset no longer exists, the reset policy chooses a behaviour but \"cannot recreate deleted records\"; latest \"may skip missing history\", and a silent reset \"can turn a recovery failure into apparently healthy but incomplete output\" (expired replay positions). The queue-versus-history walkthrough says a consumer that lags beyond retention must \"declare gap and restore authoritative snapshot\" (queue versus history).\n\nA server that answers an out-of-retention resume by starting at the earliest or latest retained item produces a gap with no error. That is the worst outcome available, because the client cannot tell a complete stream from a truncated one. The contract needs an explicit expired-position response and a snapshot handoff with a change boundary.\n\n### 3.6 Epoch and incarnation mismatch\n\nSequence numbers are meaningful only inside the incarnation that assigned them. If the server restarted and renumbered, or the device re-registered, \"41\" from the old epoch may name a different record. The fencing section requires the destination to reject stale epochs, notes that \"fencing alone does not deduplicate\", and defines which authority is checked atomically (fencing). The project recovery table is more specific for reconnect: a client that resets local storage must \"allocate a new device incarnation; never reuse old component identity\"; the reconnect protocol \"first validates epoch and snapshot compatibility\"; and a client returning after the supported offline window must \"fetch a fresh snapshot and expose unsupported pending work for explicit reconciliation\" (failures, compaction and recovery).\n\nA resume protocol without epoch validation can accept a stale position and continue a different history — a gap from the client's point of view even though the server delivered everything it had.\n\n### 3.7 The server may never have persisted 41\n\nA live stream that only forwards events has nothing to replay. The book is explicit that an ephemeral live stream with no durable source cannot promise resumability, and that buffered bytes while connected do not constitute a durable event log or replay cursor (durable resume, section 4; walkthrough). If 41 existed only in a send buffer, the resumed stream's first item is 42 and 41 is gone — the gap is created upstream of any client cursor logic.\n\n### 3.8 Send success is not delivery, so the server's own watermark can skip\n\nIf the server records \"41 sent\" as progress and refuses to rewind on reconnect, 41 is skipped even though no acknowledgement ever arrived. The chapter's own statement that framework write completion does not mean the remote application received the bytes (stream interaction, section 2) is exactly this hazard, applied to the server's bookkeeping rather than the transport. The contract must say whether the server's progress watermark is the send position, the acknowledged position, or the client-supplied position, and which one wins on reconnect.\n\n## 4. What the contract must define before resume is a supported guarantee\n\nThe book's durable-resume page lists six things a reconnecting stream must define: a cursor/checkpoint or stable event ID if replay is supported; the exact ordering scope (one connection, one partition, one entity or total order); the delivery mode together with gap and duplicate handling; the expiration and retention after which resume cannot succeed; whether a stream acknowledgement means transport received, consumer processed or committed business effect; and how protocol/schema versions coexist and unsupported events fail (durable resume, section 4). The walkthrough's proposed protocol adds the concrete envelope: stream_id, a monotonically interpreted position within a declared partition, schema version, snapshot ID and retention boundary, with the client checkpointing \"a position only after its required local effect is durable\" and an explicit \"resnapshot required\" response when replay is impossible (walkthrough).\n\nTurning those into decision-relevant fields:\n\n| Element | Question it settles | What fails without it | Device-status example |\n|---|---|---|---|\n| Stream and partition identity, epoch | What am I resuming, and against which incarnation? | A stale position names a different history; restart renumbering silently shifts the cursor | stream_id, device partition, server generation counter |\n| Position domain and ordering scope | Which order does the number index: connection, partition, device, or total? | Mixed keys make one cursor either replay too much or skip lagging keys | per-device version vs per-connection frame counter |\n| Resume-token semantics | Is the named position included again? Is it a delivered, processed or effect-committed position? Is it a vector? | Off-by-one at the exact boundary; partial resume across partitions | \"last durably committed effect position\", exclusive |\n| Acknowledgement semantics | Does an ack mean transport receipt, consumer processing, or a committed business effect? Per message, batch or cumulative? When is it sent relative to the effect? | The server cannot know what to replay; ack-before-effect loses, effect-before-ack duplicates | ack after local effect commit, per event id |\n| Delivery mode, duplicate and gap policy | At-most-once, at-least-once, or effectively-once inside a named authority? What identity dedups, for how long, and what happens on a gap? | No dedup window, unstable ID, or silent gap; duplicates hit irreversible effects, gaps go unnoticed | event id dedup for 7 days, gap reported and snapshot required |\n| Retention, replay horizon, resnapshot, versions | How long positions stay replayable; what happens at expiry; how a snapshot closes the change gap; how unsupported events fail | Latest-retained reset looks healthy but is incomplete; old schema events dropped silently | 24 h replay window, POSITION_EXPIRED error, snapshot id plus boundary |\n\nTwo additions are implied by the evidence rather than stated as a list. First, **validation of the cursor**: the pagination and change-feed table says a change feed needs \"durable position, retention and replay semantics\", and that a cursor must be bound to query, filter, order and snapshot plus access scope, validated on every request, with explicit expiry and restart semantics; \"a cursor is a continuation hint, not authorization\" (cursor and callback contracts). Second, **concurrency and takeover**: two subscriptions replaying the same position need a rule, and a stale epoch must be rejected at the effect owner (fencing).\n\nThree honest levels follow, and the contract should say which one it offers:\n\n- **Level 0 — no resume.** An ephemeral feed. Reconnect returns a current snapshot or a fresh subscription; missing or duplicate items are explicitly labelled. The walkthrough allows this when \"updates mean current temperature\" (walkthrough).\n- **Level 1 — resumable at-least-once.** A durable replay source, a declared position domain, an explicit inclusion convention, a client checkpoint written with the effect or accepted as best-effort, stable event identity, restart-safe dedup with retention at least the replay horizon, explicit gap and expiry errors, and a snapshot fallback. Duplicates are expected and harmless; gaps are never silent.\n- **Level 2 — effectively-once within one authority.** Cursor and effect committed atomically (transactional inbox, or the offset stored in the same transaction as the output), dedup durable, concurrent duplicates arbitrated by a unique constraint. This is still bounded by retention and by every external effect that lives outside that authority.\n\nWhat no level can promise is exactly-once end to end across independent authorities: Kafka transactions coordinate records and offsets inside Kafka, not an unrelated SQL commit, payment provider or email, and \"exactly-once\" claims must state their topology and connector/sink scope (offsets, section 4; processor comparison).\n\n## 5. Boundaries and trade-offs\n\n- **Transport flow control is not a log.** gRPC flow control and Reactive Streams demand govern bytes and demand while connected; neither is a durable event log, a replay cursor, or a cross-service exactly-once guarantee (purpose-and-mission; stream interaction, sections 2-3). Buffer ownership is a memory-safety question, not a resume guarantee; a slow consumer needs a declared lag budget, not a larger buffer (walkthrough table; stream interaction, section 3).\n- **Semantics decide which failure is acceptable.** Dropping interim temperature samples can be a legitimate product policy; dropping an irrevocable financial posting is not. The same walkthrough uses that distinction to choose between a transient feed and a durable subscription (walkthrough). The contract must state the semantic class before it states a delivery mode.\n- **Duplicates are cheaper than silent gaps only sometimes.** For an idempotent or last-writer-wins projection, replay is harmless. For an append-only ledger or an external payment, a duplicate is itself the incident. That is a product decision the contract must record, not an implementation detail.\n- **Dedup, retention and reconciliation have owners and costs.** A bounded dedup table, a replay log, a gap-detection service and a snapshot path all need owners, cleanup policies and storage budgets; the book recommends reversing the pattern when retention and lookup cost exceed duplicate-impact risk (Idempotent Receiver; idempotency-key route).\n- **Checkpoints do not cancel external effects.** A checkpoint captures operator state and source positions; a sink write committed outside the checkpoint protocol is not undone by replay, and replay may duplicate it unless the sink is idempotent or upserting (late correction after checkpoint and restore). The same applies to any \"exactly-once streaming\" claim that stops at the broker boundary (processor comparison).\n- **A snapshot is sometimes the only correct recovery.** When replay is impossible — retention exceeded, epoch changed, history never persisted — the honest response is a fresh snapshot plus explicit reconciliation of unsupported pending work, not an invented continuation (failures, compaction and recovery; queue versus history).\n- **Multiple subscribers multiply cursors.** Each subscriber needs its own durable cursor and its own dedup identity; \"a subscription name is not a business identity\" (publish-subscribe note). A shared \"last sequence\" across subscribers is meaningless.\n- **If none of this can be defined, the contract should not claim resume.** The book's own conclusion is that an ephemeral live stream with no durable source cannot promise resumability, and that a client may need a new snapshot rather than an invented continuation (durable resume, section 4).\n\n## 6. Evidence map\n\n| Claim | Section key | Observed or inference |\n|---|---|---|\n| Drop after send, before ack: resumable option requires dedup and replay; transient option may accept missing/duplicate 41 | tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items | observed (book states the trade-off) |\n| Proposed envelope: stream_id, position within declared partition, schema version, snapshot ID, retention boundary; checkpoint after durable effect; explicit resnapshot | same section | observed (labelled proposed, not implemented) |\n| Transport can deliver bytes while the business outcome is lost after an ambiguous ack | tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#purpose-and-mission | observed |\n| Framework write completion is not remote receipt; buffered send is not consumption | tycho.page.fbb4bc905d02495dbe3d7675d8670235#2-backpressure-is-a-contract-between-producers-and-consumers | observed |\n| Six contract elements for a reconnecting stream | tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay | observed |\n| Position before effect loses it; after effect duplicates; no global transaction | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points | observed |\n| At-least-once is the documented default; ack is a separate uncertain step | tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity | observed (quotes Kafka) |\n| Dedup marker lifetime must cover redelivery, DLQ and replay horizon; post-expiry reconcile or reject | same section | observed |\n| In-memory dedup is not restart-safe; identity includes subscriber and event scope | same section | observed |\n| Idempotent receiver conditions: stable identity, atomic record, retention, concurrent duplicates | tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview | observed |\n| Key is useless after its outcome record expires | tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route | observed |\n| Replay position is not proof of user-visible effect | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points | observed |\n| Retention or compaction removal blocks reconstruction | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix | observed |\n| Offset reset cannot recreate deleted records; latest may skip; silent reset looks healthy | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions | observed |\n| Sequence must be reliable, scoped to ordering domain; gap timeout and late disposition required | tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview | observed |\n| Per-partition ordering; per-key ordering is not total order | tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#bounded-pattern-ownership-notes | observed |\n| Each subscriber needs its own cursor; subscription name is not a business identity; redelivery follows effect-before-ack | tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes | observed |\n| Publisher confirmation does not prove consumer committed | same section (point-to-point note) | observed |\n| Stale epochs must be rejected at the destination; fencing does not deduplicate | tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination | observed |\n| Device incarnation, epoch/snapshot compatibility, fresh snapshot after offline window | tycho.page.8743d09eab614132692f934fb22c5649#failures-compaction-and-recovery | observed (synthetic project trace) |\n| Lag beyond retention: declare gap and restore authoritative snapshot | tycho.page.98616bdc3c514ea997b2cfe30ad7c070#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history | observed |\n| Change feed needs durable position, retention, replay; cursor bound to scope, expiry explicit, not authorization | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts | observed |\n| At-least-once duplicate defenses are work-level and bounded | tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses | observed (case study, source-scoped) |\n| Exactly-once is scoped to topology and connector/sink | tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#5-choose-the-processor-for-the-real-topology | observed |\n| Checkpoints do not cancel external sink effects; replay can duplicate | tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore | observed |\n| Test list: crash before/after commit, concurrent duplicates, out-of-order, lost external ack | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path | observed (proposed, not run) |\n| Inject disconnect before/after ack, restart, slow consumer, position expiry | tycho.page.e067b74eabc24cabb209ca8835c0f7cd#6-proposed-negative-experiments | observed (proposed, not run) |\n| Telemetry pipelines may drop and are not lossless by default | tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write | observed |\n| Lost ack must surface UNKNOWN, not false failure | tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem | observed (proposed adapter design) |\n\n## 7. Unknowns and confidence\n\nThe mechanism and the contract checklist are directly supported; the specific attribution in this scenario is not, because the scenario is synthetic and the protocol is explicitly unimplemented. What the book cannot tell me, and what changes the answer:\n\n1. **What the client actually recorded and when** — effect committed then cursor, cursor then effect, or one transaction. This decides whether the re-delivered 41 is a harmless duplicate or a real second effect, and whether a gap already exists before the reconnect.\n2. **Whether the server keeps per-subscriber acknowledgement state** or only a send watermark. If only send progress exists, the client's \"last processed\" is a hint the server may refuse, and 41 is skipped by default.\n3. **Whether 41 is per-connection, per-device or global.** One scalar across devices makes both duplicate and gap likely for different keys at the same time.\n4. **Whether the stream is a state feed (coalescing legal) or an event log (every item matters).** In the first case a numeric gap may be design; in the second it is loss.\n5. **The retention and replay horizon versus the client's maximum offline time**, and whether an expired position produces an error or a silent reset.\n6. **The acknowledgement's granularity and meaning** (per event, per batch, cumulative; receipt versus effect).\n7. **Whether an epoch or snapshot handshake exists**, so a post-restart position can be rejected instead of misinterpreted.\n8. **Whether dedup is client-side, server-side or both, and for how long** — and whether it survives the restart that caused the reconnect.\n\nConfidence: high on \"why duplicates and gaps are possible\" and on the required contract elements, because several independent book sections agree. Medium on the precise ordering of failures inside this one scenario, since the book labels its protocol as proposed and its walkthrough as synthetic; the answer preserves that gap rather than asserting a tested behaviour. No implementation, benchmark, production trace or human review is claimed.\n",
+  "facet_matrix": [
+    {
+      "facet": "F1. What a resume point is, who owns it, and where it is durable",
+      "queries": [
+        "resume from last processed offset replay window consumer restart",
+        "resume token cursor opaque continuation idempotent subscription",
+        "reconnect cannot recover unpersisted stream items"
+      ],
+      "evidence": [
+        "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay",
+        "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history"
+      ],
+      "answer_sections": [
+        "1",
+        "2.2",
+        "3.7",
+        "4"
+      ]
+    },
+    {
+      "facet": "F2. What an acknowledgement means (receipt vs processing vs committed effect) and when it is sent",
+      "queries": [
+        "stream acknowledgment ambiguous processed committed transport received",
+        "at-least-once by default broker delivery semantics",
+        "ambiguous acknowledgement retry response lost operation identity reconcile"
+      ],
+      "evidence": [
+        "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#purpose-and-mission",
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay",
+        "tycho.page.fbb4bc905d02495dbe3d7675d8670235#2-backpressure-is-a-contract-between-producers-and-consumers",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+        "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem"
+      ],
+      "answer_sections": [
+        "2.1",
+        "2.3",
+        "4"
+      ]
+    },
+    {
+      "facet": "F3. Why duplicates survive resume: redelivery default, dedup identity, dedup window, concurrency",
+      "queries": [
+        "duplicate suppression idempotency key deduplication window",
+        "deduplication key retention window duplicate detection expiry",
+        "duplicate deliveries processed concurrently"
+      ],
+      "evidence": [
+        "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+        "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+        "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route"
+      ],
+      "answer_sections": [
+        "2.3",
+        "2.4",
+        "2.5",
+        "2.6"
+      ]
+    },
+    {
+      "facet": "F4. Why a gap survives resume: commit order, token off-by-one, retention reset, epoch mismatch",
+      "queries": [
+        "consumer commits offset before or after processing crash duplicate gap",
+        "position expiry error resnapshot required instead of silent reset",
+        "epoch generation fencing stale session resume"
+      ],
+      "evidence": [
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+        "tycho.page.8743d09eab614132692f934fb22c5649#failures-compaction-and-recovery",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history"
+      ],
+      "answer_sections": [
+        "3.1",
+        "3.2",
+        "3.5",
+        "3.6"
+      ]
+    },
+    {
+      "facet": "F5. Sequence domain and ordering scope: per connection, per partition, per device, total order",
+      "queries": [
+        "per-partition ordering total order event stream offset",
+        "sequence number gap missing events detection heartbeat",
+        "sequence assignment single writer authority monotonic counter",
+        "coalescing sampling dropped intermediate updates current-state semantics"
+      ],
+      "evidence": [
+        "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+        "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#bounded-pattern-ownership-notes",
+        "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write"
+      ],
+      "answer_sections": [
+        "3.3",
+        "3.4",
+        "3.8"
+      ]
+    },
+    {
+      "facet": "F6. Contract elements and acceptance evidence for a supported resume guarantee",
+      "queries": [
+        "event stream contract delivery guarantee semantics define",
+        "resume guarantee unsupported ephemeral stream",
+        "snapshot plus change log bootstrap rebuild projection"
+      ],
+      "evidence": [
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay",
+        "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#6-proposed-negative-experiments",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+        "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#5-choose-the-processor-for-the-real-topology",
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies"
+      ],
+      "answer_sections": [
+        "1",
+        "4",
+        "5"
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+    "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#purpose-and-mission",
+    "tycho.page.fbb4bc905d02495dbe3d7675d8670235#2-backpressure-is-a-contract-between-producers-and-consumers",
+    "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+    "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+    "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+    "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+    "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#bounded-pattern-ownership-notes",
+    "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+    "tycho.page.8743d09eab614132692f934fb22c5649#failures-compaction-and-recovery",
+    "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history",
+    "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+    "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#5-choose-the-processor-for-the-real-topology",
+    "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path",
+    "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#6-proposed-negative-experiments",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write",
+    "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+    "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem"
+  ],
+  "evidence": [
+    {
+      "claim": "A drop after send and before acknowledgement leaves a resumable subscription needing explicit dedup and replay; a transient feed may accept a missing or duplicate 41 only when that is labelled.",
+      "section_key": "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+      "note": "Table row: 'Client resumes from last durably processed sequence; dedup and replay required' vs 'Missing/duplicate 41 may be acceptable, explicitly labeled'.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Transport flow-control windows affect buffered bytes only while connected and do not constitute a durable event log or replay cursor.",
+      "section_key": "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+      "note": "Direct sentence in the synthetic walkthrough.",
+      "kind": "observed"
+    },
+    {
+      "claim": "The proposed protocol envelope is stream_id, monotonically interpreted position within a declared partition, schema version, snapshot ID and retention boundary; the client checkpoints only after its local effect is durable; an impossible replay returns an explicit resnapshot-required response.",
+      "section_key": "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+      "note": "Labelled 'Proposed protocol (not implemented)' in the book.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A streaming transport can deliver bytes reliably while the application loses its business outcome after an ambiguous acknowledgement; backpressure, cancellation, retry identity and durable replay are distinct guarantees.",
+      "section_key": "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#purpose-and-mission",
+      "note": "Framing paragraph of the chapter.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Completion of a framework write call does not mean the bytes reached the remote application; sending into a framework buffer is not downstream consumption or a committed business effect.",
+      "section_key": "tycho.page.fbb4bc905d02495dbe3d7675d8670235#2-backpressure-is-a-contract-between-producers-and-consumers",
+      "note": "gRPC flow-control distinction, section 2 of the stream-contracts page.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A reconnecting stream must define cursor/checkpoint or stable event ID, exact ordering scope, delivery mode with gap/duplicate handling, expiration and retention, the meaning of acknowledgement, and protocol/schema version coexistence.",
+      "section_key": "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay",
+      "note": "Six-item list; this is the primary contract checklist for the question.",
+      "kind": "observed"
+    },
+    {
+      "claim": "An ephemeral live stream with no durable source cannot promise resumability; durable replay requires stored events/offsets plus idempotent consumer effects.",
+      "section_key": "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay",
+      "note": "Closing paragraph of section 4.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Committing the position before the external effect can silently lose the effect; committing it after the effect can duplicate it; no ordering of two independent commits creates a global transaction.",
+      "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+      "note": "Explains both the duplicate and the gap direction from one crash window.",
+      "kind": "observed"
+    },
+    {
+      "claim": "The consumer diagram shows a crash between effect commit and position commit causing replay, with the external store's dedup making the duplicate harmless.",
+      "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+      "note": "Mermaid plus text alternative, labelled a proposed consumer contract.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A consumer group offset is a replay position, not proof that every user-visible effect succeeded.",
+      "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+      "note": "Direct sentence separating position from effect.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Kafka guarantees at-least-once delivery by default and the acknowledgement is a separate uncertain step.",
+      "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+      "note": "Book quotes Kafka design text and draws the recovery rule.",
+      "kind": "observed"
+    },
+    {
+      "claim": "The dedup marker lifetime must cover maximum broker redelivery, DLQ replay and historical replay horizon; a shorter window turns an expired identity into a new message and can duplicate the effect; post-expiry behaviour must reconcile or reject, never silently treat as new.",
+      "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+      "note": "Retention and expiry invariant for deduplication.",
+      "kind": "observed"
+    },
+    {
+      "claim": "An in-memory dedup set is not restart-safe, and dedup identity must include the subscriber and event scope.",
+      "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+      "note": "Two failure modes directly relevant to a reconnecting consumer.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Idempotent Receiver applies only with stable identity, atomic effect-plus-identity recording, retention covering redelivery and handling of concurrent duplicates.",
+      "section_key": "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+      "note": "Good-fit conditions and hard contraindications.",
+      "kind": "observed"
+    },
+    {
+      "claim": "An idempotency key is useful only while its outcome record is retained; after expiry, historical deduplication is no longer guaranteed.",
+      "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+      "note": "Invariant stated in the retries/idempotency route.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Retention or compaction removing needed history leaves a late or rebuilding consumer unable to reconstruct required state.",
+      "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+      "note": "Row of the failure and recovery matrix.",
+      "kind": "observed"
+    },
+    {
+      "claim": "If the requested offset no longer exists, reset policy cannot recreate deleted records; latest may skip missing history and a silent reset can turn a recovery failure into apparently healthy but incomplete output.",
+      "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+      "note": "Direct statement of the silent-reset gap.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Sequence numbers must be reliable and scoped to the ordering domain with known predecessors and successors; duplicates need a rule, a gap timeout and a late-message disposition; non-unique or non-monotonic producer sequence values are a hard contraindication.",
+      "section_key": "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+      "note": "Defines the sequence-domain contract the device stream lacks.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Ordering is per partition; per-key ordering is not a topic-wide total order.",
+      "section_key": "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#bounded-pattern-ownership-notes",
+      "note": "Causal-order note contrasting partition order with total order.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Publish-subscribe is a delivery contract: each subscriber gets its own cursor, a subscriber absent during publication sees nothing unless the subscription is durable, redelivery follows an effect committed before its acknowledgement, and the opposite order loses work; each consumer needs an effect key, a dedup rule and an acknowledgement policy.",
+      "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+      "note": "Direct mapping to multi-subscriber device streams.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A publisher confirmation does not prove the consumer committed its effect, and a worker crash after the effect but before acknowledgement can cause redelivery.",
+      "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+      "note": "Point-to-point note on the same page.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A destination must reject stale epochs or the operation remains explicitly unsafe, and fencing alone does not deduplicate.",
+      "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+      "note": "Epoch validation requirement for a resumed cursor after restart or takeover.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A recovered client must allocate a new device incarnation, the reconnect protocol validates epoch and snapshot compatibility first, and a client returning after the supported offline window fetches a fresh snapshot and surfaces unsupported pending work for reconciliation.",
+      "section_key": "tycho.page.8743d09eab614132692f934fb22c5649#failures-compaction-and-recovery",
+      "note": "Synthetic project trace; the epoch/snapshot rules are stated as required behaviour.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A consumer that lags beyond retention must declare a gap and restore an authoritative snapshot.",
+      "section_key": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history",
+      "note": "Replayable-history column of the work-queue versus fan-out table.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A change feed promises ordered changes within a declared scope at the price of a durable position, retention and replay semantics; a cursor must be bound to query, filter, order and snapshot plus access scope, validated on every request, and expiry must be explicit with restart semantics; a cursor is a continuation hint, not authorization.",
+      "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+      "note": "Cursor contract table and rules.",
+      "kind": "observed"
+    },
+    {
+      "claim": "At-least-once duplicate defenses in a published migration design are four bounded work-level mechanisms (sequence listing, per-key lock, transactional accounting, destination existence check) and do not create end-to-end atomicity.",
+      "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+      "note": "Case study, source-scoped; supports the 'dedup is bounded work' reading.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Exactly-once is a scoped claim: Kafka transactions and Kafka Streams exactly_once_v2 cover a declared topology, while checkpoint plus sink-specific guarantees govern Flink-style processing.",
+      "section_key": "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#5-choose-the-processor-for-the-real-topology",
+      "note": "Comparison row 'Exactly-once nuance'.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A checkpoint captures operator state and source positions; a sink side effect committed outside the checkpoint protocol is not undone, and replay may produce a duplicate correction unless the sink is idempotent or upserting.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Late-correction walkthrough; directly limits any 'checkpoint means exactly once' claim.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Bounded verification must inject crash before and after local commit, duplicate deliveries processed concurrently, out-of-order events and a lost external acknowledgement.",
+      "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path",
+      "note": "Test list; the book marks it proposed and not executed.",
+      "kind": "observed"
+    },
+    {
+      "claim": "The proposed negative experiments include disconnecting and reconnecting at a message boundary to verify duplicates, gaps and cursor expiry under the stated replay contract.",
+      "section_key": "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#6-proposed-negative-experiments",
+      "note": "Acceptance test directly matching the question's scenario.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Telemetry collection is a pipeline that may drop or transform signals and is not proof of end-to-end lossless delivery by default.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write",
+      "note": "Relevant to a device-status feed that is telemetry rather than an event log.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A watermark or lateness policy must be chosen explicitly; late or idle input needs a declared disposition and finalization is a business policy.",
+      "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+      "note": "Supports the 'which numbering gaps are legal' requirement.",
+      "kind": "observed"
+    },
+    {
+      "claim": "A lost acknowledgement after a commit must surface as an unknown outcome, not a false failure, and reconciliation requires a scoped identity or status read.",
+      "section_key": "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+      "note": "Adapter failure analysis; the per-message form of the 41 ambiguity.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Whether the resume token is inclusive or exclusive, and whether one scalar can represent several partitions, is not fixed by the book and must be decided by the contract.",
+      "section_key": "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+      "note": "Inference from the proposed 'monotonically interpreted position within a declared partition' plus the unstated inclusion convention; marked as inference in the answer.",
+      "kind": "inference"
+    },
+    {
+      "claim": "If the server treats '41 sent' as progress and refuses to rewind, an unacknowledged 41 is skipped even though it may never have reached the client.",
+      "section_key": "tycho.page.fbb4bc905d02495dbe3d7675d8670235#2-backpressure-is-a-contract-between-producers-and-consumers",
+      "note": "Inference: applies the stated send-versus-receive distinction to the server's own watermark; not stated as a server behaviour in the book.",
+      "kind": "inference"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "provenance": {
+    "layer": "book",
+    "volume": "book",
+    "snapshot": "4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a",
+    "ranker": "tycho-section-fts5-bm25-v5",
+    "citation_scheme": "tycho.section-key.v2",
+    "cli": ".venv/bin/python scripts/agent_session_cli.py",
+    "log": "evaluation/agent-benchmark/v6-logs/Q222.jsonl",
+    "protocol": "evaluation/agent-benchmark/AGENT-PROMPT-V3.md",
+    "limits": "Book evidence only; the device-status protocol is marked proposed and not implemented; no corpus, qrels, labels or other answers were read.",
+    "logged_calls": {
+      "search": 41,
+      "read": 24,
+      "page": 7,
+      "total": 72
+    }
+  }
+}

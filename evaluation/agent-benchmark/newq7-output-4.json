@@ -1,0 +1,139 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "atlas",
+  "items": [
+    {
+      "question": "A product page is assembled at request time from catalogue, stock, pricing and review services. When pricing is slow the composition returns the page with an empty price block, a gateway retry re-sends the stock call, and one team proposes copying price data into the catalogue service so the fan-out disappears. Why is the composed response not a consistent join across owners, when is a maintained read model the better choice, and what must the composition contract declare about deadlines, partial results and retries?",
+      "required_evidence": [
+        "tycho.page.ade9759a19a0402594773756d097c11c#overview",
+        "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+        "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+        "tycho.page.6b75e10be102574cdc7351525ebabac9#overview"
+      ],
+      "core_claims": [
+        "API Composition calls several owner services at request time and assembles one client response; it creates no shared transaction or snapshot across them, so each section can reflect a different moment and the whole is not a consistent join.",
+        "The card fits read-mostly views with bounded per-owner deadlines and an honest representation of missing parts, and rejects the claim when strong consistency or writes across owners are required, when fan-out latency exceeds the client budget, or when one owner could answer directly.",
+        "Each downstream call needs its own deadline and authorization, retries must be capped per dependency and for the whole aggregate, and a partial response must name the failed dependency through a versioned shape rather than silently omit a section.",
+        "A maintained read model removes request-time fan-out at the price of duplication, projection lag and rebuild work, so it is preferable when composition latency and partial-failure complexity exceed that cost; CQRS rejects it when every read needs immediate consistency or no one owns the projection.",
+        "A BFF is a client-population contract that may own composition, but it must not become a second domain authority: shared domain services remain authoritative, and independent BFF and service lifecycles create drift risk that versioned composition and contract tests must catch."
+      ],
+      "optional_claims": [
+        "Gateway aggregation is transport and trust-boundary work with per-dependency retry limits, while API Composition owns the composition logic; a gateway is not obliged to aggregate when the composition is a hidden domain workflow.",
+        "Client-side composition or direct owner queries remain alternatives when the view is small or the composition layer cannot represent partial failure honestly."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A notification consumer inserts a processed-message row and then calls an external email provider in the same handler. The process crashes after the insert and before the provider call, and the broker redelivers the message the next day; a second consumer of the same event has its own local table. The team keeps markers for seven days although replay can reach thirty. Why does the inbox not make the email send exactly once, which identity and retention must the marker have, and when is an inbox the wrong choice?",
+      "required_evidence": [
+        "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+        "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview"
+      ],
+      "core_claims": [
+        "An inbox writes the consumer's deduplication marker and its local business effect in one local transaction, giving at most one committed local effect per consumer and message identity inside the retained window.",
+        "Identity must be scoped by the consuming subscriber and the event, not by the event id alone, because two consumers legitimately derive different local states from one event, and an in-memory set is not restart-safe.",
+        "The send lies outside that local authority: recording the marker before the send can suppress a missing email, while reversing the order can send twice, so an external effect needs a durable in-progress/completed record and reconciliation before acknowledgement.",
+        "The marker must be retained through the maximum broker redelivery, dead-letter replay and historical replay horizon; a shorter window turns an expired identity into a new message, and post-expiry behavior must reconcile or reject explicitly rather than silently treat it as new.",
+        "Reject the inbox when the consumer is naturally idempotent, identity cannot be retained, or the effect spans multiple authorities; a uniqueness constraint on effect identity, a producer outbox or an idempotent downstream API may be cheaper than the inbox table and its retention cost."
+      ],
+      "optional_claims": [
+        "Kafka's design stores a consumed log position in the same transaction as output records, which is the same atomic local-commit shape for a position rather than a guarantee about an external provider.",
+        "SKIP LOCKED supports queue-like claiming but leaves skipped rows in an inconsistent view, so it is work distribution rather than duplicate suppression across retries."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A registration service already answers its measured queries from one relational store, but the team adds a graph store for relationships, a search index for text and a columnar store for dashboards. Each store is loaded by its own job, no one owns cross-store reconciliation, and after the graph backfill stalls the search view serves partial results. Why is a second representation a synchronization problem rather than a second source of truth, what must be declared before any derived store serves reads, and when should the single store have been kept?",
+      "required_evidence": [
+        "tycho.page.6a386512b280490da745f1ae2c416c58#overview",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#6-cross-model-trade-off-matrix"
+      ],
+      "core_claims": [
+        "Polyglot persistence is justified only when distinct data responsibilities have materially different access patterns and one store cannot meet a measured requirement; when the existing store meets it, added stores bring coordination and operating cost without demonstrated benefit.",
+        "Each invariant still needs one authoritative owner; graph, search and columnar views are derived representations fed by a change pipeline, so they can lag the authority and are not automatically consistent sources of truth.",
+        "Before a derived view serves reads, its freshness bound, rebuild from the authority, deduplication, schema migration and failure recovery must be explicit, and a half-migrated projection must be treated as unavailable rather than partially correct.",
+        "The selection evidence is the invariant and transaction scope, the actual query and write mix with distributions, data size and skew, consistency and coordination needs, operational cost, and measured performance on representative data; user counts or the word fast do not establish a store choice.",
+        "Operating each store, including backup and restore, upgrades, staffing and failure drills, is part of fit, so a team that cannot operate the added store should reject it and compare a single-store projection or query-time join instead."
+      ],
+      "optional_claims": [
+        "The cross-model trade-off matrix is architecture reasoning rather than a vendor benchmark: rows state workload fit and failure cost, and some rows are explicitly synthesis without a product-specific source.",
+        "AWS and Microsoft describe eventual consistency between stores, and PostgreSQL logical replication stops on a conflict that must be resolved manually, so rebuild and reconciliation remain operational requirements rather than formal guarantees."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team replaces an order capability behind a routing facade, one capability at a time. A nightly batch job still writes the legacy tables directly, the facade becomes the only path for external clients, and the team plans to delete the legacy code as soon as the facade sends all reads to the new service. New-only writes have already produced rows the old binary cannot read. Why is interception not proof that every caller was migrated, what must coexistence define about authority and routing, and what evidence is required before the old path is retired?",
+      "required_evidence": [
+        "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview",
+        "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#bounded-pattern-ownership-notes",
+        "tycho.page.3950620546fc4c09a829132bd19bb69a#overview"
+      ],
+      "core_claims": [
+        "A strangler fig intercepts requests at a facade or route and moves one capability at a time to the new implementation while the old path stays available and authoritative for capabilities not yet migrated.",
+        "Interception is a prerequisite: where requests cannot be intercepted and routed the pattern cannot start, and internal callers can bypass the facade even when all external traffic reaches it.",
+        "Coexistence must keep one authoritative writer for each invariant and define routing and data compatibility; without that, old and new state can diverge while both paths remain live.",
+        "Routing all external reads through the facade does not prove retirement, because a bypassing batch writer and divergent state can remain; a bypass detector, routing inventory and data reconciliation check are needed before the old path is removed.",
+        "Rollback is per capability and lasts only until a recorded no-return point; a per-service rollback plan is required, and the facade itself can become a single point of failure or a performance bottleneck.",
+        "When interception is impossible or the system is small enough to replace whole, branch by abstraction, parallel run or a big-bang replacement are the alternatives; branch by abstraction keeps both implementations behind an internal seam in one deployable."
+      ],
+      "optional_claims": [
+        "Branch by abstraction needs a reversible switch, backward-compatible increments and a named removal owner and date; those removal conditions are Tycho review conditions rather than source claims.",
+        "The AWS guidance supports the interception prerequisite, the facade as a failure domain and a per-service rollback plan, but it does not define bypass detection, routing inventory or the recorded no-return gate."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Billing, support and marketing each use a customer record with different rules, and a platform team proposes one canonical customer schema, one shared vocabulary and one service to remove translation. A context map is then drawn as a mandatory graph of services, and every shared term is treated as a reason to merge models. Why is one shared word not one shared model, what must be established before a boundary is drawn, and why is a context map not a service graph?",
+      "required_evidence": [
+        "tycho.page.df51f8d69e7e4fa6beb678a5256a4f61#overview",
+        "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes",
+        "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#3-context-maps-are-semantic-integration-maps-not-mandatory-graphs",
+        "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#overview"
+      ],
+      "core_claims": [
+        "A bounded context separates meaning and ownership; the same word can denote different things in different contexts, so a shared vocabulary must not force one schema, one model or one service.",
+        "Modeling starts from behaviors and invariants: each context names the business rules it must protect, and a boundary is weak if none of its rules can be stated separately or overextended if unrelated decisions must share a transaction.",
+        "A context is not a deployment unit: several contexts can live in one deployable behind explicit in-process interfaces, and domain-driven design is not a synonym for microservices.",
+        "A context map is a human-readable semantic integration artifact that records whose meaning is authoritative and how mappings are enforced; it does not imply building a curated graph as product infrastructure.",
+        "Mappings can be one-to-many, time-scoped and incomplete, so impossible conversions must be rejected or degraded explicitly, and unknown must be distinguished from not found where the domain requires it."
+      ],
+      "optional_claims": [
+        "Reject the split when one stable model has a single accountable owner, when no domain expertise can validate meaning, or when the proposed boundary cannot be enforced in code, data or team ownership.",
+        "Evans treats a change in the language as a change to the model, and the sources note that service boundaries do not remain fixed, so moving a boundary starts from model behavior and ownership rather than from an org chart."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A team declares its service clean architecture because the diagram has four rings. The domain module imports the ORM and the web framework, a service locator supplies adapters at runtime, and the build checks only that packages compile. The team also adds mappers and ports around a small CRUD module that has one database and no second implementation. Why is the ring count not the mechanism, what does the inward dependency rule actually protect, and what does a passing import check fail to prove?",
+      "required_evidence": [
+        "tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview",
+        "tycho.page.77b512c4e2e946bd92d70b4a714600c8#purpose-and-decision-question",
+        "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+        "tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures"
+      ],
+      "core_claims": [
+        "Clean and onion styles place domain rules at the centre and constrain source dependencies to point inward; the mechanism is that dependency rule, not the number of drawn rings or the layer names.",
+        "No domain module may import a framework, transport or storage dependency, and the direction must be enforced by an automated build or dependency check, because convenience imports erode the boundary until the domain changes for a technology reason.",
+        "Hexagonal ports and adapters express the same inward rule with explicit application ports, so it is a variant rather than a competing alternative; presentation-domain-data layering is the competing alternative, and introducing a mapper so the domain does not depend on its data source is the hexagonal variation of it.",
+        "A static dependency check proves imports, not runtime coupling: reflection, a service locator or generated wiring can still bind the domain to a framework.",
+        "Reject the style when mapping overhead dominates a small CRUD application or when ports have no genuinely different implementations; one stable persistence choice is better served by simpler layering.",
+        "Ports are semantic contracts rather than network ports: local and remote adapters must produce the same domain-visible classifications, and a fake adapter test proves domain decisions only under the fake's assumptions."
+      ],
+      "optional_claims": [
+        "The inward rule comes from the source, while the automated enforcement check and the adapter-and-dependency-test remedy are Tycho guidance rather than source claims.",
+        "Domain entities stay inside the boundary, and data crossing it is a DTO or port contract with an owned mapper whose tests preserve meaning rather than only field names."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

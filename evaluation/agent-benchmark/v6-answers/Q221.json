@@ -1,0 +1,338 @@
+{
+  "task_id": "Q221",
+  "question": "During an orchestration control-plane outage, already-running containers keep answering requests, and the team concludes that the platform has high availability. Why is that conclusion incomplete, and what must the availability claim and its failure test separate?",
+  "answer": "# Q221 — A control-plane outage is not a platform availability proof\n\n## 1. Direct answer\n\nThe team's conclusion is incomplete because the observation establishes one narrow\nproperty: the data plane continued to serve requests that were already defined,\nadmitted and routed, for the period observed. A control plane changes placement,\nconfiguration, membership, policy or resource count; a data plane serves\nalready-defined requests. Seeing the second continue while the first is unreachable\nis evidence that existing steady-state traffic can survive, not evidence that the\nplatform is highly available.\n\nThe untested half is the lifecycle: new deployment, rescheduling, configuration\nchanges, scaling, secret and certificate updates, node repair or replacement. Those\nmay be blocked exactly when the outage makes them necessary. Existing capacity can\nerode as nodes fail and cannot be replaced, so a short observation can look healthy\nwhile the system drifts toward failure. And a request that still returns 200 OK can\nbe stale, unauthorized, duplicated or served from an obsolete cache; a running\ncontainer is not a correct user journey.\n\nThe availability claim must separate:\n\n- control-plane availability, data-plane availability and user-journey availability;\n- existing steady-state survival from the ability to create, replace and recover\n  resources;\n- correct client-level outcomes from pod health, replica count or HTTP 200;\n- a named failure class and declared duration from an unqualified word \"available\";\n- an observed result from a target, with eligible population, boundary, exclusions\n  and observation window;\n- an explicitly promised degraded mode from accidental partial function.\n\nThe failure test must separate:\n\n- the injected control-plane loss from the data-plane conditions kept reachable;\n- existing requests from new-route changes;\n- one fault class from another, and a single injected fault from a real downstream\n  outage or a second, compounding failure;\n- detection, decision, routing and validation phases from total recovery time;\n- offered, admitted, completed, rejected and unsent demand from correct-outcome\n  quality;\n- what a passing run establishes from what it cannot establish.\n\nIf the claim were narrowed to \"for N minutes of control-plane API isolation, existing\nrequests kept completing correctly at capacity above X, and no new routes were\nrequired\", the observation could support it. That is a static-stability claim about\none plane and one window. It is not \"the platform has high availability\".\n\n## 2. Facet matrix\n\n| Facet | Query formulations | Evidence (section_key) |\n|---|---|---|\n| F1. Plane separation: control plane, data plane, user journey | \"control plane versus data plane failure isolation availability claim\"; \"orchestration control plane outage running containers still serve requests availability\"; \"control plane\" | tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability; tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work; tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims |\n| F2. Lifecycle: steady-state survival versus create, replace and recover | \"steady-state survival ability to create recover resources\"; \"node loss cannot be repaired capacity degrades during outage\"; \"control plane unavailable new deployments scaling node repair blocked\" | tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work; tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims; tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome |\n| F3. Outcome: correct user journey versus infrastructure or probe signals | \"availability objective measured at client boundary SLI SLO\"; \"health check replica count does not prove user journey availability\"; \"degraded operation explicitly promised availability claim 200 OK stale cache\" | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target; tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level; tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable; tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation; tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments |\n| F4. Claim scope: failure class, loss boundary, duration and status | \"what an availability claim must state SLO failure model scope\"; \"RTO RPO measurement boundaries incident timer\"; \"high availability deployment and disaster recovery plan different questions\" | tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable; tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target; tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss; tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries |\n| F5. Failure-test design: preserve the claim and separate conditions | \"existing requests and new-route changes separately\"; \"declared outage duration reject topology immediate control plane participation\"; \"bounded drill is not a disaster simulator\" | tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility; tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work; tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator; tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation |\n| F6. Evidentiary scope: what a passing run establishes and what it cannot | \"fault injection loss of control plane secrets certificates stale membership\"; \"failover test inject fault availability measured user journey\"; \"availability claim failure test steady state recovery control plane\" | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested; tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior; tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments; tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey; tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome |\n\n## 3. Mechanism and justification\n\n### 3.1 The observation is a data-plane steady-state observation\n\nThe book defines the split directly: a control plane changes placement,\nconfiguration, membership, policy or resource count; a data plane serves the\nalready-defined requests or processes previously admitted work. It then warns that a\nfunctionally correct data plane can still depend on control-plane services for\nbootstrapping credentials, routing, discovery, certificate renewal, replacement\ninstances or configuration fetches, and that those dependencies must be measured\nunder loss of the control plane rather than waved away\n(tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability).\n\nThe orchestration walkthrough is almost the question's scenario. Request-serving pods\nare already running in a zone when the orchestration control plane becomes\nunreachable. Some existing client requests can continue through existing routes and\nworking data-plane components. New deployment, rescheduling or configuration changes\nmay not proceed, and losing nodes can degrade capacity over time. The section then\nstates the contract the question is asking for: the observable service contract must\ndistinguish existing steady-state survival from the ability to create and recover\nresources\n(tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work).\n\nThat distinction is not cosmetic. It is the difference between \"the traffic already\nin flight still works\" and \"the system can keep working through the declared outage\nwindow\". A team that observes only the first has measured one half of the second.\n\n### 3.2 What the observation leaves out\n\n**Resource lifecycle.** New deployments, scaling, secret updates, node repair or\nreplacement may be impaired while the control plane is unavailable, and recovery\nplans must identify which actions need inaccessible infrastructure services\n(tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims).\nThe failure matrix sharpens the point: when the deployment API or control plane\nstops, the existing data plane may or may not continue, because secrets, certificates\nand stale membership matter. The required measurement is to fault-inject the loss and\nmeasure existing requests and new-route changes separately\n(tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility).\n\n**Time and capacity erosion.** The walkthrough says losing nodes can degrade capacity\nover time. That turns the observation window into part of the claim: a system can\nlook available for the first minutes of an outage and fail later when a node dies and\ncannot be replaced. For a zone-level disruption the failure matrix asks the tester to\nexercise the outage without provisioning any new instance for the required initial\nwindow (tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility).\nIf the observed interval is shorter than the declared outage duration, the evidence\ndoes not cover the claim.\n\n**Correctness, not just response codes.** A request can return 200 OK while the\nanswer is stale, unauthorized or duplicated. The book's zone walkthrough makes this\nexplicit: degraded operation is valid if explicitly promised, but counting 200 OK\nresponses from an obsolete cache as a healthy reservation service is not\n(tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation).\nThe negative-experiment section adds that a test checking only the desired replica\ncount can pass while users cannot access correct data; it asks for client-level\ncorrect outcomes, explicit rejections, timeouts, state reconciliation, routed\ntraffic, dependency recovery and total operating cost\n(tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments).\n\n**Scope of \"platform\".** A platform-level claim cannot stop at the orchestrator. The\nzone walkthrough shows three replicas spread across two zones that still share one\nidentity endpoint and one database writer reachable through one zone's dependency\nchain; the replicas remain process-healthy while reservations cannot be authorized\nor committed. A zone-spread label did not eliminate the shared failure domain\n(tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation).\nThe chapter states the same conclusion more compactly: nominal placement diversity\ndoes not demonstrate surviving user journeys\n(tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result).\n\n**Measurement.** \"Answering requests\" is not yet an SLI. An SLI is the share of\neligible requests that satisfy correctness and deadline gates; an SLO is a target\nover a specified window. A target without a specified event population can be\nmeaningless, a time-based downtime ratio and a request-based failure ratio measure\ndifferent effects, and neither automatically captures incorrect durable writes\n(tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target).\nThe instrumentation guidance is equally concrete: use an authoritative logical\noperation ID spanning retries, attempt/admission/final outcome states including\nunknown or timeout, elapsed time, response classification, policy/version context\nand reconciliation outcomes. A counter of attempted requests is not the same\ndenominator as successful unique decisions when clients retry, and one recorded p99\nwithout rejected or timed-out populations cannot prove user experience\n(tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level).\n\n**Claim form.** Vague quality language is not a verification criterion. A useful\nscenario defines source/stimulus, environment, affected boundary, system response and\nquantitative measure, including exclusions, observation window, ownership and whether\nthe number is a requirement, estimate or observed fact. The same section notes that\nSLOs are about a user's experience, not a success check for every individual pod or\ncontainer, and that a recovery scenario requires a failure-domain and recovery test,\nnot only replica readiness\n(tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable).\n\n### 3.3 What the availability claim must separate\n\n| Separation | Why it matters | What a usable claim contains |\n|---|---|---|\n| Control plane, data plane and user journey | Continuity of already-admitted traffic is a data-plane property; the platform claim also covers the plane that changes resources and the journey that produces correct outcomes | Which plane and which user capability the number describes |\n| Steady-state survival versus create/recover | New deployment, rescheduling, configuration, scaling, secret/certificate updates and node repair may be blocked; capacity can erode | Whether the claim covers only existing traffic or also recovery and repair |\n| Correct outcome versus infrastructure signal | 200 OK, pod health and replica count can all pass while the user journey is wrong or stale | The eligible operation, correctness gate, rejection/timeout treatment and duplicate-effect rule |\n| Failure class, loss boundary and duration | Control-plane loss, node loss, zone loss, dependency outage and region loss are different questions; the declared outage duration bounds the claim | The named failure class, the loss boundary and the duration the claim is valid for |\n| Observation versus target | An SLI is an observation and an SLO is a chosen target; a number without population or window is meaningless | Population, boundary, exclusions, window, timer start and whether the number is target or observed |\n| Promised degradation versus accidental partial function | Refusing new reservations while serving a read-only catalogue may be a valid promised mode; silently serving stale booking confirmations is not | The degraded capabilities that are explicitly promised, and what must be refused |\n\nA compact claim template follows from those rows: \"During [named failure class]\nlasting [declared duration], [named user capability] achieves [quantitative measure]\nfor [eligible population] measured at [boundary] over [window], excluding\n[exclusions]; degraded capabilities are [list]; this number is a\n[requirement/estimate/observed result].\" The orchestration observation in the\nquestion fills only the \"existing requests continued\" cell of that template. It says\nnothing about the failure class beyond control-plane loss, the duration, the capacity\ntrajectory, the correctness of responses or the recovery path.\n\n### 3.4 What the failure test must separate\n\n| Separation | Test design | Why |\n|---|---|---|\n| Injected control-plane loss versus data-plane reachability | Isolate orchestrator/API access while keeping running workers and the database reachable; issue existing reads and writes; then kill one node and measure degradation and recovery; repeat under a real downstream outage | Otherwise the test cannot tell whether the data plane survived because it is independent or because the test never actually removed the dependency |\n| Existing requests versus new-route changes | Measure the two separately when the deployment API or control plane stops | Existing traffic and routing changes are different behaviours; an aggregate success rate can hide a total inability to change routes |\n| One fault class versus another | Use distinct tests for slow downstream, partial dependency outage, generator overload, lock contention, replica restart and index lag, and state what each passing run cannot establish | A partial-dependency-outage pass cannot establish correct durable state after all recovery paths, and a replica-restart pass cannot establish region disaster recoverability |\n| Independent injections versus compounding failure | Remove zone compute, then independently inject database loss and identity loss; verify no competing authoritative writers and no duplicate accepted business effects | Correlated dependencies and correctness failures are exactly what a single happy-path fault misses |\n| Phases versus total recovery time | Start the recovery clock at the declared boundary and record detection, decision, routing, validation and total time separately | Starting the timer only after slow detection or approval hides the time the user was actually down |\n| Demand versus outcome | Record offered, admitted, completed, rejected and unsent operations, p95/p99/error, replication lag and correct completions separately | A throughput or latency number without its denominator and correctness gate is not an availability result |\n| What the run establishes versus what it does not | Declare a safe abort condition, treat local passes as bounded results, and write \"insufficient evidence / do not cut over\" when the failure class or recovery path was not exercised | A passing run for one scenario is evidence for that scenario only |\n\nThe walkthrough's proposed test is the anchor for the first two rows: isolate the\norchestrator or API while keeping running workers and the database reachable, issue\nexisting reads and writes, then kill one node and measure degradation and recovery,\nand repeat under a real downstream outage. It also supplies the rejection rule: reject\na topology if its data-plane ability to serve a correct user journey depends on\nimmediate control-plane participation that cannot meet the declared outage duration\n(tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work).\n\nThe disaster-recovery drill guidance generalizes the same discipline. Its baseline\nstep records offered, admitted and completed logical operations, p95/p99 and error\nrates, and replication lag measured separately, including live resources,\ncontrol-plane changes and secret/certificate dependencies. Its injection step starts\nrecovery clocks at the declared boundary, and its review step says that if evidence is\nmissing the correct output is \"insufficient evidence / do not cut over\", not a green\ncheck (tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator).\nIts failure matrix lists the conditions that should stop a claim altogether: remaining\nzones dependent on failed management, or recovery that relies exclusively on the\nfailed control plane\n(tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey).\n\n### 3.5 Why the distinction changes the decision\n\nThe book is explicit that no topology row promises an actual availability number;\ncorrelated dependencies and measured time-to-recovery determine whether a design\nmeets the stated user contract\n(tycho.page.c579aa863be74f9ca5718e58f6f34c21#5-trade-offs-in-fault-isolation).\nIt also requires the recovery plan to identify which actions need inaccessible\ninfrastructure services\n(tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims).\nSo accepting \"containers kept answering\" as platform high availability would hide\nthe precise failure mode the test was meant to find: recovery, repair and\nreconfiguration depend on the unavailable control plane. The correct verdict for the\nunqualified claim is insufficient evidence, not \"available\". The architecture\nwalkthrough says so directly: return insufficient evidence if the dominant failure\nclass, transaction owner, placement domain, control-plane availability, workload\nshape or measured RPO/RTO is unknown\n(tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome).\n\nThere is also a measurement-quality reason. Different fault classes require distinct\ntests, and each run has an explicit ceiling on what it can establish. A slow\ndownstream response test observes parent deadlines, per-hop waits, cancellation and\nretry amplification, but cannot establish that all failure classes are tolerated. A\npartial dependency outage observes queue bounds, explicit errors and unaffected user\njourneys, but cannot establish correct durable state after all recovery paths\n(tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested).\nA control-plane outage test is one row in that table, not a platform-wide proof.\n\n## 4. Boundaries and trade-offs\n\n**The narrow claim is legitimate and useful.** A service that retains enough\npre-existing capacity and locally available state to continue serving during a zone\nor control-plane impairment is exhibiting static stability, and the book contrasts\nthat design with depending on immediate provisioning during the incident. But it\npresents this as a reported design approach, not a promise that any arbitrary\norchestration stack shares its guarantees\n(tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability).\n\"Narrow and true\" is a better outcome than \"broad and unsupported\".\n\n**Not every control-plane outage matters equally.** If the declared outage duration\nis short, the workload fits the capacity already running, all bootstrapping material\nis locally cached, no repair is needed and no routing change is required, data-plane\ncontinuity may satisfy the narrow objective. The claim must state those conditions\ninstead of generalizing from them. The reverse is also true: a long outage with node\nloss is a different test even if the first minute looks perfect.\n\n**Degraded operation is valid only when it is promised.** The zone walkthrough\naccepts read-only catalogue access with new reservations refused until a writer can be\nrecovered safely, provided that degraded operation is explicitly promised. Counting\nstale 200 OK responses from an obsolete cache as a healthy service is not that\n(tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation).\nThe same logic applies to a control-plane outage: a documented \"existing sessions\ncontinue, new routes suspended\" mode can be an availability contract; an undocumented\npartial function cannot.\n\n**The orchestrator may not be the dominant failure domain.** A process can be healthy\nwhile the user journey is unavailable because replicas share a datastore, gateway,\ncertificate issuer, routing plane or other dependency\n(tycho.page.6b3725950fad4c0db82417b3d0225d32#purpose-and-mission). A platform\navailability claim that stops at the orchestration layer is therefore underspecified:\nthe stateful primary, the identity service or the certificate path may fail while the\ncontainers keep answering. Two zones can still depend on one datastore or control\npath (tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result).\n\n**The same evidence supports different verdicts at different scopes.** For \"existing\nrequests continued correctly for ten minutes during control-plane API isolation\", the\nobservation may be adequate if it was measured with correct outcomes and a stated\npopulation. For \"the platform has high availability\", it is inadequate because it\nomits new-route changes, recovery and repair, capacity erosion, other failure classes\nand the correctness gate. The scope is not a rhetorical qualifier; it determines\nwhich test would be decisive.\n\n**Correctness is not an error budget.** An error budget is an accounting expression\nof permitted bad events under a chosen SLO, not permission to violate a\nnon-negotiable state invariant, authorization rule or contractual data-loss\nconstraint (tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target).\nA duplicate reservation or two competing writers is a hard-gate failure, not a bad\nevent to be averaged into an availability percentage. That is why the negative\nexperiment asks for no competing authoritative writers and no duplicate accepted\nbusiness effects (tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments).\n\n**Broader claims cost more to test.** Expanding the claim to cover recovery, repair\nand multiple failure classes requires more injections, longer windows, controlled\ndemand and correctness verification. The confounder guidance warns that warmed and\ncold states, unequal demand, generator saturation and background contention can all\nchange the conclusion; a local pass is a bounded result, not proof of global\nproduction behavior, and the experiment should declare warmed, cold and recovery\nphases rather than discard inconvenient transients\n(tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior).\nThe trade-off is real: a stronger claim is not free, and a test that adds faults\nwithout controlling those variables may not be comparable to its baseline.\n\n**The evidence is conceptual and synthetic.** The walkthroughs and drills in the book\nare explicitly fictional or proposed; no cluster action, failover or production\nmeasurement is claimed. The correct use of this evidence is to structure the claim\nand the test, not to infer that a particular platform achieves a particular number.\nSome of the cited pages carry an unknown evidence status, which lowers confidence in\nspecific numbers but not in the separation logic, because that logic is stated\ndirectly and repeatedly.\n\n## 5. Evidence map\n\nThe table is the full claim-to-section ledger. \"Observed\" means the cited section\nstates the claim; \"inference\" means my synthesis from the cited sections. No\nproduction observation is claimed.\n\n| # | Basis | Claim | section_key |\n|---|---|---|---|\n| E1 | observed | A control plane changes placement, configuration, membership, policy or resource count, while a data plane serves already-defined requests or previously admitted work. | tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability |\n| E2 | observed | A functionally correct data plane can still depend on control-plane services for bootstrapping credentials, routing, discovery, certificate renewal, replacement instances or configuration fetches, and those dependencies must be measured under control-plane loss. | tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability |\n| E3 | observed | In the fictional control-plane outage, some existing client requests continue while new deployment, rescheduling or configuration changes may not proceed and losing nodes can degrade capacity over time. | tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work |\n| E4 | observed | The observable service contract must distinguish existing steady-state survival from the ability to create and recover resources. | tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work |\n| E5 | observed | The proposed test isolates orchestrator/API access while keeping running workers and the database reachable, issues existing reads and writes, then kills one node and measures degradation and recovery, repeating under a real downstream outage. | tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work |\n| E6 | observed | A topology should be rejected if its data-plane ability to serve a correct user journey depends on immediate control-plane participation that cannot meet the declared outage duration. | tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work |\n| E7 | observed | When the control plane is unavailable, new deployments, scaling, secret updates, node repair or replacement may be impaired; recovery plans must identify which actions need inaccessible infrastructure services. | tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims |\n| E8 | observed | When the deployment API or control plane stops, the existing data plane may or may not continue because secrets, certificates and stale membership matter; the gate is to fault-inject the loss and measure existing requests and new-route changes separately. | tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility |\n| E9 | observed | For a host, rack or zone outage, the test should exercise the outage without provisioning any new instance for the required initial window. | tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility |\n| E10 | observed | A test that checks only the desired replica count can pass while users cannot access correct data; the measurement should include client-level correct outcomes, explicit rejections, timeouts, state reconciliation, routed traffic, dependency recovery and total operating cost. | tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments |\n| E11 | observed | No topology row promises an actual availability number; correlated dependencies and measured time-to-recovery determine whether a design meets the stated user contract. | tycho.page.c579aa863be74f9ca5718e58f6f34c21#5-trade-offs-in-fault-isolation |\n| E12 | observed | An SLI is a quantified property of eligible service behavior such as the share of requests satisfying correctness and deadline gates; an SLO is a target over a specified window; a target without a specified event population can be meaningless. | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target |\n| E13 | observed | Time-based downtime ratios and request-based failure ratios measure different effects, and neither automatically captures incorrect durable writes. | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target |\n| E14 | observed | End-user SLI instrumentation needs an authoritative logical operation ID spanning retries, attempt/admission/final outcome states including unknown or timeout, elapsed time, response classification, policy/version context and reconciliation outcomes. | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level |\n| E15 | observed | A statement that a service must be scalable and highly available is not a verification criterion; a useful scenario defines source/stimulus, environment, affected boundary, system response and quantitative measure, including exclusions, observation window, ownership and whether the number is a requirement, estimate or observed fact. | tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable |\n| E16 | observed | SLOs are about a user's experience, not a success check for every individual pod or container, and a recovery scenario requires a failure-domain and recovery test, not only replica readiness. | tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable |\n| E17 | observed | Degraded operation after a zone loss can be valid if explicitly promised, but counting 200 OK responses from an obsolete cache as a healthy service is not valid. | tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation |\n| E18 | observed | Each required failure class and loss boundary should be defined before choosing a topology, including a partial region-control-plane outage while the data plane operates; a high-availability deployment and a disaster-recovery plan solve different, sometimes overlapping, questions. | tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss |\n| E19 | observed | RTO measurement must state when the incident timer starts (user impact, confirmed failover decision or injection) and what verified user-visible state counts as restored; the timer should not start only after slow detection or approval. | tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries |\n| E20 | observed | Recoverability includes recovering serving capability, business truth and safe recovery; an RTO or RPO number is a target, not an observed result, until a performed and timed drill provides evidence for the declared failure scenario. | tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries |\n| E21 | observed | A bounded drill should record offered/admitted/completed logical operations, p95/p99/error and replication lag separately, include control-plane changes and secret/certificate dependencies, start recovery clocks at the declared boundary, and report insufficient evidence when evidence is missing. | tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator |\n| E22 | observed | Do-not-proceed conditions include remaining zones dependent on failed management and recovery that relies exclusively on the failed control plane. | tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey |\n| E23 | observed | Different fault classes require distinct tests; for example, a partial dependency outage observes queue bounds, explicit errors and unaffected journeys but cannot establish correct durable state after all recovery paths, and a replica restart cannot establish region disaster recoverability. | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested |\n| E24 | observed | Benchmark controls should declare warmed, cold and recovery phases, use equal offered demand or disclose intentional differences, and collect per-operation/tenant successes and side effects; a local pass is a bounded result rather than proof of global production behavior. | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior |\n| E25 | observed | Availability, latency, correctness and operating cost cannot be compressed into one scalar without first defining whose outcome each measures; a pending receipt cannot be counted as a confirmed booking for the SLI. | tycho.page.06b70cb83d4f490ea9ef698a025e7684#engineering-walkthrough-an-apparently-faster-architecture-that-fails-a-hard-invariant |\n| E26 | observed | Nominal placement diversity does not demonstrate surviving user journeys. | tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result |\n| E27 | observed | A process can be healthy while the overall user journey is unavailable because all replicas share a datastore, network gateway, certificate issuer, routing plane or failure domain. | tycho.page.6b3725950fad4c0db82417b3d0225d32#purpose-and-mission |\n| E28 | observed | Return insufficient evidence if the dominant failure class, transaction owner, placement domain, control-plane availability, workload shape or measured RPO/RTO is unknown. | tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome |\n| E29 | inference | The team's conclusion over-generalizes from a data-plane steady-state observation to platform-level and lifecycle-level availability. | tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work |\n| E30 | inference | A test that observes only existing requests during control-plane isolation is compatible with total failure of new-route changes, capacity repair and recovery; those must be measured separately before the claim can cover them. | tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility |\n| E31 | inference | An observation window shorter than the declared outage duration can make a topology look available even when capacity erosion would fail it later in the outage. | tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work |\n\n## 6. Unknowns and confidence\n\n**What the sources do not establish.** The book does not establish that a particular\norchestration stack caches credentials and certificates locally, that routing changes\ncan be made without its control plane, that node repair is independent of it, or that\nits data plane has enough spare capacity for the declared outage duration. Those are\nstack-specific facts that the claim needs and that the cited pages deliberately leave\nopen.\n\n**Ambiguity in the question.** \"The platform\" could mean the orchestration layer, the\napplication platform or the user-facing service. The verdict changes with the\nreferent. For the orchestration layer's own control-plane availability, the\nobservation says nothing at all. For the user service's availability, it is one\ncomponent observation with an unstated population and window. For the whole platform,\nit is insufficient evidence because recovery and repair were not exercised.\n\n**Missing test details.** There is no stated observation window, no declared outage\nduration, no workload, no capacity headroom, no eligible-event definition and no\nevidence about whether the \"answers\" were correct, stale or duplicated. Without those\ndetails the result cannot be compared with any availability target, and the correct\nreport is a bounded observation, not a percentage.\n\n**Confidence.** Confidence is high that the conclusion is incomplete as stated and\nthat the listed separations are required: multiple independent sections state the\nplane split, the steady-state-versus-recovery distinction, the existing-versus-new-\nroute measurement and the limits of a passing fault-injection run. Confidence is\nmedium for any particular deployment, because the sources are conceptual and\nsynthetic and no executed outage test is reported. Confidence is low for any numeric\navailability claim about this team's platform, because no population, window or\ncorrect-outcome data is supplied.\n\n**What would change the answer.** A scoped claim plus an executed test could support\na stronger statement: control-plane API isolation sustained for the declared\nduration, existing requests measured separately from new-route changes, a node kill\nwith measured degradation and recovery, correct client outcomes with no stale or\nduplicate effects, and an explicit statement of capacity and exclusions. Evidence of\nfull static stability and control-plane-independent recovery would support the\nnarrower claim even more strongly. Conversely, if the team's claim is reworded to\n\"existing requests continued for ten minutes\", the original observation may be\nadequate for that narrower sentence, while still not establishing platform high\navailability.\n\n*Snapshot: 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a. Layer: book. The question is conceptual and decision-method, so the atlas registry and modeling/simulation artifacts were not needed; every search used --volume book.*\n",
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "Plane separation: control plane, data plane and user journey",
+      "queries": [
+        "control plane versus data plane failure isolation availability claim",
+        "orchestration control plane outage running containers still serve requests availability",
+        "control plane"
+      ],
+      "evidence": [
+        "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability",
+        "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+        "tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims"
+      ],
+      "finding": "Existing requests continuing during a control-plane outage is a data-plane steady-state observation; the control plane's own function and the user journey are separate availability questions."
+    },
+    {
+      "id": "F2",
+      "facet": "Lifecycle: steady-state survival versus create, replace and recover",
+      "queries": [
+        "steady-state survival ability to create recover resources",
+        "node loss cannot be repaired capacity degrades during outage",
+        "control plane unavailable new deployments scaling node repair blocked"
+      ],
+      "evidence": [
+        "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+        "tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims",
+        "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome"
+      ],
+      "finding": "New deployment, rescheduling, configuration, scaling, secret/certificate updates and node repair may be impaired, and capacity can erode over the outage; the contract must distinguish survival from recovery."
+    },
+    {
+      "id": "F3",
+      "facet": "Outcome: correct user journey versus infrastructure or probe signals",
+      "queries": [
+        "availability objective measured at client boundary SLI SLO",
+        "health check replica count does not prove user journey availability",
+        "degraded operation explicitly promised availability claim 200 OK stale cache"
+      ],
+      "evidence": [
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+        "tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+        "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments"
+      ],
+      "finding": "200 OK, pod health and replica count are not availability: the SLI needs eligible operations, correctness/deadline gates, rejections, timeouts and duplicate-effect treatment."
+    },
+    {
+      "id": "F4",
+      "facet": "Claim scope: failure class, loss boundary, duration and status",
+      "queries": [
+        "what an availability claim must state SLO failure model scope",
+        "RTO RPO measurement boundaries incident timer",
+        "high availability deployment and disaster recovery plan different questions"
+      ],
+      "evidence": [
+        "tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries"
+      ],
+      "finding": "A usable claim names the failure class and loss boundary, the declared duration, the eligible population, the measurement boundary, exclusions and observation window, and whether the number is a target or an observed result."
+    },
+    {
+      "id": "F5",
+      "facet": "Failure-test design: preserve the claim and separate conditions",
+      "queries": [
+        "existing requests and new-route changes separately",
+        "declared outage duration reject topology immediate control plane participation",
+        "bounded drill is not a disaster simulator"
+      ],
+      "evidence": [
+        "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+        "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation"
+      ],
+      "finding": "The test should isolate the control plane while keeping the data plane reachable, measure existing requests and new-route changes separately, kill a node, repeat under a real downstream outage, and inject other dependencies independently."
+    },
+    {
+      "id": "F6",
+      "facet": "Evidentiary scope: what a passing run establishes and what it cannot",
+      "queries": [
+        "fault injection loss of control plane secrets certificates stale membership",
+        "failover test inject fault availability measured user journey",
+        "availability claim failure test steady state recovery control plane"
+      ],
+      "evidence": [
+        "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested",
+        "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+        "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+        "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome"
+      ],
+      "finding": "Each fault class passes only a bounded claim; a partial-dependency pass cannot establish durable correctness after all recovery paths, and missing evidence should produce insufficient evidence rather than a green check."
+    }
+  ],
+  "citations": [
+    "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability",
+    "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+    "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+    "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome",
+    "tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims",
+    "tycho.page.c579aa863be74f9ca5718e58f6f34c21#5-trade-offs-in-fault-isolation",
+    "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+    "tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+    "tycho.page.6b3725950fad4c0db82417b3d0225d32#purpose-and-mission",
+    "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+    "tycho.page.06b70cb83d4f490ea9ef698a025e7684#engineering-walkthrough-an-apparently-faster-architecture-that-fails-a-hard-invariant",
+    "tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result"
+  ],
+  "evidence": [
+    {
+      "claim": "A control plane changes placement, configuration, membership, policy or resource count, while a data plane serves already-defined requests or previously admitted work.",
+      "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability",
+      "note": "Direct definition in the section; supports treating the observed continuity as a data-plane property.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A functionally correct data plane can still depend on control-plane services for bootstrapping credentials, routing, discovery, certificate renewal, replacement instances or configuration fetches, and those dependencies must be measured under control-plane loss.",
+      "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#control-plane-data-plane-and-static-stability",
+      "note": "The section explicitly rejects waving these dependencies away.",
+      "basis": "observed"
+    },
+    {
+      "claim": "In the fictional control-plane outage, some existing client requests continue while new deployment, rescheduling or configuration changes may not proceed and losing nodes can degrade capacity over time.",
+      "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+      "note": "The scenario closest to the question; it is explicitly an original fictional service.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The observable service contract must distinguish existing steady-state survival from the ability to create and recover resources.",
+      "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+      "note": "This is the central claim-side separation in the walkthrough.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The proposed test isolates orchestrator/API access while keeping running workers and the database reachable, issues existing reads and writes, then kills one node and measures degradation and recovery, repeating under a real downstream outage.",
+      "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+      "note": "Marked proposed, not run; supplies the test design and the demand/recovery phases.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A topology should be rejected if its data-plane ability to serve a correct user journey depends on immediate control-plane participation that cannot meet the declared outage duration.",
+      "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+      "note": "The section's rejection rule ties the claim to a declared duration.",
+      "basis": "observed"
+    },
+    {
+      "claim": "When the control plane is unavailable, new deployments, scaling, secret updates, node repair or replacement may be impaired; recovery plans must identify which actions need inaccessible infrastructure services.",
+      "section_key": "tycho.page.c579aa863be74f9ca5718e58f6f34c21#4-data-authority-and-control-plane-loss-change-availability-claims",
+      "note": "Lists the lifecycle work that a steady-state observation does not cover.",
+      "basis": "observed"
+    },
+    {
+      "claim": "When the deployment API or control plane stops, the existing data plane may or may not continue because secrets, certificates and stale membership matter; the gate is to fault-inject the loss and measure existing requests and new-route changes separately.",
+      "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+      "note": "Explicit test separation between existing traffic and routing changes.",
+      "basis": "observed"
+    },
+    {
+      "claim": "For a host, rack or zone outage, the test should exercise the outage without provisioning any new instance for the required initial window.",
+      "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+      "note": "Prevents the test from silently repairing the condition it is supposed to measure.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A test that checks only the desired replica count can pass while users cannot access correct data; the measurement should include client-level correct outcomes, explicit rejections, timeouts, state reconciliation, routed traffic, dependency recovery and total operating cost.",
+      "section_key": "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+      "note": "Direct support for outcome separation and the replica-count counterexample.",
+      "basis": "observed"
+    },
+    {
+      "claim": "No topology row promises an actual availability number; correlated dependencies and measured time-to-recovery determine whether a design meets the stated user contract.",
+      "section_key": "tycho.page.c579aa863be74f9ca5718e58f6f34c21#5-trade-offs-in-fault-isolation",
+      "note": "Blocks inferring a platform availability number from a topology label or a container count.",
+      "basis": "observed"
+    },
+    {
+      "claim": "An SLI is a quantified property of eligible service behavior such as the share of requests satisfying correctness and deadline gates; an SLO is a target over a specified window; a target without a specified event population can be meaningless.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+      "note": "Supports separating observation from target and naming the eligible population.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Time-based downtime ratios and request-based failure ratios measure different effects, and neither automatically captures incorrect durable writes.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+      "note": "Explains why 200 OK counts alone are not a sufficient availability measure.",
+      "basis": "observed"
+    },
+    {
+      "claim": "End-user SLI instrumentation needs an authoritative logical operation ID spanning retries, attempt/admission/final outcome states including unknown or timeout, elapsed time, response classification, policy/version context and reconciliation outcomes.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+      "note": "Concrete measurement requirements; attempts and unique successful decisions are different denominators.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A statement that a service must be scalable and highly available is not a verification criterion; a useful scenario defines source/stimulus, environment, affected boundary, system response and quantitative measure, including exclusions, observation window, ownership and whether the number is a requirement, estimate or observed fact.",
+      "section_key": "tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable",
+      "note": "Provides the claim-scope checklist used in the answer.",
+      "basis": "observed"
+    },
+    {
+      "claim": "SLOs are about a user's experience, not a success check for every individual pod or container, and a recovery scenario requires a failure-domain and recovery test, not only replica readiness.",
+      "section_key": "tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable",
+      "note": "Directly rebuts inferring availability from container-level success.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Degraded operation after a zone loss can be valid if explicitly promised, but counting 200 OK responses from an obsolete cache as a healthy service is not valid.",
+      "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+      "note": "Supports separating a promised degraded mode from accidental partial function.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Each required failure class and loss boundary should be defined before choosing a topology, including a partial region-control-plane outage while the data plane operates; a high-availability deployment and a disaster-recovery plan solve different, sometimes overlapping, questions.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss",
+      "note": "Frames control-plane loss as one named failure class rather than a generic outage.",
+      "basis": "observed"
+    },
+    {
+      "claim": "RTO measurement must state when the incident timer starts (user impact, confirmed failover decision or injection) and what verified user-visible state counts as restored; the timer should not start only after slow detection or approval.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+      "note": "Separates detection/decision phases from total recovery time.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Recoverability includes recovering serving capability, business truth and safe recovery; an RTO or RPO number is a target, not an observed result, until a performed and timed drill provides evidence for the declared failure scenario.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+      "note": "Supports treating the team's conclusion as a target claim lacking an executed test.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A bounded drill should record offered/admitted/completed logical operations, p95/p99/error and replication lag separately, include control-plane changes and secret/certificate dependencies, start recovery clocks at the declared boundary, and report insufficient evidence when evidence is missing.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+      "note": "The seven-step drill structure is the model for the test separations.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Do-not-proceed conditions include remaining zones dependent on failed management and recovery that relies exclusively on the failed control plane.",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+      "note": "Directly addresses the orchestration-outage scenario's dangerous dependency.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Different fault classes require distinct tests; for example, a partial dependency outage observes queue bounds, explicit errors and unaffected journeys but cannot establish correct durable state after all recovery paths, and a replica restart cannot establish region disaster recoverability.",
+      "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested",
+      "note": "Supports the claim that a control-plane-outage pass is not a platform-wide proof.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Benchmark controls should declare warmed, cold and recovery phases, use equal offered demand or disclose intentional differences, and collect per-operation/tenant successes and side effects; a local pass is a bounded result rather than proof of global production behavior.",
+      "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+      "note": "Supports the trade-off that broader claims need more controlled tests.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Availability, latency, correctness and operating cost cannot be compressed into one scalar without first defining whose outcome each measures; a pending receipt cannot be counted as a confirmed booking for the SLI.",
+      "section_key": "tycho.page.06b70cb83d4f490ea9ef698a025e7684#engineering-walkthrough-an-apparently-faster-architecture-that-fails-a-hard-invariant",
+      "note": "Reinforces the outcome/population separation.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Nominal placement diversity does not demonstrate surviving user journeys.",
+      "section_key": "tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result",
+      "note": "Chapter-level conclusion; two zones can still depend on one datastore or control path.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A process can be healthy while the overall user journey is unavailable because all replicas share a datastore, network gateway, certificate issuer, routing plane or failure domain.",
+      "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#purpose-and-mission",
+      "note": "Explains why the observation's unit (containers) cannot carry a platform-level claim.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Return insufficient evidence if the dominant failure class, transaction owner, placement domain, control-plane availability, workload shape or measured RPO/RTO is unknown.",
+      "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome",
+      "note": "Supports the verdict that the unqualified platform-high-availability conclusion is not supported, and justifies preserving the unknown window and workload.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The team's conclusion over-generalizes from a data-plane steady-state observation to platform-level and lifecycle-level availability.",
+      "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+      "note": "Inference from the walkthrough's distinction and the failure matrix; the sources do not observe the team's actual evidence, so this is reasoning about the claim form, not a production finding.",
+      "basis": "inference"
+    },
+    {
+      "claim": "A test that observes only existing requests during control-plane isolation is compatible with total failure of new-route changes, capacity repair and recovery; those must be measured separately before the claim can cover them.",
+      "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+      "note": "Inference from the explicit instruction to measure existing requests and new-route changes separately.",
+      "basis": "inference"
+    },
+    {
+      "claim": "An observation window shorter than the declared outage duration can make a topology look available even when capacity erosion would fail it later in the outage.",
+      "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+      "note": "Inference from the statement that losing nodes can degrade capacity over time and the requirement to meet a declared outage duration.",
+      "basis": "inference"
+    }
+  ],
+  "abstain": false,
+  "confidence": {
+    "overall": "high for the conceptual incompleteness and the required separations; medium for application to a specific stack; low for any numeric availability claim about the team's platform",
+    "basis": "Multiple independent book sections state the plane split, the steady-state-versus-recovery distinction, the existing-versus-new-route measurement and the limits of a passing fault-injection run. The sources are conceptual/synthetic and no executed outage test is reported."
+  },
+  "method": {
+    "onboarding": "scripts/agent_session_cli.py describe run before searching",
+    "snapshot": "4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a",
+    "layer": "book",
+    "layer_reason": "The question is conceptual and decision-method: control-plane versus data-plane semantics, availability-claim scope and failure-test design. The atlas registry and modeling/simulation artifacts are not needed, and every search used --volume book.",
+    "log_file": "evaluation/agent-benchmark/v6-logs/Q221.jsonl",
+    "logged_commands_at_write": {
+      "search": 31,
+      "read": 44,
+      "page": 20,
+      "outline": 2
+    },
+    "query_count": 31,
+    "notes": "No corpus, qrels, labels, rankings, reports or other v6 answers were read. No edits to book, atlas or indexes; no commit.",
+    "evidence_basis_note": "In the evidence array, basis=observed means the cited section states the claim; basis=inference means my synthesis from the cited sections. Neither is a production observation."
+  },
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

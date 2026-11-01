@@ -1,0 +1,423 @@
+{
+  "task_id": "Q253",
+  "answer": "# Q253 - Why a matching checksum and an ostensibly completed conversion do not establish semantic equivalence\n\n**Short answer.** A checksum is a lossy detector over a chosen canonical encoding at a chosen observation boundary; it answers \"did this encoded projection change?\" not \"does the new engine preserve the business meaning of every value, query and mutation?\" A completed ALTER answers even less: it records that one DDL statement finished, not that every table exists, that its data survived an interrupted conversion, or that readers interpret the result identically. The reported MySQL-to-LSM conversion is the direct counterexample: handler commit ran out of memory and a table was missing after restart, and a reproduced SQL request returned a different result under the two engines. Both failures invalidate the inference \"same text + same checksum + completed ALTER = same semantics\". Validation must add a named invariant, a canonical comparison contract, a value-level read oracle, a pinned observation boundary, adverse-timing and crash tests, and a rehearsed rollback. The team must refuse cutover while a table is unaccounted for, a replay difference is unexplained, restore/reverse transformation is unproven, or the only oracle is a happy-path checksum/count.\n\n## 0. Layers and sources used\n\nThis question is a book-layer mechanism and validation question. It needs the book's **V05** schema-lifecycle and relational-invariant pages, **V08** compatibility/rollback and reconciliation pages, **V10** transition/reconciliation page, **V12** decision-validation/replay pages, and the M9 public case pages for MySQL-to-MyRocks, Stripe and Meta. The atlas was not needed: the question is not pattern identity or coverage. The modeling-and-simulation layer was not needed as a separate layer; the V12 reasoning pages used here are canonical book documents. All case material is first-party, time-scoped reporting plus Tycho's analytical adaptation, not a reproduced deployment.\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1 Space premise and engine boundary | space bottleneck, compressed LSM, MySQL/InnoDB to MyRocks | tycho.page.689c7d51faf1441caa7edfcb6152345e#chosen-architectural-change; #negative-evidence-costs-and-alternatives |\n| F2 Checksum and row-count proof limits | checksum equality proof, row-count validation, canonical digest blind spots | tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#safety-and-trade-off-analysis; tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves; tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover |\n| F3 Identical SQL text versus semantics | same SQL different result, PS-7722, collation and ordering | tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover; tycho.page.8d8150a14bc04b989fc34432ab7c99e1#time-numbers-and-text-are-data-contracts; tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard |\n| F4 Interrupted conversion and completed ALTER | handler commit OOM, missing table after restart, completed ALTER correctness | tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates; tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point; tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission |\n| F5 Replay and observation boundary | replayed query different result, snapshot boundary, what replay proves | tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover; tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves; tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves |\n| F6 What validation must add | value-level read oracle, layered comparison, adverse timing, checkpoint durability | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete; #synthetic-dual-authority-failure-tests; tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle; tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures |\n| F7 Refusal criteria | stop conditions, insufficient evidence, refuse migration | tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria; tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows; tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence |\n\n## 2. Mechanism: why checksums cannot carry the claim\n\n### 2.1 The space motive is real; the semantic inference is not\n\nThe case is an engine/data-lifecycle boundary, not an API rewrite, so unchanged SQL and client protocol are expected and are not evidence of semantic parity (C1). LSM storage savings come with different compaction and lookup economics, and the book explicitly refuses the claim that the engine universally lowers latency, read amplification or SSD wear without a workload-specific comparison (C1). Space is therefore a legitimate selection pressure; it is not an argument that values, orderings or query results are preserved.\n\nThe constraint was storage and operational capacity: the datastore needed more efficient storage, and selecting the next engine from microbenchmarks alone risked ignoring compaction, write amplification, range-read patterns and recovery behavior under production traffic (C24). That framing names the real decision inputs; it does not make the engine swap a mere capacity change.\n\n### 2.2 A checksum is a lossy detector inside a defined boundary\n\nA checksum or digest is computed over a canonical encoding. It can efficiently flag differences only when canonical encoding, schema interpretation and comparison windows agree. It is a detector, not proof that a faulty canonicalizer preserved meaning (C2, C14). The reported case put this precisely: a matching table checksum proves only the checked representation under its defined snapshot; a query may still diverge because of engine behavior or plan changes after statistics are rebuilt (C2). Checksum equality is necessary but incomplete when the checksum definition omits user-visible metadata (C2).\n\nThree distinct failure classes hide inside \"checksums match\":\n\n1. **Blind spots of the chosen digest.** Collisions, omitted columns, lossy normalization and versioned canonicalization require an explicit policy; a matching checksum does not prove all data semantics (C3, C4).\n2. **Window mismatch.** Materialized output can match row count and checksum while diverging semantically when time windows differ, null/value canonicalization is lossy, or the fingerprint excludes business-critical fields (C4).\n3. **Semantics outside the fingerprint.** Authorization, history, referential integrity, ordering guarantees and business invariants are not in a table checksum unless deliberately encoded (C14).\n\n### 2.3 Row counts and totals hide compensating errors\n\nEqual counts are not equal sets: a source with A, B, C and a target with A, B, B both have three rows, so the count conceals a missing C and a duplicate B; equal aggregate sums can conceal compensating errors (C3). The Meta case records the same limit at the gate level: two unequal sets can have identical counts (C3). A checksum catches the gross structural loss in the reported case - before/after table counts and checksums detected the missing table - but that success is exactly why it is dangerous to over-read: it detected a loss this time, under this canonicalization, and says nothing about value-level equivalence or query semantics (C6).\n\n### 2.4 A completed ALTER is an event, not a verified post-state\n\nAn ALTER completing means the DDL statement completed. It does not mean that all tables exist, that data conversion finished, or that an interrupted process left a durable per-table checkpoint. The reported sequence is explicit: engine conversion ran in bulk-load mode, an out-of-memory interruption during handler commit could leave a table missing after restart (C6). The source used before/after table counts and checksums rather than treating an ostensibly completed ALTER as the only correctness oracle (C5). Database syntax does not certify that a lifecycle change preserves every domain invariant (C5), and compatibility is a relation between deployed reader/writer versions and persisted information, not a green \"schema compatible\" Boolean (C5).\n\nThe practical consequence, which is inference rather than a source claim, is that post-restart validation must independently enumerate tables and re-establish per-table counts and checksums; a conversion-completion message is not a table census (C7).\n\n### 2.5 Identical SQL text can still return a different result\n\nThe strongest negative evidence in the case is not a benchmark difference: a reproduced SQL request produced a different result under the two engines (the cited defect PS-7722), so identical query text and client API did not guarantee identical semantics (C8). The book's explanation is that a query may diverge due to engine behavior or plan changes after statistics are rebuilt (C2).\n\nTwo normalization layers make this worse if left implicit:\n\n- **Text and ordering contracts.** Byte identity, normalized identity, case-insensitive search and locale-dependent ordering answer different questions; the database collation and the API comparison rule must agree where equality or pagination matters, and normalize-before-hash is valid only under an agreed versioned contract (C9).\n- **Comparison contracts.** A shadow or served comparison needs a normalization contract covering identity, observable ordering, null/default semantics, serialization, authorization and temporal freshness; a numeric field can differ because of legitimate snapshot timing or because business logic diverged, and bare equality cannot decide which (C10).\n\n### 2.6 Replay is evidence only inside a pinned tuple\n\nReplay proves that stored inputs, engine version and seed reproduce stored metrics on the same platform family; it does not prove that inputs are measured, that a model is valid, or that a decision is correct (C12). Applied to a SQL replay, the same logic holds: a replayed query is comparable only if the source snapshot, schema version, partition identity, job revision, equality rule and freshness window are pinned (C4). Comparing a live source at revision 120 with a lagging target at 110 produces expected differences; without a snapshot/change-stream join the cutover lacks a completeness argument (C11). At Read Committed, successive statements can see different committed changes, so an unpinned scan is not a point-in-time truth (C11). A replay difference is therefore a piece of evidence to classify - timing/window versus semantic divergence - not a verdict that can be waved away and not proof that the engine is wrong.\n\n## 3. What validation must add\n\n1. **Name the invariant under test** before choosing an oracle: identity, value equality, operation order, referential consistency, side-effect exactly-once or bounded freshness (C13). \"Checksum equal\" is an answer to none of these until it is defined as one of them.\n2. **Write the canonicalization and comparison contract**: identity, observable ordering, null/default semantics, serialization, authorization, temporal freshness (C10), plus the source snapshot, schema version, partition identity, job revision, equality rule and freshness window tuple (C4).\n3. **Layer the oracle and know each layer's blind spot**: counts, key-set comparison, canonical per-key digests, cross-record invariants and representative user journeys each detect different defects and miss others; a digest is a detector, not proof (C14). A value-level read oracle with per-column diffs against a recorded source revision is required, not optional (C5, C14).\n4. **Pin and record the observation boundary**: watermark/snapshot identity, per-field write ownership, and a gapless join between the source snapshot and its change stream; do not repair a newer target from an older snapshot (C11).\n5. **Inject adverse timing and failure**, not just happy paths: partial dual-write failure, long-lived old readers, shadow exceptions, interrupted backfill/restart, a missing table after conversion, replay of old events, and cleanup only after backups plus reverse transformations can restore newly accepted writes (C15, C16).\n6. **Make acceptance about user effects and recovery**: correct user effects, database invariants, bounded downtime and actual recovery; green migration SQL alone cannot close the gate (C16). Checkpoint durability on crash and retry, the exact source snapshot and migration code version, and history/authorization/referential integrity belong in the backfill acceptance record (C16).\n7. **Keep operational evidence in the same gate**: backup compatibility, CPU, compaction I/O and read-tail behavior on the new engine are part of the same decision, because the space win is workload-specific and restore procedures are an explicit cost (C1, C18).\n8. **Exercise rollback and state the no-return point**: image rollback is not business rollback once new-only state is committed; a proven forward repair or verified restore is required (C21). A rollback path that has not been exercised is itself grounds for insufficient evidence (C20).\n\n9. **Follow the engine-specific validation gate**: pin query distribution and secondary-index assumptions, shadow representative read patterns, validate consistency across snapshot and live writes, trial write/compaction backlog and staged failover, and retain a rollback before deleting the old representation; the correctness gate requires domain invariants, dual-state reconciliation where used, idempotent replays and keeping the authoritative old representation until proven (C25).\n\n## 4. When the team should refuse\n\nRefuse the cutover, and if necessary the migration, while any of these holds:\n\n- **A table is missing or unaccounted for after restart, or a replayed query returns a different result.** These are explicit stop conditions, together with backup incompatibility, unsustainable CPU/compaction I/O, an unexplained read tail, and a rollback whose old-engine copy can no longer represent accepted new writes (C18).\n- **The comparison oracle is only happy-path counts/checksums.** Refuse when identity mapping is undefined, production-authoritative writes are not recoverable after rollback, source snapshots differ in unmeasured ways, audit or authorization context changes, or the oracle covers only happy-path counts (C17).\n- **Identity or meaning is unresolved.** A migration may legitimately stop on an unresolvable identity or unknown source meaning; a hold is a correct outcome, not incomplete technical work (C19).\n- **Rollback/recovery is untested or the divergence interval crosses the decision boundary.** Return insufficient evidence rather than a conditional go (C20), and do not remove the last old-engine escape path without a documented forward-repair procedure (C18, C21).\n- **Only a public space percentage supports the choice.** If actual workload and recovery evidence cannot be obtained, the honest result is insufficient evidence, not an LSM selection by analogy (C18).\n\nThe special case in the question - a completed ALTER plus matching checksums - should be treated as *insufficient*, not as safe: completion and checksums are necessary observations, but they do not reconstruct the missing table, do not prove value-level equality, and do not explain the replay difference. The team should refuse cutover, restore an independently verifiable table census, reconcile at the value level against a pinned snapshot, and re-run the query-value comparisons before any new write authority is granted.\n\n## 5. Boundaries, contradictions and unknowns\n\n- **Preserved contradiction.** The case says unchanged client protocol and API are expected, yet the same SQL text returned a different result (C1, C8). Both are true: the interface can be stable while evaluation semantics differ. A plan that treats API stability as semantic stability repeats the error.\n- **Time-scoped evidence.** The case is a first-party 2022 report and a company-reported historical result, not an independently reproduced benchmark; precise current topology, total engineering effort, p99 and comparative cost for another workload remain unknown, and the book warns against extrapolating a dated deployment to current practice (C1, C18, C26). The checksum/row-count gates in the Meta case are likewise company-reported, with their own epistemic limits (C3).\n- **Analytical, not executed.** The adverse-timing tests, layered oracle and refusal criteria are Tycho synthetic or analytical designs, not an executed migration or a formal verification procedure (C15, C17). No measurement of this team's dataset, checksum cost or replay divergence is available here.\n- **Unknowns specific to this scenario.** The evidence read does not state the checksum algorithm, the canonicalization rules or the snapshot protocol used; it does not establish whether PS-7722 still affects every relevant engine version; and it does not establish the exact recovery semantics of bulk-load mode after an interrupted handler commit. Those must be established locally before any claim of equivalence.\n- **No overclaim.** The book pages used here carry unknown or draft evidence status in several cases and are not independent acceptance. Nothing in this answer is a production observation, benchmark or proof of correctness; it is evidence-bound reasoning about what the checks must establish.\n\n## 6. Evidence map\n\n| Claim | Assertion | Section keys |\n|---|---|---|\n| C1 | Engine boundary and workload-specific LSM economics | tycho.page.689c7d51faf1441caa7edfcb6152345e#chosen-architectural-change; #negative-evidence-costs-and-alternatives |\n| C2 | Checksum is a snapshot-bound detector, not proof | tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover; tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#safety-and-trade-off-analysis |\n| C3 | Counts/totals conceal compensating errors | tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover; tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves |\n| C4 | Matching checksum can hide semantic divergence; comparison tuple | tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee |\n| C5 | Completed ALTER / DDL syntax is not a correctness oracle | tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover; tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point; tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission |\n| C6 | OOM during handler commit left a missing table | tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates; #the-two-failure-findings-that-invalidate-a-purely-structural-cutover |\n| C7 | Post-restart census is required (inference) | tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates |\n| C8 | Same SQL text, different result (PS-7722) | tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover |\n| C9 | Collation, ordering and versioned normalization | tycho.page.8d8150a14bc04b989fc34432ab7c99e1#time-numbers-and-text-are-data-contracts |\n| C10 | Comparison normalization contract | tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard |\n| C11 | Pinned observation boundary and Read Committed drift | tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover; tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves |\n| C12 | Replay proves recomputation, not validity | tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves |\n| C13 | Name the invariant under test | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete |\n| C14 | Layered oracle and digest blind spots | tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover |\n| C15 | Adverse-timing and cleanup-refusal tests | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests |\n| C16 | Backfill/crash acceptance and user-effect recovery | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle; tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures |\n| C17 | Refusal criteria | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows |\n| C18 | Stop conditions and insufficient evidence | tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria |\n| C19 | Legitimate hold on unresolved identity | tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions |\n| C20 | Unexercised rollback / spanning interval means insufficient evidence | tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence; #the-modernization-example |\n| C21 | Image rollback is not business rollback | tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary |\n| C22 | Compare semantics, not row totals | tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise |\n| C23 | Stable logical query identity across physical routing | tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity |\n| C24 | Storage constraint and microbenchmark risk | tycho.page.689c7d51faf1441caa7edfcb6152345e#situation-the-legacy-architecture-and-constraint |\n| C25 | Engine-specific validation and correctness gates | tycho.page.689c7d51faf1441caa7edfcb6152345e#migration-and-validation |\n| C26 | Company-reported history and unknown cost/p99 | tycho.page.689c7d51faf1441caa7edfcb6152345e#observed-results-and-temporal-validity |\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The MySQL-to-LSM move is an engine and data-lifecycle boundary, so unchanged APIs do not imply unchanged storage semantics; LSM space savings carry different compaction and lookup economics that must be compared on the actual workload.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#chosen-architectural-change",
+          "quote": "Uber described changing its distributed-datastore engine from MySQL/InnoDB to MyRocks, which uses a RocksDB-style LSM approach. The change is at an engine/data lifecycle boundary: it does not imply that business APIs changed to an unrelated database product.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#negative-evidence-costs-and-alternatives",
+          "quote": "LSM storage savings can come with different compaction/lookup economics. It would be incorrect to claim MyRocks universally lowers latency, read amplification or SSD wear without a workload-specific comparison.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "A checksum is a detector over a chosen canonical encoding and a defined snapshot: matching checksums prove only the checked representation, and equality is not complete proof when the checksum definition omits user-visible metadata.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "A matching table checksum proves only the checked representation under its defined snapshot; a query may diverge due to engine behavior or plan changes after statistics are rebuilt.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#safety-and-trade-off-analysis",
+          "quote": "Checksum equality is necessary but not a complete proof if the checksum definition omits user-visible metadata.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Row counts and aggregate totals can match while data is wrong: equal counts conceal a missing record plus a duplicate, and equal sums conceal compensating errors.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+          "quote": "A fictional source snapshot has records A, B and C. A target with A, B and B also has three rows; equal counts conceal missing C and duplicate B. Equal aggregate sums can conceal compensating errors. Define canonical identities and invariants before choosing a comparison.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+          "quote": "| Record set size | Row count comparison | Two unequal sets can have identical counts |\n| Content fingerprint | Checksum comparison | Collisions/omitted columns/versioned canonicalization require own policy; matching checksum does not prove all data semantics |",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A checksum can match while intended outputs still diverge semantically when observation windows differ, null/value canonicalization is lossy, or the fingerprint omits business-critical fields; a comparison must therefore be modeled as a tuple of source snapshot, schema version, partition identity, job revision, equality rule and freshness window.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+          "quote": "For a different warehouse, materialized output can match row count and checksum while *still* diverging semantically when time windows differ, null/value canonicalization is lossy or the fingerprint excludes business-critical fields. Model each comparison as a tuple of `source snapshot + schema version + partition identity + job revision + equality rule + freshness window`. An audit should reject comparisons whose tuple differs in a way the domain owner has not explicitly normalized.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A completed ALTER is not a domain-correctness oracle: the reported case used before/after table counts and checksums rather than ALTER status, database syntax does not certify preserved invariants, and compatibility is a relation between deployed versions and persisted information rather than a green Boolean.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "In the article, table conversion interrupted by **out-of-memory during handler commit** could leave a table missing after restart. Before/after table counts and checksums detected this, rather than treating an ostensibly completed ALTER as the only correctness oracle. In another case, a reproduced SQL request produced a **different result** under the two engines (the cited defect **PS-7722**). This is stronger negative evidence than generic concern over different storage-engine performance: **identical query text and client API did not guarantee identical semantics**.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "Database syntax does not certify that a lifecycle change preserves every domain invariant.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission",
+          "quote": "**Compatibility is a relation between deployed reader/writer versions and persisted information**, not a single green “schema compatible” Boolean.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The conversion sequence has a reported partial-failure mode: out-of-memory during handler commit could leave a table missing after restart.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+          "quote": "| Engine conversion | Convert user tables to RocksDB with bulk-load mode and worker threads | Out-of-memory interruption; source authors found **missing tables after restart** |",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "In the article, table conversion interrupted by **out-of-memory during handler commit** could leave a table missing after restart. Before/after table counts and checksums detected this, rather than treating an ostensibly completed ALTER as the only correctness oracle. In another case, a reproduced SQL request produced a **different result** under the two engines (the cited defect **PS-7722**). This is stronger negative evidence than generic concern over different storage-engine performance: **identical query text and client API did not guarantee identical semantics**.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Therefore a post-restart table census and per-table counts/checksums are required evidence; a completion report for the conversion is not evidence that every table exists and is complete.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+          "quote": "| Engine conversion | Convert user tables to RocksDB with bulk-load mode and worker threads | Out-of-memory interruption; source authors found **missing tables after restart** |",
+          "supports": "C7",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Identical SQL text and client API do not guarantee identical semantics: a reproduced request returned a different result under the two engines in the cited defect PS-7722.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+          "quote": "In the article, table conversion interrupted by **out-of-memory during handler commit** could leave a table missing after restart. Before/after table counts and checksums detected this, rather than treating an ostensibly completed ALTER as the only correctness oracle. In another case, a reproduced SQL request produced a **different result** under the two engines (the cited defect **PS-7722**). This is stronger negative evidence than generic concern over different storage-engine performance: **identical query text and client API did not guarantee identical semantics**.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Text equality, collation and ordering are versioned data contracts: byte identity, normalized identity, case-insensitive search and locale-dependent ordering answer different questions, and hashing must follow an agreed versioned normalization or independently built services compute different identities.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#time-numbers-and-text-are-data-contracts",
+          "quote": "Unicode byte identity, normalized textual identity, case-insensitive search and locale-dependent ordering answer different questions. A database's collation and the API's comparison rule must agree where equality or pagination matters.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#time-numbers-and-text-are-data-contracts",
+          "quote": "Normalize before hashing only under an agreed versioned contract, or two services may compute different idempotency identities.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A shadow or served comparison needs an explicit normalization contract covering identity, observable ordering, null/default semantics, serialization, authorization and temporal freshness, because a value can differ from legitimate snapshot timing or from a business-logic divergence and bare equality cannot decide which.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+          "quote": "A robust implementation in a **different** system needs a comparison normalization contract: identity, ordering where observable, null/default semantics, trial/renewal state, old-client serialization, authorization and temporal freshness. A numeric field can be different due to legitimate snapshot timing or because business logic diverged; a bare equality assertion cannot make that policy decision.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A comparison is only meaningful at a pinned observation boundary: a live source and a lagging target legitimately differ, and successive Read Committed statements can see different committed states, so an unpinned scan is not a point-in-time truth.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+          "quote": "Comparing a live source at revision 120 with a lagging target at 110 produces expected differences. Do not repair those by overwriting newer target data from an older snapshot. Record watermark/snapshot identity and ownership of each writable field. If a source snapshot and its subsequent change stream cannot be joined without a gap, the cutover lacks a completeness argument.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+          "quote": "Successive statements at Read Committed can see concurrent committed changes.",
+          "supports": "C11",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Replay proves only that pinned inputs, engine version and seed reproduce stored metrics on the same platform family; it does not prove that inputs are measured, that a model is valid, or that a decision is correct.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+          "quote": "Replay proves that the stored inputs, engine version and seed produce the stored metrics on\nthe same platform family. It does not prove:\n\n- that the model is valid;\n- that the inputs are measured;\n- that the confidence interval covers a production value;\n- that the decision is correct;\n- that another platform will produce bit-identical floats.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Validation must first name the invariant under test - identity, value equality, operation order, referential consistency, side-effect exactly-once or bounded freshness - because unlike artifacts mean different things for different invariants.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "For a new design, first identify whether the business invariant is *identity*, *value equality*, *operation order*, *referential consistency*, *side-effect exactly-once*, or *bounded freshness*.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The oracle must be layered: row/event counts, key-set comparison, canonical per-key digests, cross-record invariants and representative user journeys have different blind spots, and a digest is a detector, not proof that a faulty canonicalizer preserved meaning.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+          "quote": "| Row/event count | Some missing/excess records | Equal loss and duplication |\n| Key-set comparison | Missing/excess identity | Wrong values under an existing identity |\n| Canonical per-key digest | Value differences under one encoding | Shared conversion bug or omitted fields |\n| Cross-record invariant | Broken relationships and forbidden states | Unspecified business rules |\n| Representative user journey | Some externally visible defects | Unexercised populations and rare states |",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+          "quote": "A digest can efficiently flag differences only if canonical encoding, schema interpretation and comparison windows agree. It is a detector, not proof that a faulty canonicalizer preserved meaning.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Cutover acceptance needs adverse-timing and failure-injection tests: partial dual-write failure, long-lived old readers and shadow exceptions, plus refusal of irreversible cleanup unless backups and reverse transformations can restore newly accepted writes.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+          "quote": "3. **Partial dual-write failure:** simulate old-write succeeds/new-write fails, and the reverse. Detect the divergence; define repair ownership, idempotent reconciliation and limits on acknowledgement before both copies converge.\n4. **Long-lived old reader:** keep a deliberately outdated consumer active during the read cutover to expose stale aliases, field interpretation or unexpected fallback paths.\n5. **Read shadow exception:** force experimental code to throw without impacting the production-served response; alert with a normalized result-identity and temporal window.\n6. **Irreversible cleanup:** test recovery after removing the old data only if backups and reverse transformations can restore any newly accepted writes; otherwise **refuse cleanup**.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Backfill acceptance must include checkpoint durability on crash and retry, the exact source snapshot and migration code version, and acceptance of correct user effects, invariants, bounded downtime and actual recovery rather than SQL success.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "A job that copies 10,000 source rows and produces 10,000 target rows can still corrupt meanings. Check:\n- stable source/target identity and tenant scope;\n- field-level semantic equivalence and unknown mappings;\n- concurrent writes, deletes and timestamps;\n- checkpoint durability on crash/retry;\n- event/CDC offset and replay horizon;\n- history, authorization and referential integrity;\n- exact source snapshot and migration code version.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+          "quote": "Acceptance includes correct user effects, database invariants, bounded downtime and actual recovery. Green migration SQL alone cannot close the gate.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A team should refuse or hold when identity mapping is undefined, production-authoritative writes are not recoverable after rollback, source snapshots differ in unmeasured ways, audit or authorization context changes, or the oracle covers only happy-path counts.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+          "quote": "**Refuse either migration** when identity mapping is undefined, production-authoritative writes are not recoverable after rollback, source snapshots differ in unmeasured ways, audit/authorization context changes, or the comparison oracle covers only happy-path counts.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "For this migration the concrete stop conditions are a missing table after ALTER, a different query result on replay, backup incompatibility, unsustainable CPU or compaction I/O, an unexplained read tail, or a rollback whose old-engine copy can no longer represent accepted writes; absent workload and recovery evidence the honest result is insufficient evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria",
+          "quote": "**Stop conditions:** missing table after ALTER, different query result on replay, backup incompatibility, unsustainable CPU or compaction I/O, unexplained read tail, or a rollback whose old-engine copy can no longer represent accepted new writes. If actual workload/recovery evidence cannot be obtained, return **insufficient evidence** instead of selecting an LSM engine from a public percentage.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "A migration may legitimately stop on an unresolvable identity or unknown source meaning; such a hold is a correct outcome, not incomplete technical work.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions",
+          "quote": "A migration may legitimately stop on an **unresolvable identity** or unknown source meaning. Such a hold is a correct outcome, not failure to finish a technical change.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "A rollback or recovery path that has not been exercised, and a divergence interval that spans the decision boundary, are themselves grounds for an insufficient-evidence outcome.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "Return insufficient evidence when any of the following holds:\n\n- a hard input is assumed and its range spans the decision boundary;\n- a hard constraint cannot be evaluated by the model;\n- the confidence interval includes both a pass and a fail on a decision-relevant metric;\n- two candidates are indistinguishable on the declared metrics;\n- the model's validity limits exclude the operating condition under test;\n- the rollback or recovery path has not been exercised;\n- the objective or metric ranking is contested.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+          "quote": "The decision record returns insufficient evidence, recommendation none.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Image or binary rollback is not business rollback once new-only state is committed; the no-return boundary requires a proven forward repair or a verified restore.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+          "quote": "**Failure:** N+1 canary commits a new-only value, fails its latency checks, then a deployment controller rolls the image back to N. N can no longer read the record; **image rollback is not business rollback**. A safe intermediate stage keeps writes compatible, or otherwise requires a proven forward repair and a separately authorized no-return gate.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Data movement must compare semantics, not only row totals, even for an apparently harmless read-index migration.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+          "quote": "Even an apparently harmless read-index migration needs to compare *semantics*, not only row totals:",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "A logical query identity - dataset, entity, interval, ordering and page token - must stay stable while physical routing changes; silently continuing under changed ordering can duplicate or skip results.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+          "quote": "For an unrelated time-series application, Tycho recommends that a logical query use stable `dataset + entity + interval + ordering + page token` semantics. A routing sidecar may resolve that identity to one ordinary partition or multiple completed split partitions, but physical routing must remain an implementation detail. A page token produced before split completion must either remain interpretable or cause an explicit resumable result; silently continuing in a changed ordering could duplicate or skip events.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The legacy constraint was storage and operational capacity, and selecting an engine from microbenchmarks alone risks ignoring compaction, write amplification, range-read patterns and recovery behavior under production traffic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#situation-the-legacy-architecture-and-constraint",
+          "quote": "A MySQL/InnoDB-backed distributed datastore needed more efficient storage and operational capacity. Selecting the next engine solely from microbenchmarks risked ignoring compaction, write amplification, range-read patterns and recovery behavior under production traffic.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "For a comparable engine migration, validation must pin query distribution and secondary-index assumptions, shadow representative read patterns, validate consistency across snapshot and live writes, trial write/compaction backlog and staged failover, and retain rollback before deleting the old representation; correctness evidence includes domain invariants, dual-state reconciliation, idempotent replays and keeping the old authority until proven.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#migration-and-validation",
+          "quote": "For a comparable project, pin query distribution and secondary-index assumptions, shadow representative read patterns, validate data consistency across snapshot and live writes, trial write/compaction backlog and staged failover, and retain a rollback before deleting the old representation.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#migration-and-validation",
+          "quote": "| Correctness | Domain-specific business invariants, dual-state reconciliation if used, idempotent replays | Keep authoritative old representation until proven |",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "The case is a company-reported historical result, not an independently reproduced benchmark; precise current topology, engineering effort, p99 and comparative cost for another workload are unknown, and a dated deployment should not be extrapolated to current practice.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#observed-results-and-temporal-validity",
+          "quote": "This is a company-reported historical result, not an independently reproduced benchmark. Precise current topology, total engineering effort, p99 and comparative cost must be regarded as **unknown** unless the named primary article supplies them. Do not extrapolate a dated deployment to October 2026 current practice.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#chosen-architectural-change",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#negative-evidence-costs-and-alternatives",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#safety-and-trade-off-analysis",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+    "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates",
+    "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#time-numbers-and-text-are-data-contracts",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+    "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#separate-physical-state-from-logical-query-identity",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#situation-the-legacy-architecture-and-constraint",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#migration-and-validation",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#observed-results-and-temporal-validity"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

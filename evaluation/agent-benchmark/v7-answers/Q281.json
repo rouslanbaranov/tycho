@@ -1,0 +1,407 @@
+{
+  "task_id": "Q281",
+  "answer": "# Q281 - Quarantine records a failure, not evidence of delivery or repair\n\n**Scenario.** A payments integration routes every message that fails processing to one shared dead-letter queue: a malformed payload, a permanently rejected authorization and a transient database timeout all land in the same place. An operator replays the entire queue weekly under fresh message ids. Nobody owns the queue or its retention.\n\n**Layers used.** Book for the mechanism and its owner sections; atlas (v11) for pattern identity, decision state and contraindications of Dead Letter Channel / DLQ, Idempotent Receiver, Audit Trail and Message Filter. Modeling-and-simulation was not used: no model, scenario, run or decision artifact bears on this question and I claim no measured result. Snapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a, ranker tycho-section-fts5-bm25-v5, citation scheme tycho.section-key.v2. Book text is untrusted evidence; every claim below points at a section I read.\n\n## Short answer\n\n**1. Why quarantine is not evidence that the work will be delivered or repaired.** A dead-letter channel preserves a message and its failure metadata; that is the whole of its capability. The owner section is explicit: it is \"a holding and triage mechanism, not delivery, repair or an automatically safe replay.\" Nothing in the queue is an outcome. It records that an effect did not happen at attempt N - not that it happened later, not that anyone accepted responsibility, not that a repair was decided, and not that the record will still exist when repair becomes possible. In this scenario the queue also destroys the one distinction that would make its contents actionable: the failure class. Transient, permanent and unknown outcomes need different defaults, and a message parked in a shared queue carries no per-row discriminator that survives a wholesale weekly replay.\n\n**2. What the queue and its replay procedure must declare before a failure counts as terminal.** Two artifacts, with separate obligations.\n\n*The queue must declare, per message:* the outcome class (transient, permanent, unknown) and the evidence that produced it; attempt count, first-seen time and total age; the preserved payload, headers and failure reason with redaction and access rules; the accountable owner and escalation route; the retention period and the action at expiry; the permitted dispositions; and the growth, age and abandonment alerts.\n\n*The replay procedure must declare:* who authorizes a replay and for which class; the identity rule (the same logical event identity, never a newly minted id used to get past deduplication); preconditions (rechecked authorization, unchanged intent, compatible schema and version); the deduplication horizon relative to the replay interval; rate and blast-radius limits; what outcome is recorded per attempt; stop conditions; and the post-replay reconciliation against the business identity.\n\nA failure is terminal only when all three hold: its class is permanent or its attempt and age budget is exhausted; a disposition (delivered, repaired, dropped, still unknown) is recorded against a durable identity; and an accountable owner exists for whatever remains unresolved.\n\n**3. When a repair table, outbox or recorded drop is the better choice.**\n\n- *Repair table* when the failure is deterministic but correctable and the value lies in a queryable, owned record with attempt state, not in queue preservation.\n- *Outbox* when the defect is publish atomicity (local state committed, event not published), not payload validity.\n- *Recorded drop* when the work is unrepairable or preservation costs more than it is worth - but only with an attributable disposition; a discard with no disposition, audit record, retention or recovery path is silent loss.\n- *Keep the DLQ* when failures are observable, an owner and replay policy exist, retention and access are bounded, alerting is defined, and high-scale operation with frequent policy-driven replay justifies it.\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1 Quarantine semantics: holding versus delivery versus repair | \"dead letter queue poison message quarantine\"; \"parking lot quarantine\"; \"message acknowledgement is not business effect\" | tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview; tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery |\n| F2 Mixed failure classes and terminality | \"retry budget max attempts terminal\"; \"retry backoff transient permanent failure classification\"; \"quarantine payload evidence diagnose\" | tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines; tycho.page.148a37ff87ca4e42a2fec625c65319b0#4-failure-and-applicability-gates; tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes |\n| F3 Replay identity and duplicate effects | \"idempotent consumer duplicate delivery deduplication\"; \"idempotency key deduplication replay\"; \"at-least-once exactly-once delivery contract duplicate\" | tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers; tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route; tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview |\n| F4 Ownership, retention and audit | \"operational ownership on-call alert abandonment\"; \"retention period data lifecycle\"; \"audit trail record disposition decision\" | tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview; tycho.page.ebee5e8bd7ca90b878acad1df2d8630a#overview; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary |\n| F5 Alternatives: repair table, outbox, recorded drop | \"repair table retry table reprocessing\"; \"transactional outbox dual write publish\"; \"drop message audit record accepted loss\" | tycho.page.ace968ab1de8409383c6a9b22a00d006#5-options-and-when-the-extra-components-are-unwarranted; tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery; tycho.page.1a7b78e63a294313b93d56eed8cc06c7#overview |\n\n## 2. Mechanism: what the queue and the replay actually do\n\nA dead-letter channel \"routes a message that exceeds its retry or age policy to a quarantine queue, preserving payload, headers and failure reason.\" That sentence contains both the capability and its limit: the queue is a routing destination selected by a counter, and what it retains is diagnostic material. The Azure documentation quoted in the card adds two properties to dead-lettered messages (dead-letter reason and dead-letter description) - reason metadata again, not resolution. The card also records that \"there is no automatic cleanup of the DLQ\": messages remain until someone explicitly retrieves them and completes them. The owner page states the consequence more sharply: \"The DLQ is a policy state, not a second work queue that silently retries forever.\"\n\nReplay is a separate act with its own semantics. In the synthetic repair state machine the path is explicit - Quarantined, then RepairAuthorized, then Claimed - and the text alternative states that \"Quarantine requires a separate repair decision.\" Replaying is not that decision. It is a re-injection, and if it mints a new message id it is a re-injection that has deliberately discarded the identity the system needs in order to tell \"the same work, retried\" from \"new work\".\n\n## 3. Why one shared queue cannot be evidence: three failures, three correct defaults\n\n| Failure | Correct default (evidence) | What the shared queue does | What a fresh-id replay does |\n|---|---|---|---|\n| Malformed payload | Deterministic, so retrying cannot succeed; repair means correcting the input while keeping the same logical effect identity, or creating an explicitly new operation if intent changes | Preserves the bad payload with its failure reason; cannot correct it | Re-sends the same invalid payload under a new id: a guaranteed repeat failure that also consumes a new identity |\n| Permanently rejected authorization | A terminal business decision at that time, but authorization is state and policy; the book says to \"Recheck current authorization before repair\" | Records the rejection reason only | Re-attempts a rejected action under a fresh id, with no record that the rejection was already reviewed |\n| Transient database timeout | Retryable under a budget: \"Retry only when an error class and the business contract permit it\" | Converts an expected transient into quarantine, delaying it behind an unrelated weekly batch | Replays a week later: a retry with a week-long backoff, no deadline, and no evidence that the original attempt's effect did not partly commit |\n\nAzure's application-level description is explicit that unacceptable messages include those that cannot be processed because of a system issue, those that \"hold malformed payloads\", and those that \"fail authentication when some message-level security scheme is used\" - which is exactly why admission to one queue cannot act as the classifier; the class has to be recorded beside the message.\n\nThe owner section generalises the point: \"Classify transient, permanent and unknown outcomes; cap attempts and total age; preserve enough evidence in quarantine to diagnose without leaking payloads.\" The DLQ card states the same judgement as a contraindication - reject the DLQ \"when failures are transient and immediate retry is safe, when no one owns the DLQ, or when dead-lettering hides a programming error.\" All three contraindications are simultaneously true in this scenario.\n\nMembership in the queue is therefore a disjunction. \"A message failed\" can mean several incompatible things, and the queue stores no field that separates them for the operator who replays. The measurement gate that would make the design defensible is stated for exactly this case: for a poison message or schema mismatch, check \"Quarantine/retry budget, dead-letter policy and source of truth\". None of the three is owned here.\n\n## 4. Why the weekly wholesale replay is not a repair procedure\n\n**(a) It destroys identity.** The book separates client request key K, business entity ID R and event ID E, and states: \"Re-delivery of the same event keeps its identity E; a new legitimate change gets a new event identity.\" A replay that mints a new id makes every replayed message look like a legitimate new change rather than a retry of the same intent.\n\n**(b) It defeats deduplication by construction.** \"Replaying with a new ID merely to bypass deduplication risks a duplicate external effect.\" The retry owner states the same invariant: \"After an acknowledgment is lost, a new identity can duplicate a committed effect; an expired key cannot guarantee historical deduplication.\" The weekly replay manufactures exactly that condition once a week.\n\n**(c) It crosses authorization scope.** The redelivery matrix requires that \"Deduplication must not bypass authorization or cross tenant state\", and the repair guidance says to recheck authorization before repair. A batch that reprocesses every class under new ids cannot show that either condition holds.\n\n**(d) It records no outcome.** A job controller \"must distinguish all queued, all acknowledged, all verified and all failed/review-needed before declaring completion.\" The weekly replay can empty the queue without establishing which of those states any item reached. A publisher confirm, likewise, \"means the broker accepted responsibility, not that a consumer completed the business effect\", and \"acknowledging receipt can precede a durable application effect; delivery terminology cannot substitute for the consumer's commit contract.\"\n\n**(e) It consumes the retention window it depends on.** There is no automatic cleanup and messages remain until explicitly retrieved, while AWS guidance is that DLQ retention should be longer than the source queue's. With no owner and no retention declaration, a weekly replay interval depends on an unstated number - and the failure mode when it loses is silence: the card says to \"monitor DLQ growth and silent abandonment.\"\n\n**(f) It severs the audit chain.** An audit trail requires that \"the audited events are defined; identity/time/source are captured; retention and access are controlled.\" Re-injecting under fresh ids discards the identity and time linkage that would make the replay attributable to the original failure.\n\n## 5. The declaration contract\n\n### 5.1 What the queue must declare\n\n1. **Outcome class per message**: transient, permanent or unknown, with the classifier and the evidence that produced it (status code, validation failure, error-code family).\n2. **Budget state**: attempt count, first-seen timestamp, total age, and the rule that maps budget exhaustion to a terminal class.\n3. **Preserved evidence**: payload, headers and failure reason, with redaction rules and access control - enough to diagnose \"without leaking payloads\".\n4. **Accountable owner**: a named team and escalation route, plus human-intervention ownership for long-running or interrupted work - \"durable state, timers, compensation and human intervention ownership\". The owner page's minimum set is explicit: \"The DLQ needs an owner, an alert threshold, a retention horizon, a capacity limit, an access policy and a cleanup owner.\"\n5. **Retention**: a period, a basis for it (longer than the source queue and longer than the deduplication and replay horizon), and the action at expiry, which must itself be a recorded drop rather than an implicit one.\n6. **Permitted dispositions**: delivered, repaired, dropped, still unknown - and which actor may set each.\n7. **Alerting**: growth, age and abandonment thresholds, because an empty queue and a forgotten queue look identical to a monitor that only counts depth.\n8. **Ownership of the queue itself**: an unowned DLQ is a stated contraindication, not a maturity gap to be closed later.\n\n### 5.2 What the replay procedure must declare\n\n1. **Scope by class**: which failure classes are replayable and which are excluded - malformed payloads without a corrected input, rejected authorizations without a policy change.\n2. **Identity rule**: preserve E and the business identity; never mint a new id to get past a deduplication check. The owner page states the test in three parts: \"A replay procedure preserves the original effect identity, reauthorizes the action and checks whether the effect was already committed before republishing; a blind replay is a duplicate-effect risk.\"\n3. **Preconditions**: rechecked authorization, unchanged intent, compatible schema and version, and a verified consumer-side idempotency boundary.\n4. **Deduplication horizon**: the retained outcome record must cover the replay interval - \"a key is only useful while its outcome record is retained; after expiry, historical deduplication is no longer guaranteed.\"\n5. **Rate and blast radius**: how much of the backlog is re-injected at once, and what protects the downstream service.\n6. **Per-attempt outcome recording**: what was attempted, by whom, with what result, and where the record lives.\n7. **Stop conditions**: what makes the operator stop replaying and escalate to repair instead.\n8. **Reconciliation**: how the business identity is checked after replay - \"define retention and what happens after keys expire\", and expose status lookup and reconciliation where an acknowledgement may be lost.\n\n### 5.3 The terminality test\n\n> A failure is terminal if and only if (class = permanent OR attempts exhausted OR age exceeded) AND a disposition is recorded against a durable identity AND an accountable owner accepted the remaining risk AND the retention horizon covers the repair and deduplication window.\n\nAnything else is parked, not terminal - and parking is not a resolution. The invariant form is: \"A message must leave the retry path when its retry budget is exhausted or its failure is permanent, and must enter a declared quarantine with enough context to diagnose it.\"\n\n## 6. When a repair table, outbox or recorded drop is the better choice\n\n| Instrument | The defect it actually fixes | Choose it when | What it must still declare | Failure mode if misused |\n|---|---|---|---|---|\n| Repair table / retry table | Correctable deterministic failure with per-record state | Failure is deterministic but repairable; a queryable owned record beats queue preservation; the broker cannot retain evidence safely | Attempts, owner, correction, expiry, disposition | A second unowned queue if the table has no owner or expiry |\n| Outbox | Publish atomicity between local state and event emission | A local database owns state and downstream events are needed; the defect is \"committed but not published\" | Event identity E, aggregate key, schema version, relay lag, consumer deduplication | Does not repair bad payloads or business-rule rejections |\n| Recorded drop | Unrepairable or uneconomic work | Preservation value is below its cost, or the work is genuinely terminal | Disposition, actor, reason, retention, audit attribution | Unrecorded discard is silent loss |\n| Keep the DLQ | Observable, ownerful, policy-driven triage | Failure is observable; an owner and replay policy exist; retention and access are bounded; alerting is defined | The full 5.1 list | Exactly the current scenario: no owner, no retention, wholesale replay |\n| Bounded retry plus audit | Transient failure | The error class and business contract permit retry | Budget, deadline, unknown-outcome state | Retrying forever turns a transient into a permanent backlog |\n\n**Repair table.** The DLQ card's competing alternative is: \"Bounded retry with backoff and an audit record, then alert and stop; drop with a recorded disposition or park the work in a repair table/outbox when failure is deterministic.\" The owner section repeats it - parking in a repair table or outbox \"may be preferable when the failure is deterministic or the broker cannot retain evidence safely\" - and the card's source record describes the retry table as \"a dedicated table specifically for events that need reprocessing\". The advantage is structural: a table is queryable and ownable in a way a broker queue is not, because attempts, owner, correction and expiry can be columns, and the record survives a broker migration.\n\n**Outbox.** An outbox targets a different defect: the naive dual write, where \"a failure between the two steps may leave a committed registration without its notification.\" Its invariant is local: \"if this transaction commits, the stored business update and its outbox intent exist together; if it aborts, neither change from that transaction is visible as committed state.\" It is warranted when the database owns state, downstream events are needed, and change capture and connector operations are supported, and it still requires \"retain same E; prove consumer application deduplication\". It is not a DLQ replacement - \"avoid using an outbox only because events are fashionable\" - and a malformed payload or a rejected authorization is not a publication-atomicity defect, so an outbox would durably preserve the intent to publish something that must not be published. Note also that \"an outbox is not an automatically enforced business invariant\".\n\n**Recorded drop.** Dropping is a legitimate terminal disposition, but only as a record. The card pairs it with an audit record, and the audit-trail conditions are the test of whether the record is evidence at all: defined events, captured identity/time/source, controlled retention and access. Message Filter supplies the counterexample: a filter that discards non-matching messages and \"states no rejected-message disposition, audit record, retention or recovery path\" cannot support any later claim about what happened to the work.\n\n**Keeping the DLQ.** The card is not a blanket rejection. Its decision state is applicable-under-conditions, and it explicitly reverses for \"high-scale systems with dedicated platform teams, where the guide says traditional DLQs remain a solid choice\", with Tycho guidance to reverse also \"when replay is frequent and needs automated policy\". The owner page states the positive condition directly: \"A DLQ is a fit when the failure is inspectable and a human or repair job can decide the terminal outcome.\" The question is not whether a DLQ exists; it is whether the good-fit conditions hold and whether replay is class-aware, identity-preserving and outcome-recording.\n\n## 7. Boundaries and contradictions\n\n- The DLQ card's decision state is applicable-under-conditions and its source base is documentation, not measurement: Azure and AWS pages describe retention, redrive and reason metadata; the Hookdeck guide is webhook-specific, and the card itself says the drop variant and general transfer are Tycho guidance. Quoted documentation is not a benchmark.\n- The repair state machine is described as synthetic and \"was not run in a workflow engine\". It is a design argument, not evidence of behaviour.\n- The card concedes the trade-off: \"reverse the DLQ choice when quarantine retention and manual repair cost exceed the value of preserving the message.\" A DLQ is not wrong in general; an unowned, undifferentiated, wholesale-replayed DLQ is.\n- The premise that nobody owns the queue comes from the scenario, not from the book. The book supplies the consequence - an unowned DLQ is a contraindication - not a diagnosis of this system.\n- I found no section measuring duplicate rates, replay success or retention overrun. Statements about what the weekly replay will cause are inferences from the identity and deduplication contracts, not observations.\n- The atlas registry is draft and coverage labels are not independent review; nothing here is production proof.\n\n## 8. Unknowns\n\n1. Whether the payment consumer's external effects are idempotent at their own durability boundary; the book requires this to be proven, not assumed.\n2. Whether the \"permanently rejected authorization\" was a policy decision, a credential expiry or a downstream state that can change - the repair guidance says to recheck authorization, which implies it can.\n3. The actual retention period versus the weekly replay interval, and what happens to messages that expire unreplayed.\n4. Whether the replay records any per-message outcome at all; without that, no claim of delivery or repair can be made from it.\n5. Whether the original logical identity (E, K, R) is recoverable from what the queue stores.\n6. Whether the broker can retain evidence safely, one of the stated conditions for preferring a repair table or outbox.\n7. Whether a single shared queue is a deliberate simplification for volume reasons; the card's high-scale reversal could apply, but the scenario supplies no scale or team evidence.\n8. Whether any of the three failure classes is currently being measured at all; no section supplies an observed failure distribution.\n\n## 9. Claim-to-evidence summary\n\nC1-C2: quarantine preserves failure evidence and never delivers or repairs. C3-C4: one queue cannot discriminate three failure classes, and terminality must be declared from class plus budget. C5: ownership, retention and alerting are preconditions. C6-C7: fresh-id replay breaks identity, deduplication and authorization scope. C8-C9: delivery requires a recorded, reconciled outcome inside a declared retention horizon. C10-C12: repair table, outbox and recorded drop each fit a different defect. C13-C14: a DLQ stays appropriate under stated conditions, and wholesale replay without those conditions hides abandonment.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A dead-letter channel preserves evidence of a failure and is a holding and triage mechanism; it is not delivery, repair, or automatically safe replay.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "It is a\nholding and triage mechanism, not delivery, repair or an automatically safe replay.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "A dead-letter queue is a holding mechanism, not successful delivery or an automatically safe replayer.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "What the queue records is diagnostic material about why a message stopped - payload, headers, failure reason and reason metadata - not what became of the work.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "preserving payload, headers and failure reason",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "The following two\nproperties (dead-letter reason and dead-letter description) are added to dead-lettered\nmessages.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Transient, permanent and unknown outcomes require different defaults, so a single shared queue cannot by itself show whether work is deliverable or repairable.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+          "quote": "Retry only when an error class and the business contract permit it.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "Classify transient, permanent and unknown outcomes; cap attempts and total age; preserve enough evidence in quarantine to diagnose without leaking payloads.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "Reject when failures are transient and immediate retry is\nsafe, when no one owns the DLQ, or when dead-lettering hides a programming error.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+          "quote": "messages that hold malformed payloads, or messages that fail\nauthentication when some message-level security scheme is used",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Terminality is a declared policy state produced by outcome class plus attempt and age caps, not a property inferred from queue membership.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "Quarantine requires a separate repair decision.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#4-failure-and-applicability-gates",
+          "quote": "Quarantine/retry budget, dead-letter policy and source of truth",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+          "quote": "The DLQ is a policy state, not a second work queue that silently retries forever.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+          "quote": "A message must leave the retry path when its retry budget is exhausted or its\nfailure is permanent, and must enter a declared quarantine with enough context to diagnose it.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Ownership, retention and alerting are preconditions of a defensible quarantine: an unowned DLQ is a stated contraindication, there is no automatic cleanup, retention must outlive the source queue, and abandonment must be monitored.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "Failure is observable; poison messages have an owner and replay\npolicy; retention and access are bounded; alerting is defined.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "There's no automatic cleanup of the DLQ. Messages remain in the DLQ until you\nexplicitly retrieve them from the DLQ and complete the dead-letter message.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "Thus, it is a best practice to always set the retention period of a dead-letter\nqueue to be longer than the retention period of the original queue.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "monitor DLQ growth and silent abandonment",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#4-failure-and-applicability-gates",
+          "quote": "Durable state, timers, compensation and human intervention ownership",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+          "quote": "The DLQ needs an owner, an alert threshold, a retention horizon, a\ncapacity limit, an access policy and a cleanup owner.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Replay under fresh message ids breaks effect identity, defeats deduplication by construction, and can duplicate a committed external effect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "Replaying with a new ID merely to bypass deduplication risks a duplicate external effect.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "After an acknowledgment is lost, a new identity can duplicate a committed effect; an expired key cannot guarantee historical deduplication.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+          "quote": "Re-delivery of the same event keeps its identity E; a new legitimate change gets a new event identity.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Replay is a fresh authorization and intent decision rather than a retry: authorization must be rechecked, and same-key/different-intent reuse is a conflict, not idempotency.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "Recheck current authorization before repair.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+          "quote": "Reject same-key/different-intent reuse.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+          "quote": "Deduplication must not bypass authorization or cross tenant state",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+          "quote": "A replay procedure preserves the\noriginal effect identity, reauthorizes the action and checks whether the effect was already\ncommitted before republishing; a blind replay is a duplicate-effect risk.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Delivery counts only when the effect outcome is recorded and reconciled; an acknowledgement, including a publisher confirm, is not the business effect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "quote": "A publisher confirm means the broker accepted\nresponsibility, not that a consumer completed the business effect.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#integrated-decision-and-reading-route",
+          "quote": "Acknowledging receipt can precede a durable application effect; delivery terminology cannot substitute for the consumer's commit contract.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "A job controller must distinguish *all queued*, *all acknowledged*, *all verified* and *all failed/review-needed* before declaring completion.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+          "quote": "The consumer should reconcile stale records or route unresolved cases for\nintervention before acknowledging redelivery.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Deduplication is bounded by its retained outcome record, so the replay interval and the key-retention horizon must be declared together.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "A key is only useful while its outcome record is retained; after expiry,\nhistorical deduplication is no longer guaranteed.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+          "quote": "Define retention and what happens after keys expire.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+          "quote": "Messages carry stable identity; effect and identity are recorded\natomically; retention covers the redelivery window; concurrent duplicates are handled.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A repair table or retry table is the better instrument when the failure is deterministic but correctable and a queryable, owned per-record state is worth more than queue preservation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "Bounded retry with backoff and an audit record, then alert and\nstop; drop with a recorded disposition or park the work in a repair table/outbox when failure\nis deterministic.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "Retrying with backoff, dropping with an audit record, or parking the work in\na repair table/outbox may be preferable when the failure is deterministic or the broker\ncannot retain evidence safely.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "A variation of database persistence, the retry table\npattern uses a dedicated table specifically for events that need reprocessing.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "An outbox addresses publish atomicity between local state and event emission, not payload validity, and still requires preserved event identity plus consumer deduplication.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+          "quote": "Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+          "quote": "If this transaction commits, the stored business update and its outbox intent exist together; if it aborts, neither change from that transaction is visible as committed state.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#5-options-and-when-the-extra-components-are-unwarranted",
+          "quote": "Database owns state; downstream events needed; change capture and connector operations are supported",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+          "quote": "Retain same E; prove consumer application deduplication",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+          "quote": "an outbox is not an automatically enforced business invariant",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A recorded drop is legitimate for unrepairable or uneconomic work, but a discard with no disposition, audit record, retention or recovery path is silent loss.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "Retrying with backoff, dropping with an audit record, or parking the work in\na repair table/outbox may be preferable when the failure is deterministic or the broker\ncannot retain evidence safely.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a7b78e63a294313b93d56eed8cc06c7#overview",
+          "quote": "It states no rejected-message disposition, audit record, retention or recovery\npath",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ebee5e8bd7ca90b878acad1df2d8630a#overview",
+          "quote": "The audited events are defined; identity/time/source are\ncaptured; retention and access are controlled.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A DLQ remains appropriate when failures are observable, an owner and replay policy exist, retention and access are bounded, alerting is defined, and high-scale operation with frequent policy-driven replay justifies it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "Failure is observable; poison messages have an owner and replay\npolicy; retention and access are bounded; alerting is defined.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "Reverse the choice for high-scale systems with\ndedicated platform teams, where the guide says traditional DLQs remain a solid choice; Tycho\nguidance: also reverse when replay is frequent and needs automated policy.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+          "quote": "A DLQ is a fit when\nthe failure is inspectable\nand a human or repair job can decide the terminal outcome.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A weekly wholesale replay that empties the queue without class policy, identity preservation or outcome recording hides abandonment rather than repairing work.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+          "quote": "monitor DLQ growth and silent abandonment",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "A job controller must distinguish *all queued*, *all acknowledged*, *all verified* and *all failed/review-needed* before declaring completion.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "Reverse the DLQ choice when quarantine retention and manual\nrepair cost exceed the value of preserving the message.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+    "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+    "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+    "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+    "tycho.page.148a37ff87ca4e42a2fec625c65319b0#4-failure-and-applicability-gates",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+    "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+    "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#integrated-decision-and-reading-route",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+    "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#5-options-and-when-the-extra-components-are-unwarranted",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+    "tycho.page.1a7b78e63a294313b93d56eed8cc06c7#overview",
+    "tycho.page.ebee5e8bd7ca90b878acad1df2d8630a#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

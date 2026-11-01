@@ -1,0 +1,343 @@
+{
+  "task_id": "Q219",
+  "layers": [
+    "book"
+  ],
+  "method": "describe was run first; all searches used --volume book; six decision facets; saturation reached when repeated formulations returned the same pages and added no new evidence; the exact CLI calls are in the Q219 session log.",
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "One asset code denotes a shared model in one business area and one physical unit in another",
+      "queries": [
+        "polymorphic identifier column different entity types",
+        "asset code model unit reservation identity",
+        "tool catalogue shared model physical unit asset_code"
+      ],
+      "evidence": [
+        "tycho.page.d00c6081ca664f619308712e245ef523#2-original-synthetic-scenario-two-equipment-identities",
+        "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#1-model-business-identities-before-tables",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#2-fictional-example-community-equipment-libraries"
+      ]
+    },
+    {
+      "id": "F2",
+      "facet": "Additive DDL versus semantic change; what a source/target row-count comparison can prove",
+      "queries": [
+        "expand and contract additive schema migration backfill",
+        "migration validation row counts equal semantic correctness",
+        "backfill consistency migration checkpoint"
+      ],
+      "evidence": [
+        "tycho.page.d00c6081ca664f619308712e245ef523#1-distinguish-syntactic-change-from-semantic-change",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+        "tycho.page.357c2d162bd44f3aa06a995a1e691551#applied-m9-evidence-what-transfers-and-what-does-not",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr"
+      ]
+    },
+    {
+      "id": "F3",
+      "facet": "The reservation corruption mechanism: identity, constraints, tenant scope and history",
+      "queries": [
+        "reservation double booking inventory allocation",
+        "reservation hold capacity oversell invariant",
+        "booking state machine reservation conflict constraint",
+        "capacity allocation conflict double allocate slot"
+      ],
+      "evidence": [
+        "tycho.page.d00c6081ca664f619308712e245ef523#2-original-synthetic-scenario-two-equipment-identities",
+        "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#1-model-business-identities-before-tables",
+        "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#2-a-snapshot-is-not-an-invariant",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#2-fictional-example-community-equipment-libraries",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+        "tycho.page.2debc63415184b02ad0a144b2649c171#6-original-synthetic-decision-bursty-reservations"
+      ]
+    },
+    {
+      "id": "F4",
+      "facet": "What to do with identities the migration cannot prove",
+      "queries": [
+        "unknown mapping must not invent identifier",
+        "quarantine ambiguous record domain review unresolved",
+        "synthetic identity mapping provenance source revision"
+      ],
+      "evidence": [
+        "tycho.page.d00c6081ca664f619308712e245ef523#2-original-synthetic-scenario-two-equipment-identities",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions",
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "id": "F5",
+      "facet": "Writes that arrive during the backfill: single writer, capture, checkpoint, replay, reconciliation and fencing",
+      "queries": [
+        "dual write during migration backfill window",
+        "backfill projection authoritative writer change data capture",
+        "idempotent replay cursor checkpoint crash resume"
+      ],
+      "evidence": [
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan"
+      ]
+    },
+    {
+      "id": "F6",
+      "facet": "Read cutover, semantic validation and the rollback boundary",
+      "queries": [
+        "cut over reads to new column rollback hold",
+        "mixed-version readers writers schema change",
+        "authority transfer single writer transition state"
+      ],
+      "evidence": [
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#1-check-the-real-combinations-including-old-readers",
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+        "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+        "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta"
+      ]
+    }
+  ],
+  "answer": "# Q219 — Overloaded asset identity, reservations and an additive model/unit migration\n\n## Scope and method\n\nLayer: **book** only. This is a domain-identity, schema-evolution, backfill and reservation-invariant question; it needs no pattern-registry identity (atlas) and no model/run/decision artifact (modeling-and-simulation). describe was run first, every search used --volume book, and the exact calls are recorded in the Q219 session log. Evidence converged from the V05/C06 semantic-compatibility and migration-retirement pages, the V08/C05 reader/writer and no-return pages, V05/C01 relational invariants, V02/C07 isolation axes, V05/C07 restore drills, and the data-migration decision playbook. Repeated formulations returned the same pages and added no new evidence.\n\n## Facet matrix\n\n| # | Facet | Query formulations used | Evidence |\n|---|---|---|---|\n| F1 | One asset code denotes a shared model in one area and a physical unit in another | \"polymorphic identifier column different entity types\"; \"asset code model unit reservation identity\"; \"tool catalogue shared model physical unit asset_code\" | SC-2, RI-1, IA-2 |\n| F2 | Additive DDL versus semantic change; what a row count can prove | \"expand and contract additive schema migration backfill\"; \"migration validation row counts equal semantic correctness\"; \"backfill consistency migration checkpoint\" | SC-1, MR-3, NF-equality, DM-four, SL-applied |\n| F3 | The reservation corruption mechanism | \"reservation double booking inventory allocation\"; \"reservation hold capacity oversell invariant\"; \"booking state machine reservation conflict constraint\"; \"capacity allocation conflict double allocate slot\" | SC-2, RI-1, RI-2, IA-2, RD-4, CT-6 |\n| F4 | Identities the migration cannot prove | \"unknown mapping must not invent identifier\"; \"quarantine ambiguous record domain review unresolved\"; \"synthetic identity mapping provenance source revision\" | SC-2, MR-3, MR-4, MR-5, RW-2, MR-notes |\n| F5 | Writes that arrive during the backfill | \"dual write during migration backfill window\"; \"backfill projection authoritative writer change data capture\"; \"idempotent replay cursor checkpoint crash resume\" | MR-3, MR-notes, DM-synthetic, DM-applicability, DM-modernization |\n| F6 | Read cutover, validation and rollback | \"cut over reads to new column rollback hold\"; \"mixed-version readers writers schema change\"; \"authority transfer single writer transition state\" | MR-3, RW-1, RW-2, NR-5, NR-6, DM-decision, DM-authority |\n\nLegend: SC = semantic-compatibility; MR = migration-retirement; RW = reader-writer-matrix; NR = no-return-recovery; RI = relational-invariants; IA = isolation-axes; RD = restore-drills; CT = contraindications-transition; DM = data-migration-correctness decision; NF = output-parity migration case; SL = schema-lifecycle-and-semantic-migration; MV = mixed-version database compatibility.\n\n## 1. Direct answer\n\nThe migration is additive only in DDL, not in meaning. asset_code is an overloaded key: the same string denotes a shared model in one business area and one physical unit in another, and the old schema never recorded which kind a row was. Copying it into both model_id and unit_id asserts that every old value is simultaneously a model and a unit, and it moves a context-scoped value into a global key without the area/tenant qualifier that made it unique.\n\nReservations are corrupted because a reservation is correct only if it names the actual physical unit, its accepted interval does not overlap another accepted interval for that unit, the member is authorized for that unit and tenant, and the acknowledgement is durable. A copied identity breaks the first term, so the other terms are evaluated on the wrong object: a model can be booked as if it were one unit, several identical units can collapse onto one unit_id, a unit can resolve to another area's model or another tenant's unit, and past bookings can be attributed to the wrong entity, while every source row still has a target row. Equal row counts cannot detect any of this because they preserve cardinality, not identity, grain or meaning; positional COPY does not validate business meaning.\n\nServing reads from the new columns then turns a one-time, partially mapped copy into the authoritative representation. Any write after the backfill snapshot is absent or stale in the columns being read, and any row not yet mapped or not provable is NULL or defaulted. The read path can therefore accept a reservation against an unknown or outdated unit state, which is exactly the double-allocation or phantom-availability failure the old key was supposed to prevent.\n\nThe migration must therefore do three things. First, resolve each old code to a kind and an identity through a versioned, tenant/area-scoped mapping with recorded provenance and review. Second, mark every mapping it cannot prove UNKNOWN and quarantine it for domain review: never default, never invent an ID, never merge two physical identities into one unit without an approved merge rule, never fabricate units from a shared model code, and hold cutover until an approved residual-unknown policy exists. Third, treat writes as part of the migration: one authoritative writer during the window, durable change capture, checkpoints committed with data, a source-authoritative ordering and replay rule, reconciliation of rows changed after the snapshot, explicit dual-write failure semantics, and a fenced cutover — because two writers can accept the same reservation on opposite sides of the switch, and a green comparison at T0 proves nothing about T1.\n\n## 2. Why an additive copy is a semantic change, not a copy\n\n### 2.1 The old column is an overloaded key\n\nThe page says it directly: \"the original field asset_code conflates a public model description and a unique physical unit\"; the new model separates model_id, \"shared by identical units\", from unit_id, the \"physical item\" (SC-2). Nothing in the old schema records which kind a given row is. The value is not a self-describing key: the same string means a model in one business area and a unit in another, and ItemId may be unique only within a library, not globally (IA-2). The area or tenant is part of the identity, not decoration.\n\nA split of one field into two is safe only when the original cases \"map without ambiguity or loss\" (SC-1). The syntactic requirement is new columns and a mapping function; the domain requirement is that the mapping is total and unambiguous. A copy is not a mapping: it does not decide kind, does not add the missing scope, and cannot represent \"this row is a model, not a unit\". Writing the same string into both columns asserts both kinds at once. That is the semantic breaking change the page warns about: the schema accepts it, the domain does not.\n\n### 2.2 The grain changes even when the row count does not\n\nmodel_id is shared by identical units; unit_id is one physical item (SC-2). A model row is one row for many units; a unit-level table needs one row per unit. If the source records a model once and its N physical units not at all, copying the model code into unit_id creates one \"unit\" whose identity is a type, not N units. If the source has N unit rows that share a model code, copying the shared code into unit_id creates N rows with the same unit identity. Either way the row count can match while the entity population is wrong. The page's totality analysis asks exactly these questions: which records represent a model or type rather than one unit, and can mappings be many-to-one, one-to-many or unknown (SC-2). A count cannot answer them.\n\n### 2.3 What a row-count check can and cannot see\n\nThe migration-retirement page is explicit: \"A job that copies 10,000 source rows and produces 10,000 target rows can still corrupt meanings\" (MR-3). Its acceptance list is identity and tenant scope, field-level semantic equivalence and unknown mappings, concurrent writes and deletes and timestamps, checkpoint durability, event/CDC offset and replay horizon, history/authorization/referential integrity, and the exact source snapshot and migration code version. A row total satisfies none of those. A positional COPY \"does not validate business meaning\" (MR-notes).\n\nA two-sided set difference is stronger than a total, but it is still a parity check: output equality is a \"relative parity guarantee, not independent verification\" of domain truth (NF-equality); identical outputs can reflect a shared semantic bug (DM-applicability); and the invariant under test has to be named — identity, value equality, operation order, referential consistency, side-effect exactly-once or bounded freshness (DM-four). Comparing row sets alone does not establish semantic correctness or zero downtime (SL-applied).\n\nFinally, a count taken during the migration is a T0 observation. The system keeps writing afterwards; \"a green source/target comparison at T0 proves nothing about T1\" (MR-3). Equality at migration time is not equality after the first post-migration write.\n\n## 3. Why this corrupts reservations\n\nReservation correctness is a relation, not a row. The reservation must name the actual physical unit; its accepted interval must not overlap another accepted interval for that unit; the member must be authorized for that unit and tenant; and the acknowledgement must survive recovery (RI-1, RI-2, IA-2, RD-4). Identity is the first term. If identity is wrong or ambiguous, the overlap check, the authorization check and the history are all evaluated on the wrong object, even when every row exists and every foreign key resolves.\n\n| Failure | What an equal-count copy can produce | Basis |\n|---|---|---|\n| Model becomes a reservable unit | A model row receives unit_id = the model code, so availability per unit sees one unit whose capacity is a type | MR-3 states the copy silently makes \"a model look like one reservable unit\"; the capacity consequence is inference |\n| Identical units collapse | N rows or N units share one copied unit_id; a unique constraint dedupes or rejects, or an exclusion constraint sees one unit for all of them | Inference from model_id being \"shared by identical units\" (SC-2) plus collision (SC-2) |\n| Cross-area or cross-tenant collision | The same string resolves to another area's model or another tenant's unit; the global key erases the scope that made the code unique | IA-2: ItemId may be unique only within a library, not globally; collision is stated in SC-2, the cross-tenant consequence is inference |\n| FK passes, meaning fails | A copied model code satisfies a units FK if the same string exists in both namespaces | RI-1: a foreign key proves the referenced identity exists; it does not prove authorization or non-overlap |\n| Constraint enforces the wrong rule | A uniqueness or exclusion constraint keyed on the copied value enforces the model's rule, not the unit's | RI-2: the restriction must encode the actual domain rule |\n| History is misattributed | Old reservations converted by string carry the ambiguity into commitments; past bookings point at the wrong entity | SC-2: \"misleading history\"; MR-3 requires history relations to reconcile |\n| Read path treats unknown as available | Unmapped or unresolved rows are NULL or defaulted; a reader sees absence and may allow the action | RW-1: old code may \"misclassify absence as an allowed action\"; RW-2: the new reader must \"say unknown, not invent an ID\"; the reservation consequence is inference |\n\nThree points deserve emphasis.\n\nFirst, a foreign key is not a reservation invariant. It can guarantee that a referenced member or tool identity exists within a consistency boundary; it \"does not independently guarantee that a member is currently authorized to reserve this unit or that two time intervals do not overlap\" (RI-1). A green FK check can coexist with a double allocation.\n\nSecond, the constraint must encode the real rule. Uniqueness and exclusion constraints enforce only the declared key or overlap restriction; if the declared unit key is the copied value, the database is enforcing the wrong domain rule (RI-2). That is worse than no constraint, because it looks like protection.\n\nThird, tenant scope is part of identity. If unit IDs become globally unique after the copy but were only library-unique before, the migration either rejects legitimate rows or merges identities across tenants (IA-2). The correct key is composite: area or tenant plus identity. Authorization is decided for the actual library and the specific object; a colliding identity can move a reservation into the wrong authorization scope.\n\nHistorical reservations make the damage durable. They are accepted commitments, and \"a revert command is not recovery of acknowledged reservations or external effects\" (NR-5). If the migration re-points them by string, it propagates the ambiguity into decisions that were already made; if it leaves them on asset_code while reads move to unit_id, two readers disagree about the same booking. Either way, the migration must convert the links with the same proof it uses for catalogue identities, and must not silently reinterpret a commitment.\n\n## 4. What the migration must do with identities it cannot prove\n\n\"Proven\" has to mean more than \"the string is present\". The evidence must identify a kind and a single entity: for a unit, an inventory, asset or serial record for one physical item; for a model, a catalogue or type record with no single physical item; both within a known area or tenant, at a named source revision, under a named mapping rule. The page asks \"Which source revision proves each mapping?\" (SC-2). If the only evidence is the code, nothing is proven.\n\nThe migration should then:\n\n1. Cover the whole population, not just the catalogue table. Classify every row, every historical and open reservation link, and every consumer that reads the code: unit, model, or unknown; one-to-one, many-to-one, one-to-many or unknown; and count the unknown classes explicitly (SC-2).\n2. Use a versioned, scoped mapping. The proposed record is (tenant, old_id, mapping_revision) -> (model_id, unit_id or UNKNOWN), reviewed and approved; the same old_id in two areas or tenants is two mappings, not one (MR-3). Record the provenance, the reviewer and the source revision for each mapping, and the mapping revision that produced each identity (MR-notes).\n3. Quarantine what it cannot prove. \"Mappings that cannot be proven must be marked unresolved for domain review rather than silently defaulted\" (SC-2); \"Quarantine ambiguous records; never invent an ID\" (MR-3). A default, a NULL treated as a value, or copying the code into both columns is an invented answer, not a resolution.\n4. Never merge physical identities without an approved rule. \"No two authoritative physical identities map to one unit without an approved merge rule\" (MR-3). Two area codes that happen to be equal are not evidence that they denote the same physical object.\n5. Never fabricate units from a model code. A shared model code cannot generate N unit identities; if the unit population is not in the source, it must come from inventory or asset records or be marked unknown, not synthesized from the model code. This is an inference from the model/unit distinction (SC-2) and the stable-unit rule (RI-1), but it is the difference between a migration and a data invention.\n6. Let the target represent the truth. If a row is a model, unit_id must be absent or UNKNOWN and the schema must allow that; if the target makes unit_id mandatory or derives a unit from every code, it forces an invented unit. The semantic-compatibility table's principle is that missing must not imply an invented business value (SC-1).\n7. Hold the transition when the unresolved set is material. \"A migration may legitimately stop on an unresolvable identity or unknown source meaning. Such a hold is a correct outcome, not failure to finish a technical change\" (MR-5). Retirement requires \"migration completeness and an approved residual-unknown policy\" (MR-4), so the unresolved classes, their owners and their allowed behavior must be accepted before the old representation is removed.\n8. Treat reservation links as their own proof problem. \"How are links to historical reservations converted?\" is one of the totality questions (SC-2). A link that cannot be proven should stay quarantined or unconfirmed with its provenance; it must not be re-pointed by string, and the reservation path must not treat it as available.\n9. Define write-time behavior for new unproven identities. A record arriving during or after the backfill must be parked, rejected or quarantined by the same mapping, with its mapping revision recorded; otherwise the backfill is clean and the first new write reintroduces the ambiguity. This is an inference, but it follows from \"What if a new record arrives while backfill is in progress?\" (SC-2) and from the requirement to record the mapping revision per identity (MR-notes).\n10. Treat a mapping change as a new revision. A changed business-key mapping must not edit the old one in place; rows written under the old revision must be found and recomputed, or a subset is silently stranded (MR-notes).\n\nThe key point is that unknown is a first-class state, not a temporary NULL. If the system cannot represent unknown, it will represent it as a model or a unit, and that is the corruption.\n\n## 5. What it must do with writes that arrive during the backfill\n\nA one-time copy is a photograph of a moving system. \"If backfill takes hours, it may read records while new writes occur. A design needs an authoritative writer and a change-capture/reconciliation plan\" (MR-3). \"Two independent writers are not automatically atomic just because the schema includes both fields\" (MR-3). The pattern notes add that two tables or stores updated by independent writes are not automatically atomic (MR-notes).\n\nThe proposed migration table gives the skeleton (MR-3):\n\n- S0 Snapshot: the legacy database remains the only writer; snapshot and replay start offset and schema version are recorded.\n- S1 Expand: the legacy writer emits the old representation plus a durable, versioned change signal; old binaries and consumers still work.\n- S2 Resolve: the versioned mapping is reviewed; ambiguous records are quarantined; no invented IDs.\n- S3 Backfill plus catch-up: the new tables are projections, not independently writable authorities; per-tenant unique identities, history relations and post-snapshot updates reconcile; resume from a durable checkpoint.\n- S4 Guarded authority transfer: a fenced cutover authorizes exactly one writer; old writes are rejected or routed; mixed-version reads, old event replay, authorization and reservation invariants pass.\n- S5 Contract: retire only after a verified replay horizon and explicit no-return approval.\n\nFor the writes specifically, the requirements are:\n\n1. One authoritative writer for the whole window. The legacy representation stays authoritative until the fenced cutover; the new tables are projections (MR-3). If dual-write is used, it is one application write path writing both representations, not two independent authorities.\n2. Capture every write durably. Emit a versioned change record in the same transaction as the legacy write (outbox or CDC), with a recorded start offset and source revision, so the projection can catch up (MR-3 S1; MR-notes).\n3. Backfill in bounded, resumable batches. Persist the checkpoint with the data commit where possible; on a crash, resume from the checkpoint with a replay window, duplicate-tolerant apply and an explicit start point (MR-notes). A checkpoint that lags the last committed row is expected, not exceptional.\n4. Order by the source, not by receipt. Apply changes by a source-authoritative version, commit or checkpoint order. A delete-and-recreate event arriving while S3 processes an older snapshot can resurrect a deleted unit if events are applied by receipt order; the design must use a source-authoritative ordering rule or reconcile the full identity history before S4 (MR-3).\n5. Reconcile post-snapshot rows. Detect rows changed after the snapshot and reconcile them before declaring the backfill complete (MR-notes). A backfill batch must not overwrite a newer mapped row; use conditional writes or version checks (inference from the checkpoint and replay requirements).\n6. Handle partial dual-write failure explicitly. Simulate old-succeeds/new-fails and new-succeeds/old-fails; detect divergence; name repair ownership; use idempotent reconciliation; and limit what can be acknowledged before both copies converge (DM-synthetic). \"Create then immediate update\" must show the same version and defaults, not merely one row on both sides (DM-synthetic).\n7. Record the mapping revision per identity. A changed mapping is a new revision; rows written under an older revision must be recomputed (MR-notes). Otherwise a mapping fix changes the meaning of only part of the data.\n8. Fence the cutover. Exactly one writer; old writes rejected or routed. Without fencing, two writers can accept the same reservation on opposite sides of the switch, and \"a green source/target comparison at T0 proves nothing about T1\" (MR-3). The reservation invariant \"no double allocation under simultaneous attempts and ambiguous responses\" is exactly what fencing protects (CT-6).\n9. Test the adverse timings before claiming completion: create-then-immediate-update, concurrent cancel and renewal, partial dual-write failure in both directions, a long-lived old reader, a crash between data commit and checkpoint, delete-and-recreate during backfill, a concurrent identifier change while old and new reads occur, and old-event replay after cutover (DM-synthetic; NR-6; MR-3).\n10. If the team cannot operate capture, checkpoint and reconciliation, do not run an online migration with two writers. Prefer a verified pause or stop-the-world approach when the changed set is small, or keep the old authority behind a mapping layer (MR-notes; MR-3 choice boundary).\n\nThe sharpest case is the record that arrives during the backfill. It is not in the source snapshot, so a static copy cannot know it. It must be mapped at write time through the same versioned mapping and either written idempotently to the projection or queued with a checkpoint that will not be overwritten. \"Copy it later\" is not a design; the ordering rule and the write path have to exist before the backfill starts.\n\n## 6. The read cutover is an authority transfer, not a read optimization\n\nSwitching reads to model_id and unit_id decides which representation the application trusts. It is an authority transfer and must pass the same gate as S4 (MR-3), not a flag that can be flipped after a count matches.\n\nThe gate should include at least:\n\n- Mapping coverage: every row a reader can see is resolved, or is explicitly unknown under an approved residual-unknown policy (SC-2; MR-4).\n- Post-snapshot reconciliation: the projection includes every write through the read cutover, verified by capture and replay, not by a count taken earlier (MR-3; MR-notes).\n- Reservation invariants: no double allocation, correct physical-unit reference, authorized tenant and object, and the interval-overlap rule (RI-1; RI-2; IA-2; RD-4; CT-6).\n- Referential and history integrity: per-tenant unique identities and history relations reconcile (MR-3 S3).\n- Mixed-version compatibility: every committed row readable by each supported binary, every write representable in both encodings (RW-2); old event replay and old readers exercised (NR-5; NR-6).\n- An authority ledger: timestamped old-read/new-read and old-write/new-write cutovers, so the trusted representation at any instant is recorded (DM-decision).\n- Fencing: exactly one writer; old writes rejected or routed (MR-3 S4).\n\nIf any gate fails, the response is to route reads back while the source remains compatible, or to hold and forward-repair (MR-3 S4). Serving reads from the new columns while writes still land only in the old ones is the specific defect: it makes a stale projection authoritative. The repair is continuous dual-write or CDC with reconciliation, a verified pause, or not switching — not a better count.\n\nThe decision playbook's read-before-write case is a real alternative, but not a license for this migration: that case dual-wrote the two tables, kept them consistent at every step, and compared reads continuously (DM-authority; MR-notes). The question's migration copies once and then switches reads; that is the opposite condition. The order of read and write cutover depends on the mutation classes and on whether both representations can be kept current (DM-authority; DM-applicability). There is no universal sequence.\n\nValidation must target the invariant under test, not the row total. For this system the relevant invariants are identity, referential consistency, operation order and overlap, authorization, and exactly-once acknowledgement; \"a row-count equality alone cannot answer\" which representation is authoritative at each phase (DM-authority). There are four different meanings of migration complete, and the gate must say which one it is checking (DM-four).\n\nRollback has a boundary. Once a new-only write or read is accepted, restoring the old binary may reproduce errors or violate invariants; \"a revert command is not recovery of acknowledged reservations or external effects\" (NR-5). The pre-cutover options are route reads back, hold traffic, forward-repair, or a verified restore; the post-cutover option is not an automatic rollback.\n\n## 7. Boundaries, alternatives and when the answer does not hold\n\nThe additive copy is defensible only when the semantics are actually preserved. That requires: every code is provably one kind; an explicit kind discriminator and area or tenant scope exist; the mapping is total, versioned and reviewed; unit identities come from a real inventory; and either the changed set is small enough for a verified pause, or the projection is continuously maintained and reconciled. Without those, the copy is a guess and the read switch is premature.\n\nUseful alternatives:\n\n- Keep the old schema and add an explicit mapping layer instead of moving authority. The page's own choice boundary says a smaller change may retain the schema and resolve through a mapping layer; the reversible point ends when new-only writes or deletion break old-reader expectations (MR-3).\n- Stop-the-world export, restore and verify when a maintenance window is acceptable and the changed set is small; this is simpler than capture, checkpoint and reconciliation (MR-notes).\n- Dual-write a projection and switch reads only after continuous comparison (MR-notes; DM-authority).\n- A new normalized authority with an adapter when the old model is inconsistent and a gradual cutover is needed (MR-5).\n\nThe answer does not hold in a system where asset_code is provably single-kind in every area, where a unit inventory exists with one row per physical unit, where every code is tenant and area scoped, and where the cutover happens under a verified pause. In that world the migration is a normal split; the danger is specifically the unproven kind and the live read/write window.\n\nThe book's evidence limits matter. The scenarios, identifiers and protocols are original synthetic reasoning, not an executed migration; no production incident, benchmark or independent review is reported. The pages propose negative tests and controls; they do not prove this catalogue's safety. Row-set equality and parity are not domain truth (NF-equality; SL-applied).\n\n## 8. Evidence map\n\n| Claim | section_key | Basis |\n|---|---|---|\n| asset_code conflates a model description and a unique physical unit; copying into both columns creates collisions, incorrect reservations and misleading history | tycho.page.d00c6081ca664f619308712e245ef523#2-original-synthetic-scenario-two-equipment-identities | observed |\n| A safe split requires a totality analysis: unit versus model records, many-to-one or one-to-many or unknown mappings, conversion of historical reservation links, the source revision proving each mapping, and records arriving during backfill | tycho.page.d00c6081ca664f619308712e245ef523#2-original-synthetic-scenario-two-equipment-identities | observed |\n| Splitting one field into two is safe only if original cases map without ambiguity or loss; an additive schema can still be a semantic breaking change | tycho.page.d00c6081ca664f619308712e245ef523#1-distinguish-syntactic-change-from-semantic-change | observed |\n| 10,000 source rows and 10,000 target rows can still corrupt meanings; acceptance must check identity, semantics, unknowns, concurrent writes, checkpoints, replay and referential integrity | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle | observed |\n| A naive string rename preserves row counts while silently making a model look like one reservable unit | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle | observed |\n| The mapping is (tenant, old_id, mapping_revision) to (model_id, unit_id or UNKNOWN); ambiguous records are quarantined; no ID is invented; two physical identities may not map to one unit without an approved merge rule | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle | observed |\n| During backfill the new tables are projections, not independently writable authorities; post-snapshot updates reconcile from a durable checkpoint | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle | observed |\n| Without fencing, two writers can accept the same reservation on opposite sides of the cutover; a green comparison at T0 proves nothing about T1 | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle | observed |\n| A delete-and-recreate event during backfill can resurrect a deleted unit; a source-authoritative version or checkpoint ordering rule is needed | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle | observed |\n| A migration may legitimately stop on an unresolvable identity; a hold is a correct outcome | tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions | observed |\n| Retirement requires an approved residual-unknown policy | tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point | observed |\n| The identity mapping must be single-valued and versioned; positional COPY does not validate business meaning | tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes | observed |\n| Name one authoritative writer or make the second write an idempotent reconciled projection; resume needs a replay window, duplicate-tolerant apply and an explicit start point; a changed mapping is a new revision | tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes | observed |\n| Every committed row must be readable by each supported binary and every write representable in both encodings; an additive column is not compatible if a new required field is written before old writers stop or a backfill changes meaning | tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window | observed |\n| If an old row has no valid mapping, the new reader must say unknown, not invent an ID | tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window | observed |\n| A model name can describe many units; a physical unit has one stable identity and a series of reservation intervals; a foreign key does not prove authorization or overlap | tycho.page.8d8150a14bc04b989fc34432ab7c99e1#1-model-business-identities-before-tables | observed |\n| Uniqueness and exclusion constraints enforce only the declared key or overlap rule; the restriction must encode the actual domain rule | tycho.page.8d8150a14bc04b989fc34432ab7c99e1#2-a-snapshot-is-not-an-invariant | observed |\n| ItemId may be unique only within a library, not globally; a slot cannot be double-allocated within the authoritative reservation state owner | tycho.page.6bbeb9533a324758a1b970471c5b04e1#2-fictional-example-community-equipment-libraries | observed |\n| Recovery must verify reservation invariants and accepted operation IDs, and fence old writers and consumers | tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations | observed |\n| Reservation acceptance requires no double allocation under simultaneous attempts and ambiguous responses, and no untracked divergent writers | tycho.page.2debc63415184b02ad0a144b2649c171#6-original-synthetic-decision-bursty-reservations | observed |\n| Partial dual-write failure must be tested in both directions; divergence needs repair ownership, idempotent reconciliation and limits on acknowledgement before convergence | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests | observed |\n| Migration complete has four meanings; the invariant under test must be named | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete | observed |\n| Never assume counts or full-backup metadata alone prove business equivalence; define one authoritative state at each transition | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr | observed |\n| A row-count equality alone cannot establish which representation is authoritative at each phase | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta | observed |\n| Refuse the migration when identity mapping is undefined, authoritative writes are not recoverable after rollback, or the oracle covers only happy-path counts; require an authority ledger | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows | observed |\n| Identical outputs can still reflect a shared semantic bug; backfills need live-write ordering; independent stores can diverge under retry races or partial failure | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications | observed |\n| Output equality is a relative parity guarantee, not independent verification; it needs a comparison key, snapshot identity, temporal window, schema version and conflict adjudicator | tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth | observed |\n| Comparing row sets alone does not guarantee semantic correctness or zero downtime | tycho.page.357c2d162bd44f3aa06a995a1e691551#applied-m9-evidence-what-transfers-and-what-does-not | observed |\n| Compatibility is a relation between deployed reader and writer versions and persisted information, not a single green boolean | tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission | observed |\n| A revert command is not recovery of acknowledged reservations or external effects; new-only committed state can make the old binary unsafe | tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary | observed |\n| Acceptance tests should include a concurrent identifier change during reads, a crash during backfill followed by resume without mapping divergence, and replay after contract | tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures | observed |\n\n## 9. Unknowns and confidence\n\nUnknowns preserved from the evidence: whether the catalogue has an explicit kind, area or tenant column; whether a physical-unit inventory exists outside asset_code; whether reservations ever reference a model rather than a unit; which constraints the target actually declares (unique, exclusion, composite); whether the backfill used a consistent snapshot, CDC, dual-write or a pause; and how long the read and write window was. The book does not specify this catalogue's schema, reservation rule or incident; it gives the mechanism and proposed controls.\n\nWhat would change the answer: a proof that every code is single-kind and tenant-scoped; a complete unit inventory with one row per physical item; a verified pause with no concurrent writes; or evidence that reads were switched only after a continuously maintained, reconciled projection with fencing. Conversely, evidence that model-level codes are shared across areas, that unit IDs were only library-unique, or that reads moved before reconciliation would make the corruption more likely, not less.\n\nConfidence: high that copying an overloaded model/unit code into both columns is unsafe as described, high that equal row counts cannot prove identity or domain correctness, high that unprovable identities must be quarantined and the cutover held, and high that live writes require one authoritative writer, durable change capture, checkpoint and replay, and reconciliation. Medium on the exact first reservation failure, because the book's scenario is synthetic and does not enumerate the reservation schema; the failure table labels which mechanisms are stated and which are inference.",
+  "citations": [
+    "tycho.page.d00c6081ca664f619308712e245ef523#2-original-synthetic-scenario-two-equipment-identities",
+    "tycho.page.d00c6081ca664f619308712e245ef523#1-distinguish-syntactic-change-from-semantic-change",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#1-check-the-real-combinations-including-old-readers",
+    "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#1-model-business-identities-before-tables",
+    "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#2-a-snapshot-is-not-an-invariant",
+    "tycho.page.6bbeb9533a324758a1b970471c5b04e1#2-fictional-example-community-equipment-libraries",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+    "tycho.page.2debc63415184b02ad0a144b2649c171#6-original-synthetic-decision-bursty-reservations",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+    "tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth",
+    "tycho.page.357c2d162bd44f3aa06a995a1e691551#applied-m9-evidence-what-transfers-and-what-does-not",
+    "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures"
+  ],
+  "evidence": [
+    {
+      "claim": "asset_code conflates a model description and a unique physical unit; copying it into model_id and unit_id can create collisions, incorrect reservations and misleading history.",
+      "section_key": "tycho.page.d00c6081ca664f619308712e245ef523#2-original-synthetic-scenario-two-equipment-identities",
+      "note": "Page states: the original field asset_code conflates a public model description and a unique physical unit; simply copying asset_code into both fields can create collisions, incorrect reservations and misleading history.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The split needs a totality analysis covering unit-vs-model records, many-to-one/one-to-many/unknown mappings, historical reservation links, the source revision proving each mapping, and records arriving during backfill.",
+      "section_key": "tycho.page.d00c6081ca664f619308712e245ef523#2-original-synthetic-scenario-two-equipment-identities",
+      "note": "Lists exactly these questions and ends: mappings that cannot be proven must be marked unresolved for domain review rather than silently defaulted.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A split of one field into two is semantically safe only if original cases map without ambiguity or loss; an additive schema can still be a semantic breaking change.",
+      "section_key": "tycho.page.d00c6081ca664f619308712e245ef523#1-distinguish-syntactic-change-from-semantic-change",
+      "note": "Table row for split one field into two requires original cases map without ambiguity or loss; the page warns that an additive schema can still be a semantic breaking change.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Equal source and target row counts do not prove semantic correctness; acceptance must check identity, semantic equivalence, unknown mappings, concurrent writes, checkpoints, replay and referential integrity.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+      "note": "Quote: a job that copies 10,000 source rows and produces 10,000 target rows can still corrupt meanings.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A naive string rename preserves row counts while silently making a model look like one reservable unit.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+      "note": "Worked original migration: a naive string rename preserves equal row counts while silently making a model look like one reservable unit.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The mapping is (tenant, old_id, mapping_revision) to (model_id, unit_id or UNKNOWN), reviewed; ambiguous records are quarantined; no ID is invented; two physical identities may not map to one unit without an approved merge rule.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+      "note": "S2 row of the proposed migration table.",
+      "basis": "observed"
+    },
+    {
+      "claim": "During backfill the new tables are projections, not independently writable authorities; post-snapshot updates reconcile from a durable checkpoint.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+      "note": "S3 row: new tables are projections, not independently writable authorities; per-tenant unique identities and history relations reconcile; resume from a durable checkpoint.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Without fencing, two writers can accept the same reservation on opposite sides of the cutover; a green source/target comparison at T0 proves nothing about T1.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+      "note": "Exact negative example in the worked migration.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A delete-and-recreate event arriving while the backfill processes an older snapshot can resurrect a deleted unit; applying events by receipt order is unsafe.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+      "note": "Needs a source-authoritative version or checkpoint ordering rule, or full identity-history reconciliation before S4.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A migration may legitimately stop on an unresolvable identity; a hold is a correct outcome, not failure to finish a technical change.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions",
+      "note": "Exact section text.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Retirement requires an approved residual-unknown policy among the recorded conditions.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+      "note": "Condition 2: migration completeness and an approved residual-unknown policy.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The identity mapping must be single-valued and versioned; positional COPY does not validate business meaning; record the mapping revision that produced each identity.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes",
+      "note": "Bounded pattern ownership notes for online data migration.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Name one authoritative writer or make the second write an idempotent reconciled projection; resume needs a replay window, duplicate-tolerant apply and an explicit start point; reconcile rows changed after the snapshot; a changed mapping is a new revision.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes",
+      "note": "Tycho rule plus checkpoint and replay notes in the pattern ownership section.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Every committed row must be readable by each supported binary and every write representable in both encodings; an additive column is not automatically compatible if a new required field is written before old writers stop or a backfill changes meaning.",
+      "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+      "note": "Tycho invariant in the pattern ownership section of the reader/writer page.",
+      "basis": "observed"
+    },
+    {
+      "claim": "If an old row has no valid mapping, the new reader must say unknown, not invent an ID.",
+      "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+      "note": "Exact sentence in the compatibility-window section.",
+      "basis": "observed"
+    },
+    {
+      "claim": "An additive field can still be semantically incompatible; old code may deserialize a fixed projection or misclassify absence as an allowed action.",
+      "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#1-check-the-real-combinations-including-old-readers",
+      "note": "Exact sentence after the reader/writer matrix.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A model name can describe many units; a physical unit has one stable identity and a series of reservation intervals; a foreign key proves existence, not authorization or interval non-overlap.",
+      "section_key": "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#1-model-business-identities-before-tables",
+      "note": "Domain example and foreign-key limitation.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Uniqueness and exclusion constraints enforce only the declared key or overlap rule; the restriction must encode the actual domain rule.",
+      "section_key": "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#2-a-snapshot-is-not-an-invariant",
+      "note": "Isolation and constraint table in the snapshot section.",
+      "basis": "observed"
+    },
+    {
+      "claim": "ItemId may be unique only within a library, not globally; a slot cannot be double-allocated within the authoritative reservation state owner.",
+      "section_key": "tycho.page.6bbeb9533a324758a1b970471c5b04e1#2-fictional-example-community-equipment-libraries",
+      "note": "Tenant-scoped identity and reservation invariant in the equipment-library example.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Recovery must verify logical reservation invariants and accepted operation IDs, and fence old writers and consumers before re-enabling writes.",
+      "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+      "note": "Proposed recovery steps 5 and 7.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Reservation acceptance requires no double allocation under simultaneous attempts and ambiguous responses, and no untracked divergent writers.",
+      "section_key": "tycho.page.2debc63415184b02ad0a144b2649c171#6-original-synthetic-decision-bursty-reservations",
+      "note": "Hard gates 1 and 4 in the bursty-reservations example.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Partial dual-write failure must be tested in both directions; divergence needs repair ownership, idempotent reconciliation and limits on acknowledgement before convergence; create-then-update must show the same version, not merely one row on both sides.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+      "note": "Synthetic dual-authority failure tests 1 and 3.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The invariant under test must be named: identity, value equality, operation order, referential consistency, side-effect exactly-once, or bounded freshness.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+      "note": "Four meanings of migration complete table and its closing sentence.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A row-count equality alone cannot establish which representation is authoritative at each phase.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+      "note": "Closing sentence of the data-authority decision guard: a row-count equality alone cannot answer those questions.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Never assume counts or full-backup metadata alone prove business equivalence; define one authoritative state at each transition.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr",
+      "note": "ADR in the decision-tree section of the data-migration playbook.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Refuse the migration when identity mapping is undefined, authoritative writes are not recoverable after rollback, or the comparison oracle covers only happy-path counts; require an authority ledger with timestamped old/new read and write cutovers.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+      "note": "Decision record and rejection criteria section.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Identical outputs can still reflect a shared semantic bug; backfills need live-write ordering; independent stores can diverge under retry races or partial failure.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+      "note": "Applicability and counterindications section.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The phased plan is: version contracts, establish old authority, dual-state writes, backfill snapshot IDs and checkpoints, compare old and new with temporal alignment, switch low-risk reads, invert writes under canary, decommission only after zero callers.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+      "note": "Modernization plan section.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Output equality is a relative parity guarantee, not independent verification of domain truth; it needs a comparison key, snapshot identity, temporal window, schema version and conflict adjudicator.",
+      "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth",
+      "note": "Output-parity case section.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Comparing row sets alone does not guarantee semantic correctness or zero downtime.",
+      "section_key": "tycho.page.357c2d162bd44f3aa06a995a1e691551#applied-m9-evidence-what-transfers-and-what-does-not",
+      "note": "Applied M9 evidence, output-parity case lens.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Compatibility is a relation between deployed reader and writer versions and persisted information, not a single green schema-compatible boolean.",
+      "section_key": "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission",
+      "note": "Purpose and mission of the mixed-version chapter.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A revert command is not recovery of acknowledged reservations or external effects; once new-only state is committed, restoring the old binary may violate business invariants.",
+      "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+      "note": "Rollback has a no-return boundary section.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Acceptance tests should include a concurrent identifier change while old and new reads occur, a crash during backfill followed by resume without mapping divergence, and restore or replay after contract.",
+      "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+      "note": "Proposed test items 4, 5 and 8.",
+      "basis": "observed"
+    }
+  ],
+  "abstain": false,
+  "confidence": "High on the mechanism and the required controls; medium on the exact first reservation failure because the book's catalogue scenario is synthetic and does not enumerate the reservation schema.",
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

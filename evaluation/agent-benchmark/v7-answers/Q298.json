@@ -1,0 +1,563 @@
+{
+  "task_id": "Q298",
+  "answer": "# Q298 - Microsecond re-expression and the representational status of simultaneity\n\n## Layers this question needs\n\n- **modeling-and-simulation (v12)**: required and primary. It is the only layer that states what an event time, a tie, a model contract, a verification case and a validation gate are.\n- **book**: used for the same v12 pages through the general layer and for one cross-layer analogue on timestamp ordering (v04, time and causality). No book-only claim is made about V12 execution semantics.\n- **atlas**: not used and not needed. The question is about model representation and verification, not pattern identity, coverage or ownership.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. What 'the same time' means inside the engine | 'simultaneity tie ordering priority equal timestamps'; '12-decimal rounding float equality'; 'unstable tie-breaking' | EV#why-event-order-is-part-of-the-model; EV#priorities; EV#failure-modes |\n| F2. How changing the unit changes the equality classes | 'microsecond timestamps sub-millisecond deadline rounding'; 'tolerance'; 'time unit resolution discretization modeling' | EV#failure-modes; SC#abstraction-is-a-choice-about-resolution |\n| F3. The priority order as a declared modeling choice | 'declared priority order'; 'test_ties_use_priority_then_insertion'; 'event order at equal time' | EV#priorities; MV#event-ordering; MV#the-test-matrix |\n| F4. Determinism versus invariance; what replay covers | 'run provenance seed reproducibility artifact'; 'deterministic replay'; 'cross-platform floats' | RR#what-replay-proves; RP#what-replay-proves; RE#determinism-rules |\n| F5. What the model contract must declare | 'model contract declared assumptions scope'; 'abstraction resolution'; 'verification cases observed result test path' | MS#required-structure; MS#failure-modes; SN#required-structure; MV#conservation |\n| F6. What the evidence labels and the run record must declare before citation | 'modeled synthetic evidence label claim status'; 'validation gates calibration'; 'evidence inflation'; 'verification and validation vocabulary' | VOK#the-five-layers; VOK#what-verification-and-validation-mean-here; VOK#calibration-statuses; VOK#evidence-statuses-used-in-decision-records; RP#required-fields; VG#v12-d-calibration; DR#failure-modes; DR#required-structure |\n\nSection handles in the tables expand to full keys in the evidence map at the end: EV = tycho.page.f914586e44ea034deaf2710c570328fc, SC = tycho.page.d860bc57cdfe6c6163912819f7679d17, MS = tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939, SN = tycho.page.dedc5f2d31912a9ba5f562a86009fda0, RP = tycho.page.201248045fa3cd67e617ce04a1c56feb, MV = tycho.page.621e495fcadc4849d2f21d55be4c52e4, RR = tycho.page.6c54ed1288a4f0806889865916dc8ccf, VG = tycho.page.6fd0d561e3e2900dc8b59a3011071cd2, RE = tycho.page.687d2196433c3b076d00c73144dad431, DR = tycho.page.c7a43944f1d41e810eec0d17ec33b85a, CO = tycho.page.d4822cc1e71c4f73896b7f6509f6daae, VOK = tycho.page.1a3833c3b4431428b25fa9896bcdd072.\n\n## Short answer\n\nRe-expressing a run in microsecond timestamps does not change what the engine computes. It changes what 'the same time' means, and in V12 'the same time' is not a modeled fact at all. The model supplies numeric event times in a declared unit. The engine rounds every scheduled time to twelve decimal places, compares the rounded values as floats, and breaks any remaining tie by a declared event priority and then by an insertion counter. 'Simultaneous' is the name of the equivalence class that this pipeline produces, not an assertion about the modeled system.\n\nThree consequences follow. First, the twelve-decimal constant is applied to the number, not to a physical interval, so the physical width of one equality class changes by the unit factor when the unit changes; float equality is also relative to magnitude, so a longer horizon shifts the class boundaries again. Second, the priority order is only consulted after time equality succeeds, so a change in equality classes changes the domain on which the declared priority order operates, and the composite ordering changes even though the priority constants were kept. Third, the final tie-break key, the insertion sequence, is engine bookkeeping produced by the scheduling history, so a newly created tie is resolved by an artifact of the run rather than by a modeled property. Determinism and replay detect none of this: the run can reproduce exactly and still be a different experiment.\n\nBefore such a run is cited, the model contract must declare the abstraction (time unit, state unit, boundary and resolution), an event-time equality rule or tolerance that is explicit about the resolution it implies, the tie-break order as a declared modeling choice, the invariants, the verification block (status, cases, observed result and test path), and the validity limits, assumptions and unknowns. The verification cases must re-establish equal-time ordering at the new unit, must separate a genuine tie from a rounding collapse at the tolerance boundary, must re-run the completion-versus-timeout race and the stale-event cases at sub-millisecond deadlines, must re-check conservation, and must replay deterministically. The run record must bind the new model and scenario hashes, engine version, seed, replications, input hash and result hash, and the citation must carry its evidence status, because a model change requires verification and validation again, a verified engine is not a validated system, and a replay match is a reproducibility check, not a truth check.\n\n## 1. The mechanism: V12 does not model simultaneity, it computes it\n\nThe event queue is defined by three ordered keys: time, priority, insertion sequence. The insertion sequence is a monotonically increasing integer, which is what makes the order total and deterministic (C1). Nothing in that definition refers to the modeled system; it refers to how the engine schedules and stores events.\n\nThe stakes are visible in the book's own example. A service completion at t=1.0 and a timeout at t=1.0 are the same timestamp. If the completion is processed first the request succeeds; if the timeout is processed first the request fails and may retry (C2). The resulting success rate, retry amplification and tail latency are downstream of a decision about which of two events at one instant goes first.\n\nThat decision is explicitly contingent: the priorities are 'a modeling choice, not a universal rule', and the property the book requires is that the choice be declared and tested (C3). So the tie-break is not discovered from the system; it is legislated for the model.\n\nThe equality relation itself is also an engine property. V12 rounds scheduled times to twelve decimal places and compares event times as floats; the book says this is sufficient for the synthetic scenarios and that a model with very small time units would need a declared tolerance (C4). The floating-point failure mode is stated in the same terms: events at 1.0 and 1.0000000001 are treated as equal or not equal without a declared tolerance. The book also names unstable tie-breaking, where two events at the same time depend on hash order, as a failure mode to be designed out (C5).\n\nSo the engine's notion of simultaneity is a four-part construction: a numeric value, a declared unit, a rounding quantum applied to that value, and an equality test on the rounded float. Only the first part comes from the model author.\n\n## 2. Why a unit change is not a formatting change\n\nThe team keeps three things constant: the twelve-decimal rounding, float equality, and the declared priority order. None of the three is unit-free, and that is the whole difficulty.\n\n**The rounding quantum is unit-relative.** The book says the engine 'rounds scheduled times to 12 decimal places' (C22, inference). Twelve decimal places of a value expressed in seconds is one picosecond. Twelve decimal places of the same physical instant expressed in microseconds is one picosecond divided by a million. Keeping the literal constant 12 while changing the unit therefore changes the physical width of the equality class by the unit factor. The constant did not change; its meaning did. This is exactly the case the book flags: 'a model with very small time units would need a declared tolerance' (C4).\n\n**Float equality is magnitude-relative.** Equality is exact on the stored float, and float spacing grows with magnitude. A long horizon expressed in microseconds produces values six orders of magnitude larger than the same horizon expressed in seconds, and the absolute spacing of representable values grows with them. The effective grid is therefore not the decimal quantum alone; it is the interaction of the decimal quantum with float spacing at the timestamp's magnitude (C22, inference). A single constant cannot describe the resolution of a run whose early and late timestamps sit at different magnitudes.\n\n**The tie-break operates on a changed domain.** The priority order is consulted only for events whose times compare equal (C1, C3). Changing the unit, and with it the equality classes, changes which pairs ever reach the priority and insertion-sequence branch. A function held constant over a changed domain does not preserve the composite behaviour. The declared priority order can be byte-identical and still route a different set of event pairs.\n\n**The horizon matters twice.** Because rounding happens when a time is scheduled (C24, inference), the rounded value, not the unrounded value, is what downstream arithmetic inherits: a retry deadline computed from a rounded timeout time inherits the quantization, and a long run with many scheduling steps accumulates it. And because float spacing widens with magnitude, a long run has a coarser absolute grid late in the horizon than early in it. The same unit therefore does not imply the same resolution across a run.\n\n**The final key is endogenous.** The insertion sequence is incremented as the engine schedules events, and the set of scheduled events is itself shaped by earlier tie resolutions: a retry's new timeout exists only because some timeout event fired first (C19, C23 inference). The tie-break key is thus a product of the run's history, not an attribute of the modeled system.\n\n## 3. Why simultaneity becomes a representational choice rather than a modeled fact\n\nA modeled fact should survive a change of representation that preserves the physical instants. Simultaneity in V12 does not. Whether two events are simultaneous is fixed by the unit, the rounding quantum, the float magnitude and the equality test; change any of them and the answer changes while the model's equations, parameters and seed stay identical.\n\nThe book supports the underlying epistemics directly. Resolution is treated as an abstraction decision, and a finer resolution is not automatically more faithful: 'a discrete-event model is not automatically more accurate; it can be wrong at a finer resolution' (C6). Reporting more decimal places than the input supports is a named failure mode, 'precision is not accuracy' (C7). A reviewable scope statement is required to carry an explicit Resolution line alongside the Validity line (C8). In other words, the book already treats granularity as a declaration that must be reviewed, not as a discovered property of the system.\n\nThe same lesson appears outside the simulation layer. In the book's ordering material, a logged timestamp can be earlier than a causally prior event, and sorting timestamps would invert the relationship; a total order is chosen by a declared authority rather than read off clocks (C21). Applied to simulation time: a timestamp comparison is a representation, and the ordering authority must be declared.\n\nTwo failure directions follow, and both are representational:\n\n1. **Collapse.** Two modeled instants that are genuinely distinct fall into one equality class. The engine then decides between them by event priority and insertion sequence, so the outcome is set by an implementation artifact.\n2. **Split.** Two modeled instants that are meant to coincide fail to compare equal because of a residue. The engine then orders them by a sub-quantum time difference, which is equally arbitrary, and the priority order is never consulted.\n\nNeither direction is visible from the model. The run is still deterministic (C14), still replayable (C13), and still passes the same equal-time test, because that test constructs simultaneous events directly rather than deriving them from a deadline race (C15). This is the precise sense in which simultaneity is a representational choice: the model never states it, and the engine only computes it.\n\n## 4. What the model contract must declare\n\nThe model contract is a strict, versioned object (C9, C10). For a microsecond re-expression, the following declarations are the minimum before the run can be read as evidence:\n\n1. **Abstraction, updated rather than inherited.** The contract's abstraction block declares 'time unit, state unit, boundary and resolution' (C9). A microsecond run needs time_unit = microsecond and a resolution statement that names the effective event-time grid and the equality rule, not merely the number 12. If resolution cannot be stated as a single number, state it as a function of timestamp magnitude or as an interval over the declared horizon.\n2. **An explicit event-time equality rule or tolerance.** The book's own condition for small time units is a declared tolerance (C4). The declaration must say what physical interval counts as 'the same time', whether equality is exact-on-rounded-value or within a tolerance, and over which magnitude band the rule is claimed to hold.\n3. **The calibration status of that tolerance.** Under V12's four input statuses, the tolerance is an assumed input: chosen for the model, not a measurement (C27). An assumed input repeated in a decision record does not become measured, and a deadline derived from arrival time plus timeout inherits the weakest status of its inputs unless the derivation itself is validated (C27). So the record must say that the microsecond deadline is derived from assumed inputs, not that it is a measured quantity.\n4. **The declared priority order and tie-break.** The event priorities and the insertion-sequence fallback must be recorded as a modeling choice (C3), and the record must say what the priorities order: event kinds, not request classes. The engine implements FIFO only, and request priority and preemption are not implemented (C16), so a reader must not infer request-class priority from the presence of event priorities.\n5. **Invariants restated for the new resolution.** The contract's invariants are 'the properties that must hold in every run' (C9). Request conservation is the load-bearing one (C30), but it is necessary and not sufficient: a tie that flips a completion into a timeout can leave the total intact while reassigning the outcome (C30).\n6. **A verification block that is populated, not asserted.** Status, cases, observed result and test path are contract fields, and a case must name the test that exercised it (C9, C10). A pass flag without a test path and an observed result is verification theater (C10).\n7. **Validity limits, assumptions and unknowns.** These are contract fields (C9). For this run they must at least state that the deadline magnitudes are synthetic, that the tolerance is assumed, and that the priority order is not validated against any real scheduler.\n8. **A new scenario identity.** The scenario contract's workload declares duration, warmup, time unit and arrival process, and the schema requires every field (C11). Changing the unit therefore changes the scenario record, not a display setting, and with it the scenario hash on which the run depends (C12).\n\nA version bump follows from the contract's own structure: the model identifier carries a semantic version (C9), and the scenario is a separate versioned object (C11). A representation change that can move a metric is not a patch.\n\n## 5. What the verification cases must declare\n\nVerification is not validation, and the book is explicit that a verified engine is not a validated system (C16). The cases below are the minimum set that makes the microsecond run citable; each must name its test path and its observed result, and each must state what it does not prove.\n\n1. **Equal-time ordering at the new unit.** The existing case schedules three events at the same time with different priorities and checks the processing order (C15); that test row is test_ties_use_priority_then_insertion. Re-expressing the run must re-run it with microsecond-unit timestamps and sub-millisecond event times, and record the observed processing order. The case proves the implemented order is deterministic; it does not prove the order matches a production scheduler (C15).\n2. **The tolerance boundary, from both sides.** A case where two events differ by exactly one grid step must show them ordered by time, not collapsed into a tie; a case where two events are intended to be simultaneous must show them comparing equal and reaching the priority tie-break. Without this pair, the run cannot distinguish a modeled tie from a rounding artifact, and the declared tolerance in the contract is untested.\n3. **The completion-versus-timeout race at sub-millisecond deadlines.** Deadlines are per-attempt (C19), so the race must be exercised for a first attempt and for a retry: timeout before completion, completion before timeout, and a stale completion after a timeout (C20). The existing test matrix already names test_timeout_before_completion and test_completion_before_timeout; those cases must be re-derived at the new unit, because the unit change can move the race.\n4. **Stale-event non-interference.** A stale event must never change the outcome, and the tests must include both orders (C20). This is the case that catches a tie flip that leaves the success count unchanged but corrupts the server pool.\n5. **Conservation under the new resolution.** The discrete-event invariant offered = completed + rejected + failed + in_system must be re-checked after every replication (C30). A resolution change can reclassify an attempt between timeout and completion without changing the offered total, so the outcome partition, not only the sum, must be asserted.\n6. **Deterministic replay at the new unit.** The replay test must rerun the same model, scenario and seed and compare the result hash, and it must state that a match is a reproducibility check, not a truth check (C13).\n7. **A declared non-claim set per case.** The verification block must repeat the limits: the service-time distribution is not fitted, the arrival process is not tested against a production trace, the queue discipline is FIFO only, and the sensitivity screen is not a full Sobol estimator (C16). These are limits, not completed checks.\n\n## 6. Evidence vocabulary: five layers, three statuses, forbidden inferences\n\nV12 keeps five evidence layers apart: source and claim evidence, model verification, calibration, simulation evidence and decision evidence (C26). The labels are not a ladder, and a later layer never upgrades an earlier one: a source can support a method without validating a model, and a model can be verified without being calibrated (C26). This is what makes the question answerable in layers rather than in one sentence. A microsecond run can be strong at the verification layer and empty at the calibration and decision layers at the same time.\n\nTwo rules from this vocabulary bear directly on the re-expression:\n\n- **A model change requires verification and validation again** (C25). Validity is purpose- and domain-dependent, and V12 has no operational validation against a real system; every model records that limit (C25). A unit change is a model change in the contract's own sense, so the previous run's verification evidence cannot be inherited by the new one.\n- **The three decision statuses are separate** (C29): model-verified, partially-verified or unverified for the engine and model; calibrated, partially-calibrated or uncalibrated for the inputs; decision-supported or insufficient-evidence for the outcome. A decision-supported outcome with an uncalibrated model is explicitly a conditional result that must state the condition and the measurements that would reverse it (C29).\n\nThe forbidden-inference list closes the remaining gap: a verified model is not a correct design, and a successful simulation is not a production prediction (C28). A microsecond run can therefore never be cited as evidence that sub-millisecond deadlines behave a certain way in production; at most it is evidence that the declared model, under the declared tolerance and tie-break, produced a stated result.\n\n## 7. What the run record and the citation must declare\n\nBefore a number from the microsecond run is cited, four things must be true of the record that carries it.\n\n1. **The run is regenerated, not reinterpreted.** The run record binds model and scenario SHA-256, engine name and version, seed base and replication count, an input hash, Python and platform, the invocation and a result hash; a change to either canonical input invalidates the run until it is regenerated (C12). A unit change changes the scenario, so the old run is stale by construction, and citing it under the new description would be hash drift.\n2. **The evidence statuses are separate.** The decision record must carry distinct statuses for model verification, calibration, simulation and sources (C18). Presenting a model-verified engine as a validated system is a named failure mode, evidence inflation (C18).\n3. **The calibration status is stated, not implied.** Every V12 model is uncalibrated and no production claim is made (C17); the validation gates do not establish that the models match a real system (C17).\n4. **The replay claim is bounded.** Replay proves that stored inputs, engine version and seed reproduce the stored metrics on the same platform family; it does not prove validity, measured inputs, or bit-identical floats on another platform (C13), and determinism is not cross-platform reproducibility (C14).\n\nThe citation should therefore read as: model X version Y, scenario Z (microsecond unit, horizon and warmup as declared), engine version, seed and replications, result hash, with verification status, calibration status, the declared tolerance and priority order, and the limits that still apply. Anything shorter is a number without a contract.\n\n## 8. Boundaries of this answer\n\n- The corpus contains no microsecond-unit run and no numeric tolerance. The book states the requirement ('would need a declared tolerance') but never names a value or a derivation (C4). Any specific tolerance proposed for such a run is the team's declaration, not a V12 fact.\n- The claims that the twelve-decimal constant is unit-relative, that float spacing is magnitude-relative, that the insertion counter is endogenous, and that a long run accumulates quantization are marked inference (C22, C23, C24). They follow from the book's own description of the engine but are not stated by any section.\n- I did not measure a metric change caused by a tie flip. The argument that a unit change can reverse an outcome rests on the book's own t=1.0 completion-versus-timeout example (C2) and on the declared tie-break, not on an observed run.\n- The search returned no V12 artifact records for these queries (the modeling layer's artifact list was empty), so I make no claim about any stored run's actual values. An empty artifact list is not proof of absence.\n- Nothing here is production evidence, independent review or owner acceptance. The validation gates page is a record of local checks and explicitly disclaims production behaviour (C17).\n\n## 9. Unknowns\n\n1. How the engine's twelve-decimal rounding is applied to a unit other than seconds is not stated in prose; the contract has no field for the rounding rule beyond the free-form resolution description. A team must therefore add an explicit resolution statement, and the schema does not force one beyond the field's presence.\n2. No page states whether the model or the scenario is the authoritative carrier of the time unit for a derived artifact. Both declare it (C9, C11), and the contract does not rank them; a change must update both or the hashes disagree.\n3. No verification case in the matrix tests a tolerance boundary; the equal-time case constructs exact ties and the timeout cases use second-scale deadlines. The coverage gap is real and is not filled by the existing passing matrix.\n4. Whether a sub-millisecond deadline in a microsecond run changes the p95 or success metric is unquantified here. The direction is a mechanism argument, not a measurement.\n5. The book does not state a cross-platform float policy beyond storing platform and Python strings (C13, C14), so bit-identical reproduction of a microsecond run across platforms is unproven.\n\n## Evidence map\n\n| Claim | Section key | Status |\n|---|---|---|\n| C1 | tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model | observed |\n| C2 | tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model | observed |\n| C3 | tycho.page.f914586e44ea034deaf2710c570328fc#priorities | observed |\n| C4 | tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes | observed |\n| C5 | tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes | observed |\n| C6 | tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution | observed |\n| C7 | tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope | observed |\n| C8 | tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed | observed |\n| C9 | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure | observed |\n| C10 | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure; #failure-modes | observed |\n| C11 | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure | observed |\n| C12 | tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields; tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract | observed |\n| C13 | tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves; tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves | observed |\n| C14 | tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules | observed |\n| C15 | tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering; #the-test-matrix | observed |\n| C16 | tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation; #what-is-not-verified | observed |\n| C17 | tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration; #what-the-gates-do-not-establish | observed |\n| C18 | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes; #required-structure | observed |\n| C19 | tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle | observed |\n| C20 | tycho.page.f914586e44ea034deaf2710c570328fc#stale-events | observed |\n| C21 | tycho.page.d4822cc1e71c4f73896b7f6509f6daae#engineering-walkthrough-wall-clock-order-cannot-prove-causality-or-commit-order | observed |\n| C22 | tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes | inference |\n| C23 | tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model; #timeout-lifecycle | inference |\n| C24 | tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes | inference |\n| C25 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here | observed |\n| C26 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers | observed |\n| C27 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses | observed |\n| C28 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences | observed |\n| C29 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records | observed |\n| C30 | tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation | observed |\n\n## Search trail\n\nEvery search, page and read call used in this answer is recorded in evaluation/agent-benchmark/v7-logs/Q298.jsonl. Repeated rounds of searches on each facet added no new section beyond the set above, with one exception recorded honestly: the literal term 'microsecond' returned zero results in the modeling layer, so the resolution evidence was reached through 'tolerance', 'time unit resolution discretization modeling' and 'abstraction is a choice about resolution', and the vocabulary page was reached through the validator's required-anchor list rather than through search.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "V12's event order is declared as a total order over three keys: event time, then event priority, then an insertion sequence that is a monotonically increasing integer.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+          "quote": "The V12 event queue orders by time, then priority, then insertion sequence. The insertion\nsequence is a monotonically increasing integer, so the order is total and deterministic.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Two events that share a timestamp are outcome-relevant: a completion at t=1.0 and a timeout at t=1.0 produce success if the completion is processed first and failure plus a possible retry if the timeout is processed first.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+          "quote": "A service completion at t=1.0 and a timeout at t=1.0 are the same timestamp.\nIf the completion is processed first, the request succeeds. If the timeout is processed\nfirst, the request fails and may retry.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The priority order that resolves equal-time events is explicitly a modeling choice rather than a universal rule; what the book requires is that the choice be declared and tested.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+          "quote": "The priorities are a modeling choice, not a universal rule. A different system may need a\ndifferent order. The important property is that the choice is declared and tested.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The engine's event-time equality is float equality applied to times rounded to twelve decimal places, and the book states that this is sufficient for the synthetic scenarios while a model with very small time units would need a declared tolerance.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+          "quote": "**Floating-point equality.** Events at 1.0 and 1.0000000001 are treated as equal or not\n  equal without a declared tolerance.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+          "quote": "V12 rounds scheduled times to 12 decimal places and compares event times as floats. That is\nsufficient for the synthetic scenarios; a model with very small time units would need a\ndeclared tolerance.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Unstable tie-breaking is a named failure mode: two events at the same time depend on hash order.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+          "quote": "**Unstable tie-breaking.** Two events at the same time depend on hash order.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Resolution is treated as an abstraction decision, and a finer resolution is not automatically more accurate: a discrete-event model can be wrong at a finer resolution.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+          "quote": "A discrete-event model is not automatically more\naccurate; it can be wrong at a finer resolution.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "False precision is a named scope failure mode: reporting more decimal places than the input supports is precision without accuracy.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+          "quote": "**False precision.** A model reports four decimal places for an input measured to one\n  significant figure. Precision is not accuracy.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A reviewable scope statement carries an explicit Resolution line and an explicit Validity line, so the granularity and the domain are reviewable separately from the purpose and the boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+          "quote": "Resolution: event-level for individual latency; one request class; no priorities.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+          "quote": "Validity: synthetic arrivals and service times only; no production claim.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The model contract's abstraction block declares the time unit, state unit, boundary and resolution; its verification block declares status, cases, observed result and test path; and the contract also carries validity limits, assumptions and unknowns.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "abstraction: time unit, state unit, boundary and resolution.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "verification: status, cases, observed result and test path.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "validity_limits, assumptions and unknowns.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A verification case must name the test that exercised it, and a case marked pass without a test path or an observed result is verification theater that the strict schema can reject structurally but cannot detect as a false claim.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "A verification case must\nname the test that exercised it.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+          "quote": "**Verification theater.** A case is marked pass without a test path or an observed result.\n  The strict schema rejects the missing fields; it cannot detect a false claim.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The scenario contract declares the workload's duration, warmup, time unit and arrival process, and the schema requires every field, so the time unit is part of the scenario identity rather than a presentation detail.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "workload: duration, warmup, time unit and arrival process;",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "The schema requires every field.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A run record binds the model and scenario hashes, engine name and version, seed base and replication count, input hash, Python and platform strings, invocation and result hash, and a change to either canonical input invalidates the run until it is regenerated.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "provenance: model hash, scenario hash, seed base, replications, input hash, Python,\n  platform and invocation;",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "Replay recomputes it and\nfails if the model, scenario or engine output has drifted.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+          "quote": "A change\nto either input invalidates the run until it is regenerated.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Replay proves only that the stored inputs, engine version and seed reproduce the stored metrics on the same platform family; it does not prove that the model is valid, that inputs were measured, or that another platform will produce bit-identical floats, and a matching replay is a reproducibility check rather than a truth check.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+          "quote": "Replay proves that the stored inputs, engine version and seed produce the stored metrics on\nthe same platform family.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+          "quote": "that another platform will produce bit-identical floats.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+          "quote": "A replay that matches is a reproducibility check,\nnot a truth check.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Determinism is not the same as reproducibility across platforms, a different floating-point platform can change the last digits, and metric windows use the declared warmup and duration rather than a process clock.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+          "quote": "Determinism is not the same as reproducibility across platforms.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+          "quote": "a different floating-point platform can change the last digits.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+          "quote": "Metric windows use the declared warmup and duration, not the process clock.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "V12 has an explicit equal-time ordering test that schedules three events at the same time with different priorities and checks the processing order, and the book states that these tests prove the implemented order is deterministic and the timeout state machine self-consistent, not that the priority order matches a production scheduler.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+          "quote": "The event-order test schedules three events at the same time with different priorities and\nchecks the processing order.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+          "quote": "The tests do not prove that the chosen priority order matches a production scheduler. They\nprove that the implemented order is deterministic and that the timeout state machine is\nself-consistent.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+          "quote": "| Event order at equal time | test_ties_use_priority_then_insertion | pass |",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Verification is distinct from validation, so a verified engine is not a validated system; FIFO is the only queue discipline, request priority and preemption are not implemented, and the unverified items are recorded as limits rather than as completed checks.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "quote": "A verified\nengine is not a validated system.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "The queue discipline is FIFO only; priority and preemption are not implemented.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "These are recorded as limits, not as completed checks. A reader who needs one of them must\ncommission the corresponding evidence, not infer it from the passing matrix.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Every V12 model is uncalibrated, no production claim is made, and the validation gates do not establish that the models match a real system.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+          "quote": "Every model is uncalibrated. The model contracts list each parameter's evidence status and\nthe missing measurement. The decision records repeat the status. No production claim is made.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "They do not establish that the models match a real system.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Evidence inflation, presenting a model-verified engine as a validated system, is a named decision-record failure mode, and the decision record must carry separate evidence statuses for model verification, calibration, simulation and sources.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+          "quote": "**Evidence inflation.** A model-verified engine is presented as a validated system.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "evidence: model verification, calibration, simulation and source identifiers;",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Deadlines are per-attempt: the deadline is the arrival time plus the configured timeout, and a retry schedules a new timeout at the retry time plus the timeout, so a resolution change re-routes the completion-versus-timeout race for every attempt.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+          "quote": "The deadline is the arrival\ntime plus the configured timeout.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+          "quote": "A retry schedules a new timeout at the retry time plus the timeout.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Stale events are not deleted; they are resolved by checking request state when processed, a stale event must never change the outcome, and the tests include both a completion after a timeout and a timeout after a completion.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+          "quote": "A stale event must never change the outcome. The engine's tests include a completion after a\ntimeout and a timeout after a completion.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Outside the simulation layer the book makes the same point about timestamps generally: a logged timestamp can be earlier than a causally prior event and sorting timestamps would invert the relationship, and a total order is chosen by a declared authority rather than read off clocks.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d4822cc1e71c4f73896b7f6509f6daae#engineering-walkthrough-wall-clock-order-cannot-prove-causality-or-commit-order",
+          "quote": "B's timestamp is earlier than A's, but E's send causally precedes its receipt. Sorting timestamps would invert that relationship.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d4822cc1e71c4f73896b7f6509f6daae#engineering-walkthrough-wall-clock-order-cannot-prove-causality-or-commit-order",
+          "quote": "A total-order service or consensus can choose one sequence for a declared authority",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Inference, not a source claim: the twelve-decimal constant is applied to the numeric value rather than to a physical interval, and float equality is exact on the stored float, so changing the time unit or the timestamp magnitude changes the set of event pairs that compare equal and therefore changes which pairs reach the priority and insertion-sequence tie-break.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+          "quote": "V12 rounds scheduled times to 12 decimal places and compares event times as floats.",
+          "supports": "C22",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Inference, not a source claim: because the final tie-break key is an insertion counter incremented as the engine schedules events, and scheduling includes events that only exist after an earlier tie is resolved (for example a retry's new timeout), the tie-break key is endogenous engine bookkeeping rather than a modeled property.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+          "quote": "The insertion\nsequence is a monotonically increasing integer, so the order is total and deterministic.",
+          "supports": "C23",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+          "quote": "A retry schedules a new timeout at the retry time plus the timeout.",
+          "supports": "C23",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "Inference, not a source claim: because times are rounded when scheduled, the stored value rather than the unrounded value is what downstream arithmetic inherits, so a long run with many scheduling steps accumulates quantization and its effective resolution is not a single constant across the horizon.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+          "quote": "V12 rounds scheduled times to 12 decimal places",
+          "supports": "C24",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "Validity is purpose- and domain-dependent, and a model change requires verification and validation again; V12 has no operational validation against a real system, and every model records that limit.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+          "quote": "Validity is purpose- and domain-dependent. A model change requires verification and\nvalidation again.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+          "quote": "V12 has no operational validation against a real system. Every model records\n  that limit.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "V12 keeps five evidence layers separate (source and claim, model verification, calibration, simulation, decision), and the labels are not a ladder: a source can support a method without validating a model, and a model can be verified without being calibrated.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+          "quote": "A source can support a method without validating a model. A model can be verified without\nbeing calibrated.",
+          "supports": "C26",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+          "quote": "- **Model verification:** is the model implemented as specified? This is the layer of units,\n  conservation, boundary cases, event ordering and deterministic tests.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "Inputs carry one of four calibration statuses (measured, assumed, derived, unknown); an assumed input does not become measured by being repeated in a decision record, and a derived input inherits the weakest status of its inputs unless the derivation itself is validated.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+          "quote": "An assumed\ninput repeated in a decision record does not become measured. A derived input inherits the\nweakest status of its inputs unless the derivation itself is validated.",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+          "quote": "- **assumed:** a value is chosen for the model and is not a measurement.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "The forbidden-inference list rules out reading a verified model as a correct design and a successful simulation as a production prediction, because each inference crosses an evidence-layer boundary without the required evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "The following inferences are invalid in V12:\n\n- \"The model is verified, so the design is correct.\"\n- \"The source supports the pattern, so the simulation parameter is measured.\"\n- \"The simulation succeeded, so production will succeed.",
+          "supports": "C28",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "Each inference crosses a layer boundary without the required evidence. The decision record\nmay still be useful; it is useful as a bounded, conditional result, not as a certificate.",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "A decision record separates three statuses: model-verified, partially-verified or unverified; calibrated, partially-calibrated or uncalibrated; decision-supported or insufficient-evidence, and a decision-supported outcome with an uncalibrated model is explicitly a conditional result.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision record separates three statuses:\n\n- model-verified, partially-verified or unverified for the engine and model;\n- calibrated, partially-calibrated or uncalibrated for the inputs;\n- decision-supported or insufficient-evidence for the outcome.",
+          "supports": "C29",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision-supported outcome with an uncalibrated model is a conditional result.",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C30",
+      "text": "The discrete-event conservation invariant is offered = completed + rejected + failed + in_system, checked after every replication; conservation is necessary but not sufficient, because a model can conserve requests while assigning them to the wrong outcome.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+          "quote": "offered = completed + rejected + failed + in_system",
+          "supports": "C30",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+          "quote": "Conservation is necessary but not sufficient. A model can conserve requests while assigning\nthem to the wrong outcome.",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.d4822cc1e71c4f73896b7f6509f6daae#engineering-walkthrough-wall-clock-order-cannot-prove-causality-or-commit-order",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

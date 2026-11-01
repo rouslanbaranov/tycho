@@ -1,0 +1,243 @@
+{
+  "task_id": "Q238",
+  "answer": "# Why the conservation identity does not prove per-request outcome correctness\n\n## 1. Direct answer\n\nThe identity `offered = completed + rejected + failed + in_system` is a **census, not an assignment**.\nIt is one scalar equation over four counters, evaluated at the end of each replication. It says that\nthe four classes partition the offered requests at the measurement instant. It does not say, for any\nindividual request, that the class it landed in is the correct one.\n\nThe book states this limit in its own words on the page that defines the check: *\"Conservation is\nnecessary but not sufficient. A model can conserve requests while assigning them to the wrong outcome.\nThe timeout and retry tests check the outcome path separately.\"* So V12 does not treat the identity as\nan outcome proof; it treats it as one invariant among several, and it assigns outcome coverage to a\ndifferent family of checks.\n\nFour properties make the identity structurally unable to certify the assignment:\n\n1. **Invariance under redistribution.** A request recorded as `failed` instead of `completed` moves one\n   unit from one term to another and leaves the sum unchanged. Every misclassification, and every pair of\n   compensating misclassifications, satisfies the equation by construction.\n2. **Path blindness.** The identity records where requests ended, not how they got there. A completion\n   accepted after its deadline, a timeout that frees a server twice, or a completion that resolves a\n   retried request are all invisible as long as the terminal census adds up.\n3. **Counting-unit blindness.** It counts the model's `request` unit, not business requests and not\n   attempts. A model that turns a retry into a second request keeps the identity balanced while inflating\n   success and cost.\n4. **An escape hatch.** `in_system` is a stock (waiting plus in service) at the horizon, so anything the\n   engine never terminated is counted as *inside*, not as wrong. Lost work is conserved, not detected.\n\n**What covers the outcome path instead:** the deadline-interaction tests (timeout before completion,\ncompletion before timeout), the stale-event tests (a completion after a timeout must not complete the\nrequest or free a second server; a timeout after a completion is ignored), the retry-budget tests\n(per-attempt deadline, terminal failure after the last attempt), the total event-order test\n(time, priority, insertion sequence), the boundary cases that assert degenerate outcomes (zero arrivals\nwith no fabricated success, zero queue capacity and full bulkhead with explicit rejection, one attempt\nwith no retry), the retry-amplification metric (attempts divided by offered requests), and deterministic\nreplay. These establish that the implemented state machine produces the *declared* outcome in declared\nregimes and does so deterministically. They do not establish that the outcome assignment matches a\nproduction scheduler, and V12 says so.\n\n## 2. Facet matrix\n\n| # | Facet | Query formulations used | Evidence |\n|---|---|---|---|\n| F1 | What the identity actually asserts (scope, sampling point, status) | \"discrete-event run conservation offered completed rejected failed in_system\"; \"accounting identity replication conservation check\" | model-verification#conservation; model-specification#required-structure |\n| F2 | Why a balanced total is blind to wrong assignment | \"conservation necessary but not sufficient wrong outcome\"; \"per-request identity relation among averages aggregate\" | model-verification#conservation; queue-and-resource-models#little-s-law-and-its-finite-window-caveat; stock-flow-vs-stock-to-flow#where-the-model-fails |\n| F3 | What the identity does catch, and where its detection power ends | \"trace event validity check extreme condition\"; \"conservation under retries double counting attempt\" | monte-carlo-reference-cases#case-1-conservation; model-verification#conservation; reference-engine-architecture#a-run-s-life-cycle |\n| F4 | Which checks cover the outcome path | \"timeout before completion stale completion outcome path\"; \"retry conservation attempts terminal failure\"; \"event ordering priority insertion tie-breaking deterministic\" | model-verification#the-test-matrix, #event-ordering, #boundary-cases; event-ordering-and-timeouts#timeout-lifecycle, #stale-events |\n| F5 | What those checks prove and what they do not | \"validation gates status verified synthetic evidence\"; \"model-verified uncalibrated evidence layer decision record status\" | validation-gates#v12-b-model-correctness; validation-gates#what-the-gates-do-not-establish; v12-volume#five-evidence-layers |\n| F6 | Residual gap, and what evidence would close it | \"per-request ledger request identifier outcome record trace\"; \"horizon requests still in system at the end of replication\" | model-verification#what-is-not-verified; monte-carlo-reference-cases#case-5-known-answer-checks-not-yet-implemented; model-verification#evidence-ledger |\n\nAll six facets were searched to saturation: the last two formulation rounds returned only documents\nalready in the ledger, and no additional V12 page bears on per-request assignment.\n\n## 3. Mechanism: why one equation cannot certify N assignments\n\n### 3.1 What the check is, exactly\n\nThe check is a declared model invariant, not a test of the run's content. The model contract carries an\n`invariants` block whose entries are \"the properties that must hold in every run\"; in the stored discrete-event\ncontract (edition/v12/models/checkout-des.json) the statement of request conservation is a membership\nclaim, every offered request is completed, rejected, failed, or still in the system at the horizon, and\nits check is a boolean over the totals.\nThat is the correct framing: the invariant says the four classes are exhaustive and mutually exclusive at\nthe census point. Exhaustive and mutually exclusive is a partitioning property, not a labelling property.\n\nThe check runs \"after every replication\", so it is a boundary check. It fires at the end of each\nreplication, not on every state transition. The stock-flow sibling model is stronger in this one respect\n(it checks at every integration step), which shows the book distinguishes sampling frequency; but even a\nper-step version of this identity would remain an aggregate, because the quantity it asserts is a sum.\n\n### 3.2 Four blind spots\n\n**Invariance under redistribution.** Consider one request that should have ended as `failed` but is\nrecorded `completed`: `failed` loses one, `completed` gains one, the sum is untouched. Consider the\nreverse error on another request in the same replication: the counters are *identical* to the correct\nrun. The identity therefore has one degree of freedom (the total) and the outcome assignment has N. No\nsingle-equation constraint can certify an N-valued assignment; it can only certify that the assignment\nstays inside a 4-simplex of fixed total.\n\nThe derived rates do not rescue this. Success, timeout and rejection rates are functions of the same\nfour counters, so a compensating pair of misclassifications is invisible in the rates as well as in the\nidentity. This is the sense in which the run-level evidence is *self-consistent* rather than *correct*.\n\n**Path blindness.** The identity is a terminal census. Event ordering, deadline expiry and retry are\ntemporal mechanisms: the same census arises from a legal path and from an illegal one that happened to\nend in the same place. The engine's own failure-mode list names outcomes that conservation would not\nsee: a timeout not cancelled on completion leaves \"a completed request later marked failed\"; a double\nrelease lets a timeout and a completion free the same server and push capacity above the configured\npool. Both preserve a plausible census; the first corrupts the classification, the second corrupts the\nresource state. Only the transition-level checks distinguish them.\n\n**Counting-unit blindness.** The retry discussion is explicit: a retry can create \"a second request in\nthe model but the same business request in reality, so success and cost are inflated\". When the unit of\ncount silently changes from business request to attempt, the identity can still balance exactly while\nthe metric it appears to underwrite is wrong. The one metric that separates the two units is retry\namplification, defined as total attempts divided by offered requests and reported for every\ndiscrete-event run. That metric, not the identity, is what exposes attempt-level double counting.\n\n**The in_system escape hatch.** `in_system` is defined as waiting plus in service, a stock at the\nmeasurement instant. In the stored checkout runs it is non-zero at the horizon. Any request\nwhose terminal event was dropped, mis-scheduled or never processed remains in this term and is counted\nas conserved. The identity therefore cannot distinguish a request that is legitimately mid-flight from\none the engine has lost; both are simply \"still inside\". A horizon-censored census is the weakest\npossible form of outcome evidence for exactly the requests whose outcome is unresolved.\n\n### 3.3 What the identity does catch\n\nNone of this makes the check useless; it makes it narrow. It catches creation and destruction of work:\na dropped request, a duplicate count, a negative stock, and the class of service-calculation bugs that\nproduce a gap. The reference-case page says a broken service calculation \"usually shows up as a\nconservation gap or a negative stock\", and the engine fails closed: a conservation failure aborts the\nrun and no partial record is written. That is a genuine and cheap guard against the coarsest errors, and\nit is why the check runs on every replication rather than once. It is a floor, not a ceiling.\n\n## 4. The checks that cover the outcome path\n\n| Check | What it pins down | Evidence |\n|---|---|---|\n| Timeout before completion | The timeout cancels the attempt, releases the server, counts the attempt as timed out, retries if budget remains, otherwise terminally fails | event-ordering-and-timeouts#timeout-lifecycle; model-verification#the-test-matrix |\n| Completion before timeout | The completion succeeds and the later timeout is ignored; a completed request is not retroactively failed | event-ordering-and-timeouts#timeout-lifecycle; model-verification#event-ordering |\n| Stale completion after timeout | A completion event after a timeout does not complete the request and does not free a second server | event-ordering-and-timeouts#stale-events; model-verification#event-ordering |\n| Retry budget and per-attempt deadline | A retry gets a new timeout at the retry time; attempts are consumed; the last attempt ends in terminal failure | event-ordering-and-timeouts#timeout-lifecycle; model-verification#boundary-cases |\n| Total event order | Ties are broken by priority then insertion sequence, so a same-timestamp race is decided by rule, not by hash order | event-ordering-and-timeouts#priorities; model-verification#the-test-matrix |\n| Boundary outcomes | Zero arrivals produces no fabricated success; zero queue capacity and full bulkhead reject; one attempt means no retry | model-verification#boundary-cases; monte-carlo-reference-cases#case-3-boundary-cases |\n| Retry amplification | Attempts are counted separately from requests, so attempt-level duplication is visible | retries-and-backpressure#retry-amplification |\n| Deterministic replay | The same model, scenario and seed produce the same result hash, so outcome assignment cannot vary run to run | model-verification#replay; reproducibility-and-replay#what-replay-proves |\n\nThe distinguishing property of these checks is stated plainly for the boundary family and holds for the\nwhole group: the tests \"assert the outcome, not merely that the run terminates\". A test that only\nasserts termination would be the same class of evidence as the identity; the outcome tests instead\nconstruct a configuration in which the correct answer is degenerate and assert that answer.\n\nThe strongest of them are the stale-event tests, because they pin a *negative*: after a timeout, a later\ncompletion must not produce a success and must not release capacity a second time. A broken state check\nfails that assertion directly. The event-order test is the only one that inspects the scheduler itself\nrather than a metric, which is why it carries the determinism claim.\n\n## 5. Boundaries and trade-offs\n\n**These are controlled-regime assertions, not per-request audits.** Each outcome test fixes a\nconfiguration in which the expected answer collapses to a simple value (success zero, timeout positive,\namplification one), then asserts that value. That is much stronger than conservation, because a global\nlabel swap changes the degenerate expectation and fails. It is still aggregate: a swap between two\nrequests inside one replication leaves every counter and every rate identical, and a misclassification\nconfined to a regime the tests do not instantiate is not exercised. The book does not claim otherwise;\nthe verification page lists the tests and their observed results, and records what is missing.\n\n**Verification is not validation.** The gate matrix records V12-B (units, conservation, boundaries,\nevent order) as implemented locally, and states that the engine tests \"do not prove operational\nvalidity\". The verification page's short answer says the coverage does not include \"operational\nvalidity, calibration or a production trace\". The volume's five evidence layers are separate by design:\na model-verified label does not imply calibration, and every V12 model is uncalibrated with assumed\nparameters. So even a fully passing outcome suite would support the conditional claim (\"under the\ndeclared inputs the engine implements the declared semantics\"), not the unconditional one (\"this run's\nrequests were correctly classified as a real system would classify them\").\n\n**Determinism is not correctness.** Replay proves the same inputs reproduce the same metrics on the same\nplatform family; the book says explicitly that it does not prove the model is valid. A deterministic\nengine can be deterministically wrong, and the identity plus replay would both pass.\n\n**The priority order is a modeling choice.** The tests prove the implemented order is total and\ndeterministic, and that the timeout state machine is self-consistent; they do not prove the order matches\na production scheduler. A different system may need a different order, and the correct response is a new\ncontract and new tests, not a flag.\n\n**When the answer would not hold.** If V12 persisted a per-request record and asserted that each request\nappears in exactly one terminal class *via a legal transition sequence*, the objection would weaken: the\nidentity would be accompanied by an outcome-conditioned constraint. V12 does not claim that today. The\nrun contract stores model, scenario and engine hashes, seeds, replications, metrics with standard errors\nand intervals, convergence, uncertainty, sensitivity and limitations; the invariant block stores a\nboolean, a check name and a detail string with the totals. The stored evidence is aggregate by construction, so a\nreader cannot re-derive the per-request assignment after the fact.\n\n**What would close the gap.** A trace-based verification case (Sargent supports traces and event-validity\nchecks as verification techniques, and the page cites him for exactly that) or a per-request terminal\nstate audit, plus a production trace for operational validity. The reference-case page records stronger\nknown-answer checks as future work rather than completed evidence, and the verification page tells the\nreader who needs an unverified mechanism to commission the evidence rather than infer it from the\npassing matrix.\n\n**A neighbouring check worth separating.** The identical-workload rule (same arrivals, duration, warmup,\nseed scheme and metric definitions across candidates) is what makes a *difference* between candidates\nattributable to the configuration. It is a comparability check, not an outcome check; it constrains the\nexperiment, not the per-request labelling.\n\n## 6. Evidence map\n\n| Claim | Section key |\n|---|---|\n| The DES check is `offered = completed + rejected + failed + in_system`, run after every replication, and a failure aborts the run | model-verification#conservation |\n| Conservation is explicitly necessary but not sufficient; timeout and retry tests cover the outcome path | model-verification#conservation |\n| The test matrix enumerates conservation, boundary, event-order, timeout and retry-conservation cases with results | model-verification#the-test-matrix |\n| Timeout tests assert both directions and that a stale completion does not free a second server | model-verification#event-ordering |\n| Boundary tests assert the outcome, not merely that the run terminates | model-verification#boundary-cases |\n| Verification does not cover operational validity, calibration or a production trace | model-verification#what-is-not-verified |\n| Replay is a determinism check, not a validity check | model-verification#replay |\n| The timeout lifecycle defines cancel, release, attempt accounting, retry and terminal failure | event-ordering-and-timeouts#timeout-lifecycle |\n| A stale event must never change the outcome; both stale directions are tested | event-ordering-and-timeouts#stale-events |\n| Failure modes include a timeout not cancelled on completion and a double release | event-ordering-and-timeouts#failure-modes |\n| Priority order is a declared modeling choice, tested for determinism only | event-ordering-and-timeouts#priorities |\n| In-system count is waiting plus in service, a stock at the instant | queue-and-resource-models#the-basic-quantities |\n| Little's law is a relation among averages, not a per-request identity | queue-and-resource-models#little-s-law-and-its-finite-window-caveat |\n| A retry can create a second request in the model but the same business request, inflating success and cost | stock-and-flow-vs-stock-to-flow#where-the-model-fails |\n| Retry amplification is total attempts divided by offered requests, reported per DES run | retries-and-backpressure#retry-amplification |\n| The legal transition set is the retry state diagram | retries-and-backpressure#a-retry-state-diagram |\n| Run records carry aggregate metrics and a conservation boolean, not a per-request ledger | run-and-result-provenance#required-fields |\n| Replay proves reproducibility, not that the model is valid | reproducibility-and-replay#what-replay-proves |\n| Invariants are declared properties that must hold in every run | model-specification#required-structure |\n| V12-B is implemented locally; passing tests do not prove operational validity; gates establish no production claim | validation-gates#v12-b-model-correctness; validation-gates#what-the-gates-do-not-establish |\n| All V12 parameters are assumed; the defensible claim is conditional | calibration-and-validity-limits#the-v12-input-table |\n| Model-verified does not imply calibrated; evidence layers are separate | v12-volume#five-evidence-layers |\n| A conservation gap or negative stock usually exposes a broken service calculation | monte-carlo-reference-cases#case-1-conservation |\n| A case marked pass without an observed result is a claim, not evidence | monte-carlo-reference-cases#a-reference-case-record |\n| Stronger known-answer checks are future work, not completed evidence | monte-carlo-reference-cases#case-5-known-answer-checks-not-yet-implemented |\n| The engine fails closed: a failed invariant aborts the run instead of writing a partial record | reference-engine-architecture#a-run-s-life-cycle |\n| The reference engine is not a production simulator | v12-c03-chapter#purpose-and-mission |\n\n## 7. Unknowns and confidence\n\n- **High confidence** in the core mechanism: the identity is a partition constraint over counts, and the\n  book itself states the necessary-but-not-sufficient limit and redirects outcome coverage to the\n  timeout and retry tests.\n- **High confidence** in what is stored: the run contract and the stored runs expose aggregate metrics\n  and a single conservation boolean plus a totals string, so no per-request audit is possible from the\n  persisted evidence.\n- **Medium confidence** in the exact discriminating power of each individual test. The book names the\n  cases and records pass results; it does not publish an assertion-level specification or a mutation\n  analysis. I read the named test module to confirm that the outcome tests assert degenerate metric\n  expectations rather than per-request records, and treat that as an artifact observation, not a book\n  claim.\n- **Open gap:** no source states how large a misclassification would have to be before the metric-level\n  tests detect it, and no source claims coverage of compensating within-replication errors. That absence\n  is itself the answer to the question; it should not be filled with an estimate.\n- **What would change the answer:** a per-request terminal-state assertion, an event-validity trace case,\n  or a production trace compared against the simulated outcome distribution. None of those is claimed in\n  the V12 material I read.",
+  "citations": [
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#evidence-ledger",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+    "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-3-boundary-cases",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+    "tycho.page.687d2196433c3b076d00c73144dad431#components",
+    "tycho.page.687d2196433c3b076d00c73144dad431#a-run-s-life-cycle",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+    "tycho.page.687d2196433c3b076d00c73144dad431#failure-modes",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+    "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission"
+  ],
+  "evidence": [
+    {
+      "claim": "The discrete-event conservation check is offered = completed + rejected + failed + in_system, evaluated after every replication.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+      "note": "Observed: the page states the DES identity and that the check runs after every replication; a conservation failure aborts the run."
+    },
+    {
+      "claim": "Conservation is necessary but not sufficient, because a model can conserve requests while assigning them to the wrong outcome.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+      "note": "Observed quote: 'Conservation is necessary but not sufficient. A model can conserve requests while assigning them to the wrong outcome. The timeout and retry tests check the outcome path separately.'"
+    },
+    {
+      "claim": "The test matrix names deadline, stale-event, retry-conservation and boundary cases and records their pass status.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+      "note": "Observed: rows include timeout before completion, completion before timeout, retry conservation, event order at equal time, zero queue capacity, zero arrivals; the page adds that a renamed test must update the contract path."
+    },
+    {
+      "claim": "The timeout tests assert that a completion before timeout succeeds, that a timeout before completion may retry, and that a stale completion does not free a second server.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+      "note": "Observed, quoted list of three assertions plus the caveat that this does not prove the priority order matches a production scheduler."
+    },
+    {
+      "claim": "Boundary tests assert the outcome, not merely that the run terminates.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+      "note": "Observed quote; the list includes zero arrivals with no fabricated success, zero queue capacity, full bulkhead and maximum attempts with terminal failure."
+    },
+    {
+      "claim": "Verification does not cover operational validity, calibration or a production trace.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+      "note": "Observed short-answer sentence and the explicit not-verified list (no fitted service-time sample, no production arrival trace, FIFO only)."
+    },
+    {
+      "claim": "Replay is an engine-determinism check, not a validation check for the model's assumptions.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay",
+      "note": "Observed: same model, scenario and seed must give the same result hash; stored run checked against current hashes."
+    },
+    {
+      "claim": "Sargent is cited as supporting traces and event-validity checks as verification techniques, but the page does not claim a V12 trace.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#evidence-ledger",
+      "note": "Observed: ledger says Sargent supports computerized-model verification, degenerate tests, extreme-condition tests and traces, and explicitly does not validate the V12 engine."
+    },
+    {
+      "claim": "The timeout lifecycle cancels the attempt, releases the server, counts the attempt as timed out, retries if attempts remain, otherwise terminally fails; the deadline is per attempt.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+      "note": "Observed; also states a request can spend up to three timeouts plus two backoffs in the system."
+    },
+    {
+      "claim": "A stale event must never change the outcome, and both stale directions are tested.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+      "note": "Observed: the completion after a timeout is stale; the timeout after a completion is stale; the engine checks request state when processing rather than deleting events."
+    },
+    {
+      "claim": "Named failure modes include a timeout not cancelled on completion (a completed request later marked failed) and a double release that exceeds the server pool.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+      "note": "Observed list; both are invisible to a terminal census but visible to transition-level checks or a capacity invariant."
+    },
+    {
+      "claim": "Event order is (time, priority, insertion sequence); priority is a declared modeling choice, not a universal rule.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+      "note": "Observed: priorities 0 for completion and timeout, 1 for arrival, 2 for retry; the important property is that the choice is declared and tested."
+    },
+    {
+      "claim": "A same-timestamp completion and timeout produce different results depending on processing order, so event order is part of the model, not an implementation detail.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+      "note": "Observed: the worked example distinguishes success from failure-and-retry at t=1.0."
+    },
+    {
+      "claim": "In-system count is waiting plus in service, that is, a stock at the measurement instant.",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+      "note": "Observed definition; time in system runs from first arrival to terminal outcome, which is not what the census records."
+    },
+    {
+      "claim": "Little's law is a relation among averages, not a per-request identity.",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+      "note": "Observed quote; the book already distinguishes aggregate relations from per-request identities, which is the same distinction at issue here."
+    },
+    {
+      "claim": "A retry can create a second request in the model but the same business request in reality, inflating success and cost.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+      "note": "Observed list item; this is counting-unit blindness, the case where the identity balances while the unit of count has changed."
+    },
+    {
+      "claim": "Conservation must hold at every step of the stock-flow model, with negative backlog refused.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+      "note": "Observed: the stock-flow sibling asserts the identity at every 0.1-second step, which shows the DES check is a coarser boundary check."
+    },
+    {
+      "claim": "Retry amplification is total attempts divided by offered requests and is reported for every discrete-event run.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+      "note": "Observed; this is the metric that separates attempts from requests, exposing attempt-level double counting."
+    },
+    {
+      "claim": "The legal outcome path is the retry state diagram: queued to in-service to completed or timed out; rejected at admission; timed out to retry wait or failed.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram",
+      "note": "Observed diagram and text alternative; this is the transition specification the identity cannot check."
+    },
+    {
+      "claim": "Backpressure without observation is a named failure mode: work is refused but not counted, so the success rate looks better than the user experience.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+      "note": "Observed; the reverse error (unrecorded rejection) would also leave a census that looks balanced only if the request is lost."
+    },
+    {
+      "claim": "The run record stores identifiers, hashes, seeds, replication count, metrics with standard error and confidence interval, convergence, uncertainty, sensitivity and limitations.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+      "note": "Observed field list; no per-request outcome array is part of the contract."
+    },
+    {
+      "claim": "Replay proves that stored inputs and seeds reproduce the stored metrics; it does not prove the model is valid or the inputs measured.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+      "note": "Observed; also names 'replay theater' as a failure mode when only metric names are compared."
+    },
+    {
+      "claim": "Invariants are declared properties that must hold in every run, and verification cases must name the test that exercised them.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+      "note": "Observed: the contract lists invariants and verification status, cases, observed result and test path."
+    },
+    {
+      "claim": "The validator can reject a missing test path or observed result but cannot detect a false verification claim.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+      "note": "Observed: four structural checks, plus the explicit limit that a source supporting a parameter is an editorial task."
+    },
+    {
+      "claim": "Only the candidate configuration varies across A/B/C; workload, duration, warmup, metric definitions and seed scheme are identical.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+      "note": "Observed; this makes cross-candidate differences attributable to configuration, a comparability property rather than an outcome check."
+    },
+    {
+      "claim": "A broken service calculation usually shows up as a conservation gap or a negative stock.",
+      "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+      "note": "Observed; defines what the identity is good at detecting (gross accounting faults)."
+    },
+    {
+      "claim": "Boundary cases assert the boundary outcome, not just that the run finishes.",
+      "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-3-boundary-cases",
+      "note": "Observed; case list matches the verification matrix (zero arrivals, zero servers, zero queue capacity, one attempt, full bulkhead)."
+    },
+    {
+      "claim": "A verification case without a test path is not a case, and a pass without an observed result is a claim, not evidence.",
+      "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+      "note": "Observed; the evidence discipline applied to the outcome checks themselves."
+    },
+    {
+      "claim": "Stronger known-answer checks (pi estimation, exponential variance, M/M/1 mean wait, interval coverage) are recorded as future work, not completed evidence.",
+      "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+      "note": "Observed; the gap is explicit and is not to be filled by inference."
+    },
+    {
+      "claim": "The engine checks invariants before aggregating and writing the record, and fails closed on a failed invariant.",
+      "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#a-run-s-life-cycle",
+      "note": "Observed: run life cycle checks invariants after the replications; failure modes include partial write and silent fallback."
+    },
+    {
+      "claim": "The engine aggregates metrics across replications, hashes the substantive record and only then writes it.",
+      "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#components",
+      "note": "Observed: metric aggregation is mean, standard error, confidence interval and convergence across replications, that is, aggregate evidence."
+    },
+    {
+      "claim": "V12-B is implemented locally and the engine tests do not prove operational validity; V12-F is a separate review gate.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+      "note": "Observed gate table; V12-A through V12-E implemented, V12-F separate, and a passing local check is not independent review, CI, owner acceptance or production validity."
+    },
+    {
+      "claim": "The V12-B scope is exactly units, conservation, boundaries, event order, timeout interaction, retry conservation and deterministic replay.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+      "note": "Observed; confirms the outcome-path checks are part of model correctness, not of validation."
+    },
+    {
+      "claim": "The gates do not establish that the models match a real system or that the source claims are true.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+      "note": "Observed list; includes no CI, deployment or production behaviour claim."
+    },
+    {
+      "claim": "Every V12 input is assumed, including arrival rate, service time, timeout, queue capacity and retry policy.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+      "note": "Observed table; the valid claim is conditional on declared inputs."
+    },
+    {
+      "claim": "A validity limit is a condition on the result's use, not a disclaimer appended to it.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+      "note": "Observed; if a decision needs the omitted mechanism, the model is outside its domain."
+    },
+    {
+      "claim": "A model-verified label does not imply calibration, and the five evidence layers are separate.",
+      "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+      "note": "Observed table: source and claim, verification, calibration, simulation, decision, each with a different owner."
+    },
+    {
+      "claim": "The reference engine is not a production simulator and the chapter does not claim a queue model predicts a production service.",
+      "section_key": "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission",
+      "note": "Observed chapter landing; the chapter fixes execution semantics and failure boundaries only."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

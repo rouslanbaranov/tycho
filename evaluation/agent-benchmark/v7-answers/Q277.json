@@ -1,0 +1,487 @@
+{
+  "task_id": "Q277",
+  "answer": "# Q277 — A second representation is a synchronization contract, not a second source of truth\n\n## Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1. Authority versus representation | `\"second representation\" source of truth`; `derived data authority`; `polyglot persistence multiple stores` | Cross-model comparison §7 and §Bounded pattern ownership notes; Polyglot Persistence card; CQRS card |\n| F2. Synchronization obligations | `derived store freshness bound reconciliation`; `serving rule projection serves traffic`; `cross-store reconciliation backfill` | Cross-model §Bounded pattern ownership notes; CQRS owner §3 and §Bounded pattern ownership notes; Online Data Migration card |\n| F3. Read gate and partial results | `partial results backfill projection`; `completeness flag partial results derived store`; `stale search index partial results` | Cross-model §Bounded pattern ownership notes; CQRS owner §3; Search index lifecycle §5 |\n| F4. Backfill ownership and recovery | `online data migration backfill checkpoint reconciliation`; `cross-store reconciliation backfill`; `graph store relationships traversal relational` | Online Data Migration card; Migration stages §3 and §Bounded pattern ownership notes; Derived relationships §5–§6 |\n| F5. When one store should remain | `single store meets requirement polyglot`; `materialized view freshness contract authority`; `storage model alternatives` | Polyglot Persistence card; Cross-model §8; Storage model alternatives §Purpose and §Engineering walkthrough; Derived relationships §6 |\n| F6. Store-specific failure modes | `search index derived authority freshness rebuild`; `columnar OLAP separate authority freshness`; `graph store relationships traversal relational` | Search index lifecycle §3–§5; Derived relationships §5–§6; Document/wide-column/analytical access §5; Cross-model §6 |\n\nLayers: `book` (owner pages) and `atlas` (pattern/decision cards). A limited `modeling-and-simulation` check returned no model, run or decision artifact for this question; the answer therefore rests on book prose and atlas cards rather than modeled evidence.\n\n## Short answer\n\nA second representation is a synchronization problem because the registration service has one write authority: the relational store that accepts commands and owns the registration invariant. On the stated design, the graph store, search index and columnar store are queryable copies loaded by separate jobs. They do not acquire authority merely by holding data; they acquire a consistency contract. Once three stores are loaded by three independent jobs, the system has three schemas, three failure modes, three rebuild costs and no transaction spanning them. The question is not \"which store is true?\" but \"who keeps each copy consistent with the authority, how stale may it be, and what happens when it is incomplete?\" [C1, C2, C9]\n\nThe evidence states the distinction directly: a single authoritative registration database plus a graph/search/OLAP projection is \"a valid possible design—but then there are *two data representations*, not two automatically consistent sources of truth\"; each store has \"its own schema, failure mode and rebuild cost\"; and a view that cannot be rebuilt from the authority \"is a second database without an owner.\" [C1–C3]\n\n## Mechanism: authority, copy and synchronization\n\n1. **One invariant owner.** The write model owns command admission, invariant checks and rejection semantics; the read model is a derived, read-only view. A projection must expose no write path for command-owned state, and a command handler must not depend on a lagging view for an invariant decision. [C1, C24]\n2. **Copies have their own lifecycle.** A projection can lag; its rebuild may be expensive; its schema may drift; its loader may crash. Those are not defects of the authority; they are properties of the copy. That is why the second representation creates a synchronization problem rather than a second source of truth. [C2, C5]\n3. **Independence is not atomicity.** Each store loaded by its own job means independent writes. Two stores updated by independent writes are not automatically atomic just because both schemas exist. The design needs one authoritative writer plus a versioned projection/reconciliation path, or it must reject the change. [C9]\n4. **Unrebuildable copies are unowned databases.** If a derived store cannot be rebuilt from the authority, it is not a projection; it is a second database without an owner. That is the architectural line between a useful read model and a competing source of truth. [C3]\n\n## What must be declared before any derived store serves reads\n\nThe serving rule must be written down before the projection serves traffic, not reconstructed after an incident. At minimum:\n\n| Declaration | What it must say | Evidence |\n|---|---|---|\n| Write owner and read-only status | Which store accepts commands; each derived store is read-only for command-owned state; command handlers do not read a lagging view for invariants | [C1, C24] |\n| Freshness bound | Maximum staleness and the caller-visible meaning of a stale read; \"eventual\" alone is not a bound | [C4] |\n| Serving rule | Freshness, rebuild, deduplication, schema migration and separate failure recovery are explicit | [C5] |\n| Rebuild and position | Rebuild reads the authority, records the applied position, and publishes the accepted schema and expected staleness | [C6] |\n| Deduplication | The deduplication key survives redelivery; the marker and derived write commit together | [C7] |\n| Schema compatibility | Projection, event and authority schemas have a compatibility window; unknown versions are rejected, not coerced | [C8] |\n| Reconciliation owner | One owner for cross-store reconciliation; independent jobs are not treated as atomic | [C9] |\n| Completeness and degradation | Partial or delayed results carry completeness flags and degraded routing; an unknown or lagging view is not served as current | [C10, C12, C13] |\n| Backfill acceptance | Mapping revision, checkpoint, replay window and reconciliation rule are recorded; post-snapshot changes are reconciled before completion | [C15, C16] |\n| Store-specific provenance | Search index generation and graph edge provenance are explicit and rebuildable | [C11, C14] |\n\nTwo declarations deserve emphasis because they are commonly skipped:\n\n- **A materialized view must record its source version or offset, refresh trigger and freshness contract.** A stale view is a derived read, not authority; a query that requires current state must use an authority path. [C25, C26]\n- **A half-migrated projection is unavailable as a current or complete view, not merely stale.** It may be exposed only as explicitly partial or degraded, never as current. The recovery sequence is: stop serving the affected projection as current, record the last applied position, reconcile conflicting or missing rows against the authority, rebuild when the position cannot be trusted, and only then re-enable reads. [C10]\n\n## The scenario: a stalled graph backfill and partial search results\n\nThe graph backfill is a projection build, not an authority transfer. While it is stalled, the graph store is an incomplete projection. If the search view depends on that build, or shares its pipeline, the search view is incomplete too. Serving partial results as if the index were current is not \"eventual consistency\"; it is a half-migrated projection presented as a complete one. [C10, C17]\n\nThat is a contract breach, not a cosmetic lag. The search index is a derived search artifact, not a replacement for the canonical source and its version lock, and its pipeline must handle partial failures and rollback/rebuild. A query that needs a newer position must wait, reroute or fail; an older row must never pass as current. [C11–C13]\n\nThe acceptable behaviors are:\n\n- do not serve the affected search view until the graph/backfill position is reconciled and the index is rebuilt;\n- serve it only with an explicit completeness flag and degraded routing, routing integrity-sensitive queries to the relational authority;\n- fail the query rather than return an older or partial row as current.\n\nSilently returning partial results is the worst option because it converts a known synchronization gap into an unknown correctness gap for the caller. The missing reconciliation owner is the second failure: without a named owner, no one is responsible for detecting the stalled backfill, deciding whether the projection is trustworthy, or re-enabling reads after repair. [C9, C10, C17]\n\n## When the single store should have been kept\n\nThe single store should have been kept while it met the measured requirement. The polyglot card's hard contraindications are directly on point: reject when \"one store meets the requirement,\" when \"no authoritative owner exists,\" when \"cross-store consistency or reconciliation ownership is undocumented,\" or when the team cannot operate the additional store. [C18] Async read projections carry the same boundary: they are contraindicated when every read needs immediate consistency, when projection lag violates the contract, or when rebuild cost is unbounded. [C28]\n\nA single store with derived projections or query-time joins may be preferable when one engine meets the query shapes and the team cannot operate a second consistency contract. The safe selection process requires \"a simpler single-database alternative and the evidence that could reverse the decision,\" and says to start by profiling actual PostgreSQL query plans and workload; a single purpose-built projection is considered only if the evidence supports it. [C19, C20]\n\nThe decision boundary is therefore:\n\n- **Keep one store** while it answers the measured queries within their requirements.\n- **Add a derived store** only when a measured query class cannot be met by the one store, cross-store ownership and reconciliation are assigned, the four-part invariant (freshness, rebuild, deduplication, schema migration) and failure recovery are explicit, and the team can operate each store. [C18, C20]\n- **Reverse the choice** when coordination, migration and operational cost exceed the workload benefit. [C21]\n- **Keep a single-store escape hatch** for integrity-sensitive reads: the authority path remains available when a projection cannot meet the freshness requirement. [C25]\n\nOn the stated facts, the registration service already answered its measured queries from one relational store. That is precisely the condition under which polyglot persistence is contraindicated. The graph/search/columnar additions were not justified by a measured requirement, and no one owned reconciliation. The single store should have been kept until a measured query class failed its requirement and a named owner could operate the synchronization contract. [C22]\n\n## Store-specific reading\n\n- **Search index.** A derived search artifact, not the canonical source. Index update lag needs a version/freshness gate; partial results need completeness flags; duplicate canonical text is fixed by one source of truth and a rebuildable index. [C11, C12]\n- **Graph store.** Edges are derived claims. Record source identity/version, extraction method and date, confidence, edge freshness/deprecation and conflict-resolution ownership. A later source revision can leave an independently rebuilt graph serving an old edge. [C14]\n- **Columnar store.** Analytical scans have different access paths and may justify separate derived storage only after actual evidence. The columnar path carries a separate authority and freshness/ingest problem; it does not replace the transactional authority. [C23]\n- **Dashboards and search reads.** A query needing a newer position must wait, reroute or fail; an older row must never pass as current. [C13]\n\n## Evidence map\n\nThe formal claim-to-evidence ledger is the `claims` array. The key anchors are:\n\n| Claims | Section key | Role |\n|---|---|---|\n| C1–C3, C9, C10, C25, C26 | `tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes`; `tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes`; `tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness`; `tycho.page.5c7d91711de3463eba59be2b16c607e4#overview` | Authority, synchronization, serving rule, recovery, stale-view contract |\n| C18, C20, C21, C28 | `tycho.page.6a386512b280490da745f1ae2c416c58#overview`; `tycho.page.5c7d91711de3463eba59be2b16c607e4#overview`; `tycho.chapter.22fa23c6c7a6b0c29a52137bc67a00c9#entry-inventory` | Polyglot and CQRS fit, hard contraindications and reversal |\n| C9, C15, C16 | `tycho.page.480477bf68a84b33b01440df8a0ccc96#overview`; `tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle`; `...#bounded-pattern-ownership-notes` | Backfill, checkpoint, reconciliation and acceptance |\n| C11–C13 | `tycho.page.0ea71c3228744d0c99a3e4826b9167ad#3-lucene-indexing-and-search-clusters`; `#4-incremental-indexing-and-the-stale-citation-problem`; `#5-failure-and-decision-criteria` | Search index as derived artifact; partial results and completeness |\n| C14 | `tycho.page.64f398c0535345258b1fdf5eebbf4438#5-derived-graphs-and-provenance`; `#original-stale-edge-counterexample`; `#6-architecture-decision-and-falsifiable-benchmark` | Graph provenance and single-store-first |\n| C19, C20, C22 | `tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence`; `tycho.page.c75a11f9786442a5b5456f11c2412df4#purpose-and-mission`; `#engineering-walkthrough-four-storage-choices-with-disqualifying-gates` | Simpler single-store alternative; profile first; one writer plus projection |\n| C23 | `tycho.page.ee2dd008d4f445eaa9b20998f855a786#5-olap-time-series-and-graph-data`; `tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#6-cross-model-trade-off-matrix` | Columnar derived storage; separate authority |\n| C3, C26 | `tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory` | Materialized-view card: rebuild, freshness contract, not authority |\n\n## Boundaries and unknowns\n\nThis is pattern-level evidence, not a production measurement of the described service. The sources are public documentation and pattern pages, not a benchmark or an executed multi-store test. [C27] The recommendation is conditional on facts the scenario does not supply:\n\n- whether the search view depends on the graph store directly or merely shares a pipeline;\n- whether the search view has an authority fallback or a version-wait path;\n- the actual freshness requirement of the measured queries;\n- whether each store can be rebuilt from the relational authority;\n- whether any store also accepts writes, which would make it a second writer rather than a projection.\n\nIf any store cannot be rebuilt from the authority, the architecture has not merely a synchronization problem but an unowned second database. [C3]\n\nNo claim is made that polyglot persistence is always wrong. It is valid when distinct responsibilities have materially different access patterns, one store cannot meet a measured requirement, cross-store ownership is assigned, the four-part invariant and failure recovery are explicit, and the team can operate each store. [C18, C20]\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A second representation is not a second source of truth: the write model owns command authority, and the read model is a derived, read-only view; neither acquires authority merely by reading the other's tables.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+          "quote": "A single authoritative registration database plus a graph/search/OLAP projection is a valid possible design—but then there are *two data representations*, not two automatically consistent sources of truth.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+          "quote": "The write model owns command authority and the read model is a derived, read-only\nview; neither side may claim authority merely because it can read the other's tables.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+          "quote": "the write\nmodel remains the only authority for command-owned state.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Combining stores creates a synchronization problem because each store has its own schema, failure mode and rebuild cost, and a projection may lag.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "Each store has its own schema, failure mode and rebuild cost. A projection view\nmay lag; the response needs a freshness contract, and the write owner must be named.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A derived view that cannot be rebuilt from the authority is a second database without an owner, not a second source of truth.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+          "quote": "A view that cannot be rebuilt from the authority is a second\ndatabase without an owner.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+          "quote": "rebuild from the base tables rather than\ntreating the view as an authority.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Before a derived store serves reads, its owner must publish a freshness bound and the caller-visible meaning of a stale read; 'eventual' alone is not a bound.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "Tycho's rule: the owner publishes a freshness\n  bound and the caller-visible meaning of a stale read; \"eventual\" alone is not a bound.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Before traffic, the serving rule must define freshness, rebuild, deduplication, schema migration and separate failure recovery.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "Define freshness, rebuild, deduplication and\nschema migration explicitly. Write the serving rule down before the projection serves traffic.\nFailure recovery is separate and explicit.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Rebuild must read the authority rather than the projection and must record the position applied; the projection owner publishes the accepted schema, applied position and expected staleness.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "rebuild reads the authority, not the projection, and records the\n  position it applied.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+          "quote": "The projection owner publishes the event schema it accepts, the position it has applied and the\nstaleness callers should expect.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Deduplication must survive redelivery, and the deduplication marker must commit atomically with the derived write.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "the deduplication key survives\n  redelivery, and the marker and the derived write commit together.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Projection, event and authority schemas need a compatibility window; an unknown version must be rejected rather than silently coerced.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "projection, event and authority schemas each have a compatibility window, and an unknown\n  version is rejected rather than silently coerced.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Cross-store reconciliation must have an explicit owner; independent per-store write jobs are not automatically atomic, so one authoritative writer or an idempotent, reconciled projection is required.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "Dual-write ambiguity and partial\nmigration need an explicit reconciliation owner; a half-migrated projection is not a valid\nserving state.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes",
+          "quote": "Two tables or stores updated by independent writes are not automatically atomic\njust because both schema versions exist",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c75a11f9786442a5b5456f11c2412df4#engineering-walkthrough-four-storage-choices-with-disqualifying-gates",
+          "quote": "Use one fenced writer plus a versioned projection/reconciliation path, or reject the change.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A half-migrated projection is unavailable, not merely stale; recovery is to stop serving it, record the last position, reconcile or rebuild against the authority, and only then re-enable reads.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "stop serving the affected projection as current, record the last\n  applied position, reconcile conflicting or missing rows against the authority, rebuild when\n  the position cannot be trusted, and only then re-enable reads. A projection that is half\n  migrated fails the freshness contract and is unavailable, not merely stale.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A search index is a derived search artifact, not a replacement for the canonical source and its version lock; its pipeline must handle change detection, deletions, partial failures and rollback/rebuild.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#3-lucene-indexing-and-search-clusters",
+          "quote": "An index replica is a **derived search artifact**, not a replacement for the canonical source repository and its version lock.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+          "quote": "The indexing pipeline must explicitly handle change detection, tombstones/deletions, old-ID redirects, partial failures and rollback/rebuild.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Partial or delayed search results require completeness flags and degraded routing, and an unknown or lagging view must be represented explicitly rather than served as current.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria",
+          "quote": "Cluster shard unavailable | Partial or delayed results | Completeness flags, degraded routing and operational recovery",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+          "quote": "represent an unknown or lagging view explicitly rather than serving it as current.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A query that needs a newer projection position must wait, reroute or fail; an older row must never pass as current.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+          "quote": "A query needing a newer position waits, reroutes or\nfails; an older row must never pass as current.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Graph edges are derived claims: record source identity/version, extraction method and date, confidence, edge freshness/deprecation and conflict-resolution ownership; a later source revision can leave an independently rebuilt graph serving a stale edge.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.64f398c0535345258b1fdf5eebbf4438#5-derived-graphs-and-provenance",
+          "quote": "A graph constructed from source references should record:\n- source file/version or admitted document;\n- inference/extraction method and date;\n- confidence or evidence status;\n- edge freshness and deprecation/removal rule;\n- ownership of conflict resolution.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.64f398c0535345258b1fdf5eebbf4438#original-stale-edge-counterexample",
+          "quote": "A later source revision S2 removes the call, but an independently rebuilt relationship store still serves the S1 edge.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "A backfill must record the mapping revision, checkpoint, replay window and reconciliation rule, and a divergent or uncertain mapping must hold the transition.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview",
+          "quote": "record the mapping revision, checkpoint, replay window and reconciliation rule.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "Any divergent or uncertain mapping holds the transition.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Backfill acceptance is more than row totals: checkpoint durability, CDC offset/replay horizon, concurrent writes and post-snapshot changes must be reconciled before declaring the backfill complete.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "A job that copies 10,000 source rows and produces 10,000 target rows can still corrupt meanings.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "If backfill takes hours, it may read records while new writes occur.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes",
+          "quote": "persist the\ncheckpoint with the data commit where possible, record source and mapping versions, detect\nrows changed after the snapshot, and reconcile them before declaring the backfill complete.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Inference from the evidence: in the scenario, a stalled graph backfill leaves an incomplete projection; partial search results served as current are a half-migrated projection and breach the freshness/serving contract. They should be unavailable or explicitly degraded, not silently returned.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria",
+          "quote": "Cluster shard unavailable | Partial or delayed results | Completeness flags, degraded routing and operational recovery",
+          "supports": "C17",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "A projection that is half\n  migrated fails the freshness contract and is unavailable, not merely stale.",
+          "supports": "C17",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Polyglot persistence is contraindicated when one store meets the requirement, no authoritative owner exists, cross-store reconciliation ownership is undocumented, or the team cannot operate the additional store.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6a386512b280490da745f1ae2c416c58#overview",
+          "quote": "Reject when one store meets the requirement, when no\nauthoritative owner exists, when cross-store consistency or reconciliation ownership is\nundocumented, or when the team cannot operate the additional store.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "A single store with derived projections or query-time joins may be preferable when one engine meets the query shapes and the team cannot operate a second consistency contract; the safe selection must compare a simpler single-database alternative.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "A single store with derived projections or query-time joins may be preferable when one engine\ncan meet the query shapes and the team cannot operate a second consistency contract.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+          "quote": "A simpler single-database alternative and the evidence that could reverse the decision.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+          "quote": "Reject when one model meets both needs, when every read requires\nimmediate consistency with no version-wait or authority-read path, or when projection\nmaintenance has no owner.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "A specialized store is justified only by measured value: one store cannot meet a measured requirement, cross-store ownership is assigned, and the four-part invariant plus failure recovery are explicit; start by profiling actual query plans and workload.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6a386512b280490da745f1ae2c416c58#overview",
+          "quote": "one store cannot meet a measured requirement",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "Polyglot\npersistence is a fit when a specialized query engine buys measured value and the synchronization\ncontract is owned.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+          "quote": "Start by profiling actual PostgreSQL query plans and workload; consider a single purpose-built projection only if the evidence supports it.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Reverse the polyglot choice when coordination, migration and operational cost exceed the workload benefit.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6a386512b280490da745f1ae2c416c58#overview",
+          "quote": "Reverse the choice when coordination, migration and operational cost exceed the\nworkload benefit.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Inference from the evidence: on the stated facts, the relational store already answered the measured queries, so the added graph/search/columnar stores fail the polyglot good-fit and hard-contraindication test; the single store should have been kept until a measured query class could not meet its requirement and a named reconciliation owner existed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6a386512b280490da745f1ae2c416c58#overview",
+          "quote": "Reject when one store meets the requirement, when no\nauthoritative owner exists, when cross-store consistency or reconciliation ownership is\nundocumented, or when the team cannot operate the additional store.",
+          "supports": "C22",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.c75a11f9786442a5b5456f11c2412df4#purpose-and-mission",
+          "quote": "The first decision should identify the authoritative invariants and representative read/write queries; next, decide whether one data model can serve them or a separately maintained derived view is worthwhile.",
+          "supports": "C22",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+          "quote": "Start by profiling actual PostgreSQL query plans and workload; consider a single purpose-built projection only if the evidence supports it.",
+          "supports": "C22",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "A columnar analytical store is derived storage justified only after actual evidence; it carries a separate authority/freshness/ingest problem rather than replacing the transactional authority.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ee2dd008d4f445eaa9b20998f855a786#5-olap-time-series-and-graph-data",
+          "quote": "Those workloads have different access paths and may justify separate **derived** storage only after actual evidence.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#6-cross-model-trade-off-matrix",
+          "quote": "Columnar OLAP — ClickHouse | Aggregate scans over append-oriented high-volume data | Background merges, freshness/ingest architecture and separate authority",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The read side must expose no write path for command-owned state, and a command handler must not depend on a lagging view for an invariant decision.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+          "quote": "A projection must expose no write\npath for command-owned state, and a command handler must not depend on a lagging view for an\ninvariant decision.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "A stale view is a derived read, not authority; a query requiring current state must use an authority path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+          "quote": "A stale view is a derived read, not\nauthority; a query that requires current state must use an authority path.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "A materialized view must record its source version or offset, refresh trigger and freshness contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+          "quote": "A materialized view must record its source version or\noffset, refresh trigger and freshness contract.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "The evidence is pattern-level: public documentation and pattern pages, not a benchmark or an executed multi-store test.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+          "quote": "Public documentation accessed 2026-10-31; living pages, not a benchmark or\nan executed multi-store test.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "Async read projections are contraindicated when every read needs immediate consistency, when projection lag violates the contract, or when rebuild cost is unbounded.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.22fa23c6c7a6b0c29a52137bc67a00c9#entry-inventory",
+          "quote": "Reject when every read needs immediate consistency, when\nprojection lag violates the contract, or when rebuild cost is unbounded.",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+    "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+    "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes",
+    "tycho.page.c75a11f9786442a5b5456f11c2412df4#engineering-walkthrough-four-storage-choices-with-disqualifying-gates",
+    "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#3-lucene-indexing-and-search-clusters",
+    "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+    "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+    "tycho.page.64f398c0535345258b1fdf5eebbf4438#5-derived-graphs-and-provenance",
+    "tycho.page.64f398c0535345258b1fdf5eebbf4438#original-stale-edge-counterexample",
+    "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+    "tycho.page.6a386512b280490da745f1ae2c416c58#overview",
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence",
+    "tycho.page.c75a11f9786442a5b5456f11c2412df4#purpose-and-mission",
+    "tycho.page.ee2dd008d4f445eaa9b20998f855a786#5-olap-time-series-and-graph-data",
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#6-cross-model-trade-off-matrix",
+    "tycho.chapter.22fa23c6c7a6b0c29a52137bc67a00c9#entry-inventory"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

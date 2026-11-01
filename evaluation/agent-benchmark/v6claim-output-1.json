@@ -1,0 +1,105 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q201",
+      "core_claims": [
+        "Averaging per-instance p99 values is generally invalid: a sum and count can reconstruct a mean over compatible populations, but they cannot reconstruct an arbitrary high percentile, and a merged histogram requires compatible bucket boundaries.",
+        "An hourly mean of per-host means is not the fleet-wide mean unless weighted by observation counts, and a p99 computed from five-minute buckets cannot be averaged into the day's p99; the retained bucket schema bounds the precision of any reconstituted percentile.",
+        "Downsampling deletes resolution, so a daily or hourly rollup can hide a ten-minute queue crisis, and a p99 that appears improved after misconfigured downsampling is a measurement artifact rather than an improvement.",
+        "Retention must be chosen from the question being answered, such as real-time alerting, incident diagnosis, capacity trend or audit, and each tier must record what it can no longer answer after downsampling.",
+        "Before the tail claim is made, the histogram and quantile mathematics and the preserved bucket boundary must be verified, and the tail must be derived from data that still carries the resolution of the interval in question.",
+        "One recorded p99 without the rejected and timed-out populations cannot prove user experience, so explicit unknown and timeout states and an operation identity spanning retries must be measured at the right level."
+      ],
+      "optional_claims": [
+        "Expired retention is its own failure mode: a past incident looks clean because the samples vanished, so known retention limits must be recorded and long-lived source or audit evidence kept separately.",
+        "A scrape or export failure can make an empty time series read as full availability, so sample freshness, target health and explicit unknown data must be tracked alongside the error rate."
+      ]
+    },
+    {
+      "task_id": "Q209",
+      "core_claims": [
+        "An accepted record must not be silently rewritten in place: a later ADR states which earlier reasoning was superseded and by which changed facts, while the earlier record keeps its stable identity and a SUPERSEDED status with a pointer to its successor.",
+        "A record must carry a stable ID, title, responsible reviewer and date, the affected user journey, versions, exact scope and change trigger, known inputs and unknowns with source revision, alternatives including the retained design, and a hard-gate table.",
+        "It must also separate observed from hypothesized findings, state falsifiers and tests, list positive, negative and neutral consequences, and name transition and irreversible-effect gates.",
+        "Status must be explicit among PROPOSED, ACCEPTED, SUPERSEDED and DEFERRED with a review trigger so a proposal is never read as an approval; the worked example stays PROPOSED because no person or production team approved it.",
+        "A GitHub issue closed for documentation is not a business approval of an architecture.",
+        "A decision is also a stopping rule: unknown gate evidence leads to investigation, a failed gate excludes the candidate or forces explicit requirement renegotiation, and no feasible candidate, deferral or insufficient evidence are legitimate outcomes instead of a fabricated recommendation."
+      ],
+      "optional_claims": [
+        "The sensitivity reversal shows the mechanism: a subsequently confirmed hard requirement, separate execution principals and storage authorization, makes the previously preferred option fail a hard gate, and no weighted preference for lower complexity may override it.",
+        "The reversal is recorded as a versioned ADR with tested observations, uncertainty, explicit rejected alternatives and a revision trigger, not as an edited paragraph."
+      ]
+    },
+    {
+      "task_id": "Q217",
+      "core_claims": [
+        "A mergeable data type guarantees convergence, not the application invariant: with a limit of two seats and one existing approval, replicas P and Q each approve a different person while disconnected, each local state is valid, and the merged union contains three.",
+        "A CRDT label does not remove transport obligations: state-based designs need an associative, commutative and idempotent join over valid states, while operation-based designs need explicit delivery, deduplication and ordering assumptions.",
+        "Local acceptance, eventual incorporation and authoritative business completion are distinct stages, and the interface must expose all three when they differ.",
+        "Authority-dependent approvals, including finite-resource assignment, permissions and publication, must be held as pending commands and revalidated against the authority on reconnect, producing either authoritative completion or a visible conflict or rejection.",
+        "Last-writer selection can conceal an over-allocation after the fact but cannot undo an external action already performed, and clock order is not evidence of user intent."
+      ],
+      "optional_claims": [
+        "Reconnect exchanges missing changes or a compact state, acknowledges durable receipt separately from approval, and preserves rejected work for review without silently making it authoritative.",
+        "Tombstone and causal-context compaction need an argument that excluded replicas cannot reintroduce removed data, and a revoked offline client's wall-clock timestamp cannot establish that an edit predates revocation."
+      ]
+    },
+    {
+      "task_id": "Q225",
+      "core_claims": [
+        "A local tier duplicates data, so invalidating only the shared key leaves the local copy in place; every tier must either receive the invalidation or detect a missed one and bound how long a stale copy can be served.",
+        "A fill that began before the write can complete after the invalidation and restore the older value in the shared key, so a later reader can receive a value older than either tier's declared bound, and a TTL is not a monotonic-version or consistency guarantee.",
+        "A fill must carry the source version and must not overwrite a newer committed value, using a version guard or compare-and-set at the shared key, and a value should be promoted to the local tier only after the shared tier accepts that version.",
+        "Stale-while-revalidate requires an explicit bounded stale window, background refresh with a blocking fallback, and a block at the bound instead of continued stale serving; mandatory read-after-write is a hard contraindication.",
+        "Each tier needs a distinct role, a named freshness bound and an owner for promotion and invalidation, and the bound must be tested per tier including after a cold start and a rolling deploy."
+      ],
+      "optional_claims": [
+        "A versioned projection with replay and tombstone semantics, or bounded staleness accepted only for noncritical content with a defined maximum interval, are the alternatives when the fill race cannot be eliminated.",
+        "Tier divergence can serve different values from different processes, so version keys and measured invalidation propagation delay per path are needed, and the cache must not be served as authority for effect or authorization checks."
+      ]
+    },
+    {
+      "task_id": "Q233",
+      "core_claims": [
+        "Activity execution and completion recording are separate: an activity task can be lost after the activity function ran and the worker crashed, and it is then retried under the activity retry policy, so a confirmation email can be sent twice.",
+        "A retry carrying the same operation identity must not become a second application-level action, so the activity needs an idempotent effect identity, and exactly-once notification does not follow from a broker.",
+        "Recovery replays durable history, so workflow code must stay deterministic and versioned: an upgrade that changes which branches a recorded history would take changes the meaning of replay, and incompatible workflow upgrades are a named failure mode.",
+        "The guarantees depend on durable history persistence, idempotent activities, versioned workflow code and reliable timer and retry handling, not on the coordinator alone.",
+        "A completed workflow state records the coordinator's own bookkeeping, not proof that the external effect committed, so an ambiguous external effect must be held in an explicit unknown or repair state rather than marked complete."
+      ],
+      "optional_claims": [
+        "A compensation is a new business action that can itself fail, so it needs idempotent effect identity, retry and repair ownership, and a user-visible unknown state when the counter-effect cannot be proven.",
+        "Durable orchestration is conditional: one service and one local transaction are often simpler, and orchestration is justified only when a business operation spans independently owned effects with different failure and recovery boundaries."
+      ]
+    },
+    {
+      "task_id": "Q241",
+      "core_claims": [
+        "A hard constraint is a condition a candidate must satisfy, a soft constraint is a tradeable preference, and only a declared hard constraint eliminates a candidate; the checkout record applies no undeclared success threshold.",
+        "The checkout record declares cost per 1000 successes at most 3.0 and p95 at most 1.5 seconds as hard quantitative constraints, with operability as a non-quantitative constraint; C is eliminated by cost 3.63 and p95 1.769, while A and B both pass.",
+        "A's timeout rate of 0.0778 is not a declared constraint, so its success of 0.9218 and its p95 of 0.870 s keep it a passing candidate that wins on latency; B is preferred because the record prioritizes success of 0.9996 and cost per success of 1.34 over the latency difference inside the ceiling, and that prioritization is a decision rather than a simulation result.",
+        "Declaring a hard minimum success rate or a maximum timeout rate would make A fail the gate and remove it from the survivor comparison.",
+        "The recommendation remains conditional because the operability constraint is untested and requires an operational review."
+      ],
+      "optional_claims": [
+        "All three runs satisfy the conservation constraints that every offered request is accounted for and none is silently dropped, and all converge under the 0.02 relative-error rule; narrow confidence intervals do not make the synthetic inputs measured.",
+        "The scenario contract requires constraints to be recorded as hard, soft and non-quantitative, and a scenario with no constraints cannot support a decision record that claims to respect hard constraints."
+      ]
+    },
+    {
+      "task_id": "Q249",
+      "core_claims": [
+        "Boundary cases exist to expose a division by zero, a negative stock or an unbounded loop, and zero servers means no service with requests rejected or left in backlog according to the model, so clean termination is not the intended outcome.",
+        "The tests assert the outcome, not merely that the run terminates.",
+        "A verification case record needs an identifier, a description, the expected result, the observed result, a pass, fail or not-run status, and a test path; a case without a test path is not a verification case.",
+        "A case marked pass without an observed result is a claim, not evidence.",
+        "The matrix names the intended tests, including test_zero_boundary for the zero-arrival boundary and test_zero_capacity_boundary for zero queue capacity, and the actual file is tests/test_tycho_v12_engine.py, which a renamed test must update in the model contract's verification case path."
+      ],
+      "optional_claims": [
+        "The boundary set also covers zero arrivals with no fabricated success, immediate rejection when queue capacity is zero, explicit rejection at a full bulkhead, no retry with one attempt, and terminal failure after the last timeout at maximum attempts.",
+        "The model contract must name the test that exercised each verification case and record status, cases, observed result and test path, so a pass status cannot stand without that binding."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,396 @@
+{
+  "task_id": "Q290",
+  "answer": "# Q290 - A pass-only verification matrix, a copied expected value, and what a pass still does not establish\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. What the matrix actually records | `verification matrix model contract test path`; `test path expected value observed result`; `verification theater` | `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record`; `tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix`; `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes` |\n| F2. Oracle integrity (copied expected value) | `expected value copied from previous run reference output`; `moving target test can never fail`; `known-answer reference case` | `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes`; `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter`; `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented` |\n| F3. What each case must record | `Each verification case in the model contract has`; `run contract required fields provenance`; `seed base input hash result sha256` | `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record`; `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure`; `tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields` |\n| F4. What a pass establishes about the model | `verification versus validation`; `model verified invalid decision`; `conservation necessary but not sufficient` | `tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation`; `tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation`; `tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview` |\n| F5. What a pass establishes about a production scheduler | `production scheduler priority order`; `queue discipline FIFO priority preemption`; `arrival process production trace` | `tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering`; `tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified`; `tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics` |\n| F6. Acceptance and guardrails | `gates do not establish`; `model-verified label calibration`; `validator cannot detect false claim` | `tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish`; `tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers`; `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated` |\n\nLayers and search. This is a modeling-and-simulation question; its five required anchors are all V12 pages, which the index also exposes through the book layer. I searched the modeling-and-simulation volume with five distinct formulations, used the V12/C07 outline, followed `next_actions` and `related_ids`, and read every cited section in full, including all sections of `model-verification.md`. Two book-layer formulations returned no additional evidence, and no atlas result is relevant: the question is about the structure of verification evidence, not pattern coverage.\n\n## 2. Short answer\n\nA pass-only matrix is not verification evidence because it records attestations, not executions: with no per-case test path and no observed result, no reader can locate the case, re-run it, compare the output with an independent expectation, or audit the assertion. The copied expected value removes the only remaining comparison: it makes the case unfalsifiable, because the previous output, defects included, becomes the specification. Each case must record at minimum an identifier, a description, the expected result, the observed result, a pass/fail/not-run status and the test path, and for the record to be reproducible it must also carry run provenance (model and scenario hashes, seed, inputs, engine, environment) and a result hash that replay recomputes. A fully passing matrix still does not establish that the model is valid - verification is not validation, the inputs are uncalibrated, and invariants are necessary but not sufficient - nor that a production scheduler behaves like the simulated one, since the engine is FIFO-only, has no priority or preemption, omits dependency calls, transport and storage, and has no production trace or measurement.\n\n## 3. Why the matrix is not verification evidence\n\nThe model contract defines a verification case in operational terms, not in terms of a status column:\n\n> Each verification case in the model contract has: an identifier; a description; the expected result; the observed result; a pass, fail or not-run status; the test path.\n\nThe operative rule is equally direct: \"A case without a test path is not a verification case. A case marked pass without an observed result is a claim, not evidence.\" The presented matrix fails both conditions at once. It has pass statuses but no per-case test paths and no observed results. Under the contract's own definition the rows are not verification cases; they are statements that someone believes the checks were run. The contract's required field is `verification: status, cases, observed result and test path`, and \"A verification case must name the test that exercised it.\"\n\nA page-level pointer does not repair this. The book's own page says: \"The table names the intended tests; the actual test file is tests/test_tycho_v12_engine.py.\" One file name for fourteen checks says where tests are supposed to live; it does not say which test exercised which check, on which inputs, against which expected value, with which result. The same page's rule - \"A test that is renamed must update the model contract's verification case path\" - only makes sense if the path belongs to the case and is authoritative. A matrix that contains neither the per-case path nor the observed result has dropped the very fields that make the case checkable.\n\nWhy the path is load-bearing, mechanically:\n\n- **Locating.** Without a path, a reader cannot find the code that produced the pass.\n- **Re-execution.** Without a path and a command, the case cannot be run against the recorded inputs and environment.\n- **Change detection.** Without a path, a renamed or deleted test is indistinguishable from a passing one; the page has to warn that a rename must update the path precisely because the path is the identity.\n- **Assertion quality.** Without the test body, a reader cannot tell whether the test asserts the outcome or merely that the function returned - the contract names \"Asserting no exception\" as a failure mode: \"The test checks that the function returns, not that the result is correct.\"\n- **Audit.** Without the recorded observed result, a reviewer cannot check that the expected value was independent or that the recorded value came from this run.\n\nThe matrix also has no way to say \"not run\". The contract makes `not-run` a first-class status; a pass-only table collapses absent, skipped and failed-unknown checks into silence. A missing row is not a pass, and a green column is not coverage.\n\nFinally, a schema pass is not a truth pass. The contract's strict schema \"rejects the missing fields; it cannot detect a false claim\", and \"The validator cannot check that a source actually supports a parameter.\" The contract is \"a guardrail, not a reviewer.\" A matrix can therefore be schema-valid and still be verification theater; the fields create visibility, not proof.\n\n## 4. Why the copied expected value is not an oracle\n\nV12 names this exact failure mode: \"Reference to a moving target. The expected value is copied from the current output, so the test can never fail.\" The consequences change what the check can prove:\n\n- **Unfalsifiable.** If any output is accepted as the expectation, no execution can fail the case. A check that cannot fail carries no information.\n- **Defect inheritance.** If the previous run was wrong, the wrong value becomes the specification; the defect is locked in and re-certified on every subsequent run.\n- **Self-consistency instead of correctness.** The case now asks \"does the code reproduce its own last output?\" That is a determinism question. V12 keeps determinism and validation apart: \"Replay is a verification check for the engine's determinism. It is not a validation check for the model's assumptions.\"\n- **Regression blindness.** A behaviour change is \"passed\" as soon as the expectation is refreshed; the matrix stays green while behaviour moves.\n- **Column collapse.** If the expected value is copied from the observed value, the two columns are the same data twice; the comparison is a tautology dressed as a test.\n\nA valid expected value needs an independent basis: a specification derivation, an analytic or known answer, or a reviewed reference run with recorded provenance. V12 states the contrast: \"A reference case with a known answer catches some of these. It does not catch a model that is implemented correctly but mis-specified for the decision.\" The stronger known-answer suite is explicitly future work: \"V12 does not claim these checks. They are recorded as future verification work, not as completed evidence.\" The copied value therefore cannot be defended as \"the reference result\"; the reference is exactly what is missing.\n\nTwo related weaknesses compound a green matrix: \"Asserting no exception\" (the test checks that the function returns, not that the result is correct) and \"Coverage without power\" (a confidence-interval check uses too few samples to detect a real coverage error). The boundary tests set the correct standard - \"The tests assert the outcome, not merely that the run terminates\" - and the copied expectation is the limiting case of failing that standard.\n\n## 5. What each case must record\n\nThe contract minimum is six fields:\n\n- an identifier;\n- a description;\n- the expected result;\n- the observed result;\n- a pass, fail or not-run status;\n- the test path.\n\nFor that record to be evidence rather than a form, each case also needs:\n\n1. **Scope.** The check or invariant exercised, the model id and version, and the scenario and inputs used.\n2. **Expected value with provenance.** Who or what derived it (specification clause, analytic derivation, or reviewed reference run) and why it is independent of the run under test; plus unit and tolerance. Without provenance, the expected value is an assertion, and if it was copied from the output it is a tautology.\n3. **Observed value.** The actual metric or output, with unit, and the artifact that carries it (log, result record, result hash) - not a restated status.\n4. **Execution environment and provenance.** The run contract records id, version, model_id and scenario_id; engine name, version and deterministic flag; \"provenance: model hash, scenario hash, seed base, replications, input hash, Python, platform and invocation\"; metrics; convergence; uncertainty; sensitivity; limitations and `result_sha256`. \"The result hash is computed over the record without the hash field. Replay recomputes it and fails if the model, scenario or engine output has drifted.\"\n5. **Status.** `pass`, `fail` or `not-run`; not-run must be written down, not omitted.\n6. **Reproduction handle.** The exact test path and command, the runner and the date.\n7. **Review status, if claimed.** Who reviewed, when, and against which hashes; otherwise the case is self-checked only.\n\nThe list is not bureaucracy. The observed result turns a pass label into an execution record; the test path makes it re-runnable; the environment and hashes make the re-run comparable; the independent expected value makes the comparison meaningful. A case missing the observed result or the path is, by the contract's own words, not a verification case. A case with a complete form but a copied expected value is still not evidence, because the comparison cannot fail.\n\n## 6. What a passing matrix still does not establish\n\n### 6.1 About the model\n\nVerification is not validation. \"A model can be verified and still be invalid for a decision because its structure or data are wrong.\" \"A verified engine is not a validated system.\" The matrix can show that the program implements the declared equations and checks on the exercised paths; it cannot show that the equations are the right ones, that the structure matches the real system, or that the parameters are measured.\n\nThe scope is bounded by what was exercised: verification covers \"units, conservation, non-negativity, boundary cases, event ordering, timeout interaction, retry conservation and deterministic replay. It does not cover operational validity, calibration or a production trace.\"\n\nInvariants are necessary, not sufficient: \"Conservation is necessary but not sufficient. A model can conserve requests while assigning them to the wrong outcome.\" A run can balance its books while sending each request down the wrong path. The reference cases have the same limit: they \"exercise the implemented accounting, event order and sensitivity sanity, not the statistical calibration of the sampler.\"\n\nThe inputs are not calibrated: \"Every model is uncalibrated. The model contracts list each parameter's evidence status and the missing measurement. The decision records repeat the status. No production claim is made.\" The service-time distribution \"is not fitted to a real sample\" and the arrival process \"is not tested against a production trace.\" Status cannot be laundered by repetition: \"A parameter can change status only with new evidence. Repeating an assumed value in a decision record does not make it measured.\" The related failure mode - \"Assumed as measured. A parameter is labeled measured because it has a number\" - is exactly the misreading a green matrix invites.\n\nThe result is conditional, not descriptive: \"The valid claim is conditional: under the declared inputs, the model produces the reported result. The invalid claim is that the result describes a real system.\"\n\n### 6.2 About a production scheduler\n\nThe event-ordering tests are the closest the model gets to scheduler semantics, and they stop short: \"The tests do not prove that the chosen priority order matches a production scheduler. They prove that the implemented order is deterministic and that the timeout state machine is self-consistent.\"\n\nThe engine does not implement the mechanisms a production scheduler is usually judged on. \"The engine does not implement priority or preemption\"; the \"queue discipline is FIFO only; priority and preemption are not implemented\"; and the model \"does not represent dependency calls, network transport or storage.\" A passing matrix therefore says nothing about a scheduler that preempts, uses weighted or deadline priorities, depends on downstream calls, or is sensitive to transport latency and clock behaviour.\n\nThere is no production trace and no production measurement. The gates \"do not establish that the models match a real system\" and do not establish \"CI, deployment or production behavior\"; \"A passing local check is not independent review, CI, owner acceptance or production validity.\" So a green matrix cannot establish that a production scheduler dispatches in the same order, honours the same timeouts, retries under the same policy, has the same concurrency and queueing, or meets the modeled latency and throughput in deployment.\n\nThe labels are separate for a reason: \"The layers are separate. A `model-verified` label does not imply calibration.\" A passing matrix can coexist with an uncalibrated model and a conditional decision; it cannot upgrade either.\n\n### 6.3 About acceptance and governance\n\nA pass on a local check is not independent review, CI, owner acceptance or production validity; the gates \"do not establish that the decisions are accepted by the owner\"; and simulation results \"never promote a pattern to `sufficient`.\" A decision record carries model verification, calibration and simulation evidence as separate fields precisely so that a verified model is not mistaken for a calibrated or accepted one.\n\n## 7. Decision rule for the contract as presented\n\n1. Do not accept the matrix as verification evidence. Mark every pathless or observed-result-free case as not-run/unsupported, and write that down explicitly.\n2. Require the per-case test path, the observed result, the status and the run provenance before counting any case.\n3. Discard the copied expectation and re-derive it independently (specification, analytic known answer, or reviewed reference with hashes); record the derivation and re-run.\n4. Treat schema validation as a guardrail: it rejects missing fields, not false claims.\n5. Keep the known gaps - arrival trace, service-time fit, priority and preemption, dependency calls, transport, storage, sampler calibration - as limits, and commission measurements before any production claim.\n6. Do not let a green matrix promote a pattern, a decision, or a production claim; those are separate gates and separate evidence layers.\n\n## 8. Evidence map\n\n| Claim | Section keys |\n|---|---|\n| C1 | `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record`; `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes` |\n| C2 | `tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix`; `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure` |\n| C3 | `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record` |\n| C4 | `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes`; `tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases` |\n| C5 | `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter`; `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented` |\n| C6 | `tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields`; `tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay` |\n| C7 | `tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation`; `tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay`; `tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness` |\n| C8 | `tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation`; `tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented` |\n| C9 | `tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration`; `tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified`; `tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses`; `tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes`; `tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview` |\n| C10 | `tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering`; `tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified`; `tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics` |\n| C11 | `tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish`; `tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#overview` |\n| C12 | `tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers`; `tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure` |\n| C13 | `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes`; `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated` |\n| C14 | `tycho.page.621e495fcadc4849d2f21d55be4c52e4#overview`; `tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified` |\n\n## 9. Unknowns, contradictions and limits\n\n- The scenario's actual contract file was not provided in this session. I answer from the V12 contract rules in the book snapshot, not from an inspection of that file. Whether its pass rows were executed or merely intended is exactly what the missing paths and observed results leave unknown.\n- The test file `tests/test_tycho_v12_engine.py` and the engine were not read or executed in this session. No test result, hash, seed or environment is asserted by this answer.\n- The cited pages are `source-linked`, but their frontmatter records `content_review.status = self-checked` and `content_verified_at = null`. That is metadata read through the CLI, not independent review.\n- The book's own matrix lists test names and one file while the contract requires a per-case path. That is a tension inside the artifact, acknowledged by the page itself: \"The table names the intended tests.\" I treat that table as navigation, not as an execution record.\n- The known-answer suite is explicitly not implemented (case 5), so even a repaired matrix could not establish sampler calibration without new work.\n- No production observation, measurement, independent review or owner acceptance exists in this evidence, and the validation-gate page says so.\n- Retrieval limits: search returns the best section per document and may truncate; zero results are not proof of absence. The conclusions rest on sections read in full, not on snippets.\n- The claim that a pathless matrix cannot be re-executed or audited is an inference from the contract's path and rename rules; the C2 evidence item carrying the rename rule is marked `inference` for that reason.\n- Scope of this answer: it explains what the presented matrix can and cannot support. It does not assert that the scenario's tests fail, that its model is wrong, or that a production scheduler would behave differently - only that neither the matrix nor a passing rerun of it can settle those questions.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A pass-only matrix without per-case test paths or observed results is not verification evidence: under the model contract, a case without a test path is not a verification case, and a pass without an observed result is a claim.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+          "quote": "A case without a test path is not a verification case. A case marked pass without an observed\nresult is a claim, not evidence.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+          "quote": "Each verification case in the model contract has:\n\n- an identifier;\n- a description;\n- the expected result;\n- the observed result;\n- a pass, fail or not-run status;\n- the test path.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+          "quote": "**Verification theater.** A case is marked pass without a test path or an observed result.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The per-case test path is the traceability and re-execution handle for a check; a page-level test-file name, test names in a table, and a rename rule do not substitute for the path that ties each case to the code that exercised it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+          "quote": "The table names the intended tests; the actual test file is tests/test_tycho_v12_engine.py.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+          "quote": "A test that is renamed must update the model contract's verification case path.",
+          "supports": "C2",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "- verification: status, cases, observed result and test path.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "A verification case must\nname the test that exercised it.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Each verification case must record an identifier, a description, the expected result, the observed result, a pass/fail/not-run status and the test path; not-run is a first-class status, so an omitted case cannot be read as a pass.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+          "quote": "Each verification case in the model contract has:\n\n- an identifier;\n- a description;\n- the expected result;\n- the observed result;\n- a pass, fail or not-run status;\n- the test path.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "An expected value copied from the previous run's output makes the check unfalsifiable: it is a moving target that can never fail, it freezes the previous output including any defect, and it does not assert that the result is correct.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+          "quote": "**Reference to a moving target.** The expected value is copied from the current output, so\n  the test can never fail.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+          "quote": "**Asserting no exception.** The test checks that the function returns, not that the result\n  is correct.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+          "quote": "**Coverage without power.** A confidence-interval check uses too few samples to detect a\n  real coverage error.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+          "quote": "The\ntests assert the outcome, not merely that the run terminates.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A valid expected value needs an independent basis such as a specification, an analytic known answer or a reviewed reference; V12 records the stronger known-answer checks as not yet implemented, so they cannot be counted as completed evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter",
+          "quote": "A reference case with a known answer catches some of these. It does not catch a model that is\nimplemented correctly but mis-specified for the decision.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+          "quote": "V12 does not claim these checks. They are recorded as future verification work, not as\ncompleted evidence.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A case is reproducible only with run provenance (model and scenario hashes, seed base, replications, input hash, engine, Python, platform, invocation) and a result hash that replay recomputes; a test name and a pass label carry none of that.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "- provenance: model hash, scenario hash, seed base, replications, input hash, Python,\n  platform and invocation;",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "The result hash is computed over the record without the hash field. Replay recomputes it and\nfails if the model, scenario or engine output has drifted.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay",
+          "quote": "The replay test runs the same model, scenario and seed twice and compares the result hash.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Passing verification shows that the program implements its specification on the exercised paths, not that the model is valid: a model can be verified and still invalid because its structure or data are wrong, a verified engine is not a validated system, and replay proves determinism, not assumptions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "quote": "A model can\nbe verified and still be invalid for a decision because its structure or data are wrong.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "quote": "A verified\nengine is not a validated system.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+          "quote": "The tests do not prove\noperational validity.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay",
+          "quote": "Replay is a verification check for the engine's determinism. It is not a validation check for\nthe model's assumptions.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Invariants are necessary but not sufficient: a model can conserve requests while assigning them to the wrong outcome, and the reference cases exercise accounting, event order and sensitivity sanity, not statistical calibration of the sampler.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+          "quote": "Conservation is necessary but not sufficient. A model can conserve requests while assigning\nthem to the wrong outcome.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+          "quote": "The current reference cases exercise the implemented accounting, event\norder and sensitivity sanity, not the statistical calibration of the sampler.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The model remains uncalibrated: inputs are assumed, the service-time distribution is not fitted and the arrival process is not tested against a production trace; repeating an assumed value does not make it measured, and the result is only conditional on the declared inputs.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+          "quote": "Every model is uncalibrated. The model contracts list each parameter's evidence status and\nthe missing measurement. The decision records repeat the status. No production claim is made.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "- The service-time distribution is not fitted to a real sample.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "- The arrival process is not tested against a production trace.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+          "quote": "A parameter can change status only with new evidence. Repeating an assumed value in a\ndecision record does not make it measured.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+          "quote": "- **Assumed as measured.** A parameter is labeled measured because it has a number.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+          "quote": "The valid claim is conditional: under\nthe declared inputs, the model produces the reported result. The invalid claim is that the\nresult describes a real system.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "About a production scheduler, a passing matrix proves determinism and timeout-state-machine self-consistency, not that the chosen priority order matches a production scheduler; the engine implements FIFO only, has no priority or preemption, and omits dependency calls, transport and storage.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+          "quote": "The tests do not prove that the chosen priority order matches a production scheduler. They\nprove that the implemented order is deterministic and that the timeout state machine is\nself-consistent.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "- The queue discipline is FIFO only; priority and preemption are not implemented.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+          "quote": "The engine does not implement priority or preemption.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "- The model does not represent dependency calls, network transport or storage.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A passing matrix does not establish production behavior or acceptance: the gates do not establish that models match a real system, CI, deployment or production behavior, or owner acceptance, and a passing local check is not independent review, CI, owner acceptance or production validity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "- They do not establish that the models match a real system.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "- They do not establish that the decisions are accepted by the owner.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "- They do not establish CI, deployment or production behavior.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#overview",
+          "quote": "A passing local check is not independent\nreview, CI, owner acceptance or production validity.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The evidence layers are separate: a model-verified label does not imply calibration, decision records carry model verification, calibration and simulation evidence as separate fields, and simulation results never promote a pattern to sufficient.",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "The layers are separate. A `model-verified` label does not imply calibration.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "Simulation results never promote a pattern to `sufficient`.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "- evidence: model verification, calibration, simulation and source identifiers;",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Schema and validator checks are guardrails, not reviewers: they reject missing fields but cannot detect a false claim, cannot verify that a source supports a parameter, and only prevent an obvious mismatch between label and record.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+          "quote": "The strict schema rejects the missing fields; it cannot detect a false claim.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+          "quote": "The contract is a guardrail, not a reviewer.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+          "quote": "The validator cannot check that a source actually supports a parameter.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+          "quote": "The contract only prevents an obvious mismatch between the label and the\nrecord.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The matrix covers only the exercised checks: verification does not cover operational validity, calibration or a production trace, and those gaps are recorded as limits to commission rather than to infer from a passing matrix.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#overview",
+          "quote": "It does not\ncover operational validity, calibration or a production trace.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "These are recorded as limits, not as completed checks. A reader who needs one of them must\ncommission the corresponding evidence, not infer it from the passing matrix.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#overview",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

@@ -1,0 +1,202 @@
+{
+  "task_id": "Q215",
+  "answer": "## 1. Direct answer\n\nThe monthly number is **not a p99**. It is the unweighted mean of per-instance, per-day p99 scalars. A percentile is a property of a distribution, not a linear statistic: the p99 of the pooled request population is not the average of the per-instance or per-day p99s. The average also gives each instance-day equal weight, while the pooled distribution weights each request; when the busiest instances or days have the worse tails, equal weighting dilutes them and the reported figure can sit below the latency threshold that the request population actually experiences. The error is not a guaranteed one-way bias: the same average can overstate the pooled p99 when slow instances or days carry little traffic, or when tail events are spread across different parts of the distribution.\n\nTo merge correctly, keep the **distributions, not the scalars**: per-bucket counts with known and compatible bucket boundaries (or the raw observations), together with observation counts/weights, the population definition, the observation window, metric identity and delta/cumulative temporality. Merge by summing counts into a common histogram (or pooling raw samples) and compute p99 **once** on the pooled distribution. Never average the p99 values, and never treat the average as a p99.\n\n## 2. Facet matrix\n\nLayer: **book** only. The question is about metric semantics and percentile aggregation; atlas cards and modeling-and-simulation artifacts are not evidence for it.\n\n**Section-key abbreviations used below:** LEG1 = tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection; LEG5 = tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss; RET5 = tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design; RET6 = tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics; MS2 = tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations; MS3 = tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness; SLI3 = tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level; TAIL1 = tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request; ARR3 = tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission; LL = tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity; BC6 = tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together.\n\n| # | Facet | Query formulations used | Evidence |\n|---|---|---|---|\n| F1 | Quantiles are non-additive: pooled p99 is not the mean of p99s | \"average of daily p99 values monthly percentile aggregation\"; \"percentiles cannot be averaged or added\"; \"global pooled histogram\" | LEG1, LEG5, RET5, MS2 |\n| F2 | Request weighting: equal weight per instance/day versus request-weighted population | \"request-weighted latency distribution across instances\"; \"observation counts\"; \"request volume weighting fleet latency\" | LEG5, LEG1 |\n| F3 | Observation boundary and fan-out: per-instance p99 is not end-to-end user latency | \"p99 tail latency percentile distribution\"; \"one percentile distributed request\" | TAIL1, SLI3 |\n| F4 | Temporal rollup and peak loss: daily p99 plus monthly averaging smooths bursts and can make p99 look better | \"downsampling\"; \"buckets\"; \"average latency hides tail percentile rollup\" | LEG5, RET5, RET6 |\n| F5 | Mergeable state: bucket boundaries plus counts, common schema, precision | \"merge latency histograms percentiles across instances\"; \"histogram bucket boundaries merge\"; \"quantile estimation known bucket boundaries\" | MS2, RET5, LEG5, SLI3 |\n| F6 | Population, temporality and validity boundaries: windows, timeouts, retries, delta/cumulative, direction of error | \"temporality\"; \"boundaries\"; \"denominators coordinated omission\" | MS3, ARR3, MS2, LEG1 |\n\n## 3. Mechanism and justification\n\n### 3.1 The mathematical reason: a quantile is not a linear functional\n\nLet each cell c = (instance i, day d) have n_c observations and CDF F_c. The pooled monthly CDF is\n\nF(t) = sum over c of n_c * F_c(t) / sum over c of n_c.\n\nThe monthly p99 is the smallest t with F(t) at least 0.99. The dashboard computes\n\nA = (1 / number of cells) * sum over c of Q_0.99(F_c).\n\nThere is no general identity A = Q_0.99(F). Equality is not general; it can hold in special cases, for example when all F_c are identical and all cells have equal n_c. The book states the same conclusion in several forms: \"averaging percentiles across groups is generally invalid\" (RET5); \"the p99 of a globally pooled histogram is not an average of per-instance p99 values\" (LEG1); and \"a p99 computed from 5-minute buckets cannot be averaged to obtain the day's p99\" (LEG5). A mean is a linear functional, so a sum and count can reconstruct it under compatible populations; a high-percentile distribution cannot be reconstructed that way (RET5). This is why the dashboard's monthly figure is not merely a slightly noisy p99: it is a different statistic.\n\n### 3.2 The weighting reason: \"most requests\" are not \"most instances\"\n\nEven if quantiles were linear, A weights every instance-day 1/(I*D), while the pooled distribution weights each observation equally through n_c. The book makes the analogous point for means: \"An hourly mean of per-host means is not generally the fleet-wide mean unless correctly weighted by observation counts\" (LEG5). A p99 average has the same defect, and the histogram counts are what carry the weights.\n\nAn invented arithmetic example makes the direction concrete. Suppose 99 low-traffic instances each receive 1 request and have p99 = 50 ms, while one busy instance receives 10,000 requests and has p99 = 500 ms. The equal-instance average is (99*50 + 500) / 100 = 54.5 ms. The pooled request distribution is almost entirely the busy instance, and its p99 is approximately 500 ms. The dashboard reports about 54.5 ms; the request population's tail threshold is about 500 ms. This is exactly the \"understate the latency most requests experience\" case: the one instance serving most requests is outvoted by many quiet instances. The numbers are illustrative arithmetic, not a measurement.\n\nThe reverse is equally possible: if the 500 ms instance is idle and the 50 ms instances serve the traffic, the equal-instance average can be far above the pooled p99. Thus the average is not guaranteed to understate; the direction depends on the correlation between traffic volume and tail latency, and on where the tail mass sits.\n\n### 3.3 The observation-boundary reason: per-instance p99 is not user end-to-end latency\n\nEach instance's p99 is a distribution at one observation point. A user request can touch several instances or dependencies, and the user experiences a maximum, sum or critical path, not one instance's marginal distribution. The book states that a percentile is a value of a distribution, not a single request's maximum, and that \"p99 of the parent is not the sum of p99 of each child; nor is the p99 of a parallel fan-out equal to the p99 of one child\" (TAIL1). Percentiles do not generally add. Therefore even a flawless merge of per-instance p99s would not reconstruct end-to-end latency under fan-out; the observation boundary has to be defined first (client-observed request, ingress-to-egress, queue wait, dependency call, or full job). A latency objective needs endpoint, time budget, observation point and outcome population (LEG1), and one recorded p99 without rejected or timed-out populations cannot prove user experience (SLI3).\n\n### 3.4 The temporal-rollup reason: two layers of equal weighting\n\nThe dashboard applies a second equal-weight layer: first each instance's day becomes one p99, then each day becomes one thirtieth of the monthly figure. Pooling requests would weight each day by its request count. A short incident is diluted by the normal days in the average, and the book warns that \"a daily series average can hide a 10-minute queue crisis\" (RET5) and that rolling raw 10-second latency buckets into hourly averages \"may erase evidence of short-lived user-visible incidents\" (LEG5). Misconfigured downsampling can even make \"p99 appear improved\"; the required check is to \"verify histogram/quantile mathematics and preserved boundary\" (RET6). The point is not that every short event necessarily changes a monthly p99; it is that the averaged daily p99 is not the p99 of the month, and the double rollup can hide the tail mass that a pooled calculation would retain.\n\n### 3.5 What must be kept so the distributions can be merged\n\nThe book's answer is a **histogram**, not a scalar percentile. A histogram is a bucket distribution of durations or sizes and supports estimable quantiles \"under known boundaries\" (MS2). To merge correctly, keep:\n\n1. **Per-bucket counts and bucket boundaries.** These are the sufficient state for a pooled empirical CDF: sum counts bucket by bucket, then compute p99 once. Deleting buckets removes resolution for later quantile estimation (RET5). Raw observations are even better; if raw data is retained, pool the raw values and compute the quantile directly.\n2. **A common bucket schema.** A histogram \"aggregated without compatible bucket boundaries can misrepresent the merged distribution\" (RET5). If schemas differ, re-bucket to a common (usually coarser) schema first; boundaries cannot be invented after the fact. Coarse buckets constrain the precision of the reconstituted percentiles (LEG5), so the merged figure must carry that precision limit.\n3. **Counts/weights, not just percentages.** The merged CDF needs n_c per bucket or per cell; that is what makes the result request-weighted rather than instance-weighted. Sums and counts can reconstruct a mean under compatible populations, but they cannot reconstruct an arbitrary high-percentile distribution (RET5), so for quantiles the counts must be kept per bucket, not collapsed to a mean.\n4. **Population and window semantics.** Keep the endpoint/operation class, observation point, start and end clock, observation window, and which events populate the histogram, including timeouts and never-started operations (ARR3, SLI3). Keep whether rejected, failed, retried or duplicate attempts are included; a success-only denominator can hide rejected operations. Keep whether values are raw, modeled, corrected, sampled or censored (ARR3).\n5. **Metric identity and temporality.** A series name, value and timestamp are not enough: keep unit, resource scope, metric kind, attribute identity, aggregation temporality, and proper start/end semantics (MS3). Delta and cumulative points cover different intervals; merging overlapping ranges, missing intervals or multiple writers without handling that can double-count or create gaps (MS3).\n6. **Raw data and correction assumptions.** If any coordinated-omission or missing-interval correction was applied, preserve both the raw data and the correction assumptions (ARR3). Corrected samples are modeled, not direct observations.\n7. **Retention tiers and their limits.** Record what each tier cannot answer after downsampling. If coarse histograms are retained, the chosen schema bounds the precision; the retention design should preserve the resolution needed for the p99 question (LEG5, RET5).\n\nA safe merge procedure is: define the population and window; normalize each source to a common bucket schema; sum counts per bucket and retain the total count; compute the p99 from the merged cumulative counts with a documented interpolation rule; if raw samples exist, pool them and compute the empirical quantile; validate a sample of merged results against raw data; and record the bucket resolution and sample size with the figure. If only p99 scalars remain, the distributions cannot be merged correctly; the honest output is \"not mergeable from this state\", not an average of the scalars.\n\n## 4. Boundaries and trade-offs\n\n- **The average can overstate as well as understate.** Equal weights over instances or days are not a one-way bias. If the slow cells are low-traffic, the simple average can exceed the pooled p99. A dashboard that always describes the average as conservative is wrong.\n- **Equality is a degenerate case.** If every instance and day has the identical distribution and equal counts, the average of p99s equals the pooled p99. Real fleets rarely satisfy that, and the equality is fragile under any change in traffic mix or bucket boundaries.\n- **An SLO stated as a proportion is different from a p99.** If the objective is \"99% of eligible requests under X ms\", the correct aggregate is a count of good and bad requests (sum numerators and denominators), not an average of p99s. The book's SLO material emphasizes eligible events, denominators and outcome populations. A percentile target is not interchangeable with a proportion target merely because both mention 99%.\n- **Histograms are approximate.** Bucket boundaries and interpolation determine the estimate; a p99 from coarse buckets is not exact. Re-bucketing to coarser common boundaries loses resolution, and deleted buckets cannot be recovered. A mergeable sketch could be an alternative only if its merge semantics and error bounds are documented; the inspected sections establish the histogram/counts requirement, not a particular sketch.\n- **Correct per-instance merging is still not end-to-end.** If requests fan out, a pooled per-instance histogram answers a per-instance question. User latency needs an end-to-end observation point, or a composition model with joint-distribution assumptions; percentiles do not generally add (TAIL1).\n- **Population choices change the answer.** Timeouts, rejected requests, retries, duplicate attempts, unknown outcomes and success-only denominators all change what the \"p99\" means. The same numeric value can describe different populations and is not evidence of user experience by itself (SLI3, ARR3).\n- **Window alignment and temporality matter.** Daily boundaries, rolling versus calendar months, time zones, delta versus cumulative points, overlapping ranges and missing intervals can all change the merge. A monthly figure assembled from misaligned windows is not the p99 of a defined month (MS3).\n- **Sample size and tail stability.** A p99 needs enough tail observations to be stable; the book warns there is no universally magic p99 sample count and that temporal correlation affects interpretation (ARR3). A merged histogram with very few observations in the tail can produce a precise-looking but unstable figure.\n- **A note on \"most requests experience\".** p99 is the slow-tail threshold, not typical latency; most requests are below it. The defensible claim is about the p99 of the request-weighted pooled distribution, not about the average request's latency. If the dashboard presents the averaged figure as \"typical\" latency, that is a second category error.\n\n## 5. Evidence map\n\n| Claim | section_key | Basis |\n|---|---|---|\n| Averaging percentiles across groups is generally invalid; deleting buckets removes resolution; sum and count cannot reconstruct an arbitrary high-percentile distribution | tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design | Book statement |\n| A histogram merged without compatible bucket boundaries can misrepresent the merged distribution; a daily series average can hide a 10-minute queue crisis | tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design | Book statement |\n| Misconfigured downsampling can make p99 appear improved; verify histogram/quantile mathematics and preserved boundary | tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics | Book statement |\n| The p99 of a globally pooled histogram is not an average of per-instance p99 values; a latency objective needs endpoint, time budget, observation point and outcome population | tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection | Book statement |\n| A p99 from 5-minute buckets cannot be averaged to the day's p99; an hourly mean of per-host means is not the fleet mean unless weighted by observation counts; coarse histogram schema constrains percentile precision | tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss | Book statement |\n| Histograms support estimable quantiles under known boundaries; averaging service p99 quantiles across replicas as samples is a failure; incompatible per-instance summary quantiles cannot be combined as one global quantile | tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations | Book statement |\n| Delta/cumulative temporality, overlapping ranges, missing intervals and multiple writers must be handled; identity includes unit, scope, kind, attributes, temporality and start/end | tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness | Book statement |\n| A histogram can support latency SLO computation only under its bucket/exemplar resolution and aggregation constraints; one recorded p99 without rejected/timed-out populations cannot prove user experience | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level | Book statement |\n| A percentile is a distribution value, not a request maximum; p99 of a parent is not the sum of child p99s and a parallel fan-out p99 is not one child's p99 | tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request | Book statement |\n| State the clock and observation point, which operations populate the histogram including timeouts and never-started work, whether values are raw/modeled/corrected/sampled, and why an aggregated p99 across heterogeneous tenants, operations or versions can hide a regression | tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission | Book statement |\n| A mean equation does not reveal the full latency distribution; a synthetic mean of 0.20 s coexists with a p99 of 2.10 s | tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity | Book statement and synthetic example |\n| Report median, p95/p99 and timeout outcomes by operation class rather than one aggregate, at a comparable offered workload and replica budget | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together | Book statement |\n| Equal-cell averaging gives each instance-day 1/(I*D); the pooled distribution weights by observation counts, so a high-traffic slow cell can be diluted and the average can fall below the pooled p99; the reverse can happen when slow cells are idle | LEG1, LEG5, RET5 | Inference from the book's non-additivity and weighting statements; the 99-fast/1-busy arithmetic is invented |\n| The average is not guaranteed to be either an upper or lower bound; equality is a degenerate case such as identical distributions with equal weights | LEG1, LEG5, RET5, MS2 | Inference from the definitions; no universal direction theorem is claimed |\n\n## 6. Unknowns and confidence\n\n- The dashboard's actual population is unknown: per-instance p99 may be computed over per-instance requests, all requests, successful requests only, or something else. If the populations differ, the monthly figure is not even a p99 of one defined population.\n- The traffic distribution and the latency-volume correlation are unknown. They determine whether the equal-weight average understates or overstates the pooled p99. The \"understate\" outcome is most likely when the busiest instances or days have the worst tails, or when the same slow events affect many instances.\n- The bucket schema is unknown. Without compatible boundaries and per-bucket counts, a correct merge is impossible; with only scalar p99s, the distributions cannot be recovered. The book does not prescribe a specific sketch or storage format.\n- Fan-out is unknown. If requests touch multiple instances or dependencies, even a correct per-instance merge answers the wrong observation boundary; an end-to-end histogram or a composition model is required.\n- No production dashboard, metric store or incident was inspected here. The book's examples are explicitly synthetic or conditional, and the legacy page's own evidence ledger disclaims executed measurements. Confidence is high in the conceptual conclusion (percentiles are not averageable; keep histogram counts/boundaries), high that equal weighting can understate a request-weighted tail, and only conditional on traffic and tail correlation for the direction and magnitude of the error.\n- The legacy metrics page (LEG1/LEG5) is retained prior source material pending full source-to-claim consolidation; the newer V09 metric pages state the same histogram and temporality constraints. The conclusion does not depend on the legacy page alone.\n",
+  "citations": [
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+    "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+    "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+    "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+    "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+    "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#8-exact-public-evidence-and-missing-checks"
+  ],
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "Quantiles are non-additive; pooled p99 is not the mean of per-instance/day p99s",
+      "queries": [
+        "average of daily p99 values monthly percentile aggregation",
+        "percentiles cannot be averaged or added",
+        "global pooled histogram"
+      ],
+      "evidence": [
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations"
+      ]
+    },
+    {
+      "id": "F2",
+      "facet": "Request weighting: equal weight per instance-day versus request-weighted pooled population",
+      "queries": [
+        "request-weighted latency distribution across instances",
+        "observation counts",
+        "request volume weighting fleet latency"
+      ],
+      "evidence": [
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection"
+      ]
+    },
+    {
+      "id": "F3",
+      "facet": "Observation boundary and fan-out: per-instance p99 is not end-to-end user latency",
+      "queries": [
+        "p99 tail latency percentile distribution",
+        "one percentile distributed request"
+      ],
+      "evidence": [
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level"
+      ]
+    },
+    {
+      "id": "F4",
+      "facet": "Temporal rollup and peak loss: daily p99 plus monthly averaging smooths bursts and can make p99 look better",
+      "queries": [
+        "downsampling",
+        "buckets",
+        "average latency hides tail percentile rollup"
+      ],
+      "evidence": [
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics"
+      ]
+    },
+    {
+      "id": "F5",
+      "facet": "Mergeable state: bucket boundaries plus counts, common schema, precision",
+      "queries": [
+        "merge latency histograms percentiles across instances",
+        "histogram bucket boundaries merge",
+        "quantile estimation known bucket boundaries"
+      ],
+      "evidence": [
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level"
+      ]
+    },
+    {
+      "id": "F6",
+      "facet": "Population, temporality and validity boundaries: windows, timeouts, retries, delta/cumulative, direction of error",
+      "queries": [
+        "temporality",
+        "boundaries",
+        "denominators coordinated omission"
+      ],
+      "evidence": [
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness",
+        "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "claim": "Averaging percentiles across groups is generally invalid; deleting buckets removes resolution and a sum/count cannot reconstruct an arbitrary high-percentile distribution.",
+      "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+      "note": "Quote: 'averaging percentiles across groups is generally invalid'; 'A sum and count can reconstruct the mean under compatible populations; they cannot reconstruct an arbitrary high-percentile distribution.'",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "A histogram aggregated without compatible bucket boundaries can misrepresent the merged distribution; a daily series average can hide a 10-minute queue crisis.",
+      "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+      "note": "Quote: 'a daily series average can hide a 10-minute queue crisis'; 'a histogram aggregated without compatible bucket boundaries can misrepresent the merged distribution.'",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "Misconfigured downsampling can make p99 appear improved; verify histogram/quantile mathematics and the preserved boundary.",
+      "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+      "note": "Failure table row: 'Misconfigured downsampling | p99 appears improved | Verify histogram/quantile mathematics and preserved boundary.'",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "The p99 of a globally pooled histogram is not an average of per-instance p99 values; a latency objective needs endpoint, time budget, observation point and outcome population.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+      "note": "Direct statements in section 1.",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "A p99 from 5-minute buckets cannot be averaged to the day's p99; an hourly mean of per-host means is not the fleet mean unless weighted by observation counts; coarse histogram schema constrains percentile precision.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+      "note": "Direct statements in section 5, including 'An hourly mean of per-host means is not generally the fleet-wide mean unless correctly weighted by observation counts.'",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "Histograms support estimable quantiles under known boundaries; averaging service p99 quantiles across replicas as samples is a failure; incompatible per-instance summary quantiles cannot be combined as one global quantile.",
+      "section_key": "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+      "note": "Table rows for Histogram and Summary with quantiles.",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "Delta/cumulative temporality, overlapping ranges, missing intervals and multiple writers must be handled; metric identity includes unit, resource scope, kind, attribute identity, temporality and start/end semantics.",
+      "section_key": "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness",
+      "note": "Direct statements in section 3.",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "A histogram can support latency SLO computation only under its bucket/exemplar resolution and aggregation constraints; one recorded p99 without rejected/timed-out populations cannot prove user experience.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+      "note": "Direct statements in section 3.",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "A percentile is a value of a distribution, not a request maximum; p99 of a parent is not the sum of child p99s and a parallel fan-out p99 is not one child's p99.",
+      "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+      "note": "Direct statements in section 1; percentile arithmetic explicitly limited.",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "For percentiled metrics, state the clock and observation point, which operations populate the histogram including timeouts and never-started work, whether values are raw/modeled/corrected/sampled, and why an aggregated p99 across heterogeneous tenants, operations or versions can hide a regression.",
+      "section_key": "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+      "note": "Five-item checklist in section 3.",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "A mean equation does not reveal the full latency distribution or guarantee an SLO; a synthetic mean of 0.20 s coexists with a p99 of 2.10 s.",
+      "section_key": "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+      "note": "Synthetic worked example in the section; not a measurement.",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "Report median, p95/p99 and timeout outcomes by operation class rather than one aggregate, at a comparable offered workload and replica budget.",
+      "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+      "note": "Reporting checklist in section 6.",
+      "kind": "book-statement"
+    },
+    {
+      "claim": "Equal-cell averaging gives each instance-day 1/(I*D), while the pooled distribution weights by observation counts; a high-traffic slow cell can therefore be diluted and the average can fall below the pooled p99, while the reverse can happen when slow cells are idle.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+      "note": "Inference from the weighting statement in LEG5 plus the pooled-versus-average statements in LEG1 and RET5; the 99-fast/1-busy arithmetic is invented illustration, not a measurement.",
+      "kind": "inference"
+    },
+    {
+      "claim": "The average of p99s is not guaranteed to be either an upper or a lower bound on the pooled p99; equality is a degenerate case such as identical distributions with equal weights.",
+      "section_key": "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+      "note": "Inference from the definitions of a quantile and a mixture; the book states the average is generally invalid but does not claim a universal direction.",
+      "kind": "inference"
+    },
+    {
+      "claim": "The metrics page's evidence ledger states that no real metric store, trace backend, remote-write test, compaction benchmark, user-level SLI, alert response or independent expert review was executed.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#8-exact-public-evidence-and-missing-checks",
+      "note": "Direct limitation statement in section 8.",
+      "kind": "book-statement"
+    }
+  ],
+  "abstain": false,
+  "layer_notes": "Book layer only; atlas and modeling-and-simulation are not evidence for this conceptual metric-semantics question.",
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

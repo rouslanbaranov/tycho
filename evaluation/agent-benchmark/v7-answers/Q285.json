@@ -1,0 +1,428 @@
+{
+  "task_id": "Q285",
+  "answer": "# A CI image pipeline is not a reproducible fleet\n\n## Short answer\n\nBuilding an image in CI proves that a candidate artifact was produced from some source revision. It does not prove that any production instance runs that artifact, that the instance's configuration and local state are recorded, that drift is detected, or that the fleet can be rebuilt and rolled back. Those are the four conditions the atlas attaches to immutable infrastructure: images and artifacts versioned and recorded, drift detected and remediated, state externalized, and replacement, rebuild and rollback automated. This team has an urgent in-place patch recorded in a ticket, a next deploy that builds from the repository without comparing what is running, manual drift remediation, several hosts with local state, and a rollback that re-runs the old patch script. That is a mutable, manually reconciled fleet with a CI pipeline in front of it. Calling it immutable because images are built in CI mistakes one release boundary for the operating model.\n\n**Layers used:** book and atlas. The question is about deployment operating models, per-object records and rollback evidence, so the modeling-and-simulation layer is not needed; no model, scenario, run or decision artifact is cited.\n\nThe rest of this answer separates the build boundary from fleet identity, states what each image, instance and rollback path must record, and gives the conditions under which configuration management on long-lived hosts is the better choice.\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| What \"immutable\" actually claims, and whether a CI image build is sufficient | \"immutable infrastructure image built CI reproducibility drift\"; \"mutable servers\"; \"server replacement state externalization\" | tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview; tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview |\n| Why a patched fleet diverges from the repository image | \"deployed digest source revision runtime acceptance\"; \"release identity deployed digest\"; \"inventory of running versions mixed fleet\" | tycho.chapter.8a2d2a79846d4567bb3d33957e19977f#decision-and-worked-result; tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries; tycho.page.3d13e39bb42a4458999803e40d7137cc#1-gitops-reconciles-desired-configuration-not-business-outcomes; tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#6-failure-matrix-and-discriminating-checks; tycho.decision.54dff384ace3468490c46b1d00b0dcf6#failure-matrix-and-required-counterevidence |\n| How drift should be detected, owned and remediated | \"configuration drift desired state reconciliation\"; \"configuration drift detection inventory actual state\"; \"drift remediation manual\" | tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull; tycho.page.49052c97325309f3830419b2290e521f#overview; tycho.page.b7913b53d5ea439697bc5236f902d76e#placement-and-topology-constraints |\n| What each image and each instance must record | \"golden image build provenance digest metadata\"; \"build ancestry image metadata rebuild\"; \"instance inventory asset record\"; \"configuration revision\" | tycho.page.faf8361106c2458b97e046319d7fa979#2-workflow-and-runner-topology; tycho.page.faf8361106c2458b97e046319d7fa979#3-provenance-reproducibility-and-signatures; tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects; tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity; tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote; tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract; tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope |\n| What a rollback path must record, and when image rollback is unsafe | \"rollback previous image redeploy patch script\"; \"rollback is not restore data\"; \"snapshot backup restore state rollback\" | tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview; tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think; tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair; tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure; tycho.page.3d13e39bb42a4458999803e40d7137cc#4-release-identity-and-evidence-gates; tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#5-progressive-promotion-and-stop-conditions |\n| When configuration management on long-lived hosts is the better choice | \"configuration management long-lived hosts\"; \"mutable servers\"; \"immutable infrastructure alternative\"; \"explicit downtime tested restore\" | tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview; tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview; tycho.page.49052c97325309f3830419b2290e521f#overview; tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs; tycho.page.1e89567050974052b13ba62b3b44484f#7-alternatives-and-the-conditions-that-reverse-a-choice |\n\n## 2. Mechanism: why building images does not make the fleet reproducible\n\n### 2.1 CI controls one release boundary, not the fleet\n\nThe book separates source revision, build execution, artifact identity, promotion and runtime acceptance. A successful pipeline run does not prove that the intended artifact was deployed or that its persisted effects remain correct. The artifact is the subject, not a mutable tag: a signed attestation bound to digest A is not evidence for digest B even if both share an image name. Deployment identity is a separate check from documentation-derived source identity and from release approval.\n\nThat separation is exactly what the team has collapsed. \"We build images in CI\" answers the build boundary. It does not answer which image is running on each host, which configuration revision that host uses, what local state it holds, or whether the previous artifact can be restored. A clean diff or converged resource state does not mean downstream effects, durable writes or API contracts are correct either. A green pipeline is not a fleet inventory.\n\nThe distinction can be stated as three different artifacts:\n\n- A **build output**: bytes with a digest, produced from a source revision and a build recipe.\n- A **deployment record**: which digest and configuration an authorized controller attempted to apply to a named target.\n- A **running instance**: the artifact actually executing, with its configuration, local state, drift and observed runtime acceptance.\n\nThe team has the first, a ticket that partially documents the second, and no reliable record of the third. Reproducibility is a property of the third: every running instance must be reproducible from a recorded artifact digest, and drift must be detected rather than tolerated.\n\n### 2.2 Four independent gaps make this fleet non-reproducible\n\nThe scenario contains four gaps. Each one is sufficient to break the claim; together they make the next deploy an uncontrolled change.\n\n1. **Artifact gap: the urgent fix may not be in the image at all.** The patch was applied to running hosts and recorded in a ticket. If it was not backported to the repository, the next image built from the repository does not contain it. If it was backported but the running hosts still hold the patched binary, the image and the hosts are different artifacts. Either way, \"the image was built\" says nothing about whether the fix survives the deploy. The ticket is not an artifact: it can record why the change happened and who approved it, but it does not identify bytes. A rebuilt image can differ from the deployed artifact, and a deployed tag can point to a different digest than the one that passed the gates. Without a digest comparison, the deploy cannot tell whether it is preserving the fix, erasing it, or creating a mixed fleet.\n\n2. **Conformance gap: no one checks what is actually running.** The next deploy never compares the repository image with the running fleet. Manual drift remediation means each correction is another unreviewed mutation. There is no reconciler observing declared versus actual state, no drift owner, and no exception ledger. The fleet can contain hosts patched on different dates, with different local packages, and with the patch applied in different ways. A ticket records one change, not the cumulative state of each host. This is the definition of a snowflake fleet: each host is individually maintained and no artifact fully describes it.\n\n3. **State gap: several hosts keep local state.** An image carries code and configuration, not the durable data, local caches, queues or device state that make a host unique. Replacing such a host is a data migration. Unless the state is externalized, or snapshotted with an owner, a recovery point and a tested restore, replacement either loses data or silently changes behavior. Immutable replacement is contraindicated when in-place state cannot be externalized; replacement is not a backup. A rollback restores an artifact, not necessarily compatible data.\n\n4. **Recovery gap: re-running the old patch script is not a rollback.** A rollback path is a recorded, tested route back to a known artifact and a known data state. Re-running an old patch script assumes the script still applies to the current host, is idempotent, has not been superseded, and that no new-only writes or external effects occurred since. None of those assumptions is recorded. The script may be unavailable, may depend on a package version that has moved, or may reverse the fix while leaving data written by the fixed version. After new-only writes, an image-only rollback can increase failures; the recovery may need a compatible forward repair or an approved restore with explicit loss.\n\nThese gaps are independent. A perfect image build does not close the artifact gap if the fix is only on hosts. A perfect patch record does not close the conformance gap if no one compares digests. A perfect digest comparison does not close the state gap if replacement destroys local data. A perfect state snapshot does not close the recovery gap if the old script cannot restore compatibility. That is why \"images are built in CI\" is not an answer to any of the three questions in the prompt.\n\n### 2.3 Why a reproducible build is not a reproducible fleet\n\nReproducibility of a build means that equivalent inputs produce comparable bytes under a defined build recipe. It is a property of the artifact, and even it is conditional: the consumer-side gate must check the deployed package digest, builder identity, provenance and trust root, approved source revision and build recipe, dependency constraints, target authorization, and key validity. A reproducible vulnerability is still a vulnerability. More importantly, byte reproducibility does not establish deployment reproducibility. It tells you what a candidate is; it does not tell you what forty hosts are running, with which configuration, against which data.\n\nFleet reproducibility requires a recorded mapping from each instance to an artifact digest, a configuration revision, an externalized or snapshotted state, and a tested recovery path. That mapping is what the team lacks. The CI pipeline can keep producing good candidates while the fleet drifts further from them.\n\n### 2.4 \"Immutable\" is an operating property, not a build location\n\nImmutable infrastructure replaces instances from a versioned image or definition instead of mutating running hosts. The atlas lists four good-fit conditions: images and artifacts are versioned and recorded; drift is detected and remediated; state is externalized; replacement, rebuild and rollback are automated. It rejects the pattern when in-place state cannot be externalized, replacement is too slow, drift is invisible, or artifact identity and the rebuild path cannot be tested. The competing alternative is explicitly mutable servers with configuration management, and the choice reverses when replacement cost exceeds the drift and recovery benefit.\n\nThe team has a partial version of the first condition: it builds an image, but it does not record which image each instance runs. It does not have detected and remediated drift, externalized state, or automated replacement and rollback. A CI build is compatible with in-place patching; indeed, a CI deploy can erase an in-place patch if no digest comparison prevents it. Immutability is a property of how the fleet is operated, not of where the build runs.\n\n### 2.5 What the ticket can and cannot do\n\nA ticket is a useful audit index. It should link to the patch artifact, the affected instances, the approval, the expiry of any temporary exception, and the rollback plan. It cannot substitute for the image digest, the instance record or the tested rollback. If the fix is urgent, the durable route is to backport it to the repository, build a new image from the patched source, record and deploy that digest, and compare it with every running instance. Until that is possible, the host patch should be recorded as an explicit, expiring drift exception with a named owner and a replacement deadline, not treated as evidence that the fleet is reproducible.\n\n## 3. What each instance, image and rollback path must record before replacement is safe\n\nThe three records answer three different questions:\n\n- The **image record** answers: what is this artifact, and can we rebuild or verify it?\n- The **instance record** answers: what is actually running here, and how does it differ from the approved artifact?\n- The **rollback path record** answers: if replacement fails, how do we get back to a known artifact and a compatible data state without losing more than we authorized?\n\n### 3.1 Image record: identity and rebuildability\n\nAt minimum, each image record should contain:\n\n| Field | Why it is needed |\n|---|---|\n| Content digest (not only a tag) | The digest is the artifact subject. A tag is mutable, and an attestation for digest A is not evidence for digest B. |\n| Source revision | Ties the bytes to a reviewed, immutable input. A branch name is not enough. |\n| Build recipe, toolchain and dependency revisions | Makes the build reconstructible and exposes differences between rebuilds. |\n| Builder identity, provenance, signature and trust root | Separates \"built by an approved builder under an approved process\" from \"someone produced a file\". |\n| Authorization and target environment | A valid signature is not deployment authorization; the environment and approver must be bound. |\n| SBOM with scope, omissions and image-layer coverage | A source-only inventory does not establish the runtime image's component set. |\n| Build ancestry and previous artifact/template | Needed to rebuild the previous image and to compare a rebuilt artifact with the deployed one. |\n| Test scope and known skipped checks | A green pipeline with skipped checks is not equivalent evidence. |\n| Build time and base-image identity | Supports reproducibility checks and vulnerability response. |\n\nThe book's record rule is explicit: record input revision, full toolchain and repository source identity, test scope, known skipped checks, output digest, source/target relationships and failed jobs. A consumer-side verification gate should test the deployed package digest, expected builder identity, verified provenance and trust root, approved source revision and build recipe, approved dependency and source constraints, valid authorization for the target environment, and key rotation and expiration policy. The SBOM should identify the target digest, generation tool, scope, component identities, known omissions, and its relationship to the exact release artifact rather than merely the source tree.\n\nTwo subtle points matter for this scenario. First, a rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change; record digests and test the rebuild path. Second, the image record must include the previous image and its template or ancestry, because that is the only artifact a rollback can actually restore. \"Rebuild from the repository\" is not a rollback path unless the previous image can be rebuilt and its digest compared.\n\n### 3.2 Instance record: actual identity and divergence\n\nAt minimum, each instance record should contain:\n\n| Field | Why it is needed |\n|---|---|\n| Actual deployed digest | The only reliable answer to \"what is running here?\" A tag or a deployment intent is not enough. |\n| Configuration revision and payload digest | Configuration is a distributed transition, not a simultaneous switch. Record the revision actually used, not just the intended one. |\n| Drift status and approved exceptions | Any difference from the approved artifact must be visible, owned and expiring. |\n| Out-of-band patches, their ticket and expiry | The urgent library fix is exactly such a patch. If it is not in the image, the instance record must say so. |\n| Local state inventory and owner | Data, caches, queues, secrets and device state that would be lost or changed by replacement. |\n| Snapshot or backup identity, recovery point and tested restore | A backup is not a restore result until integrity and application usability are tested. |\n| Runtime acceptance evidence | User outcomes, integrity checks, source revision and deployed digest; a ready process is not acceptance. |\n| Environment, target and operator responsibility | The same artifact can be safe in one target and unsafe in another. |\n| Last verification time and verifier | A record without an observation time is a claim, not evidence. |\n\nThe book separates the same concerns at a higher level: record the state writer, ingress, runtime instance, scheduler/control service, deployment mechanism, network path, secrets/identity service, availability zone/host/region and operator responsibility. In a patched fleet, the instance record is where the ticket, the digest, the configuration revision and the local state meet. If it is hand-maintained, it will drift; it should be produced or verified by the deployment and observation path, not reconstructed during an incident.\n\nFor the scenario, the patch ticket must be linked from every affected instance record. Each record should state whether the patch is present in the image, present only on the host, or superseded. If the patch is only on the host, the record should carry an approval, an expiry and a replacement plan. That is what turns an invisible mutation into a managed exception.\n\n### 3.3 Rollback path record: recoverability and data compatibility\n\nAt minimum, the rollback path record should contain:\n\n| Field | Why it is needed |\n|---|---|\n| Previous artifact digest, retained and unchanged | A rollback must restore a known artifact, not a script that may have changed. |\n| Rebuild recipe and ancestry for that artifact | If the previous image must be rebuilt, its template and build metadata must exist and be testable. |\n| Old/new compatibility matrix | Old binaries must read new persisted state, and old clients and consumers must accept the old contract. |\n| Data recovery point, RPO and permissible loss | A restore may lose acknowledged operations; the business must state what loss is allowed. |\n| Old route, environment and authority | The old path must still be operational and authorized, not merely remembered. |\n| Tested rollback or forward-repair procedure | An untested plan is not a capability. The path must be exercised before exposure. |\n| No-return point and named approver | Some writes and external effects are irreversible; the authority to cross that point must be explicit. |\n| Reconciliation and audit evidence | Repair is an authorized mutation; duplicates and external effects must be reconciled, not blindly replayed. |\n\nA code rollback is reversible only if older binaries still correctly interpret persisted state produced by newer binaries; external clients and asynchronous consumers still accept the older response or event contract; effects committed during the new release can be reconciled or safely replayed; the old route is still operational and authorized; and the rollback itself does not reintroduce a known security or correctness defect. That is a five-part test, not a script re-run.\n\nThe book also makes the sequencing explicit. Before exposure, prove candidate identity, rollback or forward-repair availability, data and read compatibility, representative readiness, downstream capacity, required security policy and measured SLIs. After new-only writes, there is no automatic image-only rollback; the recovery is a compatible forward repair or a restore with approved loss and reconciliation. A restore may lose acknowledged operations if the recovery point predates their commits, so the permissible business loss must be stated in advance.\n\n### 3.4 The replacement gate\n\nBefore replacing any instance, the team should be able to answer \"yes\" to all of the following:\n\n1. The image record is complete, and the digest being deployed is the digest that was tested and approved.\n2. The instance record is complete, and its local state is either externalized, snapshotted with a tested restore, or explicitly declared out of scope with an owner who accepts the loss.\n3. Every out-of-band patch is either in the image or recorded as an approved, expiring exception.\n4. The rollback path is recorded and has been exercised; old readers can handle new writes, or a forward-repair procedure is ready.\n5. The no-return point, approver and permissible data loss are named.\n\nIf the released digest or the old/new data compatibility is unknown, the correct state is no-go. A green CI run or a synchronized reconciler is not evidence of safety. That is the direct answer to \"before replacement is safe\": safe replacement is not a property of the image alone; it is a property of the image record, the instance record and the rollback record being complete and mutually consistent.\n\n## 4. When configuration management on long-lived hosts is the better choice\n\nConfiguration management on long-lived hosts is the better choice when the host is the unit of state, not the unit of code. The atlas states the trade-off directly: configuration management on long-lived hosts is cheaper when state locality dominates; choose immutable replacement when reproducibility, an automated replacement path and artifact rollback speed matter. The competing alternative is mutable servers with configuration management, and the choice reverses when replacement cost exceeds the drift and recovery benefit.\n\nThe concrete conditions are:\n\n- **State locality dominates.** The host holds data, licensed software, hardware-bound state, large caches or device state that cannot be externalized cheaply. Replacing it is a data migration, not an image swap.\n- **Replacement is slow or expensive.** Rebuilding and reprovisioning takes longer than the maintenance window, or requires capacity the team does not have. The atlas lists \"replacement is too slow\" as a contraindication for immutable infrastructure.\n- **In-place state cannot be externalized.** The same contraindication applies even if replacement is technically possible; the data would be lost or would diverge.\n- **Imperative, one-off changes dominate.** The GitOps card rejects reconciliation when imperative one-off changes dominate or the reconciler is unowned. A controlled configuration-management process may fit such a fleet better than a reconciliation loop nobody owns.\n- **Artifact identity or the rebuild path cannot be pinned or tested.** If the team cannot rebuild the previous image or compare digests, immutable replacement is not a safe operating model yet; a configuration-managed host with a tested change procedure may be the more honest choice.\n- **Hardware, licensing or on-disk contracts block replacement.** The book notes that a hard device driver or kernel dependency, unsupported legacy licensing, or an immutable on-disk contract can be a genuine contraindication to container-style replacement. These are evidence questions, not stereotypes.\n\nBut configuration management is not \"keep doing what you are doing, but write it down\". To be a legitimate alternative it needs the same discipline the image path needs:\n\n- a versioned desired declaration, not a pile of ad hoc scripts;\n- idempotent convergence, so repeated application is safe;\n- drift detection with an owner and an exception process;\n- an observed revision and snapshot age, because serving an old value is a deliberate policy, not evidence of convergence;\n- a tested rollback or forward-repair path, with data compatibility checked;\n- an audit trail that links each change to an approval and to the affected hosts.\n\nInfrastructure as code is a versioned declaration plus a change mechanism, not an availability mechanism by itself. A stored declaration is not proof that production matches it. The same is true of a configuration-management repository: it is evidence of intent, not evidence of convergence. The team's current process is not even that; it is manual patching with a ticket. If the team formalizes configuration management for the stateful hosts, it can be the better interim operating model. If it claims immutability, it must first externalize state, automate replacement, record digests, detect drift and test rollback.\n\nThe practical decision rule is therefore not \"do we build images?\" but \"can we produce the image record, the instance record and the rollback record, and pass the replacement gate?\" If yes, immutable replacement is a credible fit. If no, and state locality dominates, configuration management on the long-lived hosts is the better choice while the state and replacement path are fixed. If neither is true, the correct action is to stop and gather evidence rather than deploy. The book's safe-rollout alternatives make the same point: explicit downtime with a tested restore can be preferable to a staged replacement when a truly incompatible change cannot be staged safely.\n\n## 5. Boundaries and contraindications\n\n- This is an evidence-based architectural answer from the book and pattern atlas, not a production diagnosis. No host, deployment, drift measurement, rebuild or restore was observed or executed for this answer.\n- The atlas card is applicable-under-conditions and its coverage is bounded; it is not independent review or owner acceptance. The sources require versioned, recorded artifacts and drift detection, but no source mandates a particular digest format. \"Record the digest\" is Tycho's concrete record rule, not a universal vendor requirement.\n- Immutable replacement is not a backup. Data, secrets and external effects still need lifecycle ownership, and a rollback restores an artifact, not necessarily compatible data.\n- Configuration management is not automatically safer. It can hide drift, accumulate stale overrides, and produce a different snowflake per host. It needs the same versioning, observation and rollback evidence; otherwise it is manual patching with a different name.\n- Rebuild determinism is not guaranteed. The correct control is to test the rebuild path and compare the rebuilt digest with the deployed digest, not to assume byte equality.\n- A rollback may be impossible after irreversible external effects. In that case the honest choice is a forward repair or an approved restore with explicit loss, not a claimed rollback.\n- The pattern choice is reversible. If state is externalized and replacement becomes fast and testable, the balance can move toward immutable replacement. If replacement cost rises or state locality increases, the balance can move back toward configuration management.\n\n## 6. Unknowns\n\nThe following facts are not established by the scenario or the evidence, and they change the recommendation:\n\n1. Whether the urgent library fix is in the repository and in the next image, or only on the running hosts.\n2. Whether the old patch script is idempotent, still available, and tested against the current host state.\n3. Whether any new-only writes or external effects occurred after the patch; this determines whether image rollback is safe at all.\n4. What local state the several hosts hold, who owns it, and whether it can be externalized or snapshotted with a tested restore.\n5. The RTO/RPO and the business-permissible data loss for each stateful host.\n6. Whether the build is deterministic enough to rebuild the previous image and compare digests, and whether the rebuild path has ever been exercised.\n7. Whether the next deploy compares actual running digests with the approved digest, or only applies a tag.\n8. Whether the team has an inventory of running versions, configurations and out-of-band patches, and who owns drift.\n9. Whether a configuration-management system already exists and is idempotent, or whether the team would be building one from scratch.\n10. Whether the fleet can tolerate the replacement time and capacity cost, or whether in-place maintenance is the only feasible window.\n\nIf items 1, 4, 6 and 7 are resolved in the favorable direction — the fix is in the image, state is externalized, the rebuild path is tested and digests are compared — immutable replacement becomes more credible. If items 4, 5 and 10 point the other way, configuration management on the long-lived hosts is the better choice until the state architecture changes.\n\n## 7. Evidence map\n\n| Claim | Evidence |\n|---|---|\n| C1: A CI build is only one release boundary; it does not establish deployed identity or runtime correctness. | tycho.chapter.8a2d2a79846d4567bb3d33957e19977f#decision-and-worked-result (\"A successful pipeline run does not prove that the intended artifact was deployed...\"); tycho.page.3d13e39bb42a4458999803e40d7137cc#1-gitops-reconciles-desired-configuration-not-business-outcomes (\"A clean diff or converged resource state does not mean...\") |\n| C2: Immutable infrastructure is an operating model with four conditions. | tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview (\"Images/artifacts are versioned and recorded; drift is detected and remediated...\"); tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview (\"Every running instance must be reproducible from a recorded artifact digest...\") |\n| C3: A rebuilt image can differ from the deployed artifact; digest comparison and rebuild testing are the control. | tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview (\"A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change...\"); tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview (\"A rebuilt image can differ from the deployed artifact...\"); tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#6-failure-matrix-and-discriminating-checks (\"Compare actual digest to the digest that passed gates; freeze promotion\"); tycho.decision.54dff384ace3468490c46b1d00b0dcf6#failure-matrix-and-required-counterevidence (\"Track deployed-version inventory...\") |\n| C4: The artifact subject is its digest, not a tag; deployment identity is a separate check. | tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects (\"The artifact is the subject, not a mutable tag...\"; \"Treat documentation-derived source identity, runtime deployment identity and release approval identity as separate checks.\") |\n| C5: An image record must bind digest, source, build inputs, provenance, authorization, SBOM, ancestry and tests. | tycho.page.faf8361106c2458b97e046319d7fa979#2-workflow-and-runner-topology (\"Record input revision, full toolchain/repository source identity, test scope...\"); tycho.page.faf8361106c2458b97e046319d7fa979#3-provenance-reproducibility-and-signatures (\"A consumer-side verification gate should test...\"); tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity (\"artifact identifier and target digest...\"; \"relationship to the exact release artifact...\"); tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview (\"recording image metadata and build ancestry\") |\n| C6: An instance record must bind actual digest, configuration revision, drift, local state, acceptance and responsibility. | tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries (\"Runtime acceptance | User outcomes, integrity checks, source revision and deployed digest\"); tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote (\"Record the revision actually used in metrics, logs and asynchronous work.\"); tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract (\"report its observed revision and snapshot age...\"); tycho.page.b7913b53d5ea439697bc5236f902d76e#placement-and-topology-constraints (\"Separate the source commit, reviewed plan, resulting state, external drift and an actually tested restore.\"); tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope (\"Record separately: state writer, ingress, runtime instance...\") |\n| C7: Drift must be detected and owned; manual reapplication and auto-sync are not complete reconciliation. | tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull (\"...observes declared state and actual state...\"; \"enabling auto-sync does not mean all drift is repaired.\"); tycho.page.49052c97325309f3830419b2290e521f#overview (\"drift has an owner, and rollback is a reviewed revert.\") |\n| C8: Local state is the replacement boundary; replacement is not a backup. | tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview (\"Reject when in-place state cannot be externalized...\"); tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview (\"Immutable replacement is not a backup...\"); tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs (\"...immutable on-disk contract; those are evidence questions...\") |\n| C9: A code rollback has five compatibility conditions. | tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think (\"A code rollback is reversible only if: 1. Older binaries...\") |\n| C10: After new-only writes, image-only rollback is unsafe; use forward repair or approved restore. | tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair (\"No automatic image-only rollback...\"); tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure (\"If N+1 has already emitted a state that N cannot read...\"); tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think (\"A restore may lose acknowledged operations...\") |\n| C11: A rollback path records the previous artifact, rebuild ancestry, compatibility, recovery point, authority, tested procedure and reconciliation. | tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview (\"HashiCorp describes rebuilding the previous image...\"); tycho.page.3d13e39bb42a4458999803e40d7137cc#4-release-identity-and-evidence-gates (\"immutable artifact digest/source provenance...\"; \"proven rollback or forward-recovery strategy...\"); tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair (\"Old writer, old schema/decoder, recorded snapshot and operation horizon\"); tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility (\"Test actual state recovery, drift handling and protected credentials\"); tycho.page.1e89567050974052b13ba62b3b44484f#5-recovery-domains-and-two-distinct-objectives (\"A backup is not a restore result...\"); tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#5-progressive-promotion-and-stop-conditions (\"Before exposure, prove candidate identity, rollback/forward-repair availability...\") |\n| C12: Unknown digest or compatibility is a no-go. | tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#7-architecture-decision-and-evidence-boundary (\"...do not infer safety from a green CI or synchronized resources.\") |\n| C13: Configuration management on long-lived hosts is better when state locality dominates and replacement cost exceeds drift/recovery benefit. | tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview (\"Configuration management on long-lived hosts is cheaper when state locality dominates...\"); tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview (\"Mutable servers with configuration management...\"); tycho.page.49052c97325309f3830419b2290e521f#overview (\"Reject when imperative one-off changes dominate...\"); tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs (\"...hard device driver/kernel dependency...\"); tycho.page.1e89567050974052b13ba62b3b44484f#7-alternatives-and-the-conditions-that-reverse-a-choice (\"...explicit downtime with tested restore...\") |\n| C14: A versioned declaration is not convergence; drift ownership and reviewed rollback remain necessary. | tycho.page.b7913b53d5ea439697bc5236f902d76e#placement-and-topology-constraints (\"Infrastructure as code (IaC) is a versioned desired declaration plus a change mechanism...\"); tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract (\"serving with an old value is a deliberate policy, not evidence of convergence.\"); tycho.page.49052c97325309f3830419b2290e521f#overview (\"drift has an owner, and rollback is a reviewed revert.\") |\n| C15: Replacement should be treated as safe only when the image, instance and rollback records are complete and tested. | tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview (\"...turns replacement into an uncontrolled change...\"); tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#7-architecture-decision-and-evidence-boundary (\"...do not infer safety...\"); tycho.page.3d13e39bb42a4458999803e40d7137cc#4-release-identity-and-evidence-gates (\"...proven rollback or forward-recovery strategy before exposure...\") |\n\n## 8. Bottom line\n\nBuilding images in CI is necessary but not sufficient. It gives the team a candidate artifact and a place to put provenance, SBOM and digest records. It does not give the fleet a recorded identity, a drift loop, externalized state or a tested rollback. The team should stop calling the fleet immutable and choose one of two honest paths. The first is to make immutable real: backport the patch, rebuild and record the image, compare digests, externalize or snapshot state, automate replacement and test rollback. The second is to make configuration management real on the long-lived hosts: version the desired state, detect and own drift, record observed revisions and test rollback, while planning the state migration. Until one of those paths is complete, the next deploy is not a reproduction of the fleet; it is another uncontrolled change.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A CI build is only one release boundary; it does not establish that the intended artifact is deployed or that runtime effects are correct.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.8a2d2a79846d4567bb3d33957e19977f#decision-and-worked-result",
+          "quote": "A successful pipeline run does not prove that the intended artifact was deployed or that its persisted effects remain correct.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3d13e39bb42a4458999803e40d7137cc#1-gitops-reconciles-desired-configuration-not-business-outcomes",
+          "quote": "A clean diff or converged resource state does not mean downstream effects, durable writes or API contracts are correct.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Immutable infrastructure is an operating model: artifacts are versioned and recorded, drift is detected and remediated, state is externalized, and replacement, rebuild and rollback are automated.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview",
+          "quote": "Images/artifacts are versioned and recorded; drift is detected and remediated; state is externalized; replacement, rebuild and rollback are automated.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview",
+          "quote": "Every running instance must be reproducible from a recorded artifact digest, and drift must be detected rather than tolerated.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A rebuilt image can differ from the deployed artifact; comparing actual and rebuilt digests and testing the rebuild path keeps replacement from becoming an uncontrolled change.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview",
+          "quote": "A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change; record digests and test the rebuild path.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview",
+          "quote": "A rebuilt image can differ from the deployed artifact; record digests, test the rebuild path and roll back to the previous artifact.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#6-failure-matrix-and-discriminating-checks",
+          "quote": "Compare actual digest to the digest that passed gates; freeze promotion",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.54dff384ace3468490c46b1d00b0dcf6#failure-matrix-and-required-counterevidence",
+          "quote": "Track deployed-version inventory, not only repository default-branch versions.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The artifact subject is its digest, not a mutable tag; attestations for one digest do not transfer to another, and deployment identity is a separate check.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+          "quote": "The artifact is the **subject**, not a mutable tag. A signed attestation bound to digest A is not evidence for digest B even if both share an image name.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+          "quote": "Treat documentation-derived source identity, runtime deployment identity and release approval identity as separate checks.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "An image record must bind the digest to its source revision, build recipe/toolchain/dependencies, builder provenance, target authorization, SBOM scope and omissions, build ancestry, and test/skip scope.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.faf8361106c2458b97e046319d7fa979#2-workflow-and-runner-topology",
+          "quote": "Record input revision, full toolchain/repository source identity, test scope, known skipped checks, output digest, source/target relationships and failed jobs.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.faf8361106c2458b97e046319d7fa979#3-provenance-reproducibility-and-signatures",
+          "quote": "A consumer-side verification gate should test: the deployed package digest; expected builder identity; verified provenance signature/trust root; approved source revision and build recipe; approved dependency/source constraints; valid authorization for the target environment; key rotation/revocation policy; and expiration where appropriate.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity",
+          "quote": "artifact identifier and target digest; generation timestamp and producing tool/version;",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity",
+          "quote": "relationship to the exact release artifact, not merely to the source tree.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview",
+          "quote": "recording image metadata and build ancestry",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "An instance record must bind the actually deployed digest, configuration revision and payload digest, drift and approved exceptions, local state ownership and recovery point, runtime acceptance, and operator responsibility.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries",
+          "quote": "Runtime acceptance | User outcomes, integrity checks, source revision and deployed digest",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote",
+          "quote": "Record the revision actually used in metrics, logs and asynchronous work.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract",
+          "quote": "report its observed revision and snapshot age; serving with an old value is a deliberate policy, not evidence of convergence.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#placement-and-topology-constraints",
+          "quote": "Separate the source commit, reviewed plan, resulting state, external drift and an actually tested restore.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope",
+          "quote": "Record separately: state writer, ingress, runtime instance, scheduler/control service, deployment mechanism, network path, secrets/identity service, availability zone/host/region and operator responsibility.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Drift must be detected and owned; manual reapplication is not reconciliation, and an automated sync does not by itself repair all drift.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull",
+          "quote": "In GitOps, the desired configuration is versioned and a reconciler inside the target environment observes declared state and actual state, applying approved changes according to policy.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull",
+          "quote": "enabling auto-sync does not mean all drift is repaired.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.49052c97325309f3830419b2290e521f#overview",
+          "quote": "drift has an owner, and rollback is a reviewed revert.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "When in-place state cannot be externalized, immutable replacement is contraindicated; replacement is not a backup, and a rollback restores an artifact, not necessarily compatible data.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview",
+          "quote": "Reject when in-place state cannot be externalized, when replacement is too slow, when drift is invisible, or when artifact identity and the rebuild path cannot be tested.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview",
+          "quote": "Immutable replacement is not a backup: data, secrets and external effects still need lifecycle ownership, toolchain and base-image provenance must be reproducible, and a rollback restores an artifact, not necessarily compatible data.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs",
+          "quote": "A migration to containers may be contraindicated by a hard device driver/kernel dependency, unsupported legacy licensing, or an immutable on-disk contract; those are evidence questions, not stereotypes.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A code rollback is reversible only if old binaries read new persisted state, old clients and consumers accept the old contract, new effects can be reconciled, the old route remains authorized, and the rollback does not reintroduce a defect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+          "quote": "A code rollback is reversible only if: 1. Older binaries still correctly interpret persisted state produced by newer binaries. 2. External clients and asynchronous consumers still accept the older response/event contract. 3. Effects committed during the new release can be reconciled or safely replayed. 4. The old route is still operational and authorized. 5. The rollback itself doesn't reintroduce a known security or correctness defect.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "After new-only writes, image-only rollback is unsafe; recovery must be a compatible forward repair or an approved restore with explicit data loss.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+          "quote": "**No automatic image-only rollback**; stop further incompatible writes and forward-repair or restore with approved loss/reconciliation",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure",
+          "quote": "If N+1 has already emitted a state that N cannot read, changing Kubernetes deployment replicas back to N could *increase* failures.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+          "quote": "A restore may lose acknowledged operations if the recovery point predates their commits; state explicitly which business loss is permissible.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A safe rollback path records the previous artifact and its rebuild ancestry, the old/new compatibility matrix, a verified recovery point and permissible loss, the old route and authority, a tested rollback or forward-repair procedure, and reconciliation evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview",
+          "quote": "HashiCorp describes rebuilding the previous image from its template, redeploying it, and recording image metadata and build ancestry",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3d13e39bb42a4458999803e40d7137cc#4-release-identity-and-evidence-gates",
+          "quote": "immutable artifact digest/source provenance, policy-approved signer and target;",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3d13e39bb42a4458999803e40d7137cc#4-release-identity-and-evidence-gates",
+          "quote": "proven rollback **or** forward-recovery strategy before exposure;",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+          "quote": "Old writer, old schema/decoder, recorded snapshot and operation horizon",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+          "quote": "Test actual state recovery, drift handling and protected credentials",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#5-recovery-domains-and-two-distinct-objectives",
+          "quote": "A backup is not a restore result until integrity and application usability are tested.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#5-progressive-promotion-and-stop-conditions",
+          "quote": "Before exposure, prove candidate identity, rollback/forward-repair availability, data/read compatibility, representative readiness, downstream capacity, required security policy and measured SLIs.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+          "quote": "Do not let a generic replayer reissue irreversible effects merely because target state is incomplete.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "If the released digest or old/new data compatibility is unknown, replacement is a no-go; a green CI or synchronized reconciler is not evidence of safety.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#7-architecture-decision-and-evidence-boundary",
+          "quote": "if the released digest or the old/new data compatibility is unknown, do not infer safety from a green CI or synchronized resources.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Configuration management on long-lived hosts is the better choice when state locality dominates, replacement is slow or expensive, in-place state cannot be externalized, and imperative one-off changes dominate; immutable replacement wins when reproducibility, automated replacement and artifact rollback speed matter.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview",
+          "quote": "Configuration management on long-lived hosts is cheaper when state locality dominates; choose immutable replacement when reproducibility, an automated replacement path and artifact rollback speed matter.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview",
+          "quote": "Mutable servers with configuration management. Reverse the choice when replacement cost exceeds drift/recovery benefit.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.49052c97325309f3830419b2290e521f#overview",
+          "quote": "Reject when imperative one-off changes dominate, when the reconciler is unowned",
+          "supports": "C13",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs",
+          "quote": "A migration to containers may be contraindicated by a hard device driver/kernel dependency, unsupported legacy licensing, or an immutable on-disk contract; those are evidence questions, not stereotypes.",
+          "supports": "C13",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#7-alternatives-and-the-conditions-that-reverse-a-choice",
+          "quote": "may be preferable if a truly incompatible change cannot be staged safely, the allowed downtime is sufficient and data/recovery tests pass.",
+          "supports": "C13",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A versioned declaration is not convergence; drift ownership, observed revision and reviewed rollback remain necessary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#placement-and-topology-constraints",
+          "quote": "Infrastructure as code (IaC) is a *versioned desired declaration plus a change mechanism*, not an availability mechanism by itself.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract",
+          "quote": "serving with an old value is a deliberate policy, not evidence of convergence.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.49052c97325309f3830419b2290e521f#overview",
+          "quote": "drift has an owner, and rollback is a reviewed revert.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Replacement should be treated as safe only when the image, instance and rollback records are complete, mutually consistent and tested; otherwise it is an uncontrolled change.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview",
+          "quote": "A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change; record digests and test the rebuild path.",
+          "supports": "C15",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#7-architecture-decision-and-evidence-boundary",
+          "quote": "if the released digest or the old/new data compatibility is unknown, do not infer safety from a green CI or synchronized resources.",
+          "supports": "C15",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.3d13e39bb42a4458999803e40d7137cc#4-release-identity-and-evidence-gates",
+          "quote": "proven rollback **or** forward-recovery strategy before exposure;",
+          "supports": "C15",
+          "status": "inference"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.8a2d2a79846d4567bb3d33957e19977f#decision-and-worked-result",
+    "tycho.decision.54dff384ace3468490c46b1d00b0dcf6#failure-matrix-and-required-counterevidence",
+    "tycho.page.1e89567050974052b13ba62b3b44484f#5-recovery-domains-and-two-distinct-objectives",
+    "tycho.page.1e89567050974052b13ba62b3b44484f#7-alternatives-and-the-conditions-that-reverse-a-choice",
+    "tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure",
+    "tycho.page.3d13e39bb42a4458999803e40d7137cc#1-gitops-reconciles-desired-configuration-not-business-outcomes",
+    "tycho.page.3d13e39bb42a4458999803e40d7137cc#4-release-identity-and-evidence-gates",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+    "tycho.page.49052c97325309f3830419b2290e521f#overview",
+    "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview",
+    "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+    "tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity",
+    "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs",
+    "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope",
+    "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull",
+    "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#5-progressive-promotion-and-stop-conditions",
+    "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#6-failure-matrix-and-discriminating-checks",
+    "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#7-architecture-decision-and-evidence-boundary",
+    "tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract",
+    "tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote",
+    "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+    "tycho.page.b7913b53d5ea439697bc5236f902d76e#placement-and-topology-constraints",
+    "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+    "tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview",
+    "tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries",
+    "tycho.page.faf8361106c2458b97e046319d7fa979#2-workflow-and-runner-topology",
+    "tycho.page.faf8361106c2458b97e046319d7fa979#3-provenance-reproducibility-and-signatures"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

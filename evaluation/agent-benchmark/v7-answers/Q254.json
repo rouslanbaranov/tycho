@@ -1,0 +1,486 @@
+{
+  "task_id": "Q254",
+  "answer": "# Q254 - Workload threshold, per-stage durable state, and completion proof in a bulk object-migration service\n\n## Scope and layers\n\nThe question is a **book** question: it asks for the reasoning of one canonical case page and the\ngeneral rules that page relies on. I used the book layer for all evidence and checked the other two\nlayers only to confirm that they do not carry distinct evidence for this question.\n\n- **book** - required and sufficient. The case page\n  book/cases/cloudflare-super-slurper-queues.md supplies the observed result, the stage/state table,\n  the at-least-once defenses and the source limits; the performance and migration-correctness pages\n  supply the decision and verification rules.\n- **atlas** - checked for pattern identity (Queue-Based Load Leveling, Online Data Migration,\n  Idempotent Receiver). These resolve to the same v11 book pages and add no claim that is not already\n  in the book layer.\n- **modeling-and-simulation** - checked for a model or run of this crossover. The queue/resource model\n  there is generic and the available migration simulation covers a different synthetic dual-write\n  path, so it is not used as evidence here.\n\nSnapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a.\n\n## Short answer\n\n1. The queue/worker design does not have a uniformly worse cost curve; it has a **different** curve.\n   It pays a larger job-level setup cost and a larger per-object coordination cost, but it converts a\n   central, bandwidth-bound copy pool into a fan-out that can keep far more I/O in flight. A crossover\n   therefore exists. The few-hundred-object pilot sits left of it and the 75,000/millions points sit\n   right of it. The negative pilot refutes \"always faster at any size\"; it does not refute \"faster at\n   very large counts\", which is the claim the team adopted.\n2. Each stage must persist exactly the state that lets a different worker resume that stage without\n   redoing or skipping work: job identity and options; listing continuation position, identifiers and\n   sequence; per-object transfer task; per-object lock, transfer state and multipart status;\n   pending/failed/completed accounting and terminal status; and historical job metadata. That state\n   must itself be durable and capacity-bounded.\n3. A completed-object count counts work-item transitions or acknowledgments. It can be advanced by\n   duplicates, can lag behind in-flight or dead-lettered work, and can stay numerically equal while\n   objects are missing, stale, or byte-different. Completion proof is a reconciliation artifact: a\n   pinned manifest, both-direction set difference against the destination, per-object identity/value\n   checks, a drained queue/DLQ, and a terminal job record.\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1 Workload threshold and crossover mechanism | \"bulk object migration listing queue transfer queue distributed workers\"; \"parallel copy workers object storage throughput\"; \"queue-based load leveling worker overhead small batches\" | case#observed-orchestration-stages; case#performance-result; case#outcomes; case#pressure; case#mechanics; scaling-models#1 |\n| F2 Benchmark validity and workload envelope | \"benchmark representativeness workload envelope extrapolation\"; \"capacity cannot be extrapolated from one benchmark\"; \"reproducible evidence required\" | sensitivity-options#5; benchmark-controls#6; workload-shape-and-scalability-laws#5; decision-envelope#1 |\n| F3 Durable state per orchestration stage | \"manifest checkpoint resume enumeration migration\"; \"resume checkpoint cursor listing\"; \"migration correctness invariant\" | case#observed-orchestration-stages; migration-falsification#6; online-data-migration#overview |\n| F4 Duplicate delivery and idempotency | \"idempotency duplicate delivery at-least-once key\"; \"idempotent consumer duplicate delivery\"; \"message redelivery consumer effects\" | case#at-least-once-semantics; dedup-authority#5 |\n| F5 Completion proof versus completed count | \"reconciliation completion criteria partial failure verification\"; \"row count matches content differs\"; \"counting completed items progress is not correctness\" | case#at-least-once-semantics; data-migration-correctness#four-meanings; netflix-casspactor#four-proofs; rollback-data#5; meta-ingestion#green-shadow-limits |\n| F6 Adoption boundary and alternatives | \"workload threshold\"; \"adopt only within measured workload envelope\"; \"negative pilot result out of envelope\" | case#why-the-queue-architecture; negative-results#5; case#outcomes-and-negative-lessons |\n\nSaturation check: after the six facets were covered, further formulations on overhead and amortization,\ndecision envelopes and negative evidence added only sections already cited or not used as claims; the\nfinal two probes (modeling-and-simulation layer, atlas layer) added no case-specific evidence.\n\n## 2. Why the negative pilot is a workload threshold, not a refutation\n\n### 2.1 What was observed\n\nThe case page records a roughly one-week proof of concept built on Workers, Queues and Durable\nObjects. It was slower than the central Kubernetes copy workers for a few hundred objects, then\nmatched or beat the original at very large object counts. The page itself calls this a workload\nthreshold, not evidence that event-driven copying always has lower overhead. The performance table\nadds the causal label: \"Queue and orchestration cost dominates small job\". At 75,000 objects the\npublished comparison is 15 min 30 s before versus 3 min 25 s after, and \"millions of objects\" met or\nexceeded the old design.\n\nThe pressure that motivated the change was I/O wait, not CPU: as transferred object count grew, waiting on\nsource/destination I/O was a bottleneck more than available CPU, and the redesign decomposes an I/O-heavy\nbulk job into explicit scheduled listing and transfer units. That is exactly why a small-count latency\ncomparison is the wrong instrument: at small counts the job is dominated by the scheduling apparatus, while\nat large counts the I/O concurrency it unlocks is the point.\n\n### 2.2 The cost model that predicts a sign change\n\nThis is an inference from the architecture and the reported behavior, not a measured cost model in\nthe source. Let F be job-level fixed cost (create the job's durable object, provision and warm\nconsumers, first listing round trip), s the per-object service time (publish, consume, lock, state\nwrite, acknowledge, lifecycle count, plus the copy itself), and c the effective concurrency that\nactually keeps I/O in flight:\n\n    T_old(N) = F_old + N * s_old / c_old\n    T_new(N) = F_new + N * s_new / c_new\n\nThe new path plausibly has F_new > F_old and s_new > s_old (extra queue hops and durable writes per\nobject), but c_new much greater than c_old because copy workers are no longer concentrated in one\ndatacenter and waiting on source/destination I/O no longer has to serialize behind a fixed worker\npool. If s_new / c_new < s_old / c_old, the two lines cross at\n\n    N* = (F_new - F_old) / (s_old / c_old - s_new / c_new)\n\nBelow N* the new path loses; above it, the new path wins. A few hundred objects is a point below the\ncrossover; 75,000 and millions are points above it. That is the definition of a threshold, and it is\nexactly the sign pattern the architecture predicts. A refutation would require the new path to still\nlose at the population the team actually migrates, or the crossover to sit above every realistic job\nsize. Neither is reported.\n\nThe absolute numbers are not needed for the qualitative point, but they matter for honesty: the book\npublishes no breakdown of F or s, so the crossover location is inferred, not measured.\n\n### 2.3 Why the pilot cannot settle the adoption question\n\nThe pilot varied the one variable that drives the decision - population size and the concurrency it\nsupports - and measured the design in the regime where its fixed overhead is largest. A benchmark\nresult is inconclusive when the system differs too much from the target environment; that is valuable\nevidence for a better-scoped experiment, not a stronger conclusion. The shared decision envelope makes\nworkload explicit: offered versus admitted traffic, concurrency, operation mix, item skew, data size\nand growth window. A result at a different point in that envelope is a different decision.\n\nEqually, the 5x headline cannot be generalized downward. The same page warns that the advertised 5x\nresult is not a universal cloud-to-cloud benchmark, and that the 75,000-object ratio must not be\npresented as a p99 speedup for every migration. The threshold is real but its position is unknown: we\nknow the sign at a few hundred and at 75,000+, not where the lines cross or how the crossing moves with\nobject size, source latency and destination quota.\n\n### 2.4 What would actually refute the change\n\n- At the team's real population, at a comparable resource budget, the new path completes fewer correct\n  objects per unit time or costs more per verified object.\n- The crossover lies above every job size the team runs, so the fixed cost is never amortized.\n- The large-count win disappears when measured as completed correct objects rather than attempted\n  concurrency or enqueued work, or when retries, dead letters and recovery time are included.\n- The coordination state cannot be operated at the required key cardinality or recovery time.\n\nA fair comparison also has to compare equivalent cost. If one candidate runs twice the instances, a\nlower latency may be a capacity purchase rather than an efficiency gain. And throughput must mean\ncompleted correct transactions, not more workers: adding application workers increases potential\nconcurrency but does not guarantee processor time, DB write throughput, network quota, exclusive-key\nauthority or a larger useful completion rate. Increasing throughput by skipping correctness checks is\nnot a valid scale gain.\n\n### 2.5 How strong the positive side is\n\nThe positive side is a selected 75,000-object test of one object mix, with no full object-size\ndistribution, cost baseline or confidence intervals; \"millions\" met or exceeded the old design without\na published distribution either. At publication the company noted 3 concurrent migrations per account,\nwith higher concurrency a future goal, so unbounded parallelism is not proven. The \"35% of lifetime\nobjects in two months\" figure is an adoption-volume observation, not a throughput-normalized\nexperiment. The team's adoption is therefore defensible as a decision for its own very large\npopulation, not as a universal claim that queue fan-out is cheaper.\n\n## 3. What durable state each stage must preserve\n\nThe case page's stage table is the core evidence. The right way to read it is: each row names the\nstate that must survive a worker crash, a redelivery, or a handoff to a different worker, so the next\nattempt can resume that stage instead of guessing.\n\n| Stage (reported component) | Durable state it must preserve | Failure it prevents |\n|---|---|---|\n| Start a job (API Worker + account Durable Object) | Migration options, source and target names, job identity | Duplicate start requests; inaccessible historical state |\n| Enumerate source objects (List Queue consumer) | Continuation position, object identifiers, listing state; sequence numbering of listing operations | Replayed list page, reordering, overlapping workers, duplicate enumerations |\n| Schedule transfers (List producer + Transfer Queue) | Per-object key and transfer task | Queue backlog, duplicate delivery, dependence on remote source |\n| Copy bytes (Transfer Queue consumers / Workers) | In-progress lock, object-transfer state, multipart status for large objects | Timeout after upload, partial multipart object, repeated copy |\n| Determine completion (Lifecycle Queue consumer) | Pending/failed/completed object counts and job terminal status | Premature completion despite delayed transfer or dead-letter work |\n| Retrieve legacy jobs (Hyperdrive to old PostgreSQL records) | Historical migration metadata | Silently discarding prior migration history |\n\nBeyond the table, four properties make this state actually usable:\n\n1. **Stable identity.** The idempotency key should be the source object identity and version (bucket,\n   key, version/etag), not a queue message id or an attempt id. A future team should define idempotency\n   by source object identity/version, checkpoint/resume and verification of object counts and hashes\n   as gates.\n2. **Stage-local checkpoints, not one global cursor.** The listing needs a continuation token plus a\n   sequence; the transfer needs a per-object task; a large object needs its multipart upload id and\n   part state; completion needs the tally and terminal status. A resume on an online migration still\n   needs a replay window and duplicate-tolerant apply, and the design should record the mapping\n   revision, checkpoint, replay window and reconciliation rule.\n3. **Atomic accounting.** Inserting or deleting object keys and updating pending counts must be\n   coupled, so a failure to commit cannot incorrectly advance the completed-object total. Without that\n   coupling the count is a second, divergent source of truth.\n4. **An explicit partial/error policy.** Safe recovery needs durable import identity, checkpoint\n   semantics, object- or row-level logical identity and an explicit partial/error policy. An in-memory\n   cursor is not evidence of idempotent restart. Retriable work goes back to the queue; non-retriable\n   work goes to a dead-letter queue for inspection; the producer may throttle when a dependency fails.\n\nTwo boundaries are easy to miss. First, the state store is itself a capacity boundary: the design uses\nseparate batch Durable Objects for queued object keys and state, plus sharding to avoid the SQLite\nDurable Object 10 GB storage limit when dealing with billions of keys. The page explicitly does not\nclaim each batch object supports unlimited keys. Second, durable state is necessary but not sufficient:\na lock can be durable and still be attached to a partial multipart object. Durability buys resumability\nand deduplication; it does not buy byte equality.\n\n## 4. Why a completed object count is not proof that the job finished correctly\n\n### 4.1 What the number actually counts\n\nIn this design the completed total advances when a work item is acknowledged or a key is removed from\nthe tracking database. That is a count of transitions, not a count of verified destination objects.\nAt-least-once delivery means the same object can be delivered more than once, and a late acknowledgment\nafter a transfer already happened can look like new work. The four defenses - listing sequence\nidentifiers, a per-key transfer lock, transactional accounting and a destination-existence check - are\nreal, but the page is explicit that they address duplicate work, not a magic end-to-end atomic transfer\nbetween S3 and R2. Destination-existence and timestamp checks alone are not sufficient to prove byte\nequality, metadata correctness, same-version source identity or authorization.\n\nSo the number can be wrong in four independent ways:\n\n- **Inflated by duplicates.** If accounting is not keyed to unique object identity, a redelivery can\n  count twice; even when duplicates are suppressed, the total is a count of deduplicated work items,\n  not of verified objects.\n- **Advanced by a partial commit.** If the key change and the counter update are not atomic, a failure\n  can leave a count that does not match the key set.\n- **Complete too early.** The count can reach its target while a transfer is delayed, a lease has not\n  expired, or work has moved to the dead-letter queue. The page names this exact risk: premature\n  completion despite delayed transfer or dead-letter work.\n- **Numerically equal but semantically wrong.** The right number of objects can be present with the\n  wrong bytes, metadata, version or authorization.\n\n### 4.2 Four terminal states, not one\n\nThe page's rule is that a job controller must distinguish all queued, all acknowledged, all verified\nand all failed/review-needed before declaring completion. Those are four different things to establish:\n\n- all queued: the listing produced a task for every expected object;\n- all acknowledged: every consumer returned without a retryable error;\n- all verified: the destination object matches the expected identity and content under a stated\n  equality rule;\n- all failed/review-needed: the residual set is explicitly dispositioned.\n\nA count typically proves the second, sometimes the first, and rarely the third. Zero pending is\ncompatible with work sitting in a DLQ, with a message still in flight, or with a verification step that\nwas never run.\n\n### 4.3 Equal totals hide duplicates and omissions\n\nThe migration-correctness sources make the general point. Equal row counts hide duplicates and\nomissions; both old-minus-new and new-minus-old sets have to be compared, including schema-normalized\nkeys. A million indexed rows and a million source rows can still disagree on critical values or expose\nstale access decisions. Counts are cardinality; correctness is identity and value.\n\n### 4.4 Count plus checksum is still not semantic equality\n\nA materialized output can match row count and checksum while still diverging semantically when time\nwindows differ, null/value canonicalization is lossy, or the fingerprint excludes business-critical\nfields. The practical rule is to model each comparison as a tuple of source snapshot + schema version +\npartition identity + job revision + equality rule + freshness window. A count is one coordinate in\nthat tuple.\n\n### 4.5 \"Complete\" is ambiguous by design\n\nThe decision record lists four different meanings of migration \"complete\" across four dated migrations,\neach with a different authority and observable contract and each leaving something unproved. For a new\ndesign the first question is which invariant is under test: identity, value equality, operation order,\nreferential consistency, side-effect exactly-once, or bounded freshness. A completed-object count\nanswers the identity/cardinality question at best; it does not answer value equality, order, or\nexactly-once effects.\n\n### 4.6 The source's own limit\n\nThe case page notes that the company documents its lifecycle consumer but does not publish full\nper-object hash verification or an independently reproduced loss bound. That is a statement about the\nevidence, and it cuts both ways: we cannot cite the vendor's \"complete\" as a proof of byte equality,\nand we cannot assume the count is a verified-object count.\n\n### 4.7 What a real completion certificate contains\n\n1. A pinned source snapshot and version, and a manifest of expected object identities (key, version or\n   etag, size, checksum where the source exposes one).\n2. A destination listing taken at a stable watermark, normalized to the same identity keys.\n3. Both set differences empty: expected-minus-observed and observed-minus-expected, with duplicate\n   counts reported rather than silently collapsed.\n4. Per-object verification of bytes, metadata and version for all objects, or a statistically justified\n   sample plus boundary cases; multipart parts complete; authorization checked.\n5. Queue and lease state drained: no in-flight work, no unexpired lease that could still write, DLQ\n   empty or every entry explicitly dispositioned.\n6. Counters reconciled transactionally and reported by category, with a terminal job status and a\n   reason, so \"complete\" is a state with evidence rather than a number.\n7. A recorded rollback/replay boundary. Reconciliation must cover failures during copy as well as\n   completion after copy but before acknowledging the work item.\n\nThe count is an input to this certificate and a useful dashboard signal. It is not the certificate.\n\n## 5. Decision rule for the team\n\nAdopt the queue/worker path only for populations above the measured, not assumed, crossover, with:\n\n- a workload sweep over small, medium and large object counts and object-size mixes, at a comparable\n  resource budget, reporting p50/p95/p99, completed correct objects per second, cost per verified\n  object, retry and DLQ rates, and recovery time;\n- a reconciliation job that runs independently of the transfer counters;\n- an operational owner for the state store, DLQ and lease expiry.\n\nKeep the local batch copier for a limited fixed transfer set where the queue's extra operational cost\nbuys no useful concurrency. Reverse the choice when queue delay and backlog risk exceed the smoothing\nbenefit.\n\n## 6. Evidence map\n\n| Claim | Short form | Evidence sections | Status |\n|---|---|---|---|\n| C1 | Sign change: slower at hundreds, win at very large counts | case#observed; case#performance | observed |\n| C2 | Small-job loss attributed to queue/orchestration cost | case#performance; case#outcomes | observed |\n| C3 | Benefit conditional on buying concurrency/restartability at scale | case#why-not | observed |\n| C4 | Wrong-regime measurement is inconclusive, not refutation | benchmark-controls#6; decision-envelope#1 | inference |\n| C5 | Positive result bounded (one mix, no CI/cost, not universal) | case#performance; case#outcomes | observed |\n| C6 | Job start persists options/names/identity | case#observed | observed |\n| C7 | Listing persists cursor/identifiers/state and sequence | case#observed; case#at-least-once | observed |\n| C8 | Transfer persists task, lock, transfer and multipart state | case#observed | observed |\n| C9 | Completion persists counts and terminal status, transactionally | case#observed; case#at-least-once | observed |\n| C10 | Legacy migration metadata remains retrievable | case#observed | observed |\n| C11 | State store is capacity-bounded and sharded | case#observed | observed |\n| C12 | Durable import identity/checkpoint beats in-memory cursor | migration-falsification#6 | observed |\n| C13 | Online resume needs mapping revision, replay window, duplicate tolerance | online-data-migration#overview | observed |\n| C14 | Duplicate defenses do not make the transfer atomic | case#at-least-once | observed |\n| C15 | External effect needs destination idempotency or reconciliation | dedup-authority#5 | observed |\n| C16 | Four terminal states; premature completion risk | case#at-least-once; case#observed | observed |\n| C17 | Count is transitions, not identity/bytes/metadata proof | case#at-least-once | inference |\n| C18 | Equal counts hide duplicates/omissions; rows can disagree | netflix-casspactor; rollback-data#5 | observed |\n| C19 | Count plus checksum can still diverge semantically | meta-ingestion#green-shadow | observed |\n| C20 | \"Complete\" has several distinct invariants | data-migration-correctness#four-meanings | observed |\n| C21 | Proof needs manifest, both-direction diff, per-object checks | data-migration-correctness#dual-tests; case#why-not | inference |\n| C22 | Source lacks full hash verification and loss bound | case#at-least-once | observed |\n| C23 | Reconciliation covers failures during and after copy | case#why-not | observed |\n| C24 | Throughput means completed correct ops at comparable cost | scaling-models#1; workload-shape#5; sensitivity-options#5 | observed |\n| C25 | Local copier alternative; adoption conditional | case#why-not; case#outcomes | observed |\n| C26 | I/O wait, not CPU, was the growing-count bottleneck; job decomposed into scheduled units | case#pressure | observed |\n| C27 | Negative small-transfer result focused the redesign on high-concurrency scale; gates named | case#mechanics | observed |\n\nFull section keys are carried in the answer JSON claims and citations. In this table, case is short for\ntycho.page.9fba18919c6c44cdbd6ba07b4825f1e2, and each case#name shorthand maps to the corresponding\nheading anchor on that page (for example case#observed maps to\n#observed-orchestration-stages-and-persistent-state-boundaries). The shorthand is a readability aid, not\na substitute citation.\n\n## 7. Unknowns, contradictions and unverified claims\n\n- **Crossover location is unknown.** The book gives discrete points (several hundred slower; 75,000\n  faster; \"millions\" matched or exceeded) and no fitted curve. N* is inferred from the cost model, not\n  measured. No confidence interval or object-size distribution is published.\n- **The 5x is a selected comparison.** The page reports roughly 4.5x for the 75,000-object sample and a\n  company description of \"up to 5x\"; it must not be treated as a p99 or universal result.\n- **Concurrency is bounded in the report.** Three concurrent migrations per account at publication;\n  higher concurrency was a future goal. The large-count win does not prove unbounded parallelism.\n- **No per-object hash verification or independently reproduced loss bound is published.** The\n  source's lifecycle completion is not the same as a published byte-equality proof.\n- **The \"queue cost dominates small job\" explanation is the case page's analysis**, not a published\n  cost breakdown from the company. The qualitative direction is supported; the exact split between\n  fixed setup and per-object coordination is not.\n- **The page's own status** is \"original case draft; independent reviewer pending\" and evidence status\n  unknown; the evidence is company-reported and not independently reproduced.\n- **No model in the modeling-and-simulation layer covers this specific threshold.** The available\n  migration simulation models a different synthetic dual-write path and explicitly reports no modeled\n  throughput gain because both paths had enough capacity for its synthetic load; it cannot be used as\n  evidence for this crossover.\n- **Whether the team's production population is above N* is not stated in the book.** Adoption and the\n  35%-of-lifetime-objects volume observation are consistent with a very large population, but they are\n  not a throughput-normalized measurement.\n- **Claim status.** C4, C17 and C21 are marked inference: they combine source statements into a decision\n  rule or a proof requirement. They are not presented as company claims.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The reported result is a sign change across object population: the first queue/worker proof of concept was slower for a few hundred objects but matched or beat the central-worker path at very large object counts.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "A roughly one-week proof of concept using Workers/Queues/Durable Objects **performed worse for a few hundred objects**, then matched or beat the original at very large object counts. That negative pilot result is a workload threshold, not evidence that event-driven copying always has lower overhead.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case",
+          "quote": "| Several hundred objects | First Worker/Queue proof of concept **slower** than old implementation | Queue and orchestration cost dominates small job |",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The small-count loss is attributed to queue and orchestration cost dominating a small job; the page does not claim the new path is faster at every size.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case",
+          "quote": "| Several hundred objects | First Worker/Queue proof of concept **slower** than old implementation | Queue and orchestration cost dominates small job |",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#outcomes-and-negative-lessons",
+          "quote": "For hundreds of small objects the POC was worse; a queue layer is not inherently lower latency than a local worker.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The adoption hypothesis is workload-conditional: the extra operational cost is justified only when it buys useful concurrency and restartability at scale.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "A durable queued architecture adds partitioned coordinator state, asynchronous acknowledgments, poison messages, idempotency rules, recovery operations and versioned historical job data. It is attractive only when its extra operational cost buys useful concurrency and restartability at scale.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A measurement taken in a different workload regime is inconclusive for the target decision rather than a refutation, and should lead to a better-scoped experiment.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+          "quote": "A result can be **inconclusive** because variance is high, samples are insufficient, the generator saturated, or the system differs too much from the target environment. That is valuable evidence and should lead to a better scoped experiment, not a stronger conclusion.",
+          "supports": "C4",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.a726b2ab751b44dea1a659556ed4f4c6#1-a-shared-decision-envelope",
+          "quote": "Offered versus admitted traffic, concurrency, operation mix, item skew, data size and growth window",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The positive result is bounded: it rests on one 75,000-object comparison with no object-size distribution, cost baseline or confidence intervals, and 'up to 5x' is not a universal benchmark.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case",
+          "quote": "No full object-size distribution, cost or confidence intervals given",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case",
+          "quote": "The 75,000-object ratio must not be presented as a p99 speedup for every migration.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#outcomes-and-negative-lessons",
+          "quote": "The advertised 5× result is not a universal cloud-to-cloud benchmark.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Job start must durably preserve migration options, source and target names, and job identity, so duplicate start requests cannot fork a job and historical state stays reachable.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "| Start a job | API Worker + account Durable Object | Migration options, source/target names and job identity | Duplicate start requests or inaccessible historical state |",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Listing must durably preserve the continuation position, object identifiers and listing state, and sequence numbering must make duplicate enumerations recognizable.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "| Enumerate source objects | List Queue consumer | Continuation position, object identifiers and listing state | Replayed list page, reordering or overlapping workers |",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "**Listing sequence identifiers:** a source listing is sequential through continuation tokens; numbering operations prevents competing duplicate enumerations and allows redundant retries to be short-circuited.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Transfer scheduling and copying must durably preserve the per-object key and task, an in-progress lock, transfer state and multipart status, covering backlog, duplicate delivery, timeout after upload and partial multipart objects.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "| Schedule transfers | List producer + Transfer Queue | Per-object key and transfer task | Queue backlog, duplicate delivery, dependence on remote source |",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "| Copy bytes | Transfer Queue consumers / Workers | In-progress lock and object-transfer state; multipart status for large objects | Timeout after upload, partial multipart object, repeated copy |",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Completion accounting must durably preserve pending, failed and completed object counts plus a terminal job status, with key changes and counters transactionally coupled so an uncommitted change cannot advance the completed total.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "| Determine completion | Lifecycle Queue consumer | Pending/failed/completed object counts and job terminal status | Premature completion despite delayed transfer or dead-letter work |",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "**Transactional accounting:** inserting/deleting object keys and updating pending counts are coupled so failure to commit does not incorrectly advance the completed-object total.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Historical migration metadata must remain retrievable from the old store; the new runtime must not silently discard it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "| Retrieve legacy jobs | Hyperdrive to old PostgreSQL records | Historical migration metadata | New runtime must not silently discard prior migration history |",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The coordination state store is itself a bounded durable resource: batch Durable Objects are sharded to avoid the SQLite 10 GB limit for billions of keys, which is not unlimited capacity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "a sharding mechanism to avoid the SQLite Durable Object **10 GB storage limit** when dealing with billions of keys. This is not a claim that each batch DO supports unlimited keys.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Resumable migration needs durable import identity, checkpoint semantics, object- or row-level logical identity and an explicit partial/error policy; an in-memory cursor is not evidence of idempotent restart.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#6-a-correct-migration-must-test-failure-and-recovery",
+          "quote": "Safe recovery needs durable import identity, checkpoint semantics, row-level logical identity and an explicit partial/error policy. An in-memory cursor is not evidence of idempotent restart.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "An online migration also needs the mapping revision, checkpoint, replay window and reconciliation rule, and any resume has to tolerate duplicates.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview",
+          "quote": "record the mapping revision, checkpoint, replay window and reconciliation rule",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview",
+          "quote": "a resume still needs a replay window and duplicate-tolerant apply",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "At-least-once delivery plus late acknowledgments creates duplicate work; per-key locks and transactional accounting reduce duplicate effects but do not make the cross-system transfer atomic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "These defenses address duplicate **work**, not a magic end-to-end atomic transfer between S3 and R2.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "destination-existence and timestamp checks alone are not sufficient to prove byte equality, metadata correctness, same-version source identity or authorization.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Because the external destination effect is outside the local transaction, the consumer must rely on the destination's own idempotency or a durable reconciliation boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+          "quote": "marking an event processed **before** making a separate external effect can lose the effect if the process crashes; marking it processed **after** can duplicate that external effect.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+          "quote": "External idempotency or durable reconciliation; local DB cannot make remote effect atomic",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "A job controller must distinguish all-queued, all-acknowledged, all-verified and all-failed/review-needed; premature completion is possible while a transfer is delayed or work sits in the dead-letter queue.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "A job controller must distinguish *all queued*, *all acknowledged*, *all verified* and *all failed/review-needed* before declaring completion.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "| Determine completion | Lifecycle Queue consumer | Pending/failed/completed object counts and job terminal status | Premature completion despite delayed transfer or dead-letter work |",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A completed-object count counts work-item transitions or acknowledgments; it is not proof that each destination object has the right identity, bytes, metadata and version.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "These defenses address duplicate **work**, not a magic end-to-end atomic transfer between S3 and R2.",
+          "supports": "C17",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "destination-existence and timestamp checks alone are not sufficient to prove byte equality, metadata correctness, same-version source identity or authorization.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Equal totals can hide duplicates and omissions, and a million matching rows can still disagree on critical values or expose stale access decisions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#four-distinct-consistency-proofs-for-another-platform",
+          "quote": "Equal row counts hide duplicates and omissions",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+          "quote": "A million indexed rows and a million source rows can still disagree on critical values or expose stale access decisions.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Row counts and checksums can match while output still diverges semantically when time windows differ, canonicalization is lossy, or the fingerprint excludes business-critical fields.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+          "quote": "materialized output can match row count and checksum while *still* diverging semantically when time windows differ, null/value canonicalization is lossy or the fingerprint excludes business-critical fields.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+          "quote": "Shadow row counts match but checksum differs",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Migration 'complete' has several distinct meanings; a design must name which invariant it is proving among identity, value equality, operation order, referential consistency, exactly-once side effect and bounded freshness.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "For a new design, first identify whether the business invariant is *identity*, *value equality*, *operation order*, *referential consistency*, *side-effect exactly-once*, or *bounded freshness*.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Completion proof needs a pinned manifest, both-direction set difference against destination identities, and per-object value checks, not a summary count.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+          "quote": "compares identical input snapshots, schemas, transformation revisions, output row identities and both set-difference directions",
+          "supports": "C21",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "preserve listing and transfer cursors, inject queue duplicates and lost acknowledgments, verify byte-level content/metadata for representative and boundary cases, confirm the DLQ and resume workflow",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The published source does not provide full per-object hash verification or an independent loss bound, so even its own lifecycle completion is not a published byte-equality proof.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "it does not publish full per-object hash verification or an independently reproduced loss bound.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Reconciliation must cover failures during copy and completion after copy but before acknowledging the work item, not only the final tally.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "Reconciliation must cover failures during copy as well as completion after copy but before acknowledging the work item.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "Throughput must be measured as completed correct operations at comparable cost; adding workers or concurrency is not itself a scale gain.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#1-concurrency-parallel-execution-and-completed-throughput-differ",
+          "quote": "Adding application workers increases potential concurrency but does not guarantee processor time, DB write throughput, network quota, exclusive-key authority or larger useful completion rate.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#1-concurrency-parallel-execution-and-completed-throughput-differ",
+          "quote": "Increasing throughput by skipping correctness checks or quietly refusing requests is not a valid scale gain.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#5-reproducible-evidence-required",
+          "quote": "Compare completed **correct** transactions and operational cost, not throughput alone.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#5-capacity-cannot-be-extrapolated-from-one-benchmark",
+          "quote": "Compare equivalent cost and end-to-end correctness, not just per-node throughput.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "The queue architecture is justified only when its added operational cost buys concurrency and restartability at scale; a local batch copier can be safer and cheaper for a limited fixed set.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "A local batch copier can be safer and cheaper for a limited fixed transfer set.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#outcomes-and-negative-lessons",
+          "quote": "For hundreds of small objects the POC was worse; a queue layer is not inherently lower latency than a local worker.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "The growing-count bottleneck was I/O wait rather than CPU, and the redesign decomposes the bulk job into explicit scheduled listing and transfer units.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#pressure-legacy-baseline-and-actual-chosen-direction",
+          "quote": "As transferred object count grew, waiting on source/destination I/O was a bottleneck more than available CPU.",
+          "supports": "C26",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#pressure-legacy-baseline-and-actual-chosen-direction",
+          "quote": "This decomposes an I/O-heavy bulk job into explicit scheduled units.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "The negative small-transfer result was used to focus the redesign on high-concurrency transfer scale, and the page converts that lesson into gates: idempotency by source identity/version, checkpoint/resume, and count-plus-hash verification.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#migration-mechanics-and-reliability",
+          "quote": "The authors tested a proof of concept that was *slower on small transfers* but matched or beat the original at very large object counts; this negative result justified focusing the change on high-concurrency transfer scale.",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#migration-mechanics-and-reliability",
+          "quote": "a future team should define idempotency by source object identity/version, checkpoint/resume and verification of object counts and hashes as Tycho gates.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#outcomes-and-negative-lessons",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+    "tycho.page.a726b2ab751b44dea1a659556ed4f4c6#1-a-shared-decision-envelope",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+    "tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#6-a-correct-migration-must-test-failure-and-recovery",
+    "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+    "tycho.page.50b3410cae7d4032babb15542e748cac#four-distinct-consistency-proofs-for-another-platform",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#1-concurrency-parallel-execution-and-completed-throughput-differ",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#5-reproducible-evidence-required",
+    "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#5-capacity-cannot-be-extrapolated-from-one-benchmark",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#pressure-legacy-baseline-and-actual-chosen-direction",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#migration-mechanics-and-reliability"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

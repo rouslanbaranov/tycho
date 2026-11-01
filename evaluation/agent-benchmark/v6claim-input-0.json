@@ -1,0 +1,107 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q200",
+      "question": "An operations team replaces every SLO alert with a single five-minute burn-rate threshold and pauses releases whenever it fires. Why can that rule both page on noise and miss a slow budget leak, and what must the decision establish before any burn-rate threshold is trusted?",
+      "required_evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target"
+      ],
+      "preliminary_claims": [
+        "A burn rate compares observed bad-event consumption with the rate the error budget permits, and a short window can be noisy while a long window detects a severe fault slowly, so one window does not settle both false paging and detection delay.",
+        "Before a threshold is trusted, the eligible event population, measurement boundary, outcome classes and sample size must be fixed, because a target without a specified population is meaningless and too few valid events cannot support the same burn conclusion.",
+        "A hard correctness failure must stop or reverse a release even when budget remains, because the error budget is an accounting of permitted bad events, not permission to violate an invariant."
+      ]
+    },
+    {
+      "task_id": "Q208",
+      "question": "A 99.9% monthly target still has error budget left when a release starts timing out, and no single sustained-window alert has fired. Why can the remaining budget and the quiet alert both fail to stop the release, and how should short and long burn windows be used instead?",
+      "required_evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling"
+      ],
+      "preliminary_claims": [
+        "A burn rate compares observed bad-event consumption with the budget's expected consumption rate, and because short windows are noisy while long windows detect severe faults slowly, one window cannot serve both early detection and confirmation.",
+        "A mandatory correctness gate stops a rollout even with budget remaining, while confirmed burn and measured impact choose between mitigation, investigation and reversible rollback.",
+        "The event population, sampling sufficiency and logical operation outcomes must be validated before the burn signal is trusted, and recovery must show correct booked state rather than merely fewer HTTP errors."
+      ]
+    },
+    {
+      "task_id": "Q216",
+      "question": "A team doubles a topic's partition count and changes the key encoding during a migration, expecting per-customer ordering to survive because every event still carries a customer key. Why can ordering break even though each event is keyed, and what must the migration define before consumers rely on the new layout?",
+      "required_evidence": [
+        "tycho.chapter.24729e8d9b7247b298956ab144c15225#decision-and-worked-result",
+        "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+        "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#1-command-query-notification-and-durable-event-are-distinct-contracts"
+      ],
+      "preliminary_claims": [
+        "Kafka orders records within a partition; it does not establish a total order across all partitions of a topic.",
+        "Changing the partition count or key encoding can move later records for a customer to a different partition from older records, so their relative order is no longer defined by one partition sequence.",
+        "An application that needs continuity across the change must define a transition or ordering contract rather than assuming that key presence preserves order."
+      ]
+    },
+    {
+      "task_id": "Q224",
+      "question": "A service reports 99.98% availability for the month with most of its error budget unspent, so the team treats a canary that occasionally double-books a seat as acceptable until the budget is exhausted. Why is that reading wrong, and what must a budget-triggered release decision check before treating the canary as safe?",
+      "required_evidence": [
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision"
+      ],
+      "preliminary_claims": [
+        "An error budget accounts for permitted bad events under the chosen SLO; it is not permission to violate a non-negotiable invariant, so one duplicate committed allocation remains forbidden even while availability looks green and budget remains.",
+        "The percentage is meaningful only with a fixed eligible population and outcome classification, and retries, pending or unknown outcomes or a changed denominator can manufacture an apparent improvement, so the decision must first verify the event population and sampling.",
+        "A hard correctness gate stops a rollout even with budget remaining, and a burn-rate alert is a decision trigger whose short windows are noisy and long windows slow, while zero observed errors at idle demand cannot support a 100% availability claim."
+      ]
+    },
+    {
+      "task_id": "Q232",
+      "question": "A team adds a search store beside its transactional database and updates both stores in the request path. A request reports success but the document is later missing from search, a rebuild follows a mapping change, and one replay delivers the same change twice. Why is a successful double write not evidence that the two representations agree, which invariants must be owned before the search view may serve reads, and what does the outbox commit and not commit?",
+      "required_evidence": [
+        "tycho.page.6a386512b280490da745f1ae2c416c58#overview",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem"
+      ],
+      "preliminary_claims": [
+        "Two stores hold two representations rather than two automatically consistent sources of truth, because the authoritative commit and the projection update are separated by a change pipeline, so the derived view can lag and every read of it needs a declared freshness contract.",
+        "The projection needs an authoritative owner and four explicitly owned invariants: freshness, rebuild, deduplication and schema migration; without them a lagging or half-migrated view can be served as if it were complete.",
+        "The outbox makes publication intent durable in the same local transaction as the state change, but it does not make publication atomic with the broker, so a crash after publish and before completion duplicates the event and the consumer must deduplicate at its own durability boundary."
+      ]
+    },
+    {
+      "task_id": "Q240",
+      "question": "A whitespace-only reformat of a model file makes V12 replay fail, while a whitespace-only reformat of the stored run record leaves its result hash unchanged. Why does V12 treat the two artifacts differently, and what does each hash identify?",
+      "required_evidence": [
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract"
+      ],
+      "preliminary_claims": [
+        "The model and scenario hashes are file digests checked before the rerun, so any byte change to either input fails replay.",
+        "The result hash covers the run record's substantive fields rather than its file bytes, so reformatting the record leaves it unchanged.",
+        "The asymmetry follows from roles: the inputs are canonical entities identified by their files, while the run record is a derived entity identified by its declared content."
+      ]
+    },
+    {
+      "task_id": "Q248",
+      "question": "A V12 decision record has status insufficient-evidence and recommendation none, and an analyst adds the least-bad recommendation so the record looks complete. Why is that a contract failure rather than an improvement?",
+      "required_evidence": [
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome"
+      ],
+      "preliminary_claims": [
+        "A record with recommendation none can still be insufficient-evidence; it is a valid outcome, not an incomplete record.",
+        "Forcing a recommendation hides missing evidence about the world, which is the listed failure mode of recommendation by default.",
+        "The actionable record names the measurement, the range that would support or reject the decision, the owner, the consequence of staying put and the next review trigger."
+      ]
+    }
+  ]
+}

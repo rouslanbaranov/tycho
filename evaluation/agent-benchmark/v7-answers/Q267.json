@@ -1,0 +1,274 @@
+{
+  "task_id": "Q267",
+  "answer": "# Q267 — Why a 2x→10x title-boost score increase does not prove better relevance\n\n## Scope and layers\n\nThis question needs the **book** layer only. It asks for a conceptual mechanism and an evaluation contract: why a raw-score comparison is invalid, what BM25 combines, and what must be frozen and judged before a boost is accepted. It needs no atlas pattern identity and no modeling-and-simulation model, run or decision artifact, so those layers were not used. Evidence was read from the book layer at snapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a.\n\n## Facet matrix\n\n| Facet | Query formulations used | Evidence read |\n|---|---|---|\n| F1. Invalid cross-index score comparison | exact: \"cross-index BM25 score calibration\"; synonyms: \"scores different indexes analyzers corpora\"; conceptual: \"relevance improved scores\" | tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work; tycho.page.d79b0a48b30f4995a9bc110dbe691e52#purpose-and-mission |\n| F2. BM25 composition and field boosts | \"BM25\"; \"title boost\"; \"field boost\"; \"term frequency saturation inverse document frequency length normalization\"; \"field weighting relevance hypothesis\" | tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work; tycho.page.fa9fbde428884786b68dbfdf142cb1ad#2-postgresql-17-full-text-search-is-a-real-candidate; tycho.page.39a694d604d646a996bf90c3357c3b27#purpose-and-mission |\n| F3. Tuning versus acceptance | \"held-out queries tuning overfitting\"; \"reproducible evaluation design held-out\"; conceptual: \"in-sample acceptance\" | tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design; tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model |\n| F4. Freeze contract | \"score comparison across indexes calibration\"; \"same source snapshot qrels\"; \"version corpus indexing configuration queries judgments\" | tycho.page.d79b0a48b30f4995a9bc110dbe691e52#integrated-decision-and-reading-route; tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons; tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation |\n| F5. Judgments and metrics | \"nDCG recall judgments relevance metric\"; \"ranking metrics precision recall MRR\"; conceptual: \"fixed qrels\" | tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model; tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure; tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons; tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality |\n| F6. Regression and acceptance | \"field weights acceptance experiment\"; \"title boost shallow overview\"; \"dual-run evaluation passes\" | tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work; tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design; tycho.page.a4335241afc0408d9e137bc2a027ebed#7-failure-recovery-and-indexing-consistency; tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation |\n\n## Direct answer\n\nThe comparison is invalid for four independent reasons. First, BM25 scores from the old and new index builds are not on a common calibration; a rebuilt index or a changed scorer can move every score even when the judged ranking is unchanged. Second, the 2x→10x title boost is the treatment itself, so a rise in title-heavy scores is mechanically expected; a score rise is not an outcome measure. Third, the team evaluated on the queries it used for tuning, which is in-sample evidence: the boost was chosen to fit those queries, so improvement there is not evidence of improvement on unseen queries. Fourth, a raw score is not a relevance judgment: relevance is application-dependent, and a higher score can coexist with a worse ranking for the high-consequence evidence a user needs.\n\nBM25 itself combines **term evidence** (term frequency), **inverse document frequency**, and **document-length normalization**; the title boost is a separate per-field weighting choice layered on that lexical scorer, not a measure of truth or an extra source of relevance judgments. The book explicitly calls an arbitrary field boost a tuning hypothesis and warns that too much title boost can rank a shallow overview above an exact failure explanation.\n\nBefore accepting the boost, freeze the corpus/source revision, the index generation and analyzer/tokenizer version, section boundaries, the scoring configuration under test, the held-out evaluation queries, the qrels, the eligible permission filters and the measurement environment; version corpus, indexing configuration, queries and judgments together. Then judge, on unseen queries with fixed judgments, Precision@k, Recall@k, MRR and nDCG@k, plus coverage and negative/unanswerable cases, exact-symbol and false-friend cases, citation support, answer correctness, freshness, latency and cost. Accept only a pairwise improvement over the frozen baseline on that held-out judged set; revise or reject otherwise. A score increase is neither necessary nor sufficient evidence.\n\n## 1. Why the comparison is invalid\n\n### 1.1 Cross-index BM25 scores are not a common scale\n\nThe book's BM25 passage is direct: \"Scores from different indexes, analyzers or corpora need not share a common calibration.\" BM25 score magnitudes depend on corpus statistics (in particular inverse document frequency), on document-length normalization, and on the analyzer that defines terms. A new index built at a different time can have different term statistics, different segmenting or a different analyzer version; even when the corpus text is nominally the same, the score function can be a different function. The passage also warns that an \"Analyzer version mismatch between old and new generations\" is a known failure mode. Therefore a new score of, say, 18 versus an old score of 14 does not mean the new result is 4 units more relevant. The scores do not share units.\n\nThe same section frames BM25 as \"a **text relevance model**, not a guarantee that results are technically true.\" The retrieval-evaluation page adds: \"A high similarity score alone is not evidence of a correct answer.\" A score is a retrieval ordering signal; it is not truth, authority, freshness or answer correctness.\n\n### 1.2 The boost is the treatment, so score movement is expected by construction\n\nRaising the title weight from 2x to 10x multiplies the contribution of title-field term matches. Every document whose title matches the query will tend to score higher relative to body-only matches. That is the intended effect of the parameter, not a finding about relevance. To show relevance improved, the team would have to show that the *ranking of judged relevant items* improved on queries that were not used to set the weight. If they tuned 2x→10x by looking at those queries, the observed gain is fitted to the tuning sample.\n\nThe book states: \"An arbitrary field boost (e.g. 10× title) is only a tuning hypothesis. Evaluate it on unseen queries and judgment labels; too much title boost can rank a shallow overview above an exact failure explanation.\" That sentence contains both the design rule (unseen queries and judgment labels) and the concrete risk (a shallow title match displacing precise failure evidence).\n\n### 1.3 The tuning queries are in-sample\n\nIf the same queries are used to choose the boost and to declare success, the acceptance result is contaminated by selection. The evaluation-design section says: \"Separate training/tuning questions from acceptance; an author-generated in-sample set alone is too easy.\" It also requires a held-out set spanning fact lookups, synthesis, trade-offs, failure analysis, change-impact, contradictory sources and deliberately unanswerable problems. The judgments page adds that a dataset of simple keyword queries \"cannot establish real expert search quality\" and that judgments need reviewer context, snapshot/version identity, and explicit treatment of unjudged results.\n\nA team can legitimately use a development set to generate the 10x hypothesis. It cannot use that same set as the acceptance evidence, and it should not let the acceptance queries influence the chosen weight.\n\n### 1.4 A raw score is not a relevance metric\n\nRanking metrics need judgments: Precision@k is the fraction of the top k results that were judged relevant, Recall@k uses all judged relevant items under the chosen qrels, MRR measures how early the first relevant result appears, and nDCG@k uses graded relevance with position discount. A raw BM25 score has no qrels and no position-level relevance interpretation; averaging scores across queries is especially meaningless because score magnitudes depend on which query terms occur and how rare they are in the corpus. The book's limits are explicit that pooled judgments are \"assumptions/approximations for a particular collection, not an eternal complete map of relevance.\" Even a judged metric is a bounded measurement, not absolute truth.\n\n### 1.5 Even a better score does not mean a better answer\n\nInformation-retrieval quality \"spans relevance, coverage, freshness, authorization, latency and cost.\" A ranking can improve on a narrow relevance metric while returning stale pages, missing a necessary source, or citing a section that does not support the answer. The hybrid-evaluation table separates retrieval metrics from answer correctness and citation support. The team's claim is therefore too narrow even before the calibration and in-sample problems: relevance improvement is not answer-quality improvement, and neither follows from a raw score comparison.\n\n## 2. What BM25 combines\n\n| Component | What it contributes | Consequence for the 2x→10x claim |\n|---|---|---|\n| Term evidence (term frequency) | How often query terms occur in the document, with saturation so repeated terms give diminishing returns | Raising title weight raises the title-field term contribution; this is the intended effect of the parameter, not a finding about relevance |\n| Inverse document frequency (IDF) | How rare a term is across the corpus; rare terms carry more weight | A rebuilt index with different corpus statistics can change IDF and therefore all scores; old and new scores are not on one scale |\n| Document-length normalization | Discounts long documents so length alone does not dominate | Length norms and section boundaries must be held constant when comparing configurations |\n| Field weighting / boost (the title boost) | A configurable per-field multiplier; the book lists relative field importance as a hypothesis, not a measured truth | 2x→10x is a treatment applied to one field; it must be tested on unseen queries and judgment labels |\n| Scorer implementation (e.g. Lucene BM25Similarity) | A concrete, versioned implementation of the lexical scoring model | Implementation/analyzer versions are part of the measurement configuration and must be frozen or explicitly compared |\n\nThe book's wording is careful: BM25 \"combines term evidence, document-length normalization and inverse-document-frequency weighting.\" The field table is headed \"Relative retrieval importance (hypothesis)\" and covers the title, technical paragraphs, version tags, source anchors and navigation breadcrumbs. The title boost is therefore a weighting hypothesis about which field matters, not a component that makes results technically true. BM25 is lexical: word overlap helps retrieval but, as the lexical-indexing page says, \"word overlap alone cannot guarantee that a retrieved page explains the requested architecture, version or failure behavior.\"\n\n## 3. What must be frozen before the boost is judged\n\nThe word \"frozen\" is the operational reading of several book requirements; the book uses \"same source snapshot\", \"fixed judgments\", \"frozen analyzer/version snapshot\" and \"version ... together.\" A defensible test freezes:\n\n| Frozen element | Why it must be frozen | Evidence basis |\n|---|---|---|\n| Corpus and source revision | A different corpus changes IDF and length statistics; a different revision changes which documents are even eligible | \"Version corpus, indexing configuration, queries and judgments together\"; \"same underlying corpus/revision\" |\n| Index generation and analyzer/tokenizer version | Analyzer mismatch between generations changes terms and scores; a new index can be a different scorer | \"Analyzer version mismatch between old and new generations\"; \"frozen analyzer/version snapshot\" |\n| Section/chunk boundaries and length normalization inputs | Different segmentation changes document lengths and term counts, hence BM25 scores | \"same source snapshot, chunk/section boundaries\" |\n| Scoring configuration except the treatment | Only the title boost should differ between baseline and candidate; k1, b, other field weights and query parsing must stay fixed | \"Version corpus, indexing configuration, queries and judgments together\" |\n| Evaluation queries held out from tuning | The tuning queries cannot also be the acceptance evidence | \"Separate training/tuning questions from acceptance\" |\n| Qrels and judgment protocol | Metrics are only defined against fixed judgments; unjudged documents stay uncertain | \"same ... qrels\"; \"fixed judgments\"; \"unjudged results remain uncertain\" |\n| Permission filters and eligible scopes | Filters change the candidate set and therefore ranking metrics | \"same ... permission filters\" |\n| Measurement environment, k, pooling depth and latency conditions | The comparison must be reproducible and not confounded by harness or load changes | \"same ... measurement environment\"; \"Version ... together\" |\n\nIf the team rebuilt the index and also changed the analyzer, the comparison confounds the boost with a new scorer; if it only changed the boost but kept the same index, the scores are still from a different scoring function. In both cases the raw-score difference is not a measured relevance effect.\n\n## 4. What must be judged\n\n| Judgment layer | What to measure | Why it is required |\n|---|---|---|\n| Ranking | Precision@k, Recall@k, MRR/nDCG@k under fixed qrels, compared pairwise per query | These are the book's ranking metrics; raw BM25 scores are not metrics |\n| Coverage and robustness | Exact identifiers and rare symbols, false friends, multi-part questions, negative/unanswerable questions, stale or renamed content | A keyword-only or easy-positive set cannot establish expert search quality; title boosting is especially risky for exact-symbol and false-friend queries |\n| Answer quality | Answer correctness against independently checked sources, citation support for consequential claims, unknown calibration | Retrieval relevance is not answer quality; the hybrid-evaluation table separates these dimensions |\n| Operations | Freshness lag, p50/p95/p99 latency, token and operational cost, security/permission behavior | A ranking change is not acceptable if it buys relevance with stale or unsafe results |\n| Decision | Accept, revise or reject the boost on the held-out judged comparison; dual-run until evaluation passes | The evaluation design ends in an accept/revise/reject decision, and model/tokenizer changes require dual-running |\n\n## 5. A defensible acceptance test for 2x→10x\n\n1. **State the hypothesis in advance.** The boost is a title-field weighting hypothesis; write down the expected benefit and the risk (shallow title matches displacing precise body evidence). Do not define success as \"scores went up.\"\n2. **Freeze the baseline and the candidate.** Same corpus/revision, same analyzer/tokenizer and index generation, same section boundaries, same permission filters, same query parsing, same measurement environment. Change only the title boost from 2x to 10x.\n3. **Keep tuning and acceptance disjoint.** Use the tuning queries only to generate the hypothesis. Lock the acceptance query set, qrels, metric, k and decision threshold before running the candidate.\n4. **Run the held-out judged comparison.** Compute Precision@k, Recall@k, MRR and nDCG@k under the fixed qrels, with paired per-query results for old and new configurations. Report uncertainty and the pooling/judgment limits, not a single averaged raw score.\n5. **Check high-consequence regressions.** Verify that exact API/configuration lookups still surface the precise failure explanation, that false friends are not promoted, and that negative/unanswerable questions still behave correctly. The book's warning that too much title boost can rank a shallow overview above an exact failure explanation is a concrete regression test.\n6. **Check answer-level and operational quality.** If the index feeds an answer system, judge answer correctness, citation support and unknown calibration on the same cases; measure freshness, latency and cost so the boost is not accepted on relevance alone.\n7. **Decide and record.** Accept only if the held-out judged comparison improves without unacceptable regressions; otherwise revise or reject. Report what was frozen, what was judged, the judgment limits and the unknowns. A raw score delta is not an acceptance criterion.\n\n## 6. Boundaries and unknowns\n\n- **No measured experiment exists in the book.** The book describes evaluation contracts and warns that improvement claims are unverified until a controlled dataset, comparable latency and actual answer/citation judgments exist. The source material explicitly says its mechanisms are not quality evidence for its synthetic corpus, and no such experiment is executed here. This answer therefore gives a validity argument and a test design, not a measured verdict on 10x.\n- **The team's actual setup is unknown.** We do not know whether the corpus, analyzer, tokenizer, section boundaries, permission filters or even the query parser were held constant; whether the old and new indexes are the same generation; what metric or qrels were used; whether the tuning and acceptance queries overlap; or whether any significance or uncertainty analysis was done. Those are exactly the confounders that make the score comparison uninterpretable.\n- **We cannot conclude that 10x is worse.** The evidence supports \"the comparison does not establish improvement,\" not \"10x harms relevance.\" The boost could be beneficial, neutral or harmful on a proper held-out judged set; only that set can decide. The book's warning about shallow overviews is a risk to test, not a measured result.\n- **Judgments are bounded.** Even a held-out qrels is a collection-specific approximation with pooling limits; unjudged documents remain uncertain, and disagreement must be reported rather than converted into certainty.\n- **Score calibration is not rescued by normalization alone.** The book says scores from different indexes, analyzers or corpora need not share calibration. Dividing or min-max-scaling old and new scores does not create a common relevance scale; the judged ranking comparison is the defensible path.\n\n## 7. Evidence map\n\n| Claim | Evidence section key | Status |\n|---|---|---|\n| C1 cross-index scores not calibrated; boost is a hypothesis | tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work | observed |\n| C2 BM25 components; lexical model, not truth | tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work; tycho.page.39a694d604d646a996bf90c3357c3b27#purpose-and-mission | observed |\n| C3 field boost risk; unseen queries and judgment labels | tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work | observed |\n| C4 tuning/acceptance separation; keyword-only set too weak | tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design; tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model | observed |\n| C5 score is not correctness; IR quality spans dimensions | tycho.page.d79b0a48b30f4995a9bc110dbe691e52#purpose-and-mission; tycho.page.fa9fbde428884786b68dbfdf142cb1ad#2-postgresql-17-full-text-search-is-a-real-candidate; tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation | observed |\n| C6 version corpus, indexing config, queries, judgments | tycho.page.d79b0a48b30f4995a9bc110dbe691e52#integrated-decision-and-reading-route | observed |\n| C7 matched snapshot, boundaries, qrels, filters, queries | tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons | observed |\n| C8 fixed, reviewer-bound, pooled judgments | tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model; tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure; tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design | observed |\n| C9 same corpus/revision, filters, environment; pairwise | tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design | observed |\n| C10 frozen analyzer/version; dual-run; not headline tech | tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation; tycho.page.a4335241afc0408d9e137bc2a027ebed#7-failure-recovery-and-indexing-consistency | observed |\n| C11 answer correctness and citation support | tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality | observed |\n| C12 no measured quality; improvement claims unverified | tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation; tycho.page.a4335241afc0408d9e137bc2a027ebed#7-failure-recovery-and-indexing-consistency | observed |\n| C13 held-out set composition | tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model | observed |\n\n## 8. Verification notes\n\nAll cited sections were read through the book CLI (read, not snippet-only); quotes are verbatim fragments from those reads. The mechanical validator was run on this answer file and its PASS covers the contract only, not semantic support. No corpus, qrels, other answer files or v7 answer files were read; no files were edited or committed. No atlas or modeling-and-simulation evidence was used because the question does not require those layers.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A higher BM25 score from the rebuilt index does not establish better relevance: scores from different indexes, analyzers or corpora need not share a common calibration, and changing the title boost changes the weighted term contributions by construction.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+          "quote": "Scores from different indexes, analyzers or corpora need not share a common calibration.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+          "quote": "An arbitrary field boost (e.g. 10× title) is only a tuning hypothesis.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "BM25 combines term evidence, document-length normalization and inverse-document-frequency weighting, implemented by a scorer such as Lucene BM25Similarity; it is a lexical text-relevance model, not a guarantee of technical truth.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+          "quote": "BM25-style ranking combines term evidence, document-length normalization and inverse-document-frequency weighting; Apache Lucene's BM25Similarity class is a concrete scorer implementation.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+          "quote": "It is a **text relevance model**, not a guarantee that results are technically true.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.39a694d604d646a996bf90c3357c3b27#purpose-and-mission",
+          "quote": "**Primary question:** How do tokenization, postings, field weighting, ranking and index update mechanisms affect the quality and freshness of retrieving technical knowledge?",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A field boost is a separate weighting choice, not a relevance measurement: an arbitrary title boost is only a tuning hypothesis, and too much title boost can rank a shallow overview above an exact failure explanation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+          "quote": "An arbitrary field boost (e.g. 10× title) is only a tuning hypothesis. Evaluate it on unseen queries and judgment labels; too much title boost can rank a shallow overview above an exact failure explanation.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Testing the boost on the same queries used for tuning is in-sample evidence; tuning and acceptance questions must be separated and the acceptance set held out.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design",
+          "quote": "Separate training/tuning questions from acceptance; an author-generated in-sample set alone is too easy.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+          "quote": "A dataset containing only automatically generated simple keyword queries cannot establish real expert search quality.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A high similarity or BM25 score is not evidence of a correct answer; information-retrieval quality spans relevance, coverage, freshness, authorization, latency and cost, and relevance is application-dependent rather than objectively sufficient.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#purpose-and-mission",
+          "quote": "Information retrieval quality therefore spans **relevance, coverage, freshness, authorization, latency and cost**. A high similarity score alone is not evidence of a correct answer.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#2-postgresql-17-full-text-search-is-a-real-candidate",
+          "quote": "The §12.3.3 ranking section explicitly treats relevance as application-dependent rather than an objectively sufficient measure.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+          "quote": "A high BM25 rank is not evidence that R1 remains authoritative.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A reproducible quality comparison requires versioning the corpus, indexing configuration, queries and judgments together.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#integrated-decision-and-reading-route",
+          "quote": "Version corpus, indexing configuration, queries and judgments together so quality changes can be explained and reproduced.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A defensible comparison holds the source snapshot, section boundaries, qrels, permission filters and evaluation queries constant, and reports Precision, Recall and nDCG under fixed judgments.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+          "quote": "A defensible comparison uses the **same source snapshot, chunk/section boundaries, qrels, permission filters and evaluation queries** where possible.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+          "quote": "Precision/Recall/nDCG under fixed judgments",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Acceptance judgments must be fixed and bound to reviewer context and snapshot/version identity; unjudged results remain uncertain and pooled judgments are collection-specific assumptions, not a complete relevance map.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+          "quote": "Label questions and their relevant documents/sections with reviewer context and snapshot/version identity; disagreements and unjudged results remain uncertain.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+          "quote": "NIST TREC documentation makes clear that pooled judgments are assumptions/approximations for a particular collection, not an eternal complete map of relevance.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design",
+          "quote": "required canonical pages and high-consequence evidence IDs, with independent subject review",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The old and new configurations must run with the same corpus/revision, eligible filters, query set and measurement environment, and be compared pairwise rather than by a headline score.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design",
+          "quote": "Use the same underlying corpus/revision, exact eligible filters, query set and measurement environment. Assess pairwise trade-offs rather than just overall top-1 counts.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Analyzer, tokenizer or model changes require a frozen analyzer/version snapshot and dual-running until evaluation passes; the choice should rest on eligible relevance and operational freshness, not headline index technology.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+          "quote": "evaluate keyword, FTS and Lucene under a frozen analyzer/version snapshot",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#7-failure-recovery-and-indexing-consistency",
+          "quote": "If model or tokenizer changes, dual-run until evaluation passes.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+          "quote": "Choose lexical/hybrid retrieval based on eligible relevance and operational freshness, not headline index technology.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Retrieval relevance is not answer quality: acceptance must also judge answer correctness and citation support.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality",
+          "quote": "**Answer correctness** | Independently checked conclusions against public sources",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality",
+          "quote": "**Citation support** | Consequential claims backed by exact, current and admissible source sections",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The book reports no measured quality result for its synthetic corpus, and improvement claims remain unverified without a controlled dataset and actual answer/citation judgments.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+          "quote": "The existing PostgreSQL FTS and Lucene BM25 documentation specify ranking/analyzer mechanisms, not quality for this made-up corpus.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#7-failure-recovery-and-indexing-consistency",
+          "quote": "These are unverified until a controlled dataset, comparable latency/tokens and actual answer/citation judgments exist.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#7-failure-recovery-and-indexing-consistency",
+          "quote": "No such experiment is executed here.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "The held-out set must include exact identifiers, false friends, multi-part questions, negative/unanswerable questions and stale or renamed content; a keyword-only set cannot establish expert search quality.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+          "quote": "A dataset containing only automatically generated simple keyword queries cannot establish real expert search quality.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+          "quote": "negative/unanswerable questions with explicit expected no-result behavior",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+          "quote": "false friends: terms that match but describe a different version, system or meaning",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+    "tycho.page.39a694d604d646a996bf90c3357c3b27#purpose-and-mission",
+    "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+    "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#purpose-and-mission",
+    "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#2-postgresql-17-full-text-search-is-a-real-candidate",
+    "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+    "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#integrated-decision-and-reading-route",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+    "tycho.page.a4335241afc0408d9e137bc2a027ebed#7-failure-recovery-and-indexing-consistency",
+    "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

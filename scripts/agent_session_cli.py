@@ -18,6 +18,7 @@ def main(argv=None):
     ap.add_argument("command", choices=("search", "read", "page", "outline", "describe"))
     ap.add_argument("value", nargs="?")
     ap.add_argument("--limit", type=int, default=5)
+    ap.add_argument("--volume", choices=("book", "atlas", "modeling-and-simulation"))
     ap.add_argument("--max-chars", type=int, default=4500)
     ap.add_argument("--offset", type=int, default=0)
     ap.add_argument("--log", default=os.environ.get("TYCHO_SESSION_LOG"))
@@ -33,9 +34,12 @@ def main(argv=None):
     t0 = time.perf_counter()
     try:
         if args.command == "search":
-            payload = server._tool_search({
+            query = {
                 "query": args.value, "limit": args.limit, "abstain": False,
-                "detail": "snippets", "max_chars": args.max_chars})
+                "detail": "snippets", "max_chars": args.max_chars}
+            if args.volume and args.volume != "book":
+                query["volume"] = args.volume
+            payload = server._tool_search(query)
         elif args.command == "read":
             payload = server._tool_read({"section_key": args.value,
                                          "budget_chars": args.max_chars,

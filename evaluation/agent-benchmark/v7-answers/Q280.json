@@ -1,0 +1,424 @@
+{
+  "task_id": "Q280",
+  "answer": "# Q280 — Four rings are a drawing; the dependency rule is the mechanism\n\n## 0. Short answer\n\nThe team has a diagram, not a demonstrated architecture. A four-ring picture is a notation for the inward dependency rule; it is not the rule, it does not enforce the rule, and it says nothing about runtime binding. The domain importing the ORM and the web framework is a direct violation of the rule. A service locator can re-bind the domain to an adapter at runtime while the source graph looks clean. A build that only compiles checks type consistency, not dependency direction; even a real static import check proves only source imports, not runtime coupling, data behavior, or organizational decoupling. The inward rule protects the domain's source-level freedom to change and be tested independently of volatile technology details — not transactionality, availability, deployment isolation, or release ownership. Ports and mappers around a small CRUD module with one database and no second implementation are, on those facts, more likely ceremony than architecture: they are justified only by a real substitution, test, or change boundary. The team should replace the ring claim with an enforced dependency policy and behavior tests, and remove abstractions that protect nothing.\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| Ring count versus mechanism | \"clean architecture rings dependency rule\"; \"layer count number of layers\"; \"layered architecture enforced direction\" | D (bounded pattern ownership notes), A (clean/onion card), F (port contract) |\n| What the inward rule protects | \"dependency inversion stable abstractions\"; \"domain independent of ORM\"; \"tests isolate policy from infrastructure\" | B (purpose and decision question), A (clean/onion card), C (engineering walkthrough) |\n| Enforcement and import checks | \"fitness function architectural dependency test\"; \"enforced dependency test build\"; \"compiler type checker proves imports\" | K (module enforcement), D (bounded notes), H (build/test/runtime scope) |\n| Runtime binding and service locator | \"service locator\"; \"static imports runtime dependencies\"; \"composition root wiring\" | D (bounded notes), C (engineering walkthrough), L (static-imports case) |\n| CRUD ports and mappers | \"ports no second implementation\"; \"small CRUD mapping overhead\"; \"abstraction cost exceeds isolation\" | A (clean/onion card), D (bounded notes), M (atlas entry inventory), H (build/test/runtime scope) |\n| Behavior and acceptance | \"fake repository constraints\"; \"architecture acceptance tests\"; \"dependency or integration test rejects bypass\" | C (engineering walkthrough), I (failure and test matrix) |\n\n## 2. Why the ring count is not the mechanism\n\n### 2.1 A count describes the drawing, not the code\n\nThe four rings are a vocabulary: entities, use cases, interface adapters, and frameworks/drivers. The dependency rule says source dependencies point inward. The count is not a constraint on the code; it is a property of the picture. You can draw four rings around a domain that imports the ORM and the web framework, and the count is still four. The picture has not become false; the claim that the picture describes the code has. Tycho's bounded guidance is explicit: \"The dependency rule, not the number of drawn rings, is the mechanism.\" [C1] It also warns that \"drawing circles as team boundaries is not sufficient\" [C1], and it makes the same geometric point for the hexagon: \"The geometric term *hexagon* is not a requirement to have exactly six sides or six ports.\" [C1] The same applies to four rings: the geometry is a metaphor, not a causal mechanism.\n\n### 2.2 The mechanism is an enforced dependency policy\n\nThe mechanism has four parts, none of which is the ring count:\n\n1. A declared allowed direction: presentation may call application, application may call domain, and the domain calls neither. [C2]\n2. Ports or interfaces declared on the inner side, with adapter implementations outside. [C4]\n3. Enforcement in build/dependency tests: the rule is \"enforced by build/dependency tests, not by a diagram\"; \"Put that rule in build checks, not only in a diagram.\" [C2]\n4. Named public surfaces and bypass tests: the owner of each layer names its public surface and the test that catches a bypass; a pass-through layer or cyclic import is evidence that the layer is not a real boundary. [C12]\n\nA ring count supplies none of these. It does not say which edges are allowed, which packages are public, what fails on violation, or how the runtime is composed. That is why \"four rings\" can be true while the architecture is false.\n\n### 2.3 The team's own facts falsify the claim\n\nThe domain imports the ORM and the web framework. The corpus says: \"The inner domain must not depend on a UI, database or transport adapter.\" [C3] \"No domain module may import a framework, transport or storage dependency.\" [C3] \"Domain code must not depend on adapter or technology types; dependencies point inward.\" [C3] The team's imports are exactly the forbidden edges. The ring count is not merely insufficient evidence; it is contradicted by the code. A diagram cannot rescue a violated dependency rule, and a passing compile cannot either.\n\n### 2.4 More rings can be worse\n\nThe count is also not a quality scale. The corpus warns against layers that add \"indirection without a real change boundary\" [C12] and says to choose ports or a modular monolith \"when explicit ports or module ownership add more value than layer count.\" [C1] The atlas says layer boundaries must correspond to \"real change or test boundaries\" and rejects layering that \"adds ceremony without protecting a real change boundary.\" [C12] A four-ring diagram can therefore be a symptom of ceremony, not proof of architecture.\n\n## 3. What the inward dependency rule actually protects\n\n### 3.1 The protected object\n\nIt protects the domain's source-level independence from volatile details: the domain model's state transitions, invariants, and business language should not be shaped by an HTTP request or a specific ORM record shape. [C4] This is a source-code rule: it constrains which module may name which, not which module calls which at runtime. The rule keeps the domain policy from depending on the UI, database, transport, or framework. [C3] That is the object: the policy and its language, not the number of layers.\n\n### 3.2 What it buys\n\n- **Change localization.** \"Application structure determines which source changes can be made without rewriting unrelated business rules, whether storage or interface technologies can be replaced, and which dependencies must be present during a test.\" [C4]\n- **Test isolation.** \"Domain rules are the main asset; several delivery mechanisms or frameworks are plausible; dependency direction can be enforced; tests need to isolate policy from infrastructure.\" [C4]\n- **Source-level substitutability.** A port is \"a source dependency direction and semantic contract, not automatically a network port.\" [C4] Adapters translate technology to the contract.\n- **A real change/test boundary.** \"A useful port expresses a real boundary whose isolation or substitution matters to business rules or testing.\" [C4]\n- **Semantic honesty.** Adapter-specific errors, timeouts, and retries stay at the edge and do not become domain states. [C4]\n\n### 3.3 What it does not buy\n\nThe rule is not a runtime, data, deployment, or organizational isolation guarantee:\n\n- **Runtime.** The question is whether invoking the use case blocks on a datastore even if the type dependency is inverted; \"Hexagonal code still depends on the *availability* of the external capability.\" [C5]\n- **Data and transactions.** \"Ports do not make a multi-resource transaction atomic... adding an interface merely hides the transport.\" [C5]\n- **Deployment.** \"Dependency-inversion in source alone does not prove deploy-time isolation.\" [C5]\n- **Organization.** \"Compile-time inversion alone does not solve ownership or release coupling.\" [C5]\n- **Behavior.** A fake repository cannot demonstrate concurrent DB constraints, credential scope, connection cancellation, or remote transport semantics. [C13]\n\n### 3.4 The precise boundary test\n\nThe rule protects something only when the boundary is real. A layer that only forwards calls, a cyclic import, or shared mutable data crossing the boundary is evidence that the layer is not a real change boundary. [C12] The clean/onion choice should be reversed \"when that independence is not the protected boundary, or when the mapper adds no tested change benefit.\" [C12] So the rule protects a change/test boundary that is worth protecting; it does not protect a layer name.\n\n## 4. What a passing import check fails to prove\n\n### 4.1 Compile-only is not an architecture check\n\nA build that checks only that packages compile proves that each package type-checks against its classpath. If the ORM and web framework are on the domain's classpath, the domain compiles. A compile-only build does not assert that the domain is forbidden from importing them, that the package graph is acyclic, or that module publics and privates are respected. The corpus lists actual enforcement mechanisms: \"module-level build packages, language visibility restrictions, dependency analysis, ArchUnit-like architecture tests, or Spring Modulith's verification APIs.\" [C6] It asks: \"Do dependency checks reject forbidden import paths and cycles?\" [C6] A compile-only build does not answer that question. It proves type consistency, not dependency direction. The inference is explicit: a passing compile is compatible with the exact violation the team has. [C6]\n\nA build can enforce direction if the build graph makes forbidden edges impossible (module-level packages or language visibility). That is stronger than compiling packages with all dependencies available. The described build is the weaker kind: it checks compilation, not allowed edges. The difference matters: \"The rule is enforced by build/dependency tests, not by a diagram.\" [C2]\n\n### 4.2 Even a real static import check stops at source imports\n\nSuppose the team replaces the compile-only build with a genuine static dependency check (ArchUnit-like or a module graph). It can prove that source imports follow the encoded rules. It still does not prove runtime coupling:\n\n> \"A static dependency check proves imports, not runtime coupling: reflection, a service locator or generated wiring can still bind the domain to a framework.\" [C7]\n\nThat single sentence is the center of the question. The check sees the source edge, not the runtime object graph. A domain that calls a locator has a source edge to the locator, not to the ORM; the locator can return an ORM-backed adapter at runtime. The check passes; the domain still executes against the framework. [C8]\n\n### 4.3 The service locator is the named blind spot\n\nThe team's service locator is exactly the named bypass. If the domain calls the locator to obtain a repository or gateway, the source dependency is on the locator. The concrete adapter is supplied at runtime. The import check cannot see which adapter is bound, whether it is ORM-backed, or whether the domain receives framework types. The runtime dependency remains: the use case still blocks on the datastore even if the type dependency is inverted. [C8] The locator also hides the concrete dependency from tests and from the source graph; failures move from compile time to startup or runtime. That last sentence is an inference from the named runtime-binding risk, not a source claim; the corpus states the risk, not a full service-locator critique. [C8]\n\nThe remedy is not another ring. It is explicit composition-root wiring: construct the adapter outside the domain, pass the port in, and keep the locator out of domain code. If a locator remains, restrict it to the composition root and test what it can return. [C8] This remedy is design guidance, not a source claim; the engineering walkthrough's composition-root row supports the need to wire adapters outside the domain.\n\n### 4.4 The runtime, data, organizational, and behavioral gaps\n\nA passing static check also fails to prove:\n\n- **Runtime dependency.** The use case can still block on the database; \"Hexagonal code still depends on the *availability* of the external capability.\" [C5]\n- **Data behavior.** Ports do not make transactions atomic; \"adding an interface merely hides the transport.\" [C5]\n- **Deployment.** Source inversion does not prove deploy-time isolation. [C5]\n- **Organizational coupling.** Two teams may still have to coordinate contracts, migrations, and deployments. [C5]\n- **Real-adapter behavior.** Fake adapters cannot demonstrate DB constraints, concurrency, connection cancellation, or remote semantics. [C13]\n- **Fitness.** The check cannot tell whether a boundary protects a real change/test boundary or is a pass-through or ceremony. [C12]\n- **Completeness.** It checks only the rules encoded; an unencoded forbidden edge passes. This is an inference from the fact that a check asserts only its encoded rules.\n- **Build-version parity.** Tests must run on the actual build versions. [C6]\n\n### 4.5 The reflection case is an existence proof\n\nThe corpus records a publisher-reported migration where source-based dependency targets \"could not always detect classes loaded by reflection from configuration,\" and \"roughly 100 of about 700 services\" failed. [C9] This is not a universal failure rate, and the source says it is \"not proof that Bazel generally cannot represent reflective dependencies.\" [C9] It is an existence proof that source analysis can miss runtime dependencies. The lesson is not \"static checks are useless\"; it is \"a static check proves a source-level property, not the runtime graph.\" [C7]\n\n### 4.6 What a check can prove\n\nA real static import check can prove that the encoded source rules hold for the analyzed build: allowed edges, no forbidden imports, no cycles, and perhaps public/private visibility. That is valuable. It is necessary but not sufficient. It does not prove the architecture is fit, the runtime is decoupled, the data is safe, or the ports are worth their cost. [C7] [C12]\n\n## 5. The CRUD module: ports and mappers without a second implementation\n\n### 5.1 The evidence-based judgment\n\nOn the stated facts — small CRUD, one database, no second implementation — the substitution rationale is absent. The corpus is direct:\n\n- \"Reject the claim when mapping overhead dominates a small CRUD application or when ports have no genuinely different implementations; prefer simpler layering then.\" [C10]\n- The atlas rejects \"a trivial CRUD surface with one stable adapter; when no domain behavior exists to isolate; when the team cannot own mapping and contract tests.\" [C10]\n- \"If the application will always have one simple persistence choice, avoid a hierarchy of adapters that adds indirection without needed substitution.\" [C10]\n- \"If there is only one stable adapter, interfaces everywhere may add ceremony rather than useful replaceability.\" [C10]\n- \"A layered or modular-monolith structure can be simpler when one persistence choice is stable.\" [C10]\n\nOn those facts, the mappers and ports are speculative indirection, not clean architecture. In plain terms, this is speculative generality: paying for a variation that has not been shown to exist. They do not create a second implementation, they do not remove the database, and they do not by themselves make the domain testable. They add mapping code, DTOs, contract and integration tests, and places where latency and adapter errors can hide. [C10] [C13]\n\n### 5.2 Why the indirection costs\n\nA port is a semantic contract, not a network port. [C11] Around one database, it does not make the transaction atomic or the database disappear; \"adding an interface merely hides the transport.\" [C11] A mapper can hide latency and translate errors inconsistently; the boundary needs contract tests and explicit error translation to stay honest. [C13] If the layer only forwards calls, it is not a real change boundary. [C12] The team pays the mapping cost without a change scenario that the mapping enables. That is the definition of ceremony in this context.\n\n### 5.3 When it would be justified\n\nThe abstractions are justified if they protect a real boundary:\n\n- a second implementation, production or a meaningful test adapter;\n- a volatile vendor, legacy, or remote boundary;\n- domain behavior that needs isolated rule testing;\n- staged modernization where the adapter boundary is the seam.\n\nThe corpus's good-fit conditions include \"several delivery mechanisms or frameworks are plausible,\" \"tests need to isolate policy from infrastructure,\" and \"more than one adapter or technology is plausible.\" [C4] [C10] A test adapter can be a legitimate second implementation, but a small CRUD module with no domain behavior gives it little to prove; that test-adapter case is an application of the corpus's test-isolation condition, not a separate source claim. The decision test is not \"do we have ports?\" but \"what change or test does this port make possible, and is that benefit tested?\" [C12]\n\n### 5.4 Recommendation\n\nCollapse the ports and mappers unless a named boundary pays for them. Keep a thin seam only where a real test, substitution, or change need exists. If the mapper keeps ORM types out of the domain and that is tested, state that as the benefit; otherwise it is ceremony. The team should be able to say which change becomes cheaper and which test becomes possible. If it cannot, the abstraction is not architecture.\n\n## 6. Decision rules for the team\n\n1. Replace the ring claim with a written dependency policy: allowed edges, public surfaces, forbidden packages, and cycles. [C2]\n2. Enforce it at the build graph, not only in a diagram: module-level packages or language visibility so the domain cannot compile against the ORM and web framework; add ArchUnit-like tests for forbidden imports and cycles. [C6]\n3. Run the checks on the actual build versions, and fail the change. [C6]\n4. Add runtime composition tests: start the composition root, assert the domain receives only port types, and test what the service locator can return. [C8]\n5. Add real-adapter behavior tests: DB constraints, concurrency, transaction isolation, connection cancellation, and remote failure. Fake adapters alone are not enough. [C13]\n6. Remove the service locator from domain code; wire adapters explicitly at the composition root. If the locator stays, confine it to composition and test its bindings. [C8]\n7. Remove ports and mappers that protect no real boundary; keep only seams with a named change or test benefit. [C10] [C12]\n8. Review the three dependencies separately: source, runtime, and organizational. A green import check answers only the first, and only if it actually checks edges. [C5]\n\n## 7. Evidence map\n\n| Claim | Primary evidence | What it establishes |\n|---|---|---|\n| C1 | tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes; tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview; tycho.page.f375bfcea48045d2a5d1f46014ca7758#2-a-port-is-an-application-contract-not-automatically-a-network-port | Ring count is not the mechanism; geometry is not the rule; circles as boundaries are not sufficient. |\n| C2 | tycho.page.77b512c4e2e946bd92d70b4a714600c8#purpose-and-decision-question; tycho.page.f375bfcea48045d2a5d1f46014ca7758#1-layered-design-states-a-dependency-policy; tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes | Rule is enforced by build/dependency tests; file placement does not establish layering. |\n| C3 | tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes; tycho.page.f375bfcea48045d2a5d1f46014ca7758#1-layered-design-states-a-dependency-policy | Domain must not import framework, transport, or storage; direct violation. |\n| C4 | tycho.page.77b512c4e2e946bd92d70b4a714600c8#purpose-and-decision-question; tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview; tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures; tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime | Protects policy independence, change localization, test isolation, and semantic contract. |\n| C5 | tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime; tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures; tycho.page.f375bfcea48045d2a5d1f46014ca7758#4-choose-the-correct-core-boundary | Does not protect runtime, data, deployment, or organizational coupling. |\n| C6 | tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them; tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes | Compile-only is not an architecture check; tests must reject forbidden paths and cycles. |\n| C7 | tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes | Static check proves imports, not runtime coupling. |\n| C8 | tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes; tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime | Service locator is a runtime blind spot; runtime dependency remains. |\n| C9 | tycho.page.c766e3289b95429bb158fb168f7bd0b9#actual-failures-static-imports-are-not-full-runtime-dependencies | Reflection case; publisher-reported, not universal. |\n| C10 | tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview; tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes; tycho.chapter.e996607f707421ca388796732547cafd#entry-inventory; tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime | CRUD with one stable adapter is a contraindication; simpler layering preferred. |\n| C11 | tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures; tycho.page.f375bfcea48045d2a5d1f46014ca7758#4-choose-the-correct-core-boundary | Port is a source contract; interface does not make transactions atomic. |\n| C12 | tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes; tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview; tycho.chapter.e996607f707421ca388796732547cafd#entry-inventory | Real boundary requires a real change/test and a caught bypass. |\n| C13 | tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures; tycho.page.65f9616c034643f9bf5f297037f027e4#6-failure-and-test-matrix | Fake adapters and import checks cannot prove DB/concurrency/remote behavior. |\n| C14 | tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes | Bounded notes are synthetic guidance; build-check remedy is not a source claim. |\n\n## 8. Unknowns, contradictions, and limits\n\n- **No repository or build inspection.** The team's facts are taken as given; I did not run its build or inspect its module graph.\n- **\"Import check\" is ambiguous.** It could mean compile-only or a real static dependency analysis. The answer covers both; the described \"packages compile\" is the weaker case.\n- **The service locator's scope and return types are unknown.** Whether domain code calls it, whether it returns interfaces or concrete ORM types, and whether it is confined to composition are not stated. The corpus states the runtime-binding risk generally; the locator critique beyond that is inference.\n- **The mappers may be tested, and a test adapter may exist.** If so, the CRUD judgment can change; the decision test is the protected change/test boundary, not the count of production databases.\n- **The 100/700 figure is publisher-reported, not independently reproduced.** It is an existence proof, not a universal failure rate.\n- **I did not find a dedicated service-locator section in the searches.** The direct statement is a limit in the owner page. The stronger \"locator is an anti-pattern\" claim is not made here.\n- **The bounded-pattern notes are synthetic design guidance, not measured evidence.** The ring-count formulation, the service-locator limit, and the build-check remedy come from that guidance section; the underlying inward rule is source-linked. [C14] The service-locator sentence is part of the same bounded section; the corpus states the runtime-binding risk, not a full service-locator critique.\n- **No production observation, benchmark, or team-capability claim is made.**\n- **Required anchors.** All four required section keys are cited: A, B, C, and D. All are in the evidence ledger; missing_required_anchors is empty.\n\n## 9. Required-anchor coverage\n\n- tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview — clean/onion card; CRUD contraindication and circle warning.\n- tycho.page.77b512c4e2e946bd92d70b4a714600c8#purpose-and-decision-question — inward rule, build/dependency tests, inner domain.\n- tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures — port as source contract, fake adapter limits, one-persistence-choice warning.\n- tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes — ring count, service locator, CRUD, pass-through.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A clean/onion architecture is not established by the number of drawn rings; the rings are a representation, and the mechanism is the inward dependency rule.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "The dependency rule, not the number of drawn rings, is the mechanism.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview",
+          "quote": "a framework-centric application or a\nteam that cannot maintain boundary mapping is also a poor fit, and drawing circles as team\nboundaries is not sufficient.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f375bfcea48045d2a5d1f46014ca7758#2-a-port-is-an-application-contract-not-automatically-a-network-port",
+          "quote": "The geometric term *hexagon* is not a requirement to have exactly six sides or six ports. A port also need not be a REST endpoint: an in-process interface can express the actual invariant boundary more directly.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The mechanism is an enforced source-dependency direction: allowed inward edges, named public surfaces, and build/dependency tests that fail on bypass, not a diagram.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#purpose-and-decision-question",
+          "quote": "**Layer mechanism.** Layering groups responsibilities by abstraction and restricts source\ndependencies to an allowed direction. A layer may call only declared inward interfaces; the\nrule is enforced by build/dependency tests, not by a diagram. The inner domain must not\ndepend on a UI, database or transport adapter.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f375bfcea48045d2a5d1f46014ca7758#1-layered-design-states-a-dependency-policy",
+          "quote": "It works if the code controls dependency directions and avoids bypassing required rules. Simply placing files in similarly named directories does not establish architectural layering.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "Layering is a dependency rule: presentation may call application, application may call domain, and\ndomain calls neither. Put that rule in build checks, not only in a diagram.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "The owner of each layer names its public surface and the test that catches a bypass.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A domain module that imports the ORM and the web framework violates the inward rule directly: the inner domain must not depend on a UI, database, or transport adapter, and domain code must not depend on technology types.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "No domain module may\nimport a framework, transport or storage dependency, and an automated build check must enforce the\ndirection rather than a diagram.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "Convenience imports erode the boundary until the domain must change for a technology reason; the\nremedy is an enforceable dependency test and a deliberate adapter, not another layer name.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "Domain code must not depend on adapter or technology types; dependencies point inward. Keep the\nboundary only where substitution or testing justifies it.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The inward rule protects the domain policy's source-level independence from volatile technology details, so domain rules can change or be tested for domain reasons and adapters can translate technology at the edge.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#purpose-and-decision-question",
+          "quote": "Application structure determines which source changes can be made without rewriting unrelated business rules, whether storage or interface technologies can be replaced, and which dependencies must be present during a test.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview",
+          "quote": "Domain rules are the main asset; several delivery mechanisms or\nframeworks are plausible; dependency direction can be enforced; tests need to isolate\npolicy from infrastructure.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f375bfcea48045d2a5d1f46014ca7758#1-layered-design-states-a-dependency-policy",
+          "quote": "Rule depends on HTTP request or a specific ORM record shape",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures",
+          "quote": "The port is a **source dependency direction and semantic contract**, not automatically a network port.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime",
+          "quote": "A useful port expresses a real boundary whose isolation or substitution matters to business rules or testing.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f375bfcea48045d2a5d1f46014ca7758#2-a-port-is-an-application-contract-not-automatically-a-network-port",
+          "quote": "Adapters translate between these stable application contracts and details of HTTP, CLI, SQL, queues or other technologies.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "Adapter-specific errors,\ntimeouts and retries stay at the edge; they do not become domain states.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The inward rule does not protect runtime availability, transaction atomicity, deployment isolation, or organizational release coupling; those are separate dependencies.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime",
+          "quote": "**Source dependency:** does a business module import a concrete driver or HTTP framework? A static dependency check can verify much of this policy.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime",
+          "quote": "**Runtime dependency:** does invoking the use case block on a datastore even if the type dependency is inverted? Hexagonal code still depends on the *availability* of the external capability.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime",
+          "quote": "**Organizational change dependency:** must two teams coordinate contracts, migrations and deployments? Compile-time inversion alone does not solve ownership or release coupling.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures",
+          "quote": "Dependency-inversion in source alone does not prove deploy-time isolation",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f375bfcea48045d2a5d1f46014ca7758#4-choose-the-correct-core-boundary",
+          "quote": "Ports do not make a multi-resource transaction atomic. If a database commit succeeds but an external message is lost, the core needs a durable event/publication strategy where the contract requires it; adding an interface merely hides the transport.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A build that only compiles proves type consistency, not dependency direction; an architecture check must actually reject forbidden import paths and cycles and run against the real build versions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+          "quote": "Possible enforcement mechanisms include module-level build packages, language visibility restrictions, dependency analysis, ArchUnit-like architecture tests, or Spring Modulith's verification APIs.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+          "quote": "Check that the source structure represents true public/private module contracts and that tests run on actual build versions.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+          "quote": "Do dependency checks reject forbidden import paths and cycles?",
+          "supports": "C6",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "No domain module may\nimport a framework, transport or storage dependency, and an automated build check must enforce the\ndirection rather than a diagram.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Even a real static import check proves only source imports; it does not prove runtime coupling, because reflection, a service locator, or generated wiring can still bind the domain to a framework.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "A static dependency check proves imports, not runtime coupling: reflection, a\nservice locator or generated wiring can still bind the domain to a framework.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A service locator is a named runtime blind spot: the domain can depend on the locator in source while the locator supplies an adapter at runtime, so the import check passes and the runtime dependency remains.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "A static dependency check proves imports, not runtime coupling: reflection, a\nservice locator or generated wiring can still bind the domain to a framework.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime",
+          "quote": "**Runtime dependency:** does invoking the use case block on a datastore even if the type dependency is inverted? Hexagonal code still depends on the *availability* of the external capability.",
+          "supports": "C8",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures",
+          "quote": "Composition root | Wire concrete adapters and compatible versions | Dependency-inversion in source alone does not prove deploy-time isolation",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Source-based dependency analysis can miss classes loaded by reflection or configuration; the corpus records a publisher-reported migration where roughly 100 of about 700 services failed, while cautioning that this is not a universal failure rate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c766e3289b95429bb158fb168f7bd0b9#actual-failures-static-imports-are-not-full-runtime-dependencies",
+          "quote": "The generated Bazel targets identified dependencies primarily from Java/Kotlin/Scala source. That approach could not always detect classes loaded by **reflection from configuration**.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c766e3289b95429bb158fb168f7bd0b9#actual-failures-static-imports-are-not-full-runtime-dependencies",
+          "quote": "In publisher-reported startup/integration testing, **roughly 100 of about 700 services** failed.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c766e3289b95429bb158fb168f7bd0b9#actual-failures-static-imports-are-not-full-runtime-dependencies",
+          "quote": "These were **migration blockers**, not proof that Bazel generally cannot represent reflective dependencies.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Ports and mappers around a small CRUD module with one stable database and no second implementation are contraindicated when mapping overhead dominates and the boundary protects no real change or test need; simpler layering is preferred.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview",
+          "quote": "Reject the claim when mapping overhead dominates a small CRUD\napplication or when ports have no genuinely different implementations; prefer simpler\nlayering then.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "Clean/onion is\nthe wrong choice when mapping overhead dominates a small CRUD application or when ports have\nno genuinely different implementations; prefer simpler layering then.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.e996607f707421ca388796732547cafd#entry-inventory",
+          "quote": "Reject the claim for a trivial CRUD surface with one stable\nadapter; when no domain behavior exists to isolate; when the team cannot own mapping and\ncontract tests",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures",
+          "quote": "If the application will always have one simple persistence choice, avoid a hierarchy of adapters that adds indirection without needed substitution.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime",
+          "quote": "A port can reduce compile-time coupling while introducing indirection and more integration tests. If there is only one stable adapter, interfaces everywhere may add ceremony rather than useful replaceability.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview",
+          "quote": "Boundary erosion and DTO/mapping complexity are common failure\nmodes.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.e996607f707421ca388796732547cafd#entry-inventory",
+          "quote": "more than one adapter\nor technology is plausible",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A port is a source dependency direction and semantic contract, not automatically a network port, and an interface around one database does not make a multi-resource transaction atomic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures",
+          "quote": "The port is a **source dependency direction and semantic contract**, not automatically a network port.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f375bfcea48045d2a5d1f46014ca7758#4-choose-the-correct-core-boundary",
+          "quote": "Ports do not make a multi-resource transaction atomic. If a database commit succeeds but an external message is lost, the core needs a durable event/publication strategy where the contract requires it; adding an interface merely hides the transport.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A boundary is real only when it corresponds to a real change or test boundary and a bypass is caught; a pass-through layer, a cyclic import, or a mapper with no tested change benefit is evidence that the boundary is not doing architectural work.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "A layer that\nonly forwards calls, a cyclic import, or shared mutable data crossing the boundary is evidence that\nthe layer is not a real change boundary.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "The owner of each layer names its public surface and the test that catches a bypass.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview",
+          "quote": "Reverse the clean/onion choice when that independence is not\nthe protected boundary, or when the mapper adds no tested change benefit.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.e996607f707421ca388796732547cafd#entry-inventory",
+          "quote": "layer boundaries correspond\nto real change or test boundaries",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Import checks and fake-adapter tests cannot prove database constraints, concurrency, transaction isolation, connection cancellation, remote failure semantics, or a bypass of the public use-case port; genuine acceptance needs behavior tests beyond source checks.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures",
+          "quote": "A fake repository test cannot demonstrate concurrent DB constraints, credential scope, real connection cancellation or remote transport semantics.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.65f9616c034643f9bf5f297037f027e4#6-failure-and-test-matrix",
+          "quote": "Import job bypasses public use-case port | Dependency or integration test rejects bypass | Class/package names alone enforce invariants",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.65f9616c034643f9bf5f297037f027e4#6-failure-and-test-matrix",
+          "quote": "A genuine architecture acceptance must include negative authorization and state-recovery tests.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.e996607f707421ca388796732547cafd#entry-inventory",
+          "quote": "Ports can leak technology types, adapter errors can be mapped\ninconsistently, and mapping layers can hide latency.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The bounded-pattern notes are synthetic design guidance, not measured evidence; the build-check remedy and the ring-count formulation are guidance, not source claims. The source states the inward rule but not a specific enforcement mechanism.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of\nthis page. They are synthetic design guidance, not measured evidence, and they do not create a new\nsource claim.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "The automated build check is Tycho guidance, not a source claim:\nthe source states the inward rule, not an enforcement mechanism.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+          "quote": "dependency-test and adapter remedy is Tycho guidance, not a source claim",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.e996607f707421ca388796732547cafd#entry-inventory",
+    "tycho.page.36431dd64c374ff1ad20e2ff69c51c9e#overview",
+    "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+    "tycho.page.65f9616c034643f9bf5f297037f027e4#5-scope-dependency-direction-across-build-tests-and-runtime",
+    "tycho.page.65f9616c034643f9bf5f297037f027e4#6-failure-and-test-matrix",
+    "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes",
+    "tycho.page.77b512c4e2e946bd92d70b4a714600c8#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures",
+    "tycho.page.77b512c4e2e946bd92d70b4a714600c8#purpose-and-decision-question",
+    "tycho.page.c766e3289b95429bb158fb168f7bd0b9#actual-failures-static-imports-are-not-full-runtime-dependencies",
+    "tycho.page.f375bfcea48045d2a5d1f46014ca7758#1-layered-design-states-a-dependency-policy",
+    "tycho.page.f375bfcea48045d2a5d1f46014ca7758#2-a-port-is-an-application-contract-not-automatically-a-network-port",
+    "tycho.page.f375bfcea48045d2a5d1f46014ca7758#4-choose-the-correct-core-boundary"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
