@@ -1,6 +1,6 @@
 ---
 metadata_version: 1
-id: tycho.page.7beb6ba382a1458dbfba5800ff1b53af
+id: tycho.page.7040bbfecacf3ffec019376a47eda5d6
 kind: page
 parent_id: tycho.landing.ddbfbbbe1a85406faa2705102378beea
 canonical_path: book/distributed/cqrs-event-sourcing-and-projections.md

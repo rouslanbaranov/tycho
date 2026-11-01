@@ -1,6 +1,6 @@
 ---
 metadata_version: 1
-id: tycho.page.7040bbfecacf3ffec019376a47eda5d6
+id: tycho.page.7beb6ba382a1458dbfba5800ff1b53af
 kind: page
 parent_id: tycho.chapter.18aa94285a164b6f94530cebcfd87b8b
 canonical_path: book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md
@@ -54,15 +54,15 @@ content_verified_at: null
 
 
 > **Pattern atlas:**
-> [CQRS](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#command-query-responsibility-segregation-cqrs) — decision conditions and contraindications.
-> [Event Sourcing](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#event-sourcing) — decision conditions and contraindications.
-> [Domain Events](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#domain-events) — decision conditions and contraindications.
-> [Materialized View](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#materialized-view) — decision conditions and contraindications.
-> [Command-Side Replica](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#command-side-replica) — decision conditions and contraindications.
+> [CQRS](../../v11-pattern-atlas/c04-consistency-events/README.md#command-query-responsibility-segregation-cqrs) — decision conditions and contraindications.
+> [Event Sourcing](../../v11-pattern-atlas/c04-consistency-events/README.md#event-sourcing) — decision conditions and contraindications.
+> [Domain Events](../../v11-pattern-atlas/c04-consistency-events/README.md#domain-events) — decision conditions and contraindications.
+> [Materialized View](../../v11-pattern-atlas/c04-consistency-events/README.md#materialized-view) — decision conditions and contraindications.
+> [Command-Side Replica](../../v11-pattern-atlas/c04-consistency-events/README.md#command-side-replica) — decision conditions and contraindications.
 
 
 > **Pattern atlas:**
-> [CQRS Read Projections](../volumes/v11-pattern-atlas/c06-database-storage/README.md#cqrs-read-projections) — decision conditions and contraindications.
+> [CQRS Read Projections](../../v11-pattern-atlas/c06-database-storage/README.md#cqrs-read-projections) — decision conditions and contraindications.
 
 ## Purpose and mission
 
