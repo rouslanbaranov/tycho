@@ -1,0 +1,95 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q010",
+      "core_claims": [
+        "Little's Law, L = lambda x W, is an average identity: W is the mean residence time of the same population inside the same measured boundary, whereas p99 is a tail threshold of the latency distribution, so the two are different quantities and p99 cannot stand in for W.",
+        "Substituting p99 changes the computed result rather than refining it: with 95% of requests at 0.10 s and 5% at 2.10 s the mean is 0.20 s, so at 120 completed operations/s the law infers 24 average outstanding operations, while inserting p99 = 2.10 s would produce 252, which is not a required concurrency.",
+        "A single mean equation cannot recover the latency distribution or guarantee an SLO, so the law can neither predict tail latency nor decide thread-pool, connection-pool, worker or instance counts.",
+        "Both inputs must describe the same boundary, population and time semantics: the rate must count the operations whose residence time W summarizes, and mixing a p99 from one dashboard scope with throughput from another breaks the accounting rather than merely adding error.",
+        "A finite observation window that ends with unfinished work invalidates the substitution: in the one-request toy timeline (arrival at t=0, exit at t=10, window [0,5)) the naive 0.20 x 10 = 2 contradicts the actual mean occupancy of 1, because the full residence time extends beyond the window."
+      ],
+      "optional_claims": [
+        "Kim & Whitt (2013) section 2.2 gives a special finite-interval equality only when the observed system begins and ends empty; a general finite-window estimate needs uncertainty analysis, not a screenshot of three averaged metrics.",
+        "Alternatives answer different questions: per-stage queue depth and service-time instrumentation, queueing models or simulation with validated distributions, controlled open or closed workload tests, and admission controls that report rejected work; none of these is supplied by the mean identity itself.",
+        "Even a correctly computed mean occupancy is not an observed maximum or a capacity setting: 24 is an inferred mean for the boundary, not a pool size, worker count, queue capacity or memory budget, and enlarging a pool can increase downstream contention instead of creating capacity."
+      ]
+    },
+    {
+      "task_id": "Q026",
+      "core_claims": [
+        "Producers tallied the messages they sent per topic and per reporting interval and periodically published those counts into a dedicated audit topic, establishing a producer-side count for each interval.",
+        "At each cluster a Kafka Console Auditor separately consumed the topics, accumulated the counts it observed and emitted its own audit results, so every tier produced an independent count for the same topic and interval.",
+        "Auditors compared counts tier by tier along the path, from producer through local cluster and MirrorMaker-copied aggregate cluster to critical downstream consumers such as Hadoop that reported their own tier counts, using matching topic and time interval to localize where a discrepancy appeared.",
+        "The comparison was count-based on topic and reporting interval rather than record-identity-based, so equal totals cannot prove per-message equality: one lost record balanced by a duplicate, coincidentally equal cardinality, time-window skew or a replay already reflected in one tier would go undetected.",
+        "A shared producer wrapper supplied headers, schema-registration integration and audit bookkeeping so application teams did not each write bespoke counters; without it, mixed client implementations could count different events, such as attempted sends versus acknowledged durable writes."
+      ],
+      "optional_claims": [
+        "The comparison approach and the attribution to each tier are publisher-reported; the limitation column is Tycho's analysis, and the post does not establish independent per-message equality or universal end-to-end exactly-once semantics.",
+        "A single healthy broker cluster did not guarantee that every producer event traversed local clusters, MirrorMaker copies, aggregate clusters and critical downstream consumers; each added transport tier created another loss and duplication surface.",
+        "Broker health and acknowledged writes do not substitute for end-to-end tier and consumer completeness audits, and the credited dedicated platform team and client libraries were as significant as deploying the audit service."
+      ]
+    },
+    {
+      "task_id": "Q042",
+      "core_claims": [
+        "A rejection is not free: identity and permission checks, parsing, logging, error rendering, network transfer and client retries still consume CPU, memory and connections, so rejected requests cost real work.",
+        "When a large fraction of offered work is rejected, the rejection path can dominate the remaining capacity, so a service can be overloaded while most of its CPU is spent rejecting requests.",
+        "Overload also arrives through admitted work that later expires: in the simulated 30-requests/s offer against a 24-requests/s pool with a 40-request queue and a one-second deadline, the timeout rate was 0.3495 while the rejection rate was 0.0005, so deadline expiry inside the queue, not rejection, was the dominant loss.",
+        "Retries after rejection return as new offered work and compound across layers, up to 27 downstream attempts per logical intent in a deliberately simplified three-layer nested-retry model, so rejection without bounded retry guidance can feed the overload that produces more rejection.",
+        "Admission must be checked before the expensive operation and against the request's remaining deadline or bound queue age; otherwise work that will be rejected or will expire still consumes the scarce resource, and a report built on reject counts hides that loss."
+      ],
+      "optional_claims": [
+        "Admission should be optimized for completed useful operations and successful critical classes rather than ingress QPS or aggregate reject rate, because a request whose deadline is shorter than its predicted queue wait harms its caller even when accepted.",
+        "A rejected request needs an explicit contract stating what was not accepted, whether a retry could help and how long to wait, and the rejection path itself should be measured for CPU, allocation, logging, network and the ratio of rejected to completed work.",
+        "The reported attempt placed per-caller quotas in the stateless query tier and costed queries by return-byte count, so a full scan returning one row cost the same as a point lookup; the authors report it did not hold up in production, which is a failure of placement and measurability of resource pressure rather than of rate limiting generally."
+      ]
+    },
+    {
+      "task_id": "Q058",
+      "core_claims": [
+        "A poison row blocks the relay's progress: an outbox row that cannot be published holds up publication of the rows behind it, so an unhandled poison row stops the outbox from draining rather than affecting only itself.",
+        "The relay must have bounded attempts and age plus a terminal quarantine for poison rows, so a repeatedly failing row leaves the main path once the bound is reached instead of being retried indefinitely.",
+        "Operators must retain repair evidence for the quarantine: the row, its payload digest and its attempt history, kept for a declared retention window so a repair operator can diagnose, correct and republish it.",
+        "Recovery must be replay-safe: a crash after publish but before completion duplicates while a crash after commit but before publish retries, so consumers deduplicate by message ID or effect identity and a re-published quarantined row still applies once.",
+        "Schema or producer upgrade overlapping older consumers is a known way to produce poison messages and lag, so operators should plan version-compatibility tests, stop/go checks and a safe replay path, and should treat poisoned and retried messages as normal operating conditions."
+      ],
+      "optional_claims": [
+        "Point-to-point queue and competing-consumer guidance treats duplicate delivery and poison messages as normal, and a consumer architecture with no bounded-attempt or terminal path is a hard contraindication for competing consumers.",
+        "The relay also needs a publication key and per-aggregate ordering, so quarantine and replay decisions do not silently change the publication identity or the order of events for one aggregate.",
+        "An outbox is justified only when the lost-publication and duplicate-effect risk warrants relay complexity, the relay is actually operated, and event sourcing remains the stated alternative."
+      ]
+    },
+    {
+      "task_id": "Q074",
+      "core_claims": [
+        "Exposure is limited first by scope: the credential grants only the specific resources and predefined operations needed for the task, so a leak exposes that object set rather than the whole store.",
+        "Exposure is limited second by duration: direct access shifts enforcement to the resource, and a short validity period bounds a leaked key's exposure to the time it remains valid.",
+        "The credential must be revocable or disableable, but revoking a catalogue permission does not automatically invalidate capabilities already issued, so the design must state whether immediate revocation is required and supply a documented mechanism with a bounded propagation delay or accept bounded exposure.",
+        "An unguessable key is not an authorization design: a temporary download capability permits use until its expiry under the service's validation rules, so if the store does not independently validate the credential and recheck current permission, expiry is the only enforcement left.",
+        "Shorter validity is not free: it increases renewal traffic and dependence on the issuer, so the exposure bound is a chosen trade-off rather than a costless control."
+      ],
+      "optional_claims": [
+        "Immediate retirement cannot be met by a temporary bearer link valid for the whole retention term; the options are short-lived capabilities, an authorizing proxy, or a documented revocation mechanism with an acceptable propagation bound.",
+        "Gateway Routing with proxied access to storage is the competing alternative that keeps enforcement in the application instead of delegating it to the resource.",
+        "Least privilege and zero trust supply the surrounding requirements: permissions enumerable and task-scoped, access authenticated and authorized at the resource, deny by default, indirect paths tested, and a bounded audited break-glass path."
+      ]
+    },
+    {
+      "task_id": "Q090",
+      "core_claims": [
+        "The V12 screen draws 48 input rows from the declared distributions, runs the model on each row, fits a quadratic surface in standardized input coordinates, decomposes the fitted variance into main effects and an interaction term, and reports first-order and total-order shares; it does not perform a pick-freeze Sobol decomposition.",
+        "Because the indices come from the fitted quadratic surrogate, they describe variance explained by that surface over the sampled range rather than model-free variance shares of the simulator, and validity requires the quadratic surface to be adequate and the input standardization to be meaningful.",
+        "The screen requires independent inputs: the engine rejects a correlated screen and propagates correlated inputs through the separate Monte Carlo run, because the variance decomposition itself applies only to uncorrelated inputs.",
+        "For candidate B the screen reports arrival rate 0.361 first-order and 0.464 total-order, and service mean 0.536 first-order and 0.639 total-order; the two first-order indices sum to 0.897, leaving about 0.103 for interaction and unexplained variation, and service time has the larger main effect only within that sampled range.",
+        "The screen enforces total-order greater than or equal to first-order by construction because total-order includes the fitted interaction variance, and a screen reporting a total index below its first-order index is rejected as incoherent; with only 48 rows the indices are a screening result, not a precision estimate."
+      ],
+      "optional_claims": [
+        "A full pick-freeze analysis is expensive for a discrete-event model, which is why V12 uses the response-surface screen; the chapter states the screen is not a full Sobol estimator and the validation page records that as an unverified limit.",
+        "The sensitivity run is converged at a 0.00016 relative error, while a separate two-replication convergence-stress run is insufficient-sample at 0.032, and a run failing the 0.02 relative-error threshold is not used as converged evidence.",
+        "The decision record uses the ranking to identify what to measure first rather than to support a production claim about which factor dominates."
+      ]
+    }
+  ]
+}

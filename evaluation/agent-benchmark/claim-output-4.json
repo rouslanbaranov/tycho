@@ -1,0 +1,95 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q008",
+      "core_claims": [
+        "The V12 modernization model's rollback trigger sets the target traffic share to zero, so after the trigger all newly offered traffic is sent to the legacy path rather than the target.",
+        "The legacy path must absorb that offered traffic while the target drains its dual-write backlog and accumulated divergence; the model's state diagram returns from Rollback to Legacy only after the drain completes.",
+        "The staged experiment triggers rollback at t=1,200 seconds of a 2,400-second, 10-requests-per-second run, after target share reaches 1.0 at t=600, so the target receives no new traffic for the final 1,200 seconds.",
+        "The model records whether rollback completed within the horizon, the time from trigger to drain (or a value censored at the horizon), and the maximum divergence seen before the trigger; a non-completing rollback is a finding that declared reconciliation capacity is insufficient, not a model failure.",
+        "The reported staged run gives a rollback-completed value of 0.1 and a mean rollback duration of 1,080 seconds, with non-completions censored at 1,200 seconds after the trigger, so most modeled drains did not finish within the observation window."
+      ],
+      "optional_claims": [
+        "The model represents coexistence as a stage schedule plus stocks: dual_write_backlog, divergence, legacy_share/target_share and a rollback timer.",
+        "The model is a fluid approximation and does not represent individual records, schema compatibility or deployment orchestration, which are part of its validity limit.",
+        "The no-cutover baseline keeps target share at zero and never triggers rollback; it reports zero divergence and zero backlog, while the staged path adds divergence risk and a rollback requirement without adding modeled throughput."
+      ]
+    },
+    {
+      "task_id": "Q024",
+      "core_claims": [
+        "In a fixed five-voter configuration a majority quorum is three (floor(N/2)+1), so a partition containing only two voters never forms a majority.",
+        "Committing a new log entry requires the leader to replicate it to a majority and satisfy the protocol's term and commit rules; with only two communicating voters the commit condition cannot be met.",
+        "The minority side must refuse authoritative writes and cannot elect a valid leader, even though its processes stay healthy; a leader's health endpoint or self-declared leader status is not the same as the cluster having quorum.",
+        "Letting the minority commit would break the required quorum intersection and could produce conflicting committed histories, so the protocol stops progress rather than sacrifice safety.",
+        "This safety choice does not prove the whole application is unavailable: clients attached only to the minority may see unavailable writes while cached or possibly stale reads, local work and independent subsystems can continue."
+      ],
+      "optional_claims": [
+        "In the synthetic 3/2 partition of a five-voter metadata service, voters 1-3 can retain quorum and potentially elect a valid leader and commit, while voters 4-5 must not claim an independent conflicting commit.",
+        "A client timeout leaves the outcome unknown because the write may have committed before the reply was lost, so a blind retry of the external effect is unsafe without stable idempotency and readback.",
+        "More replicas are not automatically safer: a 4-voter group requires three votes and still tolerates only one failure, while adding a voter can raise the quorum without adding a failure domain."
+      ]
+    },
+    {
+      "task_id": "Q040",
+      "core_claims": [
+        "Shopify's 2019 account describes Wedge as a component-coupling feedback mechanism that inspected Ruby runtime traces collected in CI and combined them with static framework structure such as ActiveRecord associations and class inheritance.",
+        "Wedge used those runtime and static signals to flag cross-component access and public-API violations, and summarized the detected coupling into an isolation score.",
+        "Wedge's instrumented execution covered only the code paths that actually ran, so unexercised dynamic calls and long-term code ownership remained hard to observe.",
+        "In the 2020 follow-up the team built Packwerk, a separate static checker of explicit Ruby constant references and component privacy declarations that ran in the pull-request workflow because it was faster and more actionable; it intentionally did not infer every possible runtime call.",
+        "Before that tooling, the componentization team in early 2017 classified roughly 6,000 Ruby classes into candidate domain components and moved them in a single non-behavioral file-organization pull request."
+      ],
+      "optional_claims": [
+        "The 2019 author states strong boundaries had not been achieved across the whole codebase and that enforcement was partly future work at publication.",
+        "Wedge and Packwerk concern Shopify's source-code boundary enforcement, not the knowledge graph excluded from the Tycho product, and they are not interchangeable fully semantic dependency proofs.",
+        "The large file-organization pull request caused a documented migration cost: GitHub displayed many moved files as deletions and new files, making source-line history harder to follow although git ancestry could still be recovered."
+      ]
+    },
+    {
+      "task_id": "Q056",
+      "core_claims": [
+        "When the number of split parts is unknown, no count-based completeness condition exists, so the consumer or aggregate cannot decide from a count that the split has finished.",
+        "Spring Integration's base splitter sets SEQUENCE_SIZE to zero for an iterator of unknown size and states that the aggregate group remains incomplete, directing a custom release strategy or send-partial-result-on-expiry.",
+        "Without an owned release or expiry rule, the split either never completes or leaks orphaned work; a declared rule releases a partial result or forces closure instead of reporting silent success.",
+        "A release or expiry is not evidence of successful completion: it yields a partial result or a forced closure, and only a known total part count makes completion decidable.",
+        "The Splitter decision therefore requires the outcome to be observable and the fan-out bounded, with each part carrying a correlation identity and sequence position; if completion cannot be owned, the composite should be kept whole."
+      ],
+      "optional_claims": [
+        "Apache Camel's value-based watermark is updated only when the split completes successfully, so an aborted split leaves it unchanged and the failed batch can be retried; completed effects must therefore remain idempotent or be deduplicated.",
+        "If the parts must succeed atomically, the composite should not be split; when the work is to combine related messages, an aggregator is the mirror-image choice.",
+        "An unknown part count leaves the Spring Integration aggregate incomplete; the source does not fix per-part idempotency, so that remains Tycho guidance rather than a source claim."
+      ]
+    },
+    {
+      "task_id": "Q072",
+      "core_claims": [
+        "Immediately after a write invalidates a cached entry, a reader can experience a cache miss or briefly see stale data because the invalidation signal can be missed or may not have propagated yet.",
+        "A read that began before the write can finish after the invalidation and repopulate the key with the older value, so the obsolete value is resurrected for subsequent readers until expiry or another correct invalidation.",
+        "The stale-fill-after-invalidation race means cache-aside with database-write-then-delete does not by itself eliminate stale reads under arbitrary concurrent fills.",
+        "Mitigations include version-fenced cache writes, compare-and-set or atomic scripts at the shared key, a short bounded TTL for tolerable staleness, change-event replay with versions, and direct authoritative reads for correctness-critical operations.",
+        "A TTL is not itself a monotonic-version or consistency guarantee, and source or cache clock differences and refresh-of-stale-value behavior complicate any claimed maximum-age contract."
+      ],
+      "optional_claims": [
+        "Cache invalidation couples every writer to every cache and region, so fan-out, multi-cache coherence and partial purge are architectural costs; a short expiration period accepts bounded staleness without a purge path.",
+        "A distributed cache adds shared failure domains and stale replicas as normal conditions, so fallback must be bounded to keep a cache outage from overloading the authoritative source.",
+        "The stale-fill sequence is a general synthetic race, not a measured defect in Redis; the Redis cache-aside page presents the basic flow, not a proof of protection from this concurrent fill order."
+      ]
+    },
+    {
+      "task_id": "Q088",
+      "core_claims": [
+        "A scenario metric is comparable only when the decision contract declares it with an explicit identifier and unit and marks it business-comparable, and every candidate is scored on the same metric definition.",
+        "Normalization to a business outcome, such as cost per 1,000 successful requests, lets candidates with 12 versus 18 servers be compared without the raw capacity difference dominating the result.",
+        "Utilization is defined relative to capacity (rho = lambda / (c * mu) for c identical servers), so offered load and server count are accounted for instead of comparing raw counts.",
+        "Ratios are computed only after units are explicit; mixing a stock such as backlog in requests with a flow such as arrival rate in requests per second can reverse the comparison between candidates.",
+        "The candidates receive the same Poisson workload of 20 requests per second for 1,800 seconds after a 300-second warmup, with 30 replications and seed base 20261029, so demand is held fixed while capacity differs."
+      ],
+      "optional_claims": [
+        "The decision record keeps hard, soft and non-quantitative constraints separate, records an explicit recommendation or none, and names reversal triggers and limitations.",
+        "A model boundary is acceptable only if the omitted parts cannot change the comparison under the declared conditions; the boundary statement names purpose, alternatives, observable, exclusions and validity ranges.",
+        "The saturation contrast shows the arithmetic of comparability: 30 requests per second offered against 24 requests per second of capacity gives utilization 1.0 after the backlog fills, throughput of 24 requests per second and a 0.2 rejection rate with admission capped at 80."
+      ]
+    }
+  ]
+}

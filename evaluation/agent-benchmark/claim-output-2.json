@@ -1,0 +1,95 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q004",
+      "core_claims": [
+        "The concern that remains is resource isolation: one tenant's burst can exhaust a shared connection, compute or queue pool even when every tenant's data permissions and row-level ACLs are correct.",
+        "Authorization answers which objects a request may touch, not how much shared capacity it may consume, so a correct tenant predicate cannot prevent noisy-neighbour interference or starvation in a common pool.",
+        "Sharing a pool therefore needs explicit fairness, per-tenant admission or resource quotas, and a test that saturates shared downstream resources to measure the noisy-neighbour effect separately from confidentiality.",
+        "Isolation is multidimensional - identity/authorization, data, resource and lifecycle/operations (or process, network, compute, data, cache, cryptographic and control plane) - and correctness in one dimension does not establish any other.",
+        "A dedicated pool is justified only when measured noisy-neighbour cost exceeds its operational cost, and a shared pool that strands capacity or fails to enforce quotas is a reversal condition rather than a deployment detail."
+      ],
+      "optional_claims": [
+        "A correct database tenant policy does not automatically protect a shared cache, search index or background consumer; those paths need tenant-scoped keys and tests with a foreign identifier.",
+        "In a cell-based deployment the router, identity service, configuration publisher, network and outbound dependencies remain shared risks, and outbound calls need per-cell connection and deadline budgets or isolated workers still block on one shared pool.",
+        "A tenant-aware query does not protect a wrongly scoped cache or background task; isolation must hold across the complete effect path."
+      ]
+    },
+    {
+      "task_id": "Q020",
+      "core_claims": [
+        "The Java heap is only one memory domain: process memory also includes thread stacks, native libraries, direct and off-heap buffers, memory mappings, and JIT/compiler and runtime structures.",
+        "A container limit applies to the whole process, so the process can exceed its physical or configured limit while recorded heap occupancy still looks acceptable.",
+        "Heap collection reclaims managed heap objects only and cannot bound native or reserved memory, so a flat heap curve is not a control on process resident memory.",
+        "Rising resident memory with a flat heap points at native allocations, thread stacks, direct buffers or memory-mapped resources, and needs native memory accounting plus process/container telemetry of reserved versus committed memory rather than a collector change.",
+        "Heap occupancy, thread count and CPU utilisation are observations rather than diagnoses: the same symptom matches several causes and needs discriminating evidence collected in the same workload window."
+      ],
+      "optional_claims": [
+        "Heap used before collection is not a sufficient leak indicator; compare live data after comparable collections, object lifetimes and retention roots.",
+        "A high allocation rate can be harmless if objects die young, while a small allocation rate can still hide a persistent live-set leak.",
+        "A collector swap is justified only when GC pause time is shown to dominate the request's elapsed time; JFR, allocation and native memory readings must attribute the delay before the change."
+      ]
+    },
+    {
+      "task_id": "Q036",
+      "core_claims": [
+        "A stop-the-world GC pause can hold a response past its upstream timeout, and the timeout triggers retries, hedging and fallback work - new load created after the original slow request has already failed.",
+        "The amplification is a loop: retry, hedge and fallback traffic adds allocation, connection and queue pressure to the same fleet, which can lengthen or trigger further pauses and further timeouts.",
+        "The cost is therefore fleet-wide rather than confined to the requests the pause directly delayed, which is why Netflix optimised tail latency and operational simplicity together rather than peak allocation throughput.",
+        "The reported position is Generational ZGC as default for JDK 21+ services, with more than half of critical streaming video services on that combination by the 2024 article date; about 10% better than G1 applies to the described workload, not to every service.",
+        "The operating guards against amplification are bounded retry and hedging plus upstream admission limits, with p99 measured by route and connection cohort rather than aggregated at cluster level."
+      ],
+      "optional_claims": [
+        "Collector comparisons in the account are different experiments with different denominators: older ZGC was about 36% more CPU-intensive than G1, generational ZGC about 10% better than G1, and Parallel GC 6-8% better throughput on a particular batch precompute.",
+        "The retry-amplification account comes from the publisher's 2024 report and is neither a complete incident log nor proof that a collector change fixes a downstream-capacity bottleneck.",
+        "A pause that only slows one request is not equivalent to a pause that causes cancellation and retry; the remedy should follow measured correlation of GC pause with user traces, allocation and live set."
+      ]
+    },
+    {
+      "task_id": "Q052",
+      "core_claims": [
+        "The stated alternative is branch by abstraction with a smaller, monitored rollout, which replaces full dual execution and its comparison harness with an incremental rollout behind an abstraction seam.",
+        "Parallel run costs doubled compute plus comparison storage and harness work, and it produces false confidence when the comparison ignores nondeterminism or side effects.",
+        "Parallel run must not execute both implementations for side-effecting operations such as sending an email or charging a card; the old path stays authoritative until cutover and a candidate failure must never affect the response.",
+        "Matching row counts or checksums do not prove semantic equality: differing time windows, lossy null or value canonicalisation, or a fingerprint that omits business-critical fields can hide divergence.",
+        "Each comparison must be modelled as source snapshot, schema version, partition identity, job revision, equality rule and freshness window, and a comparison whose tuple differs without owner-approved normalisation should be rejected."
+      ],
+      "optional_claims": [
+        "Dark launching or shadow traffic is a related bounded option: mirrored requests are discarded, the old path remains authoritative, fractional mirroring limits the load, and the impact can be switched off with a feature flag.",
+        "Controlled cutover is not the low-cost substitute: it needs a downtime window, paused writes, drained replication and verified zero freshness, and is rejected when writes cannot be paused.",
+        "The source boundary is narrow: the cited MinimumCD record supports dual execution, incumbent-only return, background comparison, the side-effect boundary and harness removal, but gives no mismatch threshold, sample size or cost measurement, which remain synthetic."
+      ]
+    },
+    {
+      "task_id": "Q068",
+      "core_claims": [
+        "Prefer the content-based router when messages require different destinations or routing must choose among channels by content; the filter fits only a single-output pass-or-discard decision.",
+        "A message filter has one output channel and its predicate is the only selection criterion: a non-matching message is removed and produces no downstream output, so the filter cannot direct a message to a destination.",
+        "A router needs a versioned predicate set, an owner for rule changes, and a declared default or dead-letter path for unmatched messages, because a misroute is not repaired by retry.",
+        "Predicate fields must be authenticated or validated; routing on an untrusted field lets the producer choose the destination.",
+        "Do not use a router when routing rules are unstable, unowned or unable to classify every message; use a workflow or orchestrator when routing needs multiple steps or compensations, and a static topic or queue when routing is known at publish time."
+      ],
+      "optional_claims": [
+        "Reject a filter when messages need multiple destinations or every message has a required effect.",
+        "A router can become a frequent maintenance point and may take the form of a rules engine; rule changes need a canary and rollback, and unmatched and multi-match cases must be tested.",
+        "The public filter page is publisher-abridged and states no rejected-message disposition, audit record or recovery path, so those remain unknown rather than assumed."
+      ]
+    },
+    {
+      "task_id": "Q084",
+      "core_claims": [
+        "A measured input must name its source and carry the measurement method, sample size and period; a value without a source and a measurement record is not measured.",
+        "Measured is one of four statuses (measured, assumed, derived, unknown), and a parameter can change status only with new evidence - repeating an assumed value in a decision record does not make it measured.",
+        "Measurement vocabulary requires a value together with an uncertainty and, where stated, a coverage interval with its coverage probability; V12 uses that vocabulary but does not perform a metrological uncertainty budget.",
+        "A derived input inherits the weakest status of its inputs unless the derivation itself is validated, and an unknown input must not be filled with an invented value.",
+        "The V12 input table marks arrival rate, service mean, service CV, servers, queue capacity, timeout, dual-write lag, reconciliation capacity and divergence threshold as assumed, each with the measurement that is missing."
+      ],
+      "optional_claims": [
+        "Every V12 model is uncalibrated and makes no production claim; the model contract lists each parameter's status and its missing measurement, and decision records repeat that status.",
+        "A matching replay proves only that stored inputs, engine version and seed reproduce the stored metrics on the same platform family; it does not prove the model is valid, the inputs measured or the decision correct.",
+        "The contracts are strict and machine-readable: a missing required field is a validation failure, not a note."
+      ]
+    }
+  ]
+}

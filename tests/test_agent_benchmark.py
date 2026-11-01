@@ -21,6 +21,19 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(sum(q["split"] == "dev" for q in corpus["questions"]), 50)
         self.assertEqual(sum(q["split"] == "holdout" for q in corpus["questions"]), 50)
 
+    def test_v3_dev_claims_are_curated(self):
+        corpus = bench.load_json(ROOT / "evaluation/agent-benchmark/corpus-v3.json")
+        self.assertEqual(bench.validate(corpus), [])
+        dev = [q for q in corpus["questions"] if q["split"] == "dev"]
+        self.assertEqual(len(dev), 50)
+        for q in dev:
+            self.assertGreaterEqual(len(q["core_claims"]), 3)
+            self.assertLessEqual(len(q["core_claims"]), 5)
+            self.assertGreaterEqual(len(q["optional_claims"]), 1)
+            self.assertLessEqual(len(q["optional_claims"]), 3)
+        self.assertTrue(all(q.get("holdout_consumed") for q in corpus["questions"]
+                            if q["split"] == "holdout"))
+
     def test_validate_only_needs_no_agent_command(self):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
