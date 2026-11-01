@@ -1,0 +1,202 @@
+{
+  "task_id": "Q214",
+  "answer": "## Direct answer\n\nNeither window can support the page alone because each is a one-sided estimate of the same burn rate, and each fails in the regime the other covers. A five-minute average is a low-sample, high-variance estimate: ordinary clustering of failures can cross a paging threshold when there is no sustained, user-impacting burn. A one-hour average smooths some of that noise, but it measures burn intensity over the last hour, not cumulative budget erosion over the days or weeks in which a slow drain becomes severe; a threshold high enough to survive hourly noise will not fire on a low, persistent burn. The policy therefore needs a multiwindow, multi-burn-rate design (a long lookback to establish sustained burn, a short lookback to confirm it is still happening and to reset quickly, and separate tiers for different responses). It must also establish a valid measurement contract; sample sufficiency and confidence; service-specific calibration; a user-impact link and action tier; ownership, escalation and falsification; and integrity of the evidence channel, including suppression and monitoring gaps, before any threshold crossing counts as evidence for a page.\n\n## Facet matrix\n\n| Facet | Decision it informs | Query formulations | Evidence |\n|---|---|---|---|\n| F1 Short-window noise | Why does a 5m window page on normal traffic? | \"alert noise threshold sample paging\"; \"short window long window alert precision recall\"; \"alert fatigue false positive noise paging\" | budget-actions section 4; metrics-slo section 6 |\n| F2 Long-window blindness | Why does a 1h window miss a slow severe drain? | \"fast burn slow burn percentage budget consumed\"; \"sustained slow burn long-term harm weak signal\"; \"burn rate alert window error budget\" | budget-actions section 4; sli-population section 2 |\n| F3 Single-window insufficiency | Why can neither window stand alone? | \"multiwindow multi-burn-rate alerting\"; \"hysteresis keep firing reset flapping alert\" | service-level bounded notes; atlas overview |\n| F4 Measurement contract | What is the burn rate a rate of? | \"rolling window calendar window SLO evaluation\"; \"insufficient valid event samples intermittent traffic baseline\" | sli-population sections 1-3; budget-actions section 6 |\n| F5 Statistical validity and calibration | When is a threshold evidence rather than noise? | \"confidence low traffic observations statistical significance alert\"; \"alert threshold evidence detection latency action policy\" | metrics-slo section 6; budget-actions sections 4-5; chapter ledger |\n| F6 Operational contract | What must be true before a page is justified? | \"page ticket severity routing actionable alert owner\"; \"falsify hypothesis runbook alert\"; \"missing evaluation monitoring gap blind spot\" | metrics-slo section 6; atlas overview; service-level bounded notes |\n\n## 1. The five-minute window buys sensitivity with false pages\n\nA burn rate compares observed bad-event consumption with the budget's expected consumption rate, and a fast burn can justify immediate intervention. The book states the trade-off directly: \"short windows can be noisy and long windows slow to detect severe faults\" (budget-actions section 4). A five-minute window is the extreme short end of that trade-off. At a 99.9% SLO the allowed bad-event fraction is 0.1%; if 100 eligible events arrive in five minutes, one failure is a 1% error rate and a 10x burn, while at 10,000 events one failure is 0.01% and 0.1x. That arithmetic is illustrative, not measured, but it shows why the same five-minute threshold means different things at different traffic levels: at low or moderate traffic the window contains too few observations to distinguish a real burn from normal clustering. The book names the resulting trap, \"Alert threshold selected without enough valid event samples\", and requires \"enough observations / confidence to distinguish low traffic\" (budget-actions section 4; metrics-slo section 6). The operational consequence is false pages, flapping and alert fatigue; Prometheus's for clause requires persistence and keep_firing_for can bound flapping and false resolution, but neither can turn an under-sampled estimate into evidence. The legitimate role of a five-minute window is confirmation and fast reset inside a longer-window rule, not a standalone page.\n\n## 2. The one-hour window buys smoothness with blindness to slow drains\n\nA burn rate is a derivative: it says how fast the budget is being consumed relative to the SLO. The error budget itself is an integral over the SLO window (a 30-day window in the book's example). A slow drain can have a burn rate only modestly above 1x, low relative to any fast-burn paging threshold, yet consume a large cumulative share over days: at 2x burn for 30 days the budget is consumed twice over, yet a one-hour sample of 2x may sit below a paging threshold set for fast burn. Lowering the one-hour threshold enough to catch 2x would make normal hourly variation cross it; keeping it high enough to avoid noise leaves the slow drain invisible. This is the same sensitivity-specificity problem as the five-minute case, just at a different timescale. The book treats the slow case as a distinct signal, not a weaker version of a fast burn: for \"Sustained slow burn\" the useful decision is \"Review problem history and release/quality trade-offs\", and the trap is \"Ignoring long-term harm because there is no loud incident\" (budget-actions section 4). A one-hour paging threshold is therefore the wrong instrument for a slow drain: the drain needs a longer lookback and a different, non-paging response tier. The one-hour window is also long relative to a sub-hour severe fault, so it is simultaneously too short for the slow drain and too slow for the fast fault.\n\n## 3. Why neither window alone can support the alert\n\nA page is a decision to interrupt a human under uncertainty. It needs both a low false-positive rate, otherwise the page is noise and gets ignored, and a low false-negative rate for the failures that matter. A single window fixes one point on that trade-off: 5m is sensitive but not specific; 1h is more specific to sustained intensity but still blind to slow drains and slow to fast faults. A single threshold also conflates two different questions: \"is the service burning badly right now?\" and \"is the budget being eroded inexorably over the SLO window?\" The book's recommended answer is the \"multiwindow, multi-burn-rate alerting technique\", described as \"the most appropriate approach to defending your application's SLOs\" (service-level bounded notes). The design pairs a long lookback, which establishes sustained burn and suppresses short spikes, with a short lookback, which confirms the burn is still active now and resets quickly after recovery, and it uses more than one burn-rate tier so a fast burn can page while a slow burn triggers review. The book does not reproduce the Workbook's tier numbers; that tier structure is method inference, not a quoted threshold. Hysteresis and monitoring-gap handling belong to the same design: for requires persistence, keep_firing_for bounds flapping, and a skipped evaluation is \"a real blind spot\" (rule_group_iterations_missed_total), not silence that proves health.\n\nBut multiwindow design only reduces the two error rates. It does not make the threshold evidence by itself.\n\n## 4. What the policy must establish before a threshold is evidence\n\nThe book's alert checklist gives the minimum: \"eligible population and evaluation window\", \"enough observations / confidence to distinguish low traffic\", \"user outcome or concrete impending resource failure\", \"owner and escalation pathway\", \"runbook evidence and what will falsify the hypothesis\", and \"explicit suppression/muting during controlled maintenance without hiding real incidents\" (metrics-slo section 6). Expanded for a burn-rate policy, that means six things.\n\n1. A measurement contract. Name the eligible population, the good outcome, the denominator, the observation boundary, the aggregation, the exclusions, the meaningful window and the target before the first measurement. The book warns that a \"target without a specified event population can be meaningless\", that time-based and request-based ratios \"measure different effects\", and that changing the denominator later \"can manufacture an apparent improvement\" (sli-population sections 1-2). A burn-rate threshold computed over a moving numerator and denominator is not evidence of anything stable.\n\n2. Sample sufficiency and confidence. State the minimum observations or expected bad events per window, and show that the window can distinguish low traffic from real burn. \"Insufficient demand to validate reliability\" and \"alert threshold selected without enough valid event samples\" are explicit traps (budget-actions section 4). Zero errors at idle is not 100% reliability; one recorded p99 without the rejected and timed-out population \"cannot prove user experience\" (sli-population section 3). The five-minute failure is a sample-size failure as much as a window-length failure.\n\n3. Service-specific calibration, not universal numbers. The book states that the method \"does not imply universal thresholds, especially for services with intermittent traffic or where one incorrect operation is intolerable\" (budget-actions section 4), and its source ledger says the Alerting on SLOs unit supports burn-rate considerations but not \"portable universal alert parameters\" (chapter section 7). Thresholds must be calibrated against this service's observed noise, traffic shape and impact, and treated as hypotheses with a defined falsifier, not as constants copied from a book.\n\n4. A user-impact link and an action tier. The alert must connect to \"a measurable user-impact or imminent irreversible resource risk to an actionable response\"; paging on \"every instantaneous CPU spike\" is the anti-pattern (metrics-slo section 6). The book's table pairs a fast burn with \"Investigate impact and consider protecting capacity/halting rollout\" and a sustained slow burn with \"Review problem history and release/quality trade-offs\" (budget-actions section 4), and rejects an \"Arbitrary alert threshold with no user consequence\" (service-level walkthrough). A threshold that does not authorize a specific response is a dashboard number, not an alert.\n\n5. Ownership, escalation and falsification. Every alert needs an \"owner and escalation pathway\", \"runbook evidence and what will falsify the hypothesis\" (metrics-slo section 6), and budget breach \"must trigger a written action\" (atlas overview). The synthetic decision rule in the book adds: \"Check that the event population is correct and the target window sufficiently sampled\", \"Use confirmed burn and impact\", and \"Record the signal, source/alert version, decision and follow-up owner\" (budget-actions section 5). A page whose hypothesis cannot be confirmed or falsified is not evidence; it is an interruption.\n\n6. Integrity of the evidence channel. Define suppression and muting for controlled maintenance \"without hiding real incidents\"; remember that \"missing metrics are themselves an observable incident\" and an exporter outage may look like a quiet service (metrics-slo section 6). Treat skipped rule evaluations as a monitoring gap, bound alert reset, and keep numerator, denominator, units, target, data-source revision and effective date together; a later SLO change is a new version, not a retroactive reinterpretation (budget-actions section 6).\n\nOnly with those established does a threshold crossing mean that the stated hypothesis about user-visible burn is supported enough to act. Even then it is a trigger for confirmation, not proof of harm: the book's safe rule uses \"confirmed burn and impact\" before mitigation, investigation or rollback.\n\n## 5. Boundaries and trade-offs\n\n- The argument is conditional. At very high, stable traffic a single short window can have enough samples and may be adequate; at low or intermittent traffic no short window can be. A hard correctness invariant (one duplicate is intolerable) bypasses burn-rate reasoning entirely: the error budget is an accounting expression, \"not permission to violate a non-negotiable state invariant\" (sli-population section 2).\n- If the user journey is not measurable, a simpler availability check or synthetic probe may be preferable to an invented burn-rate threshold; the good-fit conditions require user-visible metrics and a real consequence for breach (atlas overview).\n- Multiwindow designs add tuning and operational complexity, and they can still be defeated by denominator changes, missing data or maintenance suppression that is too broad. They reduce detection error; they do not replace impact confirmation.\n- The book is method-level: it does not give specific window lengths, burn-rate multiples or measured false-positive and false-negative rates, and no alert was run for this chapter. The 100-versus-10,000-event arithmetic above is illustrative and should not be read as a measured calibration.\n\n## 6. Evidence map\n\n- Burn rate compares observed consumption with expected; short windows are noisy and long windows are slow to detect severe faults. Section key: tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations.\n- A threshold without enough valid event samples is a trap; a sustained slow burn needs review, and ignoring long-term harm because there is no loud incident is the trap. Section key: tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations.\n- The method does not imply universal thresholds; intermittent traffic and an intolerable single error are exceptions. Section key: tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations.\n- The safe rule checks that the population is correct and the target window sufficiently sampled, uses confirmed burn and impact, and records signal, alert version, decision and owner. Section key: tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision.\n- An SLO revision keeps numerator, denominator, units, target, data-source revision and effective date together. Section key: tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling.\n- Every alert needs an eligible population and evaluation window, enough observations and confidence for low traffic, a user outcome or concrete impending resource failure, an owner and escalation pathway, runbook evidence and a falsifier, and explicit maintenance suppression. Section key: tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety.\n- Missing metrics are an observable incident, and paging on every instantaneous CPU spike is an anti-pattern. Section key: tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety.\n- Error-budget burn should be a rate or quantity under the chosen SLO window, not an arbitrary threshold with no user consequence. Section key: tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations.\n- Treatment of the population and denominator must be documented before measurement; a target without a specified event population can be meaningless; the window may be rolling or calendar-aligned. Section keys: tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population and tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target.\n- One recorded p99 without rejected and timed-out populations cannot prove user experience. Section key: tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level.\n- Multiwindow, multi-burn-rate alerting is recommended; for and keep_firing_for bound flapping; a skipped evaluation is a blind spot. Section key: tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes.\n- Name the eligible population, good outcome, denominator, window and action owner before the first measurement; reject non-user-visible metrics, arbitrary targets and budget breach with no consequence; a target without an owner, window or action is not an SLO. Section key: tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview.\n- The Workbook unit supports error-budget consumption and burn-rate alert considerations but does not establish portable universal alert parameters. Section key: tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#7-evidence-and-review-boundaries.\n- The 5m window crosses on normal noise because it contains too few events, and the 1h window misses a slow drain because burn is a derivative and the threshold must be high enough to survive hourly noise. This is derived from the above; the arithmetic is illustrative. Section keys: tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations and tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target. Type: inference.\n\n## 7. Unknowns and confidence\n\nNo traffic distribution, error-clustering pattern, SLO target, alert history or measured false-positive and false-negative rate was observed, so the exact windows and thresholds cannot be derived from this evidence. The book does not reproduce the Workbook's multiwindow tier table, and no SLO policy or alert rule was executed. Confidence is high that a single window cannot cover both regimes and that the measurement, sample, calibration and operational contracts are prerequisites; medium that a specific multiwindow tier structure is the right design for a given service; low in any specific numeric threshold. A service with very high stable traffic and a tolerant SLO could support a simpler short-window rule, while a hard invariant would require a non-budget gate; measured backtests would be needed to choose actual windows.",
+  "citations": [
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+    "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview",
+    "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#7-evidence-and-review-boundaries"
+  ],
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "Short-window noise and false pages",
+      "question": "Why does a five-minute burn-rate window page during normal traffic noise?",
+      "query_formulations": [
+        "alert noise threshold sample paging",
+        "short window long window alert precision recall",
+        "alert fatigue false positive noise paging"
+      ],
+      "evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety"
+      ]
+    },
+    {
+      "id": "F2",
+      "facet": "Long-window blindness to slow drains",
+      "question": "Why does a one-hour window miss a slow and severe budget drain?",
+      "query_formulations": [
+        "fast burn slow burn percentage budget consumed",
+        "sustained slow burn long-term harm weak signal",
+        "burn rate alert window error budget"
+      ],
+      "evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target"
+      ]
+    },
+    {
+      "id": "F3",
+      "facet": "Single-window insufficiency and the multiwindow alternative",
+      "question": "Why can neither window alone support the alert?",
+      "query_formulations": [
+        "multiwindow multi-burn-rate alerting",
+        "hysteresis keep firing reset flapping alert"
+      ],
+      "evidence": [
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+        "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview"
+      ]
+    },
+    {
+      "id": "F4",
+      "facet": "Measurement contract",
+      "question": "What must the burn rate be a rate of before the threshold means anything?",
+      "query_formulations": [
+        "rolling window calendar window SLO evaluation",
+        "insufficient valid event samples intermittent traffic baseline"
+      ],
+      "evidence": [
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level"
+      ]
+    },
+    {
+      "id": "F5",
+      "facet": "Statistical validity and service-specific calibration",
+      "question": "When is a threshold crossing evidence rather than noise?",
+      "query_formulations": [
+        "confidence low traffic observations statistical significance alert",
+        "alert threshold evidence detection latency action policy"
+      ],
+      "evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+        "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#7-evidence-and-review-boundaries"
+      ]
+    },
+    {
+      "id": "F6",
+      "facet": "Operational contract: action, ownership, falsification, channel integrity",
+      "question": "What must be true before a page is justified?",
+      "query_formulations": [
+        "page ticket severity routing actionable alert owner",
+        "falsify hypothesis runbook alert",
+        "missing evaluation monitoring gap blind spot"
+      ],
+      "evidence": [
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+        "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "claim": "An error-budget burn rate compares observed bad-event consumption with the budget's expected consumption rate; fast burn may warrant immediate intervention, but short windows are noisy and long windows are slow to detect severe faults.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "Direct book claim: 'short windows can be noisy and long windows slow to detect severe faults.'",
+      "type": "observed"
+    },
+    {
+      "claim": "A threshold selected without enough valid event samples is a trap; a sustained slow burn calls for reviewing problem history and release/quality trade-offs, and ignoring long-term harm because there is no loud incident is the opposite failure.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "Table rows for 'Fast error-budget burn' and 'Sustained slow burn'; exact trap phrases used.",
+      "type": "observed"
+    },
+    {
+      "claim": "The burn-rate method does not imply universal thresholds, especially for services with intermittent traffic or where one incorrect operation is intolerable.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "Direct qualification in section 4.",
+      "type": "observed"
+    },
+    {
+      "claim": "A safe decision rule checks that the event population is correct and the target window is sufficiently sampled, uses confirmed burn and impact, and records the signal, source/alert version, decision and follow-up owner.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+      "note": "Synthetic decision rule in section 5; thresholds there are explicitly hypothetical.",
+      "type": "observed"
+    },
+    {
+      "claim": "SLO revision must keep numerator, denominator, units, target, data-source revision and effective date together; retries or API changes can shift what the indicator means.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+      "note": "Section 6 on revision and contradiction handling.",
+      "type": "observed"
+    },
+    {
+      "claim": "Every alert needs an eligible population and evaluation window, enough observations and confidence to distinguish low traffic, a user outcome or concrete impending resource failure, an owner and escalation pathway, runbook evidence and a falsifier, and explicit suppression during controlled maintenance without hiding incidents.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+      "note": "Six-item alert checklist; short phrases quoted in the answer.",
+      "type": "observed"
+    },
+    {
+      "claim": "Paging on every instantaneous CPU spike is an anti-pattern; missing metrics are themselves an observable incident, and an exporter outage can look like a quiet service.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+      "note": "Direct statements in section 6.",
+      "type": "observed"
+    },
+    {
+      "claim": "Error-budget burn should be a rate or quantity under the chosen SLO window; an arbitrary alert threshold with no user consequence is an unacceptable substitution.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+      "note": "Table row in the engineering walkthrough.",
+      "type": "observed"
+    },
+    {
+      "claim": "The eligible population, good outcome, denominator, observation boundary, exclusions and meaningful window must be agreed and documented before measurement; a target without a specified event population can be meaningless, and changing the denominator can manufacture an apparent improvement.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+      "note": "Section 1 defines the boundary and population; section 2 adds that a target without an event population can be meaningless.",
+      "type": "observed"
+    },
+    {
+      "claim": "An SLO target is evaluated over a specified rolling or calendar window; time-based and request-based ratios measure different effects.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+      "note": "Section 2 distinguishes the objective window and the two ratio families.",
+      "type": "observed"
+    },
+    {
+      "claim": "One recorded p99 without the rejected and timed-out populations cannot prove user experience.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+      "note": "Section 3 on measuring the right signals.",
+      "type": "observed"
+    },
+    {
+      "claim": "The Workbook recommends the multiwindow, multi-burn-rate alerting technique as the most appropriate approach to defending SLOs; Prometheus for and keep_firing_for provide hysteresis; a skipped evaluation is a real blind spot.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+      "note": "Bounded pattern ownership notes quote the Workbook and the Prometheus clauses.",
+      "type": "observed"
+    },
+    {
+      "claim": "An SLO good-fit condition is naming the eligible population, good outcome, denominator, window and action owner before the first measurement; non-user-visible metrics, arbitrary targets and budget breach with no consequence are contraindications; a target without an owner, window or action is a dashboard number, not an SLO.",
+      "section_key": "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview",
+      "note": "Atlas overview decision card, decision state applicable-under-conditions.",
+      "type": "observed"
+    },
+    {
+      "claim": "The Alerting on SLOs source supports error-budget consumption and burn-rate alert considerations but does not establish portable universal alert parameters.",
+      "section_key": "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#7-evidence-and-review-boundaries",
+      "note": "Chapter source ledger row for the Google SRE Workbook alerting unit.",
+      "type": "observed"
+    },
+    {
+      "claim": "A five-minute window crosses on normal noise because it contains too few events; a one-hour window misses a slow severe drain because burn is a derivative and the threshold must be high enough to survive hourly noise.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "Analytical inference from the burn-rate definition, the noisy-short-window claim and the sample-sufficiency requirement; the 100-versus-10,000 event arithmetic is illustrative, not measured.",
+      "type": "inference"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "layer": "book",
+  "snapshot": "4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a"
+}
