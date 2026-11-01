@@ -1,5 +1,7 @@
 # Tycho
 
+<p align="center"><strong>From architecture question to cited decision.</strong></p>
+
 <p align="center">
   <a href="assets/tycho-station/tycho-station.jpg">
     <img src="assets/tycho-station/tycho-station.jpg"
