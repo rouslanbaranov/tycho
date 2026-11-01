@@ -48,7 +48,8 @@ tool invocation that retrieves sources, or change.
     record which checks could not be run. Review evidence independently and do not claim
     CI ran for a PR. GitHub Actions is **not** triggered by push or PR. Avoid
     automatic-closing wording; close a task only when its bounded issue-level acceptance
-    criteria are met. GitHub branch protection is separate administration.
+    criteria are met. GitHub branch protection, PR permissions and merge permissions are
+    owner administration; see rule 40.
 12. **Mermaid-first readable diagrams:** use fenced native `mermaid` diagrams in
     volume/chapter landings and technical pages whenever architecture, topology,
     data/control flow, sequences, state transitions or failure/recovery become clearer
@@ -273,3 +274,12 @@ tool invocation that retrieves sources, or change.
     bookkeeping before the next entry. Use the report templates in that file. Charts
     are generated and shown only after promotion, embedded as images, never as links
     in intermediate reports.
+
+40. **Protected main and PR-only delivery.** `main` is protected. Never push,
+    force-push or commit directly to it. Every change must land through a pull
+    request from an issue-specific feature branch. The owner administers branch
+    protection, review requirements, merge permissions and contributor access; do
+    not attempt to bypass a restriction or alter repository settings. If the current
+    actor cannot create a PR, or a PR is closed without merge, stop and report the
+    restriction; do not fall back to a direct `main` push or another repository. A
+    passing local check is not permission to merge.
