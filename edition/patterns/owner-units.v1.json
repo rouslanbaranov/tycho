@@ -1990,7 +1990,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "BFF mechanism and failure/recovery bound 2026-10-30 to Microsoft, AWS and microservices.io pattern pages; composition contract, duplication policy, drift, versioning and client-contract testing remain Tycho guidance. Coverage partial-bounded; no promotion."
+      "notes": "Promoted and frozen: all four dimensions supported, technical and decision coverage sufficient. The dedicated card excludes line is historical; no backlink is added."
     },
     {
       "pattern_id": "tycho.pattern.api-composition",
@@ -2012,29 +2012,66 @@
         "mechanism": {
           "state": "supported",
           "quote": "An API composition layer calls several owner APIs for one request and assembles their responses into a single caller-visible result.",
-          "reason": "Defines query-time calls to several owner APIs and assembly of one caller-visible result.",
+          "reason": "Names the API Composer for a query; the in-memory join and caller-visible assembly are described in the owner section.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-api-composition.2026-10-21",
             "section": "Solution",
-            "quote": "Implement a query by defining an API Composer, which invoking the services that own the data and performs an in-memory join of the results.",
+            "quote": "Implement a query by defining an API Composer, which invokes the services that own the data and performs an in-memory join of the results.",
             "revision": "7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b"
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The composed response must declare per-source freshness and what partial failure means, rather than presenting one aggregate result as uniformly current.",
-          "reason": "Source describes an in-memory join but not per-source freshness or a partial-failure contract."
+          "state": "supported",
+          "quote": "The composed response must make the partial-or-failed response policy explicit when a source times out.",
+          "reason": "Azure binds the explicit partial-response-or-failure decision; per-source freshness is labelled Tycho synthesis in the owner section.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-aggregation.2026-11-01",
+            "section": "Example",
+            "quote": "Make this decision explicit in the policy design so that clients experience predictable behavior.",
+            "revision": "b29c820c64a8ea1394113b5afe2152e4ff5e16551ca83fd4498d6c52f14a5f49"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "One slow or failed participant must not silently disappear from the result; apply per-call deadlines, mark missing parts or fail the composition explicitly.",
-          "reason": "Source does not address slow or failed participants, deadlines, missing parts or explicit failure."
+          "reason": "The Azure page supports per-request timeouts, an explicit partial-or-fail choice, unresponsive-back-end handling and failure visibility; the per-call deadline contract and missing-part schema remain Tycho synthesis.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-aggregation.2026-11-01",
+            "section": "Problems and considerations",
+            "quote": "If one or more service calls take too long, it might be acceptable to time out and return a partial set of data. Consider how your application will handle this scenario.",
+            "revision": "b29c820c64a8ea1394113b5afe2152e4ff5e16551ca83fd4498d6c52f14a5f49"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-gateway-aggregation.2026-11-01",
+              "section": "Problems and considerations",
+              "quote": "This layer becomes responsible for handling unresponsive back-end services gracefully and preventing failures from cascading across the aggregated response.",
+              "revision": "b29c820c64a8ea1394113b5afe2152e4ff5e16551ca83fd4498d6c52f14a5f49"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-gateway-aggregation.2026-11-01",
+              "section": "Example",
+              "quote": "If one of the back-end calls times out or returns an error, API Management can apply the behavior that best fits the operation. For example, it might return a partial response when missing data is acceptable, or it might fail the entire request when complete and consistent order data is required.",
+              "revision": "b29c820c64a8ea1394113b5afe2152e4ff5e16551ca83fd4498d6c52f14a5f49"
+            },
+            {
+              "source_id": "src.microsoft-api-design",
+              "ledger_record": "read.microsoft-api-design.2026-11-01",
+              "section": "Enable distributed tracing and trace context in APIs",
+              "quote": "APIs that support the inclusion of trace and context information enhance their observability level and debugging capabilities.",
+              "revision": "2891e38400bb5898d6905fed7c324f903ef76c5774da5439646fb7e0fa6face0"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
-          "quote": "Build a maintained read model or a client-specific backend for frontend; prefer composition when the sources are authoritative and the caller needs a live view.",
-          "reason": "Names a maintained read model or client-specific backend for frontend.",
+          "quote": "Build a maintained read model; prefer composition when the sources are authoritative and the caller needs a live view.",
+          "reason": "CQRS/read model is the named alternative; the selection rule is Tycho guidance.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-api-composition.2026-10-21",
@@ -2047,7 +2084,7 @@
       "decision_evidence": {
         "atlas_section": "api-composition",
         "question": "Should an in-memory composition layer assemble a response from several service owners, rather than forcing one owner to duplicate all data?",
-        "competing_alternative": "A maintained read model or a client-specific backend for frontend. Reverse the choice when composition latency and partial-failure complexity exceed the duplication alternative.",
+        "competing_alternative": "A maintained read model. Reverse the choice when composition latency and partial-failure complexity exceed the duplication alternative.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2056,12 +2093,24 @@
         "source_id": "src.microservices-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-aggregation.2026-11-01",
+            "revision": "b29c820c64a8ea1394113b5afe2152e4ff5e16551ca83fd4498d6c52f14a5f49"
+          },
+          {
+            "source_id": "src.microsoft-api-design",
+            "ledger_record": "read.microsoft-api-design.2026-11-01",
+            "revision": "2891e38400bb5898d6905fed7c324f903ef76c5774da5439646fb7e0fa6face0"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
-      "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Technical and decision coverage sufficient: invariant binds Azure partial-response-or-failure; failure/recovery binds Azure policy and Microsoft trace context; mechanism and alternative bind microservices.io; decision evidence matches the card. Freshness, deadlines, versioned adapters, query shape and transaction boundaries remain Tycho synthesis."
     },
     {
       "pattern_id": "tycho.pattern.reverse-proxy",
@@ -18519,17 +18568,17 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 98,
-    "failure_recovery_supported": 96,
+    "invariant_supported": 99,
+    "failure_recovery_supported": 97,
     "alternative_supported": 98,
     "technical_partial_bounded": 11,
-    "technical_partial": 49,
+    "technical_partial": 48,
     "technical_name_only": 0,
-    "technical_sufficient": 85,
-    "decision_partial_bounded": 60,
+    "technical_sufficient": 86,
+    "decision_partial_bounded": 59,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 85,
+    "decision_sufficient": 86,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

@@ -193,22 +193,71 @@ living pages, not a benchmark or an executed drift test.
 ### API Composition
 
 An API composition layer calls several owner APIs for one request and assembles their responses into
-a single caller-visible result. The composed response must declare per-source freshness and what
-partial failure means, rather than presenting one aggregate result as uniformly current.
+a single caller-visible result.
+
+microservices.io says to "Implement a query by defining an API Composer, which invokes the
+services that own the data and performs an in-memory join of the results." It also notes that
+"Some queries would result in inefficient, in-memory joins of large datasets." The pattern page
+does not define a freshness format. The composed response must make the partial-or-failed
+response policy explicit when a source times out. Azure supports that partial-failure decision.
+Tycho synthesis, not a source claim: the per-source freshness format remains Tycho guidance.
 
 One slow or failed participant must not silently disappear from the result; apply per-call
-deadlines, mark missing parts or fail the composition explicitly. Build a maintained read model or a
-client-specific backend for frontend; prefer composition when the sources are authoritative and the
-caller needs a live view.
+deadlines, mark missing parts or fail the composition explicitly. Azure's Gateway Aggregation
+pattern says: "If one or more service calls take too long, it might be acceptable to time out and
+return a partial set of data. Consider how your application will handle this scenario." It also
+says the aggregation layer "becomes responsible for handling unresponsive back-end services
+gracefully and preventing failures from cascading across the aggregated response." For a timeout
+or error, Azure says the gateway can "return a partial response when missing data is acceptable,
+or it might fail the entire request when complete and consistent order data is required" and that
+the team should "Make this decision explicit in the policy design so that clients experience
+predictable behavior." Tycho synthesis, not a source claim: the per-call deadline and the
+partial-result schema remain Tycho's contract; the Azure page gives policy choices, not an
+executed composition test.
 
-**No snapshot.** Per-owner reads happen at different times, so the aggregate can mix owner
-revisions; it is not a cross-source snapshot, and a caller's just-committed write may be
-absent. Read-your-writes needs per-source version/as-of markers or a read model.
+**No snapshot.** Tycho synthesis, not a source claim: per-owner reads happen at different times,
+so the aggregate can mix owner revisions; it is not a cross-source snapshot, and a caller's
+just-committed write may be absent. Read-your-writes needs per-source version/as-of markers or a
+read model.
 
-**Query shape.** Filtering, sorting and pagination cannot generally be delegated to owners;
-the composer over-fetches, joins in memory and must bound payload, memory and merged-page
-stability. A maintained read model is often cheaper for repeated shaped queries.
+**Query shape.** Tycho synthesis, not a source claim: filtering, sorting and pagination cannot
+generally be delegated to owners; the composer over-fetches, joins in memory and must bound
+payload, memory and merged-page stability. A maintained read model is often cheaper for repeated
+shaped queries.
 
-**Limits.** Fan-out latency is the max of participants; per-source authorization, versioning
-and partial-failure schema are costs, and a maintained read model may be cheaper for repeated
-composition. A composition endpoint is not a transaction.
+**Contract boundary.** Microsoft's API design guidance says "A web API that implements versioning
+can indicate the features and resources that it exposes, and a client application can submit
+requests that are directed to a specific version of a feature or resource." It also says "APIs
+that support the inclusion of trace and context information enhance their observability level and
+debugging capabilities." Tycho synthesis, not a source claim: the composition endpoint and each
+owner adapter need an explicit version and a propagated trace context, because a composed failure
+spans several calls.
+
+**Alternative (CQRS; selection rule Tycho synthesis).** Build a maintained read model;
+prefer composition when the
+sources are authoritative and the caller needs a live view. Tycho synthesis,
+not a source claim: reverse the choice when fan-out latency and partial-failure complexity
+outweigh the cost of duplicating the data.
+
+**Limits.** Fan-out latency is the max of participants; per-source authorization, versioning and
+partial-failure schema are costs, and a maintained read model may be cheaper for repeated
+composition. Azure also warns that the gateway "shouldn't introduce service coupling across the
+back-end services" and "might introduce a single point of failure (SPoF)." Tycho synthesis, not a
+source claim: a composition endpoint is not a transaction.
+
+**Source boundary.** Public pattern and API-design pages, inspected 2026-10-21 and 2026-11-01;
+living pages, not a benchmark or an executed composition test. Azure calls the related pattern
+Gateway Aggregation; it supports the fan-out/partial-failure policy, not API Composition's
+query-join scope.
+
+- microservices.io, "API Composition", sections "Solution", "Resulting context" and "Related
+  patterns": record `read.microservices-api-composition.2026-10-21`, raw HTML revision
+  `7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b`.
+- Microsoft, "Gateway Aggregation pattern", sections "Solution", "Problems and considerations"
+  and "Example": canonical text revision
+  `b29c820c64a8ea1394113b5afe2152e4ff5e16551ca83fd4498d6c52f14a5f49`, raw HTML revision
+  `3dff76ba664fc8089dd7974e55123810bdeaf8e2994acf29ec2dc14c55f17d0a`.
+- Microsoft, "Web API design best practices", sections "Implement versioning" and "Enable
+  distributed tracing and trace context in APIs": canonical text revision
+  `2891e38400bb5898d6905fed7c324f903ef76c5774da5439646fb7e0fa6face0`, raw HTML revision
+  `9825b790a5306510791741e08be0e4ade313a173464141cd2103311163d83b27`.
