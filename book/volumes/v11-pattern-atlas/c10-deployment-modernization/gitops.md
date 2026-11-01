@@ -46,7 +46,7 @@ evidence_scope:
     read.argocd-auto-sync.2026-11-01, read.argocd-diffing.2026-11-01,
     read.argocd-best-practices.2026-11-01, read.argocd-security.2026-11-01,
     read.argocd-ha.2026-11-01, read.flux-concepts.2026-11-01,
-    read.flux-kustomization.2026-11-01, read.flux-gitrepository.2026-11-01 and
+    read.flux-gitrepository.2026-11-01 and
     read.flux-monitoring.2026-11-01; read.batch5-opengitops.2026-10-21 is
     retained historical context; owner section and limits are bounded.
 content_review:
@@ -69,11 +69,14 @@ a Git source?
 
 **Good-fit conditions.** Desired state is declarative and reviewed; reconciliation is
 observable; secrets/drift are handled; rollback is a revert commit; repository write access and
-commit signatures can be verified; reconciliation failure is monitored.
+commit signatures can be verified; reconciliation failure is monitored. **Tycho
+conditions:** secrets stay outside plaintext, drift has an owner, and rollback is a reviewed revert.
 
 **Hard contraindications.** Reject when imperative one-off changes dominate, when the
-reconciler is unowned, when secrets cannot be managed safely, or when desired-state revisions and
-artifact references cannot be pinned and verified.
+reconciler is unowned, when secrets cannot be managed safely (Tycho), or when desired-state
+revisions and
+artifact references cannot be pinned and
+verified.
 
 **Competing alternative.** Pipeline-driven deployment, a manual sync or imperative changes.
 Argo CD records that automatic sync removes the pipeline's need for direct API access, that a
@@ -98,7 +101,6 @@ records `read.argocd-auto-sync.2026-11-01`,
 `read.argocd-security.2026-11-01` and `read.argocd-ha.2026-11-01`;
 [src.flux](../../../../edition/patterns/reading-ledger.v1.json) read
 records `read.flux-concepts.2026-11-01`,
-`read.flux-kustomization.2026-11-01`,
 `read.flux-gitrepository.2026-11-01` and
 `read.flux-monitoring.2026-11-01`.
 `read.batch5-opengitops.2026-10-21` is retained historical context.

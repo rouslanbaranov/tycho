@@ -130,23 +130,22 @@ by agents that "automatically pull the desired state declarations from the sourc
 observe actual system state and attempt to apply the desired state" (OpenGitOps — Principles
 v1.0.0). Argo CD compares "the desired manifests in Git" with "the live state in the cluster" (Argo
 CD — Automated Sync Policy); Flux describes an automated process that "ensures that the deployed
-environment matches the state specified in one or more Git repositories" (Flux — Core Concepts). The
-reconciler records the observed revision; the repository is neither a build log nor a credentials
-store.
+environment matches the state specified in one or more Git repositories" (Flux — Core Concepts). **Tycho guidance:** the reconciler records the observed revision; the repository is neither a
+build log nor a credentials store.
 
-Rollback is a revert commit, which needs a linear, reviewable history and an immutable artifact
-reference. Pin image digests and verify the commit signature: Argo CD warns that "gaining
+**Tycho rule:** rollback is a revert commit, which needs a linear, reviewable history and an
+immutable artifact reference. Pin image digests and verify the commit signature: Argo CD warns that "gaining
 unauthorized write access to a git repository trusted by Argo CD will have serious security
 implications" (Argo CD — Security), and Flux can enable "the verification of Git commit signatures"
-against keys of "trusted Git authors" (Flux — GitRepository). Secrets stay out of plaintext: use an
-external secret reference or sealed value that the controller can resolve with least privilege.
+against keys of "trusted Git authors" (Flux — GitRepository). **Tycho rule:** secrets stay out of plaintext; use an external secret reference or sealed value
+that the controller can resolve with least privilege.
 
 **Failure and recovery (Tycho synthesis).** Controller outage, drift, repository compromise and
 stale artifact references are the common failures: reconciliation is periodic and controller-driven,
 a green sync does not prove convergence, failed syncs are not retried against the same revision, and
-a trusted repository is a deployment path. Argo CD polls Git "every 3m by default" (Argo CD — High
-Availability) and Flux reconciles "every five minutes by default" (Flux — Core Concepts), so an
-unavailable controller stops convergence while workloads keep serving. "It is possible for an
+a trusted repository is a deployment path. Argo CD polls Git "every 3m by default" (Argo CD — High Availability); Flux reconciles each
+resource on its configured interval, so an unavailable controller stops convergence while
+workloads keep serving. "It is possible for an
 application to be OutOfSync even immediately after a successful Sync operation", for example because
 "A controller or mutating webhook is altering the object after it was submitted to Kubernetes" (Argo
 CD — Diffing Customization); Flux warns that direct `kubectl` edits "will be promptly reverted"
@@ -161,8 +160,7 @@ generated manifests (for 24h by default)" and "the expected manifests can change
 repo has not changed" when a Kustomize remote base or an unversioned Helm chart moves (Argo CD —
 High Availability); pin "a Git tag or commit SHA" rather than a moving base (Argo CD — Best
 Practices). Alert on reconciliation failure instead of assuming convergence: Flux's monitoring example
-uses `gotk_resource_info`, whose `ready` label "shows the readiness of the resource" (Flux —
-Prometheus metrics). Verify commit signatures, pin tags and digests, keep secrets external, and name a drift
+exposes a `ready` label that "shows the readiness of the resource" (Flux — Prometheus metrics). Verify commit signatures, pin tags and digests, keep secrets external, and name a drift
 owner. The controller-outage consequence and this runbook are Tycho guidance; the selected pages
 document periodic reconciliation, caching and repository trust, not an outage drill.
 
@@ -186,7 +184,7 @@ and *High Availability* read through the moving `stable` alias; and Flux *Core C
 `read.opengitops-principles.2026-11-01`, `read.argocd-auto-sync.2026-11-01`,
 `read.argocd-diffing.2026-11-01`, `read.argocd-best-practices.2026-11-01`,
 `read.argocd-security.2026-11-01`, `read.argocd-ha.2026-11-01`, `read.flux-concepts.2026-11-01`,
-`read.flux-kustomization.2026-11-01`, `read.flux-gitrepository.2026-11-01` and
-`read.flux-monitoring.2026-11-01`. The four failure modes, the controller-outage consequence and the
-selection rule are Tycho synthesis; no reconciler, cluster, outage or compromised repository was
-exercised, and no independent review is claimed.
+`read.flux-gitrepository.2026-11-01` and
+`read.flux-monitoring.2026-11-01`. The grouping of these failure modes, the controller-outage consequence and the selection rule
+are Tycho synthesis; the drift, compromise and caching mechanisms are source-bound. No
+reconciler, cluster, outage or compromised repository was exercised, and no independent review is claimed.
