@@ -208,3 +208,5 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | Read Replicas + Multi-Leader rebind | pass | `2026-11-01-read-replicas-deepseek.md` | `cf756be9cd47324698660cfea70d7808ace3b7ea4d894e220fee9306d851d4cb` |
 | 2026-11-01 | DeepSeek Reviewer | Read Replicas + Multi-Leader rebind | pass | `2026-11-01-read-replicas-multi-leader-deepseek.md` | `b721d8199b77fee2cdfd038bbdd33843ad6716afda8d88b6b231d6ca2869e333` |
 | 2026-11-01 | DeepSeek Reviewer | Zero Trust + Least Privilege | pass | `2026-11-01-zero-trust-least-privilege-deepseek.md` | `ac6de657a9941316982a1525d6fca490efc70f44949491dd8c872b7365a25775` |
+| 2026-11-01 | DeepSeek Reviewer | Correlation Identifier | pass | `2026-11-01-correlation-identifier-deepseek.md` | `79be9693b6f4c75d90fa48ed11d3901162e37d4c84158eb48676f2524b0744e1` |
+| 2026-11-01 | DeepSeek Reviewer | DLQ card rebind | pass | `2026-11-01-dlq-card-rebind-deepseek.md` | `9aceb8053b01434c176037901dc704bd3a188dca6a2d1284ad41446d9647ab9e` |
