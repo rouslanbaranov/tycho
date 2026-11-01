@@ -53,6 +53,16 @@ content_verified_at: null
 
 **Owning question:** Which messaging pattern fits the delivery and ownership contract?
 
+## Navigation and prerequisites
+
+- Parent: [V11](../README.md).
+- Previous: [V11/C02](../c02-api-communication/README.md).
+- Next: [V11/C04](../c04-consistency-events/README.md).
+- Prerequisite: V10/C03 — pattern applicability and contraindications.
+- Registry: [pattern registry](../../../../edition/patterns/registry.v1.json).
+- Card batch: [card batches](../../../../edition/patterns/card-batches.v1.json).
+- Coverage map: [candidate coverage](../../../../edition/patterns/coverage-map.v1.json).
+
 ## Purpose and mission
 
 This chapter is the atlas entry point for **Messaging and event-driven integration**.
@@ -153,3 +163,8 @@ See the [Canonical Data Model](canonical-data-model.md) card.
 ### Process Manager-Routing Slip
 
 See the [Process Manager / Routing Slip](process-manager-routing-slip.md) card.
+
+## Evidence and known limits
+
+- All 20 cards cite read ledger units; owner links and backlinks are self-checked.
+- Decision coverage is partial; no independent review or owner acceptance is claimed.
