@@ -37,7 +37,7 @@ def main(argv=None):
             query = {
                 "query": args.value, "limit": args.limit, "abstain": False,
                 "detail": "snippets", "max_chars": args.max_chars}
-            if args.volume:
+            if args.volume and args.volume != "book":
                 query["volume"] = args.volume
             payload = server._tool_search(query)
         elif args.command == "read":

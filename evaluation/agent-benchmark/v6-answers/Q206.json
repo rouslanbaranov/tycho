@@ -1,0 +1,233 @@
+{
+  "task_id": "Q206",
+  "answer": "# Q206 — Why a consistent-hashing ring bounds movement, and why more tokens can still worsen failure and repair\n\n## 1. Direct answer\n\nModulo sharding makes ownership a function of the bucket count itself: a key goes to hash(key) mod N, so changing N changes the function for almost every key. Going from 16 to 17 buckets keeps a key only when its hash is congruent both modulo 16 and modulo 17, which means congruent modulo lcm(16,17)=272; about 1/272 of keys (roughly 0.37%) stay, so roughly 99.6% move. A consistent-hashing ring makes ownership a property of positions on a circle instead: a key belongs to the first node clockwise from its hash. Inserting or removing one node therefore changes ownership only inside the arc that node takes over or vacates, so the expected moved share is about K/N — about 1/17, or 5.9%, when the 17th node joins — not the whole keyspace.\n\nVirtual nodes are a balance knob, not a safety knob. Raising tokens per node from 64 to 512 smooths each node's share of the ring (relative deviation falls roughly with the square root of the token count), but it does not change the expected moved fraction on a join or leave, and it multiplies the number of ownership ranges that a failure must reassign, that hinted handoff and anti-entropy repair must track, and that a topology change may move at once. More tokens can therefore improve average balance while worsening blast radius, reassignment pacing and repair tail. Ownership safety comes from fencing, ownership epochs, verified handoff and bounded reassignment, not from token count.\n\n## 2. Facet matrix (six facets)\n\n| Facet | Question it answers | Query formulations used | Primary evidence |\n|---|---|---|---|\n| F1 Modulo remap | Why 16 to 17 buckets moves nearly every key | resharding; modulo bucket remap; keyspace remap fraction | P (modulo paragraph) |\n| F2 Ring bound | Why a ring moves only a fraction | consistent hashing; hash ring; token ring | P (invariant paragraph); CARD |\n| F3 Token count and balance | What 64 to 512 vnodes actually buys | virtual nodes; tokens per node; partition count | P (mechanism); CARD good-fit |\n| F4 Failure outcomes | Why more tokens can worsen node loss | hot token range; ring membership gossip; vnodes | P (failure paragraph); QUORUM; CELLS-F |\n| F5 Repair outcomes | Why more tokens can worsen repair and rebuild | anti-entropy repair; hinted handoff; Merkle tree | QUORUM; P (runbook); CASE |\n| F6 Boundaries and safety | When the ring does not bound movement, and what safety requires | ownership epoch; fencing stale ownership; shard key | SHARD; STRAT1; STRAT3; CELLS-P |\n\nP = tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes (Resharding and alternatives).\nCARD = tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview (Consistent Hashing card).\nQUORUM = tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes (Replica properties and quorum failure envelopes).\nCELLS-P = ...cells-and-shuffle-shards-solve-different-placement-questions; CELLS-F = ...failure-and-recovery-policies (Cells and shuffle sharding).\nCASE = tycho.page.b55f5bf29d7946c78454a769980c476e#what-changed-in-the-migration-plan (Discord storage migration).\nSHARD = tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission (Sharding, partition keys, hotspots and safe resharding).\nSTRAT1 = tycho.page.3b048fab91c24b9f8121564b9b0e59bb#1-distinguish-physical-partitions-logical-ownership-and-replicas (Partition ownership, keys and skew).\nSTRAT3 = tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks (Partition ownership, keys and skew).\n\n## 3. Mechanism and justification\n\n### F1. Why 16 to 17 modulo buckets remaps almost everything\n\nModulo hashing assigns a key to hash(key) mod N, so the owner is a function of the modulus. The book records the consequence directly: 'Modulo hashing assigns a key to hash(key) mod N. Cassandra says adding one node \"might invalidate almost all of the mappings\"; Karger et al. describe the same central-redistribution problem for classical hash functions when machines join.' The same section's choice rule is 'use modulo only when N is fixed.'\n\nArithmetic (my derivation in support of that source claim, not a measured result): a key keeps its bucket across 16 and 17 only if its hash h satisfies h mod 16 = h mod 17, which requires h to be congruent modulo lcm(16,17) = 272. Only about 1/272 of hash values, roughly 0.37%, survive; about 99.6% move. The failure is structural, not a tuning mistake: 16 and 17 are coprime, so the modulus itself changes for nearly every key, and nothing about the key's current placement predicts its new placement. Client caches, routing tables and in-flight writes all become stale at once, which is exactly the 'central redistribution' problem the ring was invented to avoid.\n\n### F2. Why the ring bounds movement\n\nThe ring decouples ownership from node count. The book's mechanism summary: 'A consistent hash function maps keys and nodes into one circular space. A key belongs to the first node encountered clockwise from its hash position, and each physical node normally claims many small positions, called tokens or virtual nodes, rather than one large arc.' A new node inserted at a position takes only the keys whose clockwise predecessor changed — the arc between the previous owner and the new position. Everything else keeps its successor node.\n\nThe book's invariant paragraph states the bound: 'With K keys spread over N equal-share nodes, adding or removing one node should move about K/N keys: the joining or leaving node's share, not the whole keyspace.' It supports this with Dynamo ('departure or arrival \"only affects its immediate neighbors\"'), Cassandra ('only has to move a small fraction of the keys'), Riak ('1/(number of nodes) of the ring') and Karger et al. ('the minimum needed to maintain a balanced load'). At 16 to 17 nodes the expected moved share is about 1/17 = 5.9%, versus the roughly 99.6% of modulo — about a seventeenfold difference in moved keys (my arithmetic).\n\nThe book is careful about the status of that number: 'The ~1/N figure is an expectation under balance, not a guarantee,' and Tycho's rule is to 'measure the actual moved fraction, because random tokens, unequal vnode counts and hot keys can exceed the ideal share.' So the ring bounds movement under stated assumptions (balance, unchanged hash, unchanged token layout); it is not a proof for any particular cluster.\n\n### F3. What 64 to 512 virtual nodes actually buys\n\nOne token per node gives each node one large arc; arc sizes are random, so node shares vary widely. Many tokens per node replace one big arc with many small arcs, so a node's share is a sum of many small random pieces and clusters closer to the mean. That is the balance argument, and it is the reason the number of tokens is called out as an owned parameter: ring, 'token/vnode count and replication factor are owned; key and token distribution are measured' (card good-fit conditions), and 'uneven token ranges produce uneven request load' (P).\n\nQuantitatively (my model, not a book measurement): if a node holds k independent arcs, its share has relative standard deviation on the order of 1/sqrt(k). At k=64 that is about 12.5%; at k=512 about 4.4%. Going from 64 to 512 therefore cuts relative imbalance by roughly a factor of 2.8. What it does not do is change the expected moved fraction on a join or leave: that stays about 1/(N+1) regardless of k, because the moved set is still the arcs the entering or leaving node owns. Token count trades variance for granularity, not variance for movement.\n\nThe same 8x increase also multiplies the number of ranges: at 17 nodes, 64 tokens gives about 1,088 ranges and 512 tokens about 8,704 (my arithmetic). Each range is a unit of ownership, transfer, hinting and repair, which is where F4 and F5 come from.\n\n### F4. Why more tokens can worsen failure outcomes\n\nA node loss with k tokens is not one transfer; it is k ownership transfers, each with its own replica set, hinted-handoff stream and streaming job. Dynamo's approach, as summarized in the book, 'disperses an unavailable node's load across remaining nodes and sends missed replicas to a hinted node; when the node recovers, hinted replicas are delivered and anti-entropy repairs permanent divergence.' Dispersal is finer with 512 tokens, so no single successor absorbs a large arc — good for post-failure balance. But the count of transfers, hint streams and affected peers grows with k, and the failure is now smeared across many peers instead of concentrated on a few.\n\nThe book records the counterweight explicitly: 'Cassandra warns that each token adds failure combinations and raises outage probability,' and Tycho's runbook says to 'bound token counts against repair and outage cost.' The card repeats the same warning in compressed form: 'Cassandra warns that more tokens raise outage probability and maintenance cost.' The mechanism (my inference from the sources, not a quantified source claim) is that with more ranges the number of distinct replica sets and in-flight range movements grows, so a second failure or a topology change overlaps more partially moved ranges; each overlap is small, but their sum can exceed survivor headroom. The cells page states the general control for exactly this: 'A cell outage needs reserved recovery capacity, a reconstructible durable state path, and a bounded reassignment rate. Moving every tenant immediately can exhaust survivors.' Applying that to tokens (my transfer) means reassigning 512 ranges per lost node takes more pacing than 64, so recovery is longer and needs more reserved capacity.\n\nThere is also a correctness hazard, not only a capacity hazard: 'Cassandra warns that simultaneous range movements can \"violate monotonic consistency and can even cause data loss\"' (QUORUM, reporting Cassandra's warning). More ranges per node means more range movements in flight during any membership change, which widens that window.\n\nSo more tokens do not make ownership safer: they make load more even and failures more fragmented. 'Safer' would require fewer simultaneous movements, better fencing and sufficient recovery capacity — none of which token count supplies.\n\n### F5. Why more tokens can worsen repair and rebuild outcomes\n\nRepair is per range. The book: 'hinted handoff and Merkle-tree anti-entropy repair lagging replicas,' while read repair and hinted handoff are 'only best-effort' and anti-entropy is what provides eventual consistency (QUORUM). Hinted handoff is temporary protection, not repair (CARD, P). With 8x more ranges, the number of Merkle-tree comparisons, validation compactions, repair sessions and stream setups grows roughly 8x, while the data per range falls roughly 8x. Fixed per-range costs — scheduling, tree construction, session bookkeeping, streaming setup, compaction overhead — do not shrink with the range, so total repair work per byte grows as ranges get smaller (my inference; the book states the mechanism and the direction, not a cost curve).\n\nRebuild after failure inherits the same granularity. A rebuilding node must receive hundreds of small ranges from many peers instead of a few large ones; more peers, more sessions, more chances of a straggler. The Discord case is the book's concrete demonstration of per-range tail risk: the token-range migrator 'stalled near 99.9999% on ranges full of uncompacted tombstones,' and the book's lesson is that 'a fraction of token ranges can contain disproportionate scan work, deletion markers and operational risk' and that treating 99.9999% as a completeness certificate would have produced false acceptance. More ranges means more tail samples and more chances that some range is pathological; the tail is per range, so splitting ranges multiplies the number of tails to clear.\n\n### F6. What safety actually requires, and when the ring does not bound movement\n\nThe book's safety conditions are about authority and verification, not tokens: the card's good-fit list requires that 'the ring, token/vnode count and replication factor are owned' and that 'a rebalance and repair path exists' and 'ownership can be fenced during a change.' Tycho's runbook says to 'record the ownership epoch at every membership change,' and warns that 'a ring without epoch fencing can still route one key to two owners during a change.' The sharding page's invariant is the same: a versioned shard map assigns each key to a shard, 'one authoritative owner must exist per key, and a resharding move must fence writes or preserve a verifiable handoff' (SHARD).\n\nThree boundaries limit the 1/N claim. First, it covers a single node join or leave under a fixed hash and token layout; changing token counts from 64 to 512 is itself a layout change, and unless new tokens are placed inside each node's existing arcs the movement can exceed the ideal share — hence 'measure the actual moved fraction.' Second, changing the hash function invalidates stability entirely: the shard-key table says the routing function 'does not guarantee stability through routing/hash algorithm changes' (STRAT1). Third, the ring balances keys, not load: the hash-strategy row warns 'single hot key still hot' (STRAT3), and hot spots are the failure the original paper targets (the book notes the Karger title names 'Relieving Hot Spots'). A hot key stays on one owner at 64 or 512 tokens.\n\nFinally, a hash does not create independence: 'Do not assume assignments are statistically independent just because they use a hash. Capacity skew, placement constraints, correlated failure and retries all change overlap and impact' (CELLS-P). That is the precise sense in which more tokens can look safer (better average balance) while leaving correlated-failure exposure and blast radius untouched.\n\n## 4. Boundaries and trade-offs\n\n- The ring vs modulo contrast is a movement contrast, not a completeness claim. The book's alternative section also lists explicit range assignment (operator control, range locality, manual planning) and rendezvous/highest-random-weight hashing (no shared ring), and its choice rule says to 'reverse the choice when ring operations and virtual-node tuning cost more than the movement they save' — which is exactly the 64 to 512 question.\n- Token count is a cost/benefit dial with two failure directions: too few tokens leaves lumps (large arcs, skewed load, coarse repair units); too many multiplies per-range overhead, failure combinations, concurrent movements and repair tail. The card's own rule is to 'bound token counts against repair and outage cost', not to maximize them.\n- The binding constraint on a failure is often survivor headroom, not ring geometry: recovery needs 'reserved recovery capacity' and a 'bounded reassignment rate' (CELLS-F). A 512-token node failure is 512 reassignments to pace; whether that is better or worse than 64 depends on transfer parallelism and per-transfer overhead, which the book does not measure.\n- The evidence is documentation- and paper-grounded, not benchmarked: the resharding page states its sources are 'public papers and documentation, not benchmarks' and that Tycho-labelled rules are synthesis. No cluster, rebalance or migration was run (SHARD source limits). So the qualitative mechanism is well supported; the specific 64/512 comparison is a modeled argument.\n- The 16 to 17 and 64 to 512 numbers are the question's scenario, not book measurements. The book supplies the mechanism and the direction; the percentages here are arithmetic under stated assumptions (uniform hashing, balanced shares, unchanged layout).\n\n## 5. Evidence map\n\n| Claim | Section key | Basis |\n|---|---|---|\n| Modulo assigns hash(key) mod N; adding a node can invalidate almost all mappings | P | observed |\n| Classical hashing has the same central-redistribution problem on join | P | observed |\n| Ring ownership is first node clockwise; nodes hold many small tokens | P | observed |\n| Join/leave moves about K/N; Dynamo immediate neighbors; Cassandra small fraction; Riak 1/N; Karger minimum needed | P | observed |\n| ~1/N is an expectation under balance, not a guarantee; measure the moved fraction | P | observed |\n| More tokens raise outage probability and maintenance cost; bound token counts | CARD | observed |\n| Ring, token count and replication factor are owned; fencing and a repair path are required | CARD | observed |\n| Ring without epoch fencing can route one key to two owners | P | observed |\n| Simultaneous range movements can violate monotonic consistency and cause data loss | QUORUM | observed |\n| Read repair and hinted handoff are best-effort; Merkle anti-entropy repairs lagging replicas | QUORUM | observed |\n| Recovery needs reserved capacity and a bounded reassignment rate | CELLS-F | observed (transfer to rings is inference) |\n| Hash placement is not statistical independence; correlation and skew change impact | CELLS-P | observed |\n| Routing function does not guarantee stability through hash-algorithm changes | STRAT1 | observed |\n| Hash strategy leaves a single hot key hot and carries remapping costs | STRAT3 | observed |\n| Versioned shard map; one owner per key; fence writes or verify handoff | SHARD | observed |\n| Per-range tail: migrator stalled at 99.9999% on tombstone ranges | CASE | observed |\n| 16 to 17 keeps ~1/272 of keys (about 0.37%), so ~99.6% move | P (anchor) | inference (arithmetic) |\n| 64 to 512 cuts relative share deviation ~2.8x but leaves the moved fraction unchanged | CARD/P | inference (model) |\n| 8x more ranges means ~8x per-range transfers, hint streams and repair sessions | P/CARD | inference |\n| Re-tokenizing from 64 to 512 is not a single-node join and can exceed the 1/N ideal | P | inference |\n\n## 6. Unknowns and confidence\n\n- The book does not quantify repair cost versus token count; it asserts the direction ('each token adds failure combinations and raises outage probability'; 'bound token counts against repair and outage cost'). The per-range overhead argument is my inference from the Merkle-tree/per-range repair mechanism plus the Discord tail case.\n- The 64 to 512 scenario is not in the book; 512 is not endorsed or rejected there. The defensible statement is conditional: more tokens help balance and hurt per-range overhead, failure fragmentation and repair tail, so the right count depends on measured repair time, transfer throughput and headroom.\n- The 99.6% and 5.9% figures assume uniform hashing and balanced arcs. Real rings with uneven token placement, hot keys or partial replication can exceed the ideal share, as the book warns; my numbers are illustrative.\n- Tooling note: in this checkout, search with the documented --volume book flag returned zero results (the value appears to be applied as a volume-code filter), so searches were run without --volume, which defaults to the book layer; describe was run first with --volume book. Section reads and the outline worked normally. Snapshot: 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a.\n- Confidence: high on the movement bound, the modulo contrast and the token-count trade-off direction; medium on magnitudes (derived, not measured); the sources are papers and documentation, not cluster benchmarks.",
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "Modulo 16 to 17 remap",
+      "queries": [
+        "resharding",
+        "modulo bucket remap",
+        "keyspace remap fraction"
+      ],
+      "evidence": [
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes"
+      ],
+      "finding": "Ownership depends on N itself; keys survive only when congruent mod 272, so about 99.6% move. Source: Cassandra 'might invalidate almost all of the mappings'; modulo only safe when N is fixed."
+    },
+    {
+      "id": "F2",
+      "facet": "Ring movement bound",
+      "queries": [
+        "consistent hashing",
+        "hash ring",
+        "token ring"
+      ],
+      "evidence": [
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+        "tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview"
+      ],
+      "finding": "A key belongs to the first node clockwise, so a join or leave changes ownership only in the affected arc; expected moved share is K/N (about 1/17), an expectation under balance, not a guarantee."
+    },
+    {
+      "id": "F3",
+      "facet": "Tokens 64 to 512 and balance",
+      "queries": [
+        "virtual nodes",
+        "tokens per node",
+        "partition count"
+      ],
+      "evidence": [
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+        "tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview"
+      ],
+      "finding": "Many small tokens average out arc-size variance (relative deviation ~1/sqrt(k)); the expected moved fraction on a join or leave is unchanged, while range count grows 8x (about 1,088 to 8,704 at 17 nodes)."
+    },
+    {
+      "id": "F4",
+      "facet": "Failure outcomes with more tokens",
+      "queries": [
+        "hot token range",
+        "ring membership gossip",
+        "vnodes"
+      ],
+      "evidence": [
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+        "tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#failure-and-recovery-policies"
+      ],
+      "finding": "Node loss becomes k ownership transfers and hint streams; Cassandra's warning that each token adds failure combinations and raises outage probability, plus bounded reassignment rate and reserved recovery capacity, mean finer dispersal is not obviously safer."
+    },
+    {
+      "id": "F5",
+      "facet": "Repair and rebuild outcomes",
+      "queries": [
+        "anti-entropy repair",
+        "hinted handoff",
+        "merkle tree"
+      ],
+      "evidence": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+        "tycho.page.b55f5bf29d7946c78454a769980c476e#what-changed-in-the-migration-plan"
+      ],
+      "finding": "Repair is per range (Merkle anti-entropy), so 8x ranges means roughly 8x sessions, comparisons and stream setups; per-range tail risk is shown by the 99.9999% token-range stall, where a fraction of ranges hid disproportionate work."
+    },
+    {
+      "id": "F6",
+      "facet": "Boundaries and what safety requires",
+      "queries": [
+        "ownership epoch",
+        "fencing stale ownership",
+        "shard key"
+      ],
+      "evidence": [
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#1-distinguish-physical-partitions-logical-ownership-and-replicas",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cells-and-shuffle-shards-solve-different-placement-questions",
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes"
+      ],
+      "finding": "The 1/N bound assumes a fixed hash and token layout; re-tokenizing or changing the hash can move more, hot keys stay hot, and safety comes from versioned ownership, epoch fencing, verified handoff and measured movement."
+    }
+  ],
+  "citations": [
+    "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+    "tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#failure-and-recovery-policies",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cells-and-shuffle-shards-solve-different-placement-questions",
+    "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#1-distinguish-physical-partitions-logical-ownership-and-replicas",
+    "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+    "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+    "tycho.page.b55f5bf29d7946c78454a769980c476e#what-changed-in-the-migration-plan"
+  ],
+  "evidence": [
+    {
+      "claim": "Modulo assigns hash(key) mod N and adding a node 'might invalidate almost all of the mappings'.",
+      "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+      "note": "Alternative - modulo paragraph, quoting Cassandra; Karger et al. describe the same central redistribution.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Modulo is only appropriate when N is fixed.",
+      "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+      "note": "Choice rule: 'use modulo only when N is fixed'.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Ring ownership is the first node clockwise and nodes hold many small tokens rather than one large arc.",
+      "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+      "note": "Mechanism paragraph, with Karger, Dynamo, Cassandra and Riak constructions.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A membership change moves about K/N keys, not the whole keyspace.",
+      "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+      "note": "Invariant paragraph: Dynamo 'only affects its immediate neighbors'; Riak '1/(number of nodes) of the ring'; Karger 'the minimum needed to maintain a balanced load'.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The ~1/N figure is an expectation under balance, not a guarantee; measure the moved fraction.",
+      "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+      "note": "Tycho rule: random tokens, unequal vnode counts and hot keys can exceed the ideal share.",
+      "basis": "observed"
+    },
+    {
+      "claim": "More tokens raise outage probability and maintenance cost; token counts should be bounded.",
+      "section_key": "tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview",
+      "note": "Failure and recovery: 'Cassandra warns that more tokens raise outage probability and maintenance cost'; rule: 'bound token counts'.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Ring, token/vnode count and replication factor must be owned; fencing and a repair path are prerequisites.",
+      "section_key": "tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview",
+      "note": "Good-fit conditions and hard contraindications.",
+      "basis": "observed"
+    },
+    {
+      "claim": "A ring without epoch fencing can still route one key to two owners during a change.",
+      "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+      "note": "Tycho runbook paragraph; record the ownership epoch at every membership change.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Simultaneous range movements can violate monotonic consistency and even cause data loss.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Quorum invariant paragraph quoting Cassandra.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Read repair and hinted handoff are best-effort; Merkle-tree anti-entropy repairs lagging replicas.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Failure and recovery paragraph.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Recovery needs reserved capacity and a bounded reassignment rate; immediate movement can exhaust survivors.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#failure-and-recovery-policies",
+      "note": "Cells page; the transfer to token reassignment is my inference.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Hash placement does not imply statistical independence; correlation and skew change impact.",
+      "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cells-and-shuffle-shards-solve-different-placement-questions",
+      "note": "'Do not assume assignments are statistically independent just because they use a hash.'",
+      "basis": "observed"
+    },
+    {
+      "claim": "A routing function does not guarantee stability through hash-algorithm changes.",
+      "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#1-distinguish-physical-partitions-logical-ownership-and-replicas",
+      "note": "Shard key row of the term table.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Hashing leaves a single hot key hot and carries remapping costs.",
+      "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+      "note": "Four partition strategies table, hash row.",
+      "basis": "observed"
+    },
+    {
+      "claim": "One authoritative owner per key; resharding must fence writes or preserve a verifiable handoff.",
+      "section_key": "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+      "note": "Sharding mechanism and invariant paragraphs.",
+      "basis": "observed"
+    },
+    {
+      "claim": "Per-range tail risk: a token-range migrator stalled near 99.9999% on ranges full of tombstones.",
+      "section_key": "tycho.page.b55f5bf29d7946c78454a769980c476e#what-changed-in-the-migration-plan",
+      "note": "Table and lesson: 'a fraction of token ranges can contain disproportionate scan work, deletion markers and operational risk'.",
+      "basis": "observed"
+    },
+    {
+      "claim": "16 to 17 modulo keeps only hashes congruent mod 272, so about 99.6% of keys move.",
+      "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+      "note": "Arithmetic derived from the modulo definition on the page; the page states 'almost all', the fraction is mine.",
+      "basis": "inference"
+    },
+    {
+      "claim": "64 to 512 tokens cuts relative share deviation about 2.8x (1/sqrt(k)) without changing the moved fraction.",
+      "section_key": "tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview",
+      "note": "Statistical model of many small arcs; not a book measurement.",
+      "basis": "inference"
+    },
+    {
+      "claim": "8x more ranges means roughly 8x per-range transfers, hint streams, Merkle comparisons and repair sessions.",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+      "note": "Derived from per-range repair mechanics and token counts; no cost curve in the book.",
+      "basis": "inference"
+    },
+    {
+      "claim": "Raising token count is itself a layout change; the 1/N bound is for a join or leave under a fixed layout.",
+      "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+      "note": "Derived from 'measure the actual moved fraction' and the expectation-not-guarantee caveat.",
+      "basis": "inference"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
