@@ -61,8 +61,8 @@ The binding rule for this volume is:
 
 > V12 references existing patterns. Existing patterns do not reference V12.
 
-The rule protects the evidence layer. A sufficient, promotion-bound card or owner page has a
-promotion hash, source ledger and review record; the other entries do not. Adding a V12
+The rule protects the evidence layer. Only a sufficient, promotion-bound card or owner page has a promotion hash; all entries
+retain their source ledgers and review records. Adding a V12
 backlink would change a canonical file, stale review and source records, and can invalidate a
 promotion where one exists. The protection is not a matter of style; it is a requirement for
 keeping existing evidence reproducible.
@@ -169,7 +169,8 @@ that the relation is semantically apt; that remains an editorial review.
   Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
   supports short, modular records.
   It does not establish a pattern's applicability.
-- The existing V11 registry (edition/patterns/registry.v1.json) supplies the stable pattern
+- The edition-level pattern registry (edition/patterns/registry.v1.json), spanning V1-V11,
+supplies the stable pattern
   identifiers and owner paths. It is read-only for this volume.
 
 ## Navigation

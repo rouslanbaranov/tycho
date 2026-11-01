@@ -191,3 +191,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
   `2026-10-29-v12-isolated-volume-delta4-codex.md` |
   `6118b60e5b19a13479ea2932d2067cbe6e6c11e83b4eca2decfca179ea14fcdd`
 | 2026-11-01 | DeepSeek Reviewer | #540 V12 consistency | reject | `2026-11-01-v12-consistency-deepseek.md` | `e38c71c554d0e97b71edef1ffcb97487819bc60d61d04b98769bed961934626c` |
+| 2026-11-01 | DeepSeek Reviewer | #540 V12 consistency delta | pass | `2026-11-01-v12-consistency-delta-deepseek.md` | `00784a6786cd93fb69ffa4b566bfa4522c3c4d47ab1206c00da6152b2a5afd20` |
