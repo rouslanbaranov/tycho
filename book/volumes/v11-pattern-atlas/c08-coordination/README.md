@@ -81,141 +81,19 @@ none claims sufficient technical or decision coverage.
 
 ### Leader Election
 
-**Identity.** Leader Election; family Distributed coordination; kind coordination-pattern;
-priority core.
-
-**Decision question.** Should one node be chosen to coordinate work while others stand by?
-
-**Good-fit conditions.** A single coordinator is useful; terms/epochs are available;
-failover and stale leaders are handled; clients can observe leadership.
-
-**Hard contraindications.** Reject when work is safely partitioned without a leader, when
-election cannot be made safe, or when leader failover would block progress.
-
-**Competing alternative.** Leaderless/quorum coordination or static assignment. Reverse
-the choice when election latency and split-brain risk exceed coordination benefit.
-
-**Failure and recovery.** Split votes, quorum loss, stale leaders and divergent uncommitted
-logs are common. A follower read can miss committed state; require read-index or lease
-confirmation for linearizable reads. Stop authoritative writes without quorum, keep retries
-idempotent, and treat durability as contingent on stable storage and membership change.
-
-**Technical owner.** [Leader elections, logs and client observations](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#4-leader-elections-logs-and-client-observations) — leader election is bounded, not a complete Raft implementation.
-
-**Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-raft.2026-10-21: sections "The Raft Consensus Algorithm",
-"What is Raft?". The landing page does not document term/vote/log safety or election details;
-those are synthetic owner guidance. The source is a public pattern/documentation unit, not a
-benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Consensus; Lease-Based Ownership; Fencing Tokens; Quorum
-Coordination.
+See the [Leader Election](leader-election.md) card.
 
 ### Consensus
 
-**Identity.** Consensus; family Distributed coordination; kind coordination-pattern;
-priority core.
-
-**Decision question.** Should replicas agree on an ordered log despite failures and
-partitions?
-
-**Good-fit conditions.** A quorum exists; safety and progress requirements are explicit;
-membership changes are owned; clients tolerate retries.
-
-**Hard contraindications.** Reject when a single writer suffices, when the network cannot
-provide a stable quorum, or when availability must override consistency.
-
-**Competing alternative.** Leader-follower replication with weaker guarantees. Reverse the
-choice when consensus latency/availability cost exceeds agreement benefit.
-
-**Failure and recovery.** Quorum loss and leader churn are common; verify safety/progress
-in the owner section.
-
-**Technical owner.** [Consensus](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#consensus) — consensus is bounded to safety/progress discussion.
-
-**Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-raft.2026-10-21: sections "The Raft Consensus Algorithm",
-"What is Raft?". The landing page does not document safety/term details; those are synthetic
-owner guidance. The source is a public pattern/documentation unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Leader Election; Quorum Coordination; Leader-Follower Replication;
-2PC.
+See the [Consensus](consensus.md) card.
 
 ### Distributed Lock
 
-**Identity.** Distributed Lock; family Distributed coordination; kind
-coordination-pattern; priority advanced.
-
-**Decision question.** Should a shared lock prevent concurrent access to one resource
-across processes?
-
-**Good-fit conditions.** The lock protects a correctness-critical section; the service
-can maintain quorum; expiry and ownership are explicit; the resource checks a fencing
-epoch.
-
-**Hard contraindications.** Reject when work is naturally partitioned, when lock loss
-would corrupt state, when the lock service cannot maintain quorum, or when the resource
-cannot reject a stale holder.
-
-**Competing alternative.** Lease-based ownership with fencing, single-writer partitioning,
-or a conditional write/unique constraint. Reverse the choice when lock safety cannot be proven.
-
-**Failure and recovery.** Pauses, delayed writes, quorum loss and release races are
-common. Treat ownership as uncertain after a missed renewal; fence stale epochs at the
-resource or keep the outcome explicitly unsafe.
-
-**Technical owner.** [Distributed Lock](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#distributed-lock) — locks/leases/fencing are bounded, not a lock-service API guide.
-
-**Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-k8s-leases.2026-10-21: all six served headings read.
-The prior truncation note is superseded.
-The record covers leases; fencing and quorum guidance is synthetic owner evidence.
-The source is a public pattern/documentation unit, not a benchmark.
-[src.kleppmann-distributed-locking](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-fencing.2026-10-21: all nine served headings read.
-The article supports fencing tokens; it does not benchmark
-this design.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Lease-Based Ownership; Fencing Tokens; Leader Election; Consensus.
+See the [Distributed Lock](distributed-lock.md) card.
 
 ### Lease-Based Ownership
 
-**Identity.** Lease-Based Ownership; family Distributed coordination; kind
-coordination-pattern; priority core.
-
-**Decision question.** Should ownership expire after a bounded lease rather than remain
-until explicit release?
-
-**Good-fit conditions.** A lease duration is known; renewal is observable; expired owners
-stop acting; destination fencing exists.
-
-**Hard contraindications.** Reject when the owner cannot renew, when clock skew is
-unbounded, or when expiry could allow two active owners without fencing.
-
-**Competing alternative.** Static ownership or quorum-backed ownership. Reverse the choice
-when lease renewal cost exceeds availability benefit.
-
-**Failure and recovery.** Pauses, delayed renewal and quorum loss can leave two owners
-acting. Treat ownership as uncertain after a missed renewal and fence the stale epoch at
-the destination.
-
-**Technical owner.** [Lease-Based Ownership](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#lease-based-ownership) — lease ownership is bounded, not a scheduler implementation.
-
-**Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-k8s-leases.2026-10-21: all six served headings read. The
-source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Distributed Lock; Fencing Tokens; Leader Election; Health Endpoint
-Monitoring.
+See the [Lease-Based Ownership](lease-based-ownership.md) card.
 
 ### Fencing Tokens
 
@@ -223,35 +101,7 @@ See the [dedicated Fencing Tokens card](fencing-tokens.md).
 
 ### Quorum Coordination
 
-**Identity.** Quorum Coordination; family Distributed coordination; kind
-coordination-pattern; priority core.
-
-**Decision question.** Should decisions require a majority of replicas rather than one
-node?
-
-**Good-fit conditions.** Replica set and failure domains are known; majority arithmetic is
-explicit; latency of quorum calls is acceptable.
-
-**Hard contraindications.** Reject when a single authority suffices, when the network
-cannot maintain a majority, or when quorum latency violates the budget.
-
-**Competing alternative.** Leader-based coordination or static assignment. Reverse the
-choice when quorum availability/latency exceeds safety benefit.
-
-**Failure and recovery.** Quorum loss, slow replicas and unsafe membership changes are
-common. A minority must refuse conflicting authority; membership changes need joint or
-overlapping safeguards.
-
-**Technical owner.** [Quorum Coordination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-coordination) — quorum arithmetic is bounded, not a consensus protocol.
-
-**Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-raft.2026-10-21: sections "The Raft Consensus Algorithm",
-"What is Raft?". The landing page does not document safety/term details; those are synthetic
-owner guidance. The source is a public pattern/documentation unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Consensus; Leader Election; Quorum-Based Reads/Writes; 2PC.
+See the [Quorum Coordination](quorum-coordination.md) card.
 
 ### Causal Ordering
 
