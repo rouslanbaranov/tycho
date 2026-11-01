@@ -135,7 +135,7 @@ explain coexistence and rollback; it does not edit them.
 flowchart LR
     V["V12 decision record"] --> P["tycho.pattern.* identifier"]
     P --> O["Existing canonical owner page"]
-    V --> R["V12 derived reverse index"]
+    V --> R["V12 derived reverse index (read-only)"]
     R --> V
 ~~~
 
