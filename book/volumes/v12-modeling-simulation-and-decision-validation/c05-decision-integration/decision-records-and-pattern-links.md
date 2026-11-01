@@ -63,9 +63,9 @@ The binding rule for this volume is:
 
 The rule protects the evidence layer. Only a sufficient, promotion-bound card or owner page
 has a promotion hash; all entries retain their source ledgers and review records. Adding a V12
-backlink would change a canonical file, stale review and source records, and can invalidate a
-promotion where one exists. The protection is not a matter of style; it is a requirement for
-keeping existing evidence reproducible.
+backlink would change a canonical file and make its review and source records stale, and can
+invalidate a promotion where one exists. The protection is not a matter of style; it is a
+requirement for keeping existing evidence reproducible.
 
 V12 therefore uses:
 
@@ -107,7 +107,7 @@ validates the pattern.
 The checkout decision links three candidates:
 
 - A: timeout and load shedding;
-- B: bounded queue, retry with exponential backoff and bulkhead;
+- B: bounded queue and retry with exponential backoff;
 - C: horizontal scaling and bulkhead.
 
 The owner pages are in V02 and V07. The decision record references them; those pages do not
