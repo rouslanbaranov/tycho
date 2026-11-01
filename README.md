@@ -153,6 +153,12 @@ external agent service. External citations support verification; essential
 explanations belong in the book itself. Public source dependencies are recorded
 explicitly.
 
+## Development environment
+
+Tycho pins **Python 3.15.0** for local validation, the premerge suite, milestone
+verification and the container image. Use the version in `.python-version` and
+install `requirements-validation.txt` before schema checks.
+
 ## Current state
 
 Tycho is in active development. The book and pattern atlas are public; the
