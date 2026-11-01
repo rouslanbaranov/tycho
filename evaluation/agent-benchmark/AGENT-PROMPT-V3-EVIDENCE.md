@@ -9,7 +9,7 @@ contract. Read this entire prompt before acting.
 Run:
 
 ```bash
-.venv/bin/python scripts/agent_session_cli.py describe
+.venv/bin/python mcp/agent_session_cli.py describe
 ```
 
 Read `metadata.layers`, tool descriptions, pagination/error rules and examples.
@@ -108,11 +108,11 @@ contract is coherent.
 ## 6. CLI
 
 ```bash
-.venv/bin/python scripts/agent_session_cli.py describe
-.venv/bin/python scripts/agent_session_cli.py search "query" --limit 5 --volume atlas --log LOG
-.venv/bin/python scripts/agent_session_cli.py page "book/..." --max-chars 5000 --log LOG
-.venv/bin/python scripts/agent_session_cli.py read "section_key" --max-chars 5000 --log LOG
-.venv/bin/python scripts/agent_session_cli.py outline "topic" --limit 4 --log LOG
+.venv/bin/python mcp/agent_session_cli.py describe
+.venv/bin/python mcp/agent_session_cli.py search "query" --limit 5 --volume atlas --log LOG
+.venv/bin/python mcp/agent_session_cli.py page "book/..." --max-chars 5000 --log LOG
+.venv/bin/python mcp/agent_session_cli.py read "section_key" --max-chars 5000 --log LOG
+.venv/bin/python mcp/agent_session_cli.py outline "topic" --limit 4 --log LOG
 ```
 
 Default budget is 4500; maximum 6000. Use `offset=next_offset` when truncated.

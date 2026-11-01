@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class AgentSessionCliTests(unittest.TestCase):
     def test_describe_returns_layer_catalog(self):
         proc = subprocess.run(
-            [sys.executable, "scripts/agent_session_cli.py", "describe"],
+            [sys.executable, "mcp/agent_session_cli.py", "describe"],
             cwd=ROOT, capture_output=True, text=True, timeout=60)
         self.assertEqual(proc.returncode, 0, proc.stderr)
         payload = json.loads(proc.stdout)
@@ -22,7 +22,7 @@ class AgentSessionCliTests(unittest.TestCase):
 
     def test_search_can_target_atlas_volume(self):
         proc = subprocess.run(
-            [sys.executable, "scripts/agent_session_cli.py", "search",
+            [sys.executable, "mcp/agent_session_cli.py", "search",
              "pattern", "--volume", "atlas", "--limit", "1"],
             cwd=ROOT, capture_output=True, text=True, timeout=60)
         self.assertEqual(proc.returncode, 0, proc.stderr)
@@ -32,7 +32,7 @@ class AgentSessionCliTests(unittest.TestCase):
 
     def test_book_volume_returns_book_layer(self):
         proc = subprocess.run(
-            [sys.executable, "scripts/agent_session_cli.py", "search",
+            [sys.executable, "mcp/agent_session_cli.py", "search",
              "pattern", "--volume", "book", "--limit", "1"],
             cwd=ROOT, capture_output=True, text=True, timeout=60)
         self.assertEqual(proc.returncode, 0, proc.stderr)

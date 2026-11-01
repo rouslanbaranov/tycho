@@ -26,14 +26,14 @@ dependencies were not locked.
 ## Commands
 
 ~~~sh
-/tmp/tycho-mcp-sdk-2.3.0/bin/python scripts/mcp_sdk_smoke.py \
+/tmp/tycho-mcp-sdk-2.3.0/bin/python mcp/mcp_sdk_smoke.py \
   --server-python .venv/bin/python
 
-/tmp/tycho-mcp-sdk-2.3.0/bin/python scripts/mcp_sdk_smoke.py \
+/tmp/tycho-mcp-sdk-2.3.0/bin/python mcp/mcp_sdk_smoke.py \
   --server-python .venv/bin/python --mode legacy
 ~~~
 
-[scripts/mcp_sdk_smoke.py](../scripts/mcp_sdk_smoke.py) starts the local server
+[mcp/mcp_sdk_smoke.py](../mcp/mcp_sdk_smoke.py) starts the local server
 over stdio and calls `tycho_search`, `tycho_page`, `tycho_patterns` and
 `tycho_pattern`. It uses no hosted model or answer generator.
 

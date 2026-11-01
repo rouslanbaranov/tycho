@@ -9,7 +9,7 @@ A/B showed that detailed v3 answers win but cost too many words.
 Run:
 
 ```bash
-.venv/bin/python scripts/agent_session_cli.py describe
+.venv/bin/python mcp/agent_session_cli.py describe
 ```
 
 Read metadata.layers, tool descriptions, pagination/errors and examples. Canonical
@@ -60,11 +60,11 @@ evidence array in JSON so detail remains auditable.
 ## 5. CLI
 
 ```bash
-.venv/bin/python scripts/agent_session_cli.py describe
-.venv/bin/python scripts/agent_session_cli.py search "query" --limit 5 --log LOG
-.venv/bin/python scripts/agent_session_cli.py page "book/..." --max-chars 5000 --log LOG
-.venv/bin/python scripts/agent_session_cli.py read "section_key" --max-chars 5000 --log LOG
-.venv/bin/python scripts/agent_session_cli.py outline "topic" --limit 4 --log LOG
+.venv/bin/python mcp/agent_session_cli.py describe
+.venv/bin/python mcp/agent_session_cli.py search "query" --limit 5 --log LOG
+.venv/bin/python mcp/agent_session_cli.py page "book/..." --max-chars 5000 --log LOG
+.venv/bin/python mcp/agent_session_cli.py read "section_key" --max-chars 5000 --log LOG
+.venv/bin/python mcp/agent_session_cli.py outline "topic" --limit 4 --log LOG
 ```
 
 Default budget is 4500; maximum 6000. Continue with offset=next_offset when

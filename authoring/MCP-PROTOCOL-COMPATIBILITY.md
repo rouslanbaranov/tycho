@@ -63,7 +63,7 @@ This decision is intentionally reversible if a client compatibility matrix demon
 ## Local implementation update - 2026-10-23
 
 Issue #57 now has a local stdio candidate in
-[scripts/mcp_server.py](../scripts/mcp_server.py). It implements modern
+[mcp/mcp_server.py](../mcp/mcp_server.py). It implements modern
 `server/discover`, `tools/list` and `tools/call` with per-request
 `_meta`, the bounded 2025-11-25 initialize path, explicit unsupported-version
 errors and read-only tools over the existing section index and draft pattern

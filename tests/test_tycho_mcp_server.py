@@ -17,6 +17,7 @@ import unittest
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "mcp"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import mcp_server  # noqa: E402
@@ -1095,7 +1096,7 @@ class McpServerTests(unittest.TestCase):
 
     def test_stdio_roundtrip(self):
         process = subprocess.Popen(
-            [sys.executable, str(ROOT / "scripts/mcp_server.py"),
+            [sys.executable, str(ROOT / "mcp/mcp_server.py"),
              "--root", str(self.root)],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,

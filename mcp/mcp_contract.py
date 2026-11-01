@@ -225,8 +225,30 @@ PAGINATION = {
     },
 }
 
+def _type_schema(kind):
+    if "|" in kind:
+        parts = [part.strip() for part in kind.split("|") if part.strip()]
+        if len(parts) > 1:
+            return {"type": parts}
+    if kind.startswith("array[") and kind.endswith("]"):
+        inner = kind[len("array["):-1].strip()
+        if inner == "object":
+            return {
+                "type": "array",
+                "items": {"type": "object", "additionalProperties": True},
+            }
+        return {"type": "array", "items": {"type": inner}}
+    if kind == "array":
+        return {"type": "array"}
+    if kind == "object":
+        return {"type": "object", "additionalProperties": True}
+    return {"type": kind}
+
+
 def _field(kind, description):
-    return {"type": kind, "description": description}
+    field = _type_schema(kind)
+    field["description"] = description
+    return field
 
 def _object(properties, required=("status",)):
     return {"type": "object", "additionalProperties": True,
@@ -244,7 +266,13 @@ def output_schema(tool):
     common = {
         "status": _field("string", "ok or a bounded error/abstention state."),
         "snapshot": _field("string", "Snapshot ID; cite it with results."),
-        "coverage": _field("string", "Index coverage state."),
+        "coverage": {
+            "description": "Index or pattern coverage state.",
+            "anyOf": [
+                {"type": "string"},
+                {"type": "object", "additionalProperties": True},
+            ],
+        },
         "content_trust": _field("string", "Always untrusted-evidence for book text."),
     }
     if tool == "tycho_search":

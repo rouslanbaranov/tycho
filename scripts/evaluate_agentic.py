@@ -206,7 +206,7 @@ def main(argv=None):
     if args.max_tasks is not None:
         items = items[:args.max_tasks]
     process = subprocess.Popen(
-        [sys.executable, "scripts/mcp_server.py", "--root", str(args.root)],
+        [sys.executable, "mcp/mcp_server.py", "--root", str(args.root)],
         cwd=str(ROOT), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL, text=True,
     )

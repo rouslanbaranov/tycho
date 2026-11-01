@@ -9,7 +9,7 @@
 
 ## Purpose
 
-[scripts/mcp_http_server.py](../scripts/mcp_http_server.py) wraps the merged
+[mcp/mcp_http_server.py](../mcp/mcp_http_server.py) wraps the merged
 stdio MCP adapter in a read-only HTTP service so client agents and humans can
 reach the book, search and MCP tools over the network. The stdio adapter
 remains the canonical protocol implementation.
@@ -93,7 +93,7 @@ Standard-library client, no SDK required:
 
 ~~~sh
 TYCHO_MCP_TOKEN="$TYCHO_MCP_TOKEN" .venv/bin/python \
-  scripts/mcp_http_client_smoke.py --url http://<container-host>:8000 \
+  mcp/mcp_http_client_smoke.py --url http://<container-host>:8000 \
   --query "retry budget"
 ~~~
 
@@ -101,7 +101,7 @@ Official SDK client, Python 3.11+ and `mcp==2.3.0` in a separate environment:
 
 ~~~sh
 TYCHO_MCP_TOKEN="$TYCHO_MCP_TOKEN" \
-  /tmp/tycho-mcp-sdk-2.3.0/bin/python scripts/mcp_http_sdk_smoke.py \
+  /tmp/tycho-mcp-sdk-2.3.0/bin/python mcp/mcp_http_sdk_smoke.py \
   --url http://<container-host>:8000
 ~~~
 
@@ -189,8 +189,8 @@ No MCP code or `SERVER_VERSION` change is needed for book-only changes.
 
 ### API change
 
-- Update `TOOL_SPECS` and handlers in `scripts/mcp_server.py`, HTTP behavior
-  in `scripts/mcp_http_server.py`, and the relevant tests/docs.
+- Update `TOOL_SPECS` and handlers in `mcp/mcp_server.py`, HTTP behavior
+  in `mcp/mcp_http_server.py`, and the relevant tests/docs.
 - Keep changes additive where possible; removing or renaming a tool, argument
   or response field is breaking for clients.
 - Bump `SERVER_VERSION` for a tool/API behavior change. `server/discover`
