@@ -20,6 +20,9 @@ import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, quote, unquote, urlsplit
 
+_HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(_HERE))
+
 from mcp_server import (
     META_VERSION,
     MODERN_VERSION,

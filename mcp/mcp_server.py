@@ -31,6 +31,9 @@ try:
 except ImportError:  # frontmatter stays omitted if PyYAML is unavailable
     yaml = None
 
+_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(_ROOT / "scripts"))
+
 import best_search
 import mcp_contract
 import route_index

@@ -12,7 +12,7 @@
 
 ## Scope and non-goals
 
-[scripts/mcp_server.py](../scripts/mcp_server.py) is a stdlib-only MCP adapter
+[mcp/mcp_server.py](../mcp/mcp_server.py) is a stdlib-only MCP adapter
 over the snapshot-bound section index and the draft pattern registry. It
 exposes bounded retrieval, pattern lookup and registered evidence; it does not
 generate answers, rank with vectors, reformulate queries, fetch sources,

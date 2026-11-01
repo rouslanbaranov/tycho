@@ -46,7 +46,7 @@ def main(argv=None):
              "include_artifacts": True}}},
     ]
     proc = subprocess.Popen(
-        [sys.executable, "scripts/mcp_server.py"], cwd=args.root,
+        [sys.executable, "mcp/mcp_server.py"], cwd=args.root,
         stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         stderr=subprocess.PIPE, text=True)
     payload = "".join(line(request) for request in requests)

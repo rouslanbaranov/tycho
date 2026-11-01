@@ -6,7 +6,7 @@ and the official SDK, tested here with mcp==2.3.0. It starts the local server
 over stdio, runs a bounded modern or legacy roundtrip and prints a JSON summary.
 
 Example (SDK environment separate from the server environment):
-  python3.15 scripts/mcp_sdk_smoke.py --server-python .venv/bin/python
+  python3.15 mcp/mcp_sdk_smoke.py --server-python .venv/bin/python
 """
 import argparse
 import asyncio
@@ -34,7 +34,7 @@ async def run(args):
     root = args.root.resolve()
     params = StdioServerParameters(
         command=args.server_python,
-        args=[str(root / "scripts/mcp_server.py"), "--root", str(root)],
+        args=[str(root / "mcp/mcp_server.py"), "--root", str(root)],
         cwd=str(root),
     )
     async with Client(params, mode=args.mode) as client:

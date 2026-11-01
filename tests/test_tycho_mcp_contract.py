@@ -4,10 +4,13 @@ import sys
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "mcp"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import mcp_contract  # noqa: E402
 import mcp_http_server  # noqa: E402
 import mcp_server  # noqa: E402
+from jsonschema import Draft202012Validator  # noqa: E402
 
 
 class McpToolContractTests(unittest.TestCase):
@@ -28,6 +31,12 @@ class McpToolContractTests(unittest.TestCase):
             encoding="utf-8")
         for name in mcp_server.TOOL_ORDER:
             self.assertIn(name, text)
+
+    def test_output_schemas_are_valid_json_schema(self):
+        for name in mcp_server.TOOL_ORDER:
+            schema = mcp_contract.output_schema(name)
+            Draft202012Validator.check_schema(schema)
+            self.assertEqual(schema["type"], "object")
 
     def test_server_and_http_versions_agree(self):
         self.assertEqual(

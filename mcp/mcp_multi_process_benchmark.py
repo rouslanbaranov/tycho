@@ -28,7 +28,7 @@ def worker(payload):
     payload_text = "".join(json.dumps(request) + "\n"
                            for request in requests)
     proc = subprocess.run(
-        [sys.executable, "scripts/mcp_server.py"], cwd=root,
+        [sys.executable, "mcp/mcp_server.py"], cwd=root,
         input=payload_text, text=True, capture_output=True, timeout=300)
     responses = [json.loads(line) for line in proc.stdout.splitlines()
                  if line.strip()]

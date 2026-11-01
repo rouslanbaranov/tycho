@@ -14,10 +14,10 @@ You are an independent external agent. Answer one question from evidence only.
 ## CLI
 
 ```bash
-.venv/bin/python scripts/agent_session_cli.py search "query" --limit 5 --log LOG
-.venv/bin/python scripts/agent_session_cli.py page "book/..." --max-chars 5000 --log LOG
-.venv/bin/python scripts/agent_session_cli.py read "section_key" --max-chars 5000 --log LOG
-.venv/bin/python scripts/agent_session_cli.py outline "topic" --limit 4 --log LOG
+.venv/bin/python mcp/agent_session_cli.py search "query" --limit 5 --log LOG
+.venv/bin/python mcp/agent_session_cli.py page "book/..." --max-chars 5000 --log LOG
+.venv/bin/python mcp/agent_session_cli.py read "section_key" --max-chars 5000 --log LOG
+.venv/bin/python mcp/agent_session_cli.py outline "topic" --limit 4 --log LOG
 ```
 
 - default budget is 4500; maximum is 6000;
