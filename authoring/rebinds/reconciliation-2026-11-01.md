@@ -38,6 +38,8 @@ Server-Side Discovery and Load Balancing share `discovery-balancing.md`:
 These are link-target changes, not format-only rebinds. They require the normal delta review;
 this record does not waive it.
 
+Delta review: `authoring/ai-reviews/2026-11-01-reconciliation-delta-deepseek.md` (pass).
+
 ## Link verification
 
 Six link edits across eight changed files were resolved on disk; every fragment matched a
