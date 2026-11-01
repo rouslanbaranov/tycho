@@ -134,6 +134,7 @@ Public references:
 ## Start here
 
 - [Read the book](book/README.md)
+- [Contributing](CONTRIBUTING.md)
 - [Current state and next action](authoring/STATE.md)
 - [Roadmap](authoring/ROADMAP.md)
 - [Knowledge platform and MCP delivery plan](authoring/knowledge-platform-and-mcp-plan.md)
