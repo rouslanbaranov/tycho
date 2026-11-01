@@ -195,13 +195,12 @@ living pages, not a benchmark or an executed drift test.
 An API composition layer calls several owner APIs for one request and assembles their responses into
 a single caller-visible result.
 
-microservices.io says to "Implement a query by defining an API Composer" that invokes "the
+microservices.io says to "Implement a query by defining an API Composer, which invokes the
 services that own the data and performs an in-memory join of the results." It also notes that
 "Some queries would result in inefficient, in-memory joins of large datasets." The pattern page
-does not define a freshness format. Tycho synthesis, not a source claim. The composed response
-must declare per-source freshness and what partial failure means, rather than presenting one
-aggregate result as uniformly current. Azure supports the partial-failure half; the freshness
-format remains Tycho synthesis.
+does not define a freshness format. The composed response must make the partial-or-failed
+response policy explicit when a source times out. Azure supports that partial-failure decision.
+Tycho synthesis, not a source claim: the per-source freshness format remains Tycho guidance.
 
 One slow or failed participant must not silently disappear from the result; apply per-call
 deadlines, mark missing parts or fail the composition explicitly. Azure's Gateway Aggregation
@@ -234,8 +233,9 @@ debugging capabilities." Tycho synthesis, not a source claim: the composition en
 owner adapter need an explicit version and a propagated trace context, because a composed failure
 spans several calls.
 
-**Alternative.** Build a maintained read model or a client-specific backend for frontend; prefer
-composition when the sources are authoritative and the caller needs a live view. Tycho synthesis,
+**Alternative (CQRS; selection rule Tycho synthesis).** Build a maintained read model;
+prefer composition when the
+sources are authoritative and the caller needs a live view. Tycho synthesis,
 not a source claim: reverse the choice when fan-out latency and partial-failure complexity
 outweigh the cost of duplicating the data.
 
@@ -245,8 +245,10 @@ composition. Azure also warns that the gateway "shouldn't introduce service coup
 back-end services" and "might introduce a single point of failure (SPoF)." Tycho synthesis, not a
 source claim: a composition endpoint is not a transaction.
 
-**Source boundary.** Public pattern and API-design pages, accessed 2026-11-01; living pages, not a
-benchmark or an executed composition test.
+**Source boundary.** Public pattern and API-design pages, inspected 2026-10-21 and 2026-11-01;
+living pages, not a benchmark or an executed composition test. Azure calls the related pattern
+Gateway Aggregation; it supports the fan-out/partial-failure policy, not API Composition's
+query-join scope.
 
 - microservices.io, "API Composition", sections "Solution", "Resulting context" and "Related
   patterns": record `read.microservices-api-composition.2026-10-21`, raw HTML revision

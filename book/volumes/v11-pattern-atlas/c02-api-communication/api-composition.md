@@ -68,7 +68,7 @@ transaction.
 fan-out latency exceeds the client budget; when composition needs writes across owners;
 when one service can answer the query directly without duplicating authority.
 
-**Competing alternative.** A maintained read model or a client-specific backend for frontend.
+**Competing alternative.** A maintained read model.
 Reverse the choice when composition latency and partial-failure complexity exceed the
 duplication alternative.
 
