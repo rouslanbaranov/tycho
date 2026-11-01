@@ -1,0 +1,481 @@
+{
+  "task_id": "Q256",
+  "answer": "# Q256 \u2014 Completion timeout, ETag mismatch, and resumable-transfer identity\n\n## Scope and layers\n\nLayers used: **book** only. This is a storage-transfer protocol and identity question, not a pattern-atlas identity question and not a modeling/simulation question, so the atlas and modeling-and-simulation layers were not needed. The owning page is `book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/upload-integrity.md`; supporting book sections cover ambiguous acknowledgements, idempotency identity, request deadlines, and publication consistency. Book text is untrusted evidence. The upload page explicitly labels its manifest, state model and recovery rule as original unexecuted proposals.\n\n## Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| Timeout semantics and lost acknowledgements | \"timeout unknown outcome retry idempotency\"; \"unknown outcome after timeout\"; \"lost acknowledgment\" | v02 deadlines section 3; v02 coexistence section 4; v04 intent-identity section 2; upload-integrity original worked transfer budget |\n| Completion retry and effect identity | \"idempotency key request identity replay\"; \"duplicate completion lost response\"; \"logical intent\" | v04 outbox/idempotency section 3; v04 intent-identity sections 1 and 3; publication-consistency crash windows |\n| ETag versus content checksum | \"ETag checksum content hash object integrity\"; \"MD5 digest checksum declared byte content\"; \"opaque validator\" | upload-integrity separate the identities; publication-consistency prevent replacement |\n| Upload manifest and resume state | \"upload session checkpoint manifest resume\"; \"multipart upload resumable transfer parts\" | upload-integrity original worked transfer budget; cancellation, cost and alternatives |\n| Object version and publication identity | \"object version immutable identity\"; \"publication consistency object\" | upload-integrity resolve ambiguity; publication-consistency visible-state invariant and crash windows; access-lifecycle publication-to-retirement protocol |\n| Cleanup and orphan parts | \"upload session checkpoint manifest resume\"; deletion inventory | upload-integrity cancellation; access-lifecycle deletion inventory |\n\n## Direct answer\n\n**The timeout does not prove failure.** A completion timeout means the client stopped waiting at its local wait bound. It does not mean the storage service rejected completion, did not receive it, or did not commit it. The server may have completed the multipart upload and lost the response; the completion request may still be executing; a cancellation may stop local work without undoing a committed effect. The book states the same distinction: the client observes \"no answer,\" not necessarily \"no commit,\" and an ambiguous timeout requires outcome lookup. Until an authoritative outcome lookup or durable outcome record resolves the exact object and session, the correct state is **unknown**, not failed.\n\n**The ETag comparison is not a portable integrity check.** An ETag is an opaque, service-defined validator. For a completed multipart object, the provider documents that the ETag is not necessarily the MD5 of the object's bytes. A 64-part object can therefore carry a multipart validator that is not a client-computed whole-file MD5. A mismatch between that ETag and the local MD5 is not evidence of corruption, and an ETag match would not by itself prove byte integrity. ETag-based preconditions are also specific to particular write APIs and stores; they are scoped validators, not cross-service content digests. The defensible check is a documented checksum algorithm applied to the declared byte content and compared with a trusted expected value under the chosen API contract, alongside size and per-part evidence.\n\n**A resumed transfer must preserve several distinct identities and the manifest state that binds them.** The identities are the logical upload request/operation ID with its scope, the transport attempt, the object key, the exact object version or candidate identity, the multipart session ID, the part position, the per-part receipt/digest, the full-object size/checksum contract, and the pinned source version. The manifest must record the authorized owner, logical operation ID, expected object identity, session ID, size/checksum contract, completed part receipts, the explicit Unknown/Verifying/Ready/Quarantined state, the completion-attempt evidence, the verification result, the publication reference, and cleanup/abort state. Starting a fresh upload under a new key while the old completion is unresolved creates a new logical operation; it does not resolve the old one and can leave an orphan copy or race an overwrite.\n\n## Mechanism\n\n### 1. Why a completion timeout is an unknown outcome, not a failure signal\n\nA timeout is a local wait bound on one operation, not the request's end-to-end deadline and not a statement about the remote effect. The server can commit the completion, then lose the response; cancellation stops work \"where possible\" but does not roll back a committed effect. The client therefore has an observation gap, not a negative result.\n\nThe dangerous conversion is \"timeout means failed, so retry with a new identity.\" If the first completion committed, a second logical operation can duplicate the object or a side effect. The book's coexistence page gives the concrete failure: converting a timeout to \"failed, safe to retry\" can make a second request allocate again or trigger another notification. The correct behavior depends on the foreign contract: if a scoped idempotency identity exists, repeat with that identity and reconcile to the durable original outcome; if only a status read exists, query it using a stable business identity and handle inconsistent results explicitly; if neither exists, surface unknown outcome and use bounded reconciliation or redesign rather than claiming blind retries are safe.\n\nFor an object store, the analogue is not just the object key. The client must resolve the exact object version and multipart session, and check whether completion is already recorded. A matching key alone is insufficient if another writer may have replaced the object. The publication page's crash table makes the same point for its synthetic protocol: after upload but before the completion call, verify the exact candidate and resume; after a publish commit but before the response, return the existing result for the same operation ID. Response loss does not create a new operation.\n\n### 2. Why the ETag/MD5 comparison is not portable\n\nThe book's upload page summarizes the relevant S3 caveat: the multipart overview describes initiation, part upload and completion, and its documentation explicitly cautions that a completed multipart object's ETag is not necessarily the MD5 of its bytes. That is the central reason the client's comparison is invalid as an integrity test. The ETag is a validator chosen by the service for its representation and API; it is not a checksum the client declared over the source file.\n\nConsequences:\n\n- A multipart ETag differing from the local whole-file MD5 can be completely consistent with correct bytes. The two values have different computation scopes and possibly different algorithms.\n- A multipart ETag matching a local MD5 would not prove integrity either, because the validator's semantics still belong to the service and the comparison scope is not established.\n- ETag-based conditional writes are preconditions for particular write APIs; they protect the scoped object operation and do not become a portable content hash. Other stores may differ.\n- The relevant check is a documented checksum algorithm over the declared byte content, compared with a trusted expected value under the same API contract. The client should verify size and, where the contract provides them, per-part checksums and receipts as well as the completed-object checksum.\n- A checksum is still bounded: it verifies bytes against a trusted expected value; it does not establish permission, safe content, or the authenticity of a maliciously supplied manifest.\n\nThus the ETag mismatch should move the transfer into \"verification required,\" not \"corruption proven\" and not \"success proven.\"\n\n### 3. Identities a resumed transfer must preserve\n\n| Identity | What it names | Failure if conflated |\n|---|---|---|\n| Logical upload request / operation ID (K) | One authorized user intent with defined parameters and scope | Creating a new ID for each retry turns one intent into multiple effects |\n| Transport attempt ID | One transmitted HTTP/RPC/message attempt | Counting attempts as distinct successful effects |\n| Object key | A storage location | Treating a mutable name as an immutable object identity |\n| Exact object version or candidate identity | The immutable bytes a reference resolves to | A key match after another writer replaced the object |\n| Multipart session ID | One upload session and its parts | A new session can orphan the old parts and lose the receipt history |\n| Part position / part number | One slot in the multipart sequence | Assuming position identifies content, or reusing a position with different bytes |\n| Per-part receipt / digest | Evidence that a specific part was accepted | Re-uploading or silently replacing parts without reconciliation |\n| Full-object size and checksum contract | The expected declared byte content | Comparing a local MD5 with a service validator of a different scope |\n| Source version / fingerprint | The local bytes read for each part | A changed source file can make a successful transfer combine unintended data |\n| Owner / authorization scope | Who may perform and publish this upload | An unguessable key is not an authorization design |\n| Publication record / operation event | Metadata state that makes the object visible | Object existence alone does not authorize exposure |\n\nThe book's five transfer identities are the logical upload request, object key/version, multipart session, part position, and expected content digest. A client reconnecting after an interruption must know which of those identities remains authoritative. The wider idempotency page adds the logical-operation/transport-attempt distinction and warns that a new logical ID per retry is a dangerous confusion.\n\n### 4. Manifest state that must survive a resume\n\nThe upload page gives the minimum manifest contents: an authorized owner, logical operation ID, expected object identity, session ID, size/checksum contract, and completed part receipts. A practical transfer should persist at least:\n\n- Owner/principal and tenant/operation scope for the logical upload.\n- Logical operation ID K and the immutable request parameters or fingerprint bound to it.\n- Expected object identity: bucket, key, and the exact version or nonpublic candidate identity.\n- Multipart session ID and the service's part-size/count constraints for the selected bucket type.\n- Size and checksum contract: algorithm, expected full-object value, and any per-part values.\n- Completed part receipts: part number, size, checksum/ETag, and accepted state.\n- Source version pin or fingerprint for the local file, so a resume cannot mix different source bytes.\n- Explicit state: Initiated, Uploading, Completing, Unknown, Verifying, Ready, Quarantined, Aborting.\n- Completion-attempt evidence: request identity, timestamps, response or lost-response observation, and the authoritative outcome lookup result.\n- Verification result: exact object/version observed, metadata, size, checksum comparison, and decision.\n- Publication record: pending K, exact object reference, published state, and any required outbox event.\n- Cleanup/abort state: session expiry, orphan candidates, temporary parts, and retention/cleanup policy.\n\nThe page's state model is a useful expression of the invariant: transferred parts are a completed candidate, not a verified object; a lost response enters an explicit Unknown state; Unknown resolves to Verifying, not to an assumed failure; verification ends in Ready or Quarantined. The manifest is what makes that state machine durable across client restarts.\n\n### 5. Applying this to the 4 GiB, 64-part scenario\n\n1. Do not interpret the completion timeout as failure and do not immediately create a new logical upload under a new key. Load the manifest for the original logical operation.\n2. Query the exact intended object/version and the multipart session under the chosen API contract. If the service has a scoped idempotency/outcome lookup, repeat completion with the same logical identity and reconcile to the durable result. If only a status read is available, query by the stable business identity and handle inconsistency explicitly. Reusing the object key alone is not proof that it is the same multipart session; the session ID, part receipts and source version must also match the manifest.\n3. If an object version exists, verify size and the documented checksum over the declared bytes, using the trusted expected value. Check the completed part receipts and the source version. Do not use the ETag-versus-MD5 comparison as the integrity verdict.\n4. If the checksum and metadata match, record the observed outcome for K and publish the exact object version through the metadata authority. If they do not match, quarantine the logical upload for repair; do not publish guessed bytes.\n5. If no object exists and the multipart session is still valid, resume only the missing or failed parts under the same session and logical operation, with the source version pinned. Do not start a new random key merely because the completion response was lost.\n6. If no unambiguous resolution is possible, keep the state Unknown and quarantine/repair. A new key may be a deliberate new logical operation only after the old operation is explicitly superseded/aborted and its orphaned session and parts are tracked for cleanup; it must not be recorded as proof that the old completion failed. The ETag from the fresh upload under the new key belongs to the new candidate/version and says nothing about the old completion.\n7. Publication is separate from upload. Use a pending record with a stable operation ID, upload into a nonpublic candidate identity, verify the object, then atomically change metadata to published with the exact object version and any required outbox event. If the publish commit succeeds but its response is lost, return the existing result for K.\n8. Clean up deliberately. Incomplete uploads consume storage; an abort acknowledgement is not proof that every concurrently sent part has disappeared. Account for temporary parts and retained versions in the cleanup inventory.\n\n### 6. Boundaries and unknowns\n\n- The book's upload manifest, multipart state model, and recovery rule are original unexecuted proposals. No storage engine, cloud account, or upload client was executed for the chapter. The S3 multipart caveats come from inspected provider documentation; other stores may differ, and this answer does not establish a universal object-store contract.\n- The exact ETag algorithm for the unnamed service is not established here. The safe conclusion is only that a multipart ETag is not a portable whole-object MD5; the answer does not claim a specific composite formula or that every provider behaves identically.\n- Multipart completion idempotency varies by service and API. The answer therefore requires an explicit outcome lookup or recorded result rather than assuming that repeating completion is safe in every implementation.\n- The answer does not know whether the client's \"same key\" retry used the same multipart session ID, whether another writer replaced the object, whether the local MD5 was computed over exactly the declared bytes, or whether the service exposes a full-object checksum. Those missing facts are precisely why the state must remain Unknown until resolved.\n- Checksum verification is not authorization, content-safety review, or manifest authenticity. A malicious or stale manifest can supply a trusted-looking expected value.\n- Retention and key expiry are policy decisions. A key is only useful while its outcome record is retained; after expiry, historical deduplication is no longer guaranteed.\n- The upload page recommends testing interruption during a part, changed source bytes, duplicate completion, and lost completion responses. Those are proposed tests, not executed evidence.\n\n## Evidence map\n\n| Claim | Evidence anchors | What it establishes |\n|---|---|---|\n| C1 | v02 deadlines section 3; upload-integrity original worked transfer budget | Timeout is a local wait bound; lost response is Unknown, not failure |\n| C2 | v04 intent-identity section 2; v02 coexistence section 4 | A lost reply can mean unknown; converting to failed can duplicate |\n| C3 | v02 coexistence section 4; v04 intent-identity section 3 | Same scoped identity reconciles to durable outcome; otherwise surface unknown |\n| C4 | v04 intent-identity section 1; upload-integrity separate the identities | New ID/key per retry can duplicate or orphan |\n| C5 | access-lifecycle address; upload-integrity resolve ambiguity; publication prevent replacement | Key is location; need exact version, not mutable name |\n| C6 | upload-integrity separate the identities | ETag is opaque; multipart ETag not necessarily MD5 |\n| C7 | upload-integrity separate the identities; resolve ambiguity | ETag/MD5 mismatch is not an integrity verdict |\n| C8 | upload-integrity separate the identities; resolve ambiguity | Use documented checksum over declared bytes under the API contract |\n| C9 | publication prevent replacement | ETag preconditions are API-specific; other stores differ |\n| C10 | upload-integrity resolve ambiguity | Checksum does not prove permission, safety, or manifest authenticity |\n| C11 | upload-integrity separate the identities | Five transfer identities must remain distinct |\n| C12 | upload-integrity original worked transfer budget | Required manifest fields |\n| C13 | upload-integrity original worked transfer budget | Parts are a candidate; Unknown is explicit |\n| C14 | upload-integrity resolve ambiguity | Resolve exact object/version or quarantine |\n| C15 | upload-integrity resolve ambiguity | Pin source version or detect changes |\n| C16 | access-lifecycle publication-to-retirement; publication visible-state invariant | Exact version, owner and publication status in metadata |\n| C17 | publication crash windows | Lost commit response returns existing result for K |\n| C18 | upload-integrity cancellation; access-lifecycle deletion inventory | Cleanup incomplete uploads and temporary parts |\n| C19 | v04 outbox/idempotency section 3; v04 retries integrated | Key scope, immutable parameters, conflict on changed intent |\n| C20 | v04 intent-identity section 1 | Logical operation ID versus transport attempt ID |\n| C21 | v04 retries integrated; v04 intent-identity section 1 | Retention/expiry bound deduplication |\n| C22 | upload-integrity evidence and navigation; chapter failure boundary | Original unexecuted proposals; tests proposed, not run |\n| C23 | upload-integrity evidence and navigation; publication prevent replacement | S3 caveats inspected; other stores may differ |\n| C24 | upload-integrity overview | The owning question is identity recovery without confusing parts with a verified object |",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A completion timeout is a local wait bound; it does not prove that the server failed to complete the operation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "A timeout is a local wait bound on one operation",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#original-worked-transfer-budget",
+          "quote": "A lost response introduces an explicit unknown state; it does not prove that completion failed.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission",
+          "quote": "The client observes \u201cno answer,\u201d not necessarily \u201cno commit.\u201d",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "requires outcome lookup",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "A lost reply or timeout leaves the outcome unknown; treating it as failure can duplicate an effect that the server already committed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+          "quote": "| Network timeout or lost reply | Outcome may be unknown | Server did nothing |",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+          "quote": "If the adapter converts timeout to \u201cfailed, safe to retry,\u201d a second request may allocate again or trigger another notification.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "After a lost acknowledgment, retry with the same scoped identity and reconcile to a durable outcome; if no such contract exists, surface unknown rather than claim failure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+          "quote": "If a scoped idempotency identity exists, repeat with the same identity and reconcile to the durable original outcome.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+          "quote": "If the foreign system provides neither, the adapter cannot honestly guarantee that blind retries are safe.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+          "quote": "With stable scoped intent and an atomic deduplication contract, a repeat returns the same committed outcome.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A retry attempt is not a new logical effect: creating a new identity for each retry can duplicate a committed effect, and a new random object key can orphan the original upload.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+          "quote": "| Logical operation ID | One authorized user intent with defined parameters and scope | New ID created for every retry |",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+          "quote": "Retrying with a new random object key every time can create orphan copies; reusing a key without concurrency control can overwrite another upload.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "After an acknowledgment is lost, a new identity can duplicate a committed effect; an expired key cannot guarantee historical deduplication.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "An object key is a storage location, not an immutable object identity; a matching key is insufficient if another writer may have replaced the bytes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+          "quote": "An object key names a storage location.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "A matching key alone is insufficient if another writer may have replaced it.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+          "quote": "If the application reads by a mutable name, another writer can change the bytes between verification and later use.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "An ETag is an opaque service-defined validator; a completed multipart object's ETag is not necessarily the MD5 of its bytes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+          "quote": "Its documentation explicitly cautions that a completed multipart object's ETag is not necessarily the MD5 of its bytes.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+          "quote": "rather than treating an opaque validator as a portable checksum",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A mismatch between the returned multipart ETag and a local whole-file MD5 is not evidence of corruption, and an ETag match would not by itself prove byte integrity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+          "quote": "Select a documented checksum algorithm and compare the declared byte content, rather than treating an opaque validator as a portable checksum.",
+          "supports": "C7",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "verify the expected metadata and checksum under the chosen API contract",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A portable integrity check uses the service's documented checksum algorithm over the declared byte content, compared with a trusted expected value under the same API contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+          "quote": "Select a documented checksum algorithm and compare the declared byte content, rather than treating an opaque validator as a portable checksum.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "After a completion timeout, query the exact intended object/version and verify the expected metadata and checksum under the chosen API contract.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "ETag semantics and conditional-write preconditions are API- and service-specific and do not transfer across stores as a content digest.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+          "quote": "S3 conditional writes support create-if-absent and ETag-based preconditions for particular write APIs.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+          "quote": "Other stores may differ.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A checksum verifies bytes against a trusted expected value; it does not establish permission, safe content, or the authenticity of the manifest.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "A checksum verifies bytes against a trusted expected value; it does not establish permission, safe content or the authenticity of a maliciously supplied manifest.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A resumed transfer must preserve the logical upload request, object key/version, multipart session, part position, and expected content digest as distinct identities.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+          "quote": "Name the logical upload request, object key/version, multipart session, part position and expected content digest.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+          "quote": "A client reconnecting after an interruption must know which of those identities remains authoritative.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The upload manifest must record an authorized owner, logical operation ID, expected object identity, session ID, size/checksum contract, and completed part receipts.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#original-worked-transfer-budget",
+          "quote": "Persist an upload manifest containing an authorized owner, logical operation ID, expected object identity, session ID, size/checksum contract and completed part receipts.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Manifest state must make a lost completion response an explicit Unknown state and treat transferred parts as a candidate, not a verified object.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#original-worked-transfer-budget",
+          "quote": "Text alternative: transferred parts become a completed candidate, then a verified object. A lost response introduces an explicit unknown state; it does not prove that completion failed.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Verification must resolve the exact object/version and expected metadata/checksum; if no unambiguous resolution is possible, quarantine the logical upload rather than publish guessed bytes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "After a completion timeout, query the exact intended object/version and verify the expected metadata and checksum under the chosen API contract.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "If no unambiguous resolution is possible, quarantine the logical upload for repair; do not publish guessed bytes.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "The source version must be pinned or changes detected across part retries, or a transfer can combine unintended data.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "If the local file changes between reading part 1 and retrying part 2, a transfer can succeed while combining unintended data.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "Pin the source version or detect changes.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Publication metadata must hold the exact object version, authorized owner, publication status, and lifecycle policy; publication is a separate metadata step after verification.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+          "quote": "Store the object version, authorized owner, publication status and lifecycle policy in authoritative metadata.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+          "quote": "Upload into a nonpublic candidate identity, verify the object, then atomically change the metadata state to published with the exact object version and any required outbox event.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "After a publish or commit whose response is lost, the durable record must return the existing result for the same logical operation K; recovery is not a new publication.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#crash-windows",
+          "quote": "| After publish commit, before response | Published K and its object reference | Return existing result for K |",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#crash-windows",
+          "quote": "| After upload, before completion call | Candidate object and pending K | Verify exact candidate and resume |",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Incomplete uploads and orphan parts require explicit cleanup; an abort acknowledgement is not proof that concurrently sent parts have disappeared.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#cancellation-cost-and-alternatives",
+          "quote": "Incomplete uploads consume storage and need an explicit cleanup policy.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#cancellation-cost-and-alternatives",
+          "quote": "an abort acknowledgement should not be interpreted as proof that every concurrently sent part has already disappeared",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+          "quote": "Account for current and noncurrent versions, previews, transcodes, temporary parts, replication targets, edge caches, search references and backups.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The retry key must be scoped to owner/tenant/operation and bound to immutable parameters; the same key with different intent is a conflict, not idempotency.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+          "quote": "Scope it by principal/tenant and operation, bind it to immutable request parameters, persist outcome where necessary, and document expiry. Reject same-key/different-intent reuse.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "a reused key with changed intent is a conflict, not idempotency.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "A logical operation ID is distinct from a transport attempt ID; counting attempts as distinct successful effects is unsafe.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+          "quote": "| Transport attempt ID | One transmitted HTTP/RPC/message attempt | Counting attempts as distinct successful effects |",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+          "quote": "A retry identity must be scoped to the relevant owner/tenant/principal and operation semantics.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "A key only deduplicates while its outcome record is retained, and retention must align with the retry/reconciliation horizon.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "A key is only useful while its outcome record is retained",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+          "quote": "Its retention must be long enough for accepted retry/reconciliation behavior, but a finite key window cannot prevent arbitrary delayed replay forever.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The book's upload manifest, state model, and recovery rule are original unexecuted proposals; no storage engine, cloud account, or upload client was executed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#evidence-and-navigation",
+          "quote": "The manifest, state model, memory arithmetic and recovery rule are original unexecuted proposals.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.0bf6cdc27afdb2f2494b82013d92eb73#failure-and-acceptance-boundary",
+          "quote": "No storage engine, cloud account or upload client was executed for this chapter.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.0bf6cdc27afdb2f2494b82013d92eb73#failure-and-acceptance-boundary",
+          "quote": "Inject interruption during a part, lost completion response, metadata transaction failure after upload, duplicate completion and cleanup concurrent with publication.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "The S3 multipart caveats come from inspected provider documentation; other stores may differ and the exact ETag algorithm is not established here.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#evidence-and-navigation",
+          "quote": "[Multipart upload overview](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html) supports the named S3 lifecycle/checksum caveats; selected passages inspected 2026-10-20.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+          "quote": "Other stores may differ.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The book frames the problem as which transfer identities allow interruption recovery without confusing uploaded parts with a verified object.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#overview",
+          "quote": "Which transfer identities allow interruption recovery without confusing uploaded parts with a verified object?",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.0bf6cdc27afdb2f2494b82013d92eb73#failure-and-acceptance-boundary",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#crash-windows",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+    "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#cancellation-cost-and-alternatives",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#evidence-and-navigation",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#original-worked-transfer-budget",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#overview",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
