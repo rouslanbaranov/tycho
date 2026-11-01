@@ -8940,7 +8940,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Invariant narrowed 2026-10-29 to Cassandra timestamps/LWW; convergence, preservation and silent-LWW are labeled Tycho synthesis. Failure/recovery cross-references Data Versioning; alternative quote covers locking/commit delay and async conflict resolution. All four dimensions support the narrowed claims; coverage partial-bounded; no promotion."
+      "notes": "Promoted and frozen: technical and decision coverage sufficient. Card excludes updated during the 2026-11-01 rebind; no owner acceptance claimed."
     },
     {
       "pattern_id": "tycho.pattern.read-replicas",
@@ -8961,49 +8961,49 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Read replicas serve read-only traffic from followers, reducing load on the leader while accepting that a replica can lag behind the latest committed write.",
-          "reason": "Defines follower read serving with bounded lag.",
+          "quote": "Read replicas serve read-only traffic from followers, reducing load on the leader.",
+          "reason": "PostgreSQL binds read-only standby serving; load reduction and bounded-lag acceptance are Tycho analysis.",
           "binding": {
             "source_id": "src.postgresql",
-            "ledger_record": "read.batch3-pg-warm.2026-10-21",
-            "section": "26.2. Log-Shipping Standby Servers",
+            "ledger_record": "read.pg18-ha.2026-10-30",
+            "section": "Chapter 26. High Availability, Load Balancing, and Replication",
             "quote": "A standby server can also be used for read-only queries, in which case it is called a hot standby server.",
-            "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f"
+            "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
           }
         },
         "invariant": {
           "state": "supported",
           "quote": "A read must state the freshness it requires, and read-your-writes or monotonic guarantees must be enforced by routing, a position wait or an authority read.",
-          "reason": "Requires a freshness statement and routing, wait or authority read for stronger guarantees.",
+          "reason": "Tycho synthesis of the freshness contract; PostgreSQL binds synchronous replay and visibility.",
           "binding": {
             "source_id": "src.postgresql",
-            "ledger_record": "read.batch3-pg-warm.2026-10-21",
-            "section": "26.2.8.1. Basic Configuration",
-            "quote": "Setting synchronous_commit to remote_apply will cause each commit to wait until the current synchronous standbys report that they have replayed the transaction, making it visible to user queries. In simple cases, this allows for load balancing with causal consistency.",
-            "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f"
+            "ledger_record": "read.pg18-ha.2026-10-30",
+            "section": "26.2.8.1. Synchronous Replication",
+            "quote": "In the case that synchronous_commit is set to remote_apply, the standby sends reply messages when the commit record is replayed, making the transaction visible.",
+            "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
           }
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A lag spike serves stale data even though replication is healthy; monitor applied position and lag, and route freshness-critical reads away from a lagging replica.",
-          "reason": "Requires applied-position and lag monitoring with freshness-critical routing.",
+          "quote": "A lag spike serves stale data even though replication is healthy.",
+          "reason": "PostgreSQL binds the WAL lag definition and calculation; monitoring and routing response are Tycho guidance.",
           "binding": {
             "source_id": "src.postgresql",
-            "ledger_record": "read.batch3-pg-warm.2026-10-21",
+            "ledger_record": "read.pg18-ha.2026-10-30",
             "section": "26.2.5.2. Monitoring",
             "quote": "An important health indicator of streaming replication is the amount of WAL records generated in the primary, but not yet applied in the standby. You can calculate this lag by comparing the current WAL write location on the primary with the last WAL location received by the standby.",
-            "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f"
+            "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
           }
         },
         "alternative": {
           "state": "supported",
           "quote": "Read from the leader or use a quorum read when freshness dominates; add replicas when read volume and tolerance for bounded staleness justify the extra copies.",
-          "reason": "PostgreSQL binds read-only replicas and stale asynchronous reads; the owner quote states the leader/quorum and freshness rule as Tycho guidance.",
+          "reason": "PostgreSQL binds read-only server combination and stale asynchronous results; leader/quorum preference and cost-benefit rule are Tycho guidance.",
           "binding": {
             "source_id": "src.postgresql",
             "ledger_record": "read.pg18-ha.2026-10-30",
             "section": "Chapter 26. High Availability, Load Balancing, and Replication",
-            "quote": "Read-only database servers can be combined relatively easily.",
+            "quote": "Read-only database servers can be combined relatively easily. Asynchronous solutions allow delay between commit and propagation, so transactions might be lost in a switch and load-balanced servers might return slightly stale results.",
             "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
           }
         }
@@ -9011,7 +9011,7 @@
       "decision_evidence": {
         "atlas_section": "read-replicas",
         "question": "Should read-only replicas serve queries to offload the writer?",
-        "competing_alternative": "Single writer or cached read models. Reverse the choice when replica lag and routing complexity exceed read-scale benefit.",
+        "competing_alternative": "Read from the leader or use a quorum read when freshness dominates; add replicas when read volume and tolerance for bounded staleness justify the extra copies. Reverse the choice when replica lag and routing complexity exceed read-scale benefit. **Tycho guidance.**",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9020,12 +9020,19 @@
         "source_id": "src.postgresql",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.pg18-ha.2026-10-30",
+            "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Alternative bound to PostgreSQL read-only servers and stale asynchronous reads; the owner quote states the leader/quorum preference as Tycho guidance. Dedicated card split 2026-11-01; coverage partial-bounded; no promotion."
+      "notes": "Mechanism, invariant, failure recovery and alternative bind PostgreSQL hot standby, synchronous replay, WAL lag and read-only staleness; routing, freshness and leader/quorum preference are Tycho guidance. Coverage partial-bounded; promotion candidate."
     },
     {
       "pattern_id": "tycho.pattern.quorum-based-reads-writes",

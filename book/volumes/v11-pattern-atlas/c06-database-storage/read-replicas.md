@@ -53,20 +53,25 @@ replication-pattern; priority core.
 replica health and lag are observable.
 
 **Hard contraindications.** Reject when every read requires linearizable freshness, when
-lag is unbounded, or when replicas add no capacity benefit.
+lag is unbounded, or when replicas add no capacity benefit; a failover to a stale replica
+can violate read-your-writes even when replication is healthy.
 
-**Competing alternative.** Single writer or cached read models. Reverse the choice when
-replica lag and routing complexity exceed read-scale benefit.
+**Competing alternative.** Read from the leader or use a quorum read when freshness dominates;
+add replicas when read volume and tolerance for bounded staleness justify the extra copies.
+Reverse the choice when replica lag and routing complexity exceed read-scale benefit.
+**Tycho guidance.**
 
-**Failure and recovery.** Stale reads and replica lag are common; verify read routing in
-the owner section.
+**Failure and recovery.** Stale reads, replica lag and failover to a stale replica are
+possible; verify read routing and read-your-writes after failover.
 
 **Technical owner.** [Read Replicas](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#read-replicas) — read-replica scaling is bounded by replica lag, read routing and staleness.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-warm.2026-10-21: all twenty headings read; Hot
-Standby and Failover are separate pages. The source is a public pattern/documentation
-unit, not a benchmark.
+Standby and Failover are separate pages. Read record read.pg18-ha.2026-10-30:
+chapter 26; revision
+d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d. The source is a public
+pattern/documentation unit, not a benchmark.
 
 **Evidence and limits.** PostgreSQL's high-availability chapter states that
 "Read-only database servers can be combined relatively easily" and that

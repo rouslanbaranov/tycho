@@ -8301,7 +8301,9 @@
       "access_date": "2026-10-30",
       "access_method": "public HTTPS GET on 2026-10-30; served HTML 20,418 bytes; HTTP Date 2026-10-30T20:08:03Z; no ETag or Last-Modified; raw HTML SHA-256 6abaf4548a557ec8142ca7eebe8d1a62e7645a0f50c29b698d8c8bfed1c68592; article-region text 3,686 characters, SHA-256 d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d; PostgreSQL 18.6.",
       "sections_read": [
-        "Chapter 26. High Availability, Load Balancing, and Replication"
+        "Chapter 26. High Availability, Load Balancing, and Replication",
+        "26.2.8.1. Synchronous Replication",
+        "26.2.5.2. Monitoring"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -8316,7 +8318,12 @@
         "Database servers can work together so a second server takes over if the primary fails, or several servers serve the same data.",
         "Read-only database servers can be combined relatively easily.",
         "A hot standby accepts connections and serves read-only queries; a warm standby cannot be connected to until promoted.",
-        "Asynchronous solutions allow delay between commit and propagation, so transactions might be lost in a switch and load-balanced servers might return slightly stale results."
+        "Asynchronous solutions allow delay between commit and propagation, so transactions might be lost in a switch and load-balanced servers might return slightly stale results.",
+        "A standby server can also be used for read-only queries, in which case it is called a hot standby server.",
+        "In simple cases, this allows for load balancing with causal consistency.",
+        "not yet applied in the standby",
+        "In the case that synchronous_commit is set to remote_apply, the standby sends reply messages when the commit record is replayed, making the transaction visible.",
+        "An important health indicator of streaming replication is the amount of WAL records generated in the primary, but not yet applied in the standby. You can calculate this lag by comparing the current WAL write location on the primary with the last WAL location received by the standby."
       ],
       "claims_not_supported": [
         "linked pages",
