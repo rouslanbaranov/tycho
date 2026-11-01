@@ -852,8 +852,7 @@ def run_scenario(model: dict, scenario: dict, model_path: str, scenario_path: st
         "seed_base": base_seed,
         "replications": replications,
         "input_sha256": sha256_json({"model": model, "scenario": scenario,
-                                     "engine_version": ENGINE_VERSION,
-                                     "engine_sha256": engine_sha}),
+                                     "engine_version": ENGINE_VERSION}),
         "python": platform.python_version(),
         "platform": platform.platform(),
         "invocation": ("python3 scripts/v12_engine.py run --model "
@@ -890,6 +889,9 @@ def run_scenario(model: dict, scenario: dict, model_path: str, scenario_path: st
 
 def finalize_run(run: dict) -> dict:
     body = {k: v for k, v in run.items() if k != "result_sha256"}
+    provenance = dict(body.get("provenance") or {})
+    provenance.pop("platform", None)
+    body["provenance"] = provenance
     run["result_sha256"] = sha256_json(body)
     return run
 
