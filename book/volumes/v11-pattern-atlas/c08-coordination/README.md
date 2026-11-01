@@ -41,15 +41,15 @@ evidence_scope:
     - "src.temporal"
   claim_ids: []
   status: "source-linked"
-  notes: "9 cards cite read units; owner links are bounded."
+  notes: "9 cards cite read units; workflow card binds Temporal, AWS and Cadence 2026-11-01."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-11-01"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-31"
-source_inspection_date: "2026-10-31"
+updated_at: "2026-11-01"
+source_inspection_date: "2026-11-01"
 content_verified_at: null
 ---
 # V11/C08 — Distributed coordination
@@ -274,20 +274,38 @@ decisions; the team can operate a durable engine and version its histories.
 has no owner, when replay/versioning cannot be governed, or when orchestration becomes a
 hidden monolith.
 
-**Competing alternative.** Saga choreography or a simple queue pipeline. Reverse the
-choice when central workflow state and engine operations exceed coordination benefit.
+**Competing alternative.** Saga choreography, a database-backed job table or a simple queue
+pipeline. Temporal's job-queue guidance reserves a Workflow for several activities or state
+between steps; Cadence says a queue is usually right for simple fire-and-forget fanout and
+that the queue-plus-database pattern works for simple flows while dispersing state across
+tables. Temporal's Saga comparison lists event-driven choreography. Reverse when central
+workflow state and engine operations exceed coordination benefit; that selection rule is
+Tycho guidance.
 
 **Failure and recovery.** Stuck workflows, duplicate activities, lost timers,
-nondeterministic replay and version conflicts are common. Replay from durable history,
-keep activities idempotent and use a repair state for unknown external effects.
+nondeterministic replay and version conflicts are common. Temporal records that an
+Activity Task can be lost after the Activity Function ran and the Worker crashed, then
+retries it after a Start-To-Close timeout; AWS Step Functions times out an activity that
+does not report success or heartbeat, invalidates the task token and can redrive the Task;
+Cadence does not recover activity state and regular activities can run more than once under
+a retry policy. AWS Standard workflows are exactly-once for "your tasks and states" unless
+`Retry` is declared; Express workflows are at-least-once. Replay from durable history, keep
+activities idempotent and use a repair state for unknown external effects; a completed flag
+is not proof that the effect committed. That repair rule and the completed-flag caution are
+Tycho guidance.
 
 **Technical owner.** [Distributed Workflow Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#distributed-workflow-orchestration) — durable workflow coordination is bounded, not a Temporal product guide.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-temporal-workflows.2026-10-21: all four served headings read.
-The record supports durable orchestration only; saga
-compensation semantics are synthetic guidance, not a source claim. The source is a public
-pattern/documentation unit, not a benchmark.
+retained record `read.batch2-temporal-workflows.2026-10-21`; proposed 2026-11-01 records
+`read.temporal-workflows`, `read.temporal-activities`,
+`read.temporal-activity-execution`, `read.temporal-saga-pattern` and
+`read.temporal-job-queue` (src.temporal); `read.aws-step-functions-workflow-types`,
+`read.aws-step-functions-activities`, `read.aws-step-functions-redrive` and
+`read.aws-step-functions-best-practices` (proposed src.aws-step-functions); and
+`read.cadence-activities`, `read.cadence-faq` and `read.cadence-workflow-engine`
+(proposed src.cadence), all dated 2026-11-01. Public documentation, not a benchmark,
+engine run, outage drill or repair-state test.
 
 **Decision state.** applicable-under-conditions.
 
