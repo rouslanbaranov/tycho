@@ -37,18 +37,18 @@ route_hints:
     - "state"
     - "reconciliation"
 evidence_scope:
-  source_ids: []
+  source_ids: ["src.microsoft-cloud-patterns"]
   claim_ids: []
-  status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  status: "source-linked"
+  notes: "Read source-plan units; page-level, not claim-mapped."
 content_review:
   status: "draft"
   reviewed_at: null
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
-source_inspection_date: null
+updated_at: "2026-11-01"
+source_inspection_date: "2026-11-01"
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765:-1 -->
@@ -111,17 +111,51 @@ measured evidence, and they do not create a new source claim.
 ### Geode
 
 Geode places identical regional nodes behind a global routing layer so clients can use a
-nearby healthy region. It needs a data replication and consistency contract, a regional
-health signal, a routing rule and an explicit failover authority. Use it when locality or
-regional survival is material and the data model can reconcile cross-region state. Do not
-use it when a single region meets the objective or when routing would hide divergent
-state.
+nearby healthy region. Each geode is a self-contained regional deployment; Azure's page calls this
+an active-active approach that "distributes request processing around the globe to improve
+latency and increase availability" and says each geode uses a geo-replicated read-write service
+to keep cross-geode data consistent
+([Geode pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/geodes)).
+Geodes "never exist in isolation", and any geode can take over after a regional outage. It
+needs a data replication and consistency contract, a regional health signal, a routing rule
+and an explicit failover authority.
 
-The failure path is a route to a stale or isolated region; the router must use an
-authoritative health and data-freshness signal, and failover must fence the old writer. Global
-routing can itself add a single point of failure, and replication lag or a regional failover can
-leave the nearby region stale; test those paths. Active-passive recovery is the alternative when
-cross-region consistency is not worth the routing complexity.
+**Failure and recovery (Tycho synthesis).** A route can remain stale or point at an isolated
+region; use a reachability probe and a separate freshness gate, and fence the old writer before
+failover. Azure Traffic Manager answers DNS queries, so a client keeps using a cached endpoint
+"until the DNS cache expires"; the service cannot move existing connections, and geographic
+routing "returns a response whether the endpoint is healthy or not"
+([endpoint monitoring](https://learn.microsoft.com/en-us/azure/traffic-manager/traffic-manager-monitoring);
+[routing methods](https://learn.microsoft.com/en-us/azure/traffic-manager/traffic-manager-routing-methods)).
+When every eligible endpoint is degraded, Traffic Manager makes a "best effort" attempt and
+answers as if they were online, so a probe bounds detection but not data freshness. Treat the
+multi-location probe as the routing health signal: it is authoritative for reachability, not a
+data-freshness signal. Add dependency checks such as database availability where possible; a
+200 response does not prove the region's writes are current. Replication is asynchronous across
+distant regions, so monitor lag and include it in the recovery design
+([multi-region App Service guidance](https://learn.microsoft.com/en-us/azure/architecture/web-apps/guides/multi-region-app-service/multi-region-app-service)).
+Before failover, fence the old writer; the sources delegate quorum to the replication backplane
+and require conflict handling for bidirectional writes, but they do not prescribe fencing, so
+that rule is Tycho guidance
+([Geode pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/geodes);
+[multiregion network design](https://learn.microsoft.com/en-us/azure/networking/design-guide/multi-region)).
+The global router is a critical dependency, but not a proven single point of failure: Azure
+Traffic Manager is "a single, global service" designed to be "resilient to a complete failure of
+any Azure region" ([Traffic Manager FAQ](https://learn.microsoft.com/en-us/azure/traffic-manager/traffic-manager-faqs)).
+The residual risks are stale DNS, long-lived connections and a health signal that does not
+reflect data freshness.
+
+**Alternative (Tycho comparison).** Active-passive recovery is the alternative when writes must
+stay in one region, state cannot be replicated cheaply, cost prevents full active-active
+capacity, or RTO tolerance allows activation time. It keeps one region primary and the other
+ready but not serving traffic. The sources name "strict write-region requirements or can't
+easily replicate state" and cost constraints, and warn that the passive path can drift
+([multiregion network design](https://learn.microsoft.com/en-us/azure/networking/design-guide/multi-region)).
+Active-active is justified when both regions can serve any request, the lowest RTO is required,
+and conflict resolution and continuous bidirectional replication are affordable. Test failover
+and failback, and reverse the choice when cross-region consistency, conflict handling and
+routing complexity exceed the locality benefit.
 
 **Limits.** Cross-region replication, conflict resolution and routing health are costs; a stale
-route can defeat locality.
+route can defeat locality. This is a documentation-based comparison, not a failover, routing,
+replication-lag or fencing test.
