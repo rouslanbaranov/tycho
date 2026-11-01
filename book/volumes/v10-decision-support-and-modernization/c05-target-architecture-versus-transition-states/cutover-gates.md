@@ -116,22 +116,22 @@ Branch by abstraction inserts an internal interface between callers and the old/
 implementations, so both can run in one deployable while traffic moves gradually. The switch is a
 runtime or configuration decision, not a long-lived source branch.
 
-An internal interface can route old/new implementations with one deployable. Old and new
-implementations behind the internal interface must preserve the same contract and observable
-effects; the switch must remain reversible until the old path is removed. Keep each increment
+An internal interface can route old/new implementations with one deployable. The system must build and run correctly at all times while the replacement proceeds.
+**Tycho review condition:** old and new implementations should preserve the same contract and
+observable effects, and the switch remains reversible until the old path is removed. Keep each increment
 reversible and backward compatible, and use an easily flipped switch so the team can return to
-the old functionality if problems appear. An intermediate verification step that calls both
-new and old functionality can implement a fallback. The AWS Prescriptive Guidance page lists
+the old functionality if problems appear. A verification step that calls both new and old functionality can implement a fallback as a
+Tycho technique. The AWS Prescriptive Guidance page lists
 "Allows for incremental changes that are reversible in case anything goes wrong (backward
 compatible)" as an advantage and advises a "switching mechanism that can be flipped easily
 (such as a feature toggle) so you can switch back to the old functionality easily if you
-encounter any problems." It also rules the pattern out where data consistency is involved.
-As a Tycho review condition, give the seam a removal date and owner; the source requires
-cleanup after cutover but does not assign that ownership.
+encounter any problems." **Tycho review condition:** give the seam a removal date and owner; the source does not assign
+that ownership.
 
-A strangler facade can route requests by capability when the boundary is external. Branch by
-abstraction is a fit when the switch can stay inside one deployable and the interface is genuinely
-owned; otherwise a facade or a parallel run is simpler. Reverse when abstraction cost exceeds
+The source presents branch by abstraction as an alternative to version-control branching. It
+fits when the switch can stay inside one deployable and the interface is genuinely owned; a
+strangler facade or parallel run may fit an external boundary, but that comparison is Tycho
+guidance. Reverse when abstraction cost exceeds
 incremental change benefit, and remove the seam once the old path is gone.
 
 ### Controlled Cutover

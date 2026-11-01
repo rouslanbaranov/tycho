@@ -13,8 +13,8 @@ perspectives:
   - "architecture"
   - "migration"
 summary: >-
-  Decision card for Branch by Abstraction; all four dimensions are source-bound,
-  coverage remains partial-bounded and no promotion is claimed.
+  Decision card for Branch by Abstraction; four dimensions bound, with contract and facade
+  comparisons labelled Tycho guidance, coverage remains partial-bounded and no promotion is claimed.
 route_hints:
   questions:
     - >-
@@ -61,20 +61,21 @@ modernization-pattern; priority core.
 **Decision question.** Should an internal abstraction seam allow old/new implementations to
 coexist in one deployable?
 
-**Good-fit conditions.** The seam can be introduced without breaking callers; both
-implementations preserve the same contract; removal date and reversible switch are owned.
+**Good-fit conditions.** The seam can be introduced without breaking callers; a reversible switch
+and removal owner/date are defined. **Tycho review condition:** both implementations preserve
+the same contract.
 
-**Hard contraindications.** Reject when no internal seam exists, when the abstraction adds
-no substitution value, when the old implementation cannot coexist, or when data consistency
-is involved.
+**Hard contraindications.** Reject when no internal seam exists, when the abstraction adds no
+substitution value, or when the old implementation cannot coexist. **Tycho contraindications.**
 
-**Competing alternative.** Strangler Fig, a façade or a parallel run. Reverse the choice
-when abstraction cost exceeds incremental change benefit.
+**Competing alternative.** Version-control branching (the source's explicit alternative), a
+strangler façade or a parallel run. Reverse the choice when abstraction cost exceeds incremental
+change benefit; the facade/parallel-run comparison is Tycho guidance.
 
 **Failure and recovery.** Keep each increment reversible and backward compatible, and use an
-easily flipped switch so the team can return to the old functionality if problems appear. An
-intermediate verification step that calls both new and old functionality can implement a
-fallback. A named removal owner and date remain Tycho review conditions, not source claims.
+easily flipped switch so the team can return to the old functionality if problems appear.
+A verification step that calls both new and old functionality can implement a fallback as a
+Tycho technique. A named removal owner and date remain Tycho review conditions, not source claims.
 
 **Technical owner.** [Branch by Abstraction](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#branch-by-abstraction) — branch by abstraction is bounded to internal interface replacement.
 
@@ -86,8 +87,7 @@ Failure and recovery also uses
 read.aws-branch.2026-10-29: the public AWS Prescriptive Guidance page "Branch by
 abstraction pattern", accessed 2026-10-29; canonical text revision
 `618648d7274e985f417915ecd4eeffe83e6c7db8b2ee1d0691293aee04f09d1c`.
-The page supports reversible, backward-compatible increments, fallback verification,
-switch-back recovery and the data-consistency limit.
+The page supports reversible, backward-compatible increments and switch-back recovery.
 The sources are public documentation/articles, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
