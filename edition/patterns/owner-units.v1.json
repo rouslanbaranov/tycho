@@ -6250,37 +6250,241 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a TTL-bound value and invalidates on writes; stampede hazards follow from that sequence.",
-          "reason": "Gives the canonical read-miss-fill-invalidate sequence.",
+          "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a TTL-bound value and invalidates on writes.",
+          "reason": "Azure and AWS state the read-miss-fill-invalidate sequence, and Redis states the read fallback and write invalidation; the bounded reading is Tycho.",
           "binding": {
             "source_id": "src.aws-caching-strategies",
             "ledger_record": "read.batch3-aws-caching.2026-10-21",
             "section": "Cache-Aside (Lazy Loading)",
             "quote": "Whenever your application requests data, it first makes the request to the ElastiCache cache. If the data exists in the cache and is current, ElastiCache returns the data to your application. If the data doesn't exist in the cache or has expired, your application requests the data from your data store. Your data store then returns the data to your application. Your application next writes the data received from the store to the cache.",
             "revision": "7285674270bc8c142038380b991124a33538c4eecef644b40539cb32a8902c4b"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+              "section": "Solution",
+              "quote": "writes the change to the data store and then invalidates the corresponding item in the cache",
+              "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+            },
+            {
+              "source_id": "src.aws-caching-strategies",
+              "ledger_record": "read.aws-caching-strategies.2026-11-01",
+              "section": "Lazy loading",
+              "quote": "If the data doesn't exist in the cache or has expired, your application requests the data from your data store",
+              "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+            },
+            {
+              "source_id": "src.redis-cache-aside",
+              "ledger_record": "read.redis-cache-aside.2026-11-01",
+              "section": "How Redis supports the solution",
+              "quote": "falls back to the primary on a miss, and writes the result back to Redis",
+              "revision": "392854e0c638038095f356216f4838cc6a4caa8e73a893fb6367b112d7920745"
+            },
+            {
+              "source_id": "src.redis-cache-aside",
+              "ledger_record": "read.redis-cache-aside.2026-11-01",
+              "section": "How Redis supports the solution",
+              "quote": "writes the primary and invalidates the cache key",
+              "revision": "392854e0c638038095f356216f4838cc6a4caa8e73a893fb6367b112d7920745"
+            },
+            {
+              "source_id": "src.redis-cache-aside",
+              "ledger_record": "read.redis-cache-aside.2026-11-01",
+              "section": "How Redis supports the solution",
+              "quote": "a TTL that bounds how long stale data can be served",
+              "revision": "392854e0c638038095f356216f4838cc6a4caa8e73a893fb6367b112d7920745"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
-          "quote": "A source result may fill a cache if a competing update has not made it obsolete.",
-          "reason": "Source has no fill precondition tied to a competing update."
+          "state": "supported",
+          "quote": "A cache-aside read is a freshness claim bounded by the fill revision, the invalidation path and the TTL, not a consistency theorem.",
+          "reason": "Azure states the pattern does not guarantee consistency and shows stale reads after writes; AWS states a miss-only fill leaves the cache stale; Redis bounds staleness with a TTL.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+            "section": "Problems and considerations",
+            "quote": "doesn't guarantee consistency between the data store and the cache",
+            "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+              "section": "Problems and considerations",
+              "quote": "Between the write and the next read, a reader can experience a cache miss or briefly see stale data",
+              "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+            },
+            {
+              "source_id": "src.aws-caching-strategies",
+              "ledger_record": "read.aws-caching-strategies.2026-11-01",
+              "section": "Advantages and disadvantages of lazy loading",
+              "quote": "no updates to the cache when data is changed in the database",
+              "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+            },
+            {
+              "source_id": "src.aws-caching-strategies",
+              "ledger_record": "read.aws-caching-strategies.2026-11-01",
+              "section": "Advantages and disadvantages of lazy loading",
+              "quote": "data in the cache can become stale",
+              "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+            },
+            {
+              "source_id": "src.aws-caching-strategies",
+              "ledger_record": "read.aws-caching-strategies.2026-11-01",
+              "section": "Adding TTL",
+              "quote": "doesn't guarantee that a value isn't stale",
+              "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+            },
+            {
+              "source_id": "src.aws-caching-strategies",
+              "ledger_record": "read.aws-caching-strategies.2026-11-01",
+              "section": "Adding TTL",
+              "quote": "keeps data from getting too stale",
+              "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+            },
+            {
+              "source_id": "src.redis-cache-aside",
+              "ledger_record": "read.redis-cache-aside.2026-11-01",
+              "section": "How Redis supports the solution",
+              "quote": "a TTL that bounds how long stale data can be served",
+              "revision": "392854e0c638038095f356216f4838cc6a4caa8e73a893fb6367b112d7920745"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+              "section": "Example",
+              "quote": "a small window of time when a client might fetch the item before the data store is updated",
+              "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+              "section": "Example",
+              "quote": "This sequence leads to stale data in the cache",
+              "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+            },
+            {
+              "source_id": "src.aws-caching-strategies",
+              "ledger_record": "read.aws-caching-strategies.2026-11-01",
+              "section": "Advantages and disadvantages of lazy loading",
+              "quote": "Write-through and Adding TTL strategies",
+              "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations.",
-          "reason": "Source has no stale-authorization or revocation-sensitive recovery rule."
+          "state": "supported",
+          "quote": "A write can commit while its delete fails; the invalidation intent must be durable at commit time and retried.",
+          "reason": "Azure states the cache-malfunction fallback; AWS states node-failure continuity and the miss penalty; Redis states atomic stampede mitigation. No selected unit states an outbox, fencing rule or version gate; those are Tycho guidance.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+            "section": "Workload design",
+            "quote": "If the cache malfunctions, the workload can fall back to the origin data store.",
+            "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+              "section": "Workload design",
+              "quote": "In limited ways, it can preserve the availability of frequently accessed data if the origin data store becomes temporarily unavailable.",
+              "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+            },
+            {
+              "source_id": "src.aws-caching-strategies",
+              "ledger_record": "read.aws-caching-strategies.2026-11-01",
+              "section": "Advantages and disadvantages of lazy loading",
+              "quote": "Node failures aren't fatal for your application",
+              "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+            },
+            {
+              "source_id": "src.aws-caching-strategies",
+              "ledger_record": "read.aws-caching-strategies.2026-11-01",
+              "section": "Advantages and disadvantages of lazy loading",
+              "quote": "a replacement empty node continues to serve, \"though with increased latency\", and each miss costs \"three trips\".",
+              "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+              "section": "Example",
+              "quote": "a small window of time when a client might fetch the item before the data store is updated",
+              "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+              "section": "Example",
+              "quote": "This sequence leads to stale data in the cache",
+              "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+              "section": "Problems and considerations",
+              "quote": "Between the write and the next read, a reader can experience a cache miss or briefly see stale data",
+              "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
           "quote": "When the read budget allows, serving from the source or a shorter TTL with retried invalidation is the alternative",
-          "reason": "Names the source read and shorter-TTL path as the alternative.",
+          "reason": "Azure recommends write-through for read-after-write freshness, AWS names write-through and TTL, and Redis bounds staleness with a TTL; the reversal rule is Tycho guidance.",
           "binding": {
-            "source_id": "src.aws-caching-strategies",
-            "ledger_record": "read.batch3-aws-caching.2026-10-21",
-            "section": "Cache-Aside (Lazy Loading)",
-            "quote": "To address this issue, you can use the Write-through and Adding TTL strategies.",
-            "revision": "7285674270bc8c142038380b991124a33538c4eecef644b40539cb32a8902c4b"
-          }
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+            "section": "Problems and considerations",
+            "quote": "read-heavy paths need read-after-write freshness",
+            "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-caching-strategies",
+              "ledger_record": "read.aws-caching-strategies.2026-11-01",
+              "section": "Advantages and disadvantages of lazy loading",
+              "quote": "Write-through and Adding TTL strategies",
+              "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+            },
+            {
+              "source_id": "src.redis-cache-aside",
+              "ledger_record": "read.redis-cache-aside.2026-11-01",
+              "section": "How Redis supports the solution",
+              "quote": "a TTL that bounds how long stale data can be served",
+              "revision": "392854e0c638038095f356216f4838cc6a4caa8e73a893fb6367b112d7920745"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+              "section": "Solution",
+              "quote": "writes the change to the data store and then invalidates the corresponding item in the cache",
+              "revision": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841"
+            },
+            {
+              "source_id": "src.aws-caching-strategies",
+              "ledger_record": "read.aws-caching-strategies.2026-11-01",
+              "section": "Lazy loading",
+              "quote": "If the data doesn't exist in the cache or has expired, your application requests the data from your data store",
+              "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+            },
+            {
+              "source_id": "src.redis-cache-aside",
+              "ledger_record": "read.redis-cache-aside.2026-11-01",
+              "section": "How Redis supports the solution",
+              "quote": "falls back to the primary on a miss, and writes the result back to Redis",
+              "revision": "392854e0c638038095f356216f4838cc6a4caa8e73a893fb6367b112d7920745"
+            },
+            {
+              "source_id": "src.redis-cache-aside",
+              "ledger_record": "read.redis-cache-aside.2026-11-01",
+              "section": "How Redis supports the solution",
+              "quote": "writes the primary and invalidates the cache key",
+              "revision": "392854e0c638038095f356216f4838cc6a4caa8e73a893fb6367b112d7920745"
+            }
+          ]
         }
       },
       "decision_evidence": {
@@ -6291,16 +6495,38 @@
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch3-aws-caching.2026-10-21",
-        "source_id": "src.aws-caching-strategies",
+        "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
+        "source_id": "src.microsoft-cloud-patterns",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-caching-strategies",
+            "ledger_record": "read.aws-elasticache-best-practices.2026-11-01",
+            "revision": "9186ee013a7ccf99d0a8ff03056222a60fa0b7df639f39b3fdf30827eae68d16"
+          },
+          {
+            "source_id": "src.aws-caching-strategies",
+            "ledger_record": "read.aws-caching-strategies.2026-11-01",
+            "revision": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca"
+          },
+          {
+            "source_id": "src.redis-cache-aside",
+            "ledger_record": "read.redis-cache-aside.2026-11-01",
+            "revision": "392854e0c638038095f356216f4838cc6a4caa8e73a893fb6367b112d7920745"
+          },
+          {
+            "source_id": "src.aws-caching-strategies",
+            "ledger_record": "read.batch3-aws-caching.2026-10-21",
+            "revision": "7285674270bc8c142038380b991124a33538c4eecef644b40539cb32a8902c4b"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Heading names the alias exactly; dedicated although the thesis is a limit."
+      "notes": "Two partial dimensions bound 2026-11-01 to Azure Cache-Aside, AWS ElastiCache best practices and caching strategies, and Redis cache-aside. The stale-fill algorithm, version gate, tombstone rule and durable invalidation are Tycho synthesis; no cache, node failure, stampede or revocation path was exercised; coverage self-checked, not independently reviewed."
     },
     {
       "pattern_id": "tycho.pattern.read-through-cache",
@@ -6638,7 +6864,7 @@
         "heading": "TTL-Based Expiration",
         "anchor": "ttl-based-expiration",
         "level": 3,
-        "line": 132,
+        "line": 170,
         "unit_kind": "dedicated",
         "unit_terms": [
           "TTL-based expiration",
@@ -6723,7 +6949,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Dedicated TTL-Based Expiration owner section; the reciprocal atlas card link is on the page. Coverage remains partial-bounded pending a fresh external review."
+      "notes": "Dedicated TTL-Based Expiration owner section; the reciprocal atlas card link is on the page. Promotion suspended 2026-11-01 because the shared owner page changed when the Cache-Aside section was expanded; coverage partial-bounded and review-ready; a fresh external review must pass before restoration."
     },
     {
       "pattern_id": "tycho.pattern.negative-caching",
@@ -17953,7 +18179,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 0,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Cache-aside and TTL expiration now have separate dedicated units."
     },
@@ -18202,11 +18428,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 96,
-    "failure_recovery_supported": 94,
+    "invariant_supported": 97,
+    "failure_recovery_supported": 95,
     "alternative_supported": 98,
     "technical_partial_bounded": 11,
-    "technical_partial": 51,
+    "technical_partial": 50,
     "technical_name_only": 0,
     "technical_sufficient": 83,
     "decision_partial_bounded": 62,

@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "45fe09f5b66b117591d270f8a4ad1702b9c6de70cb42020dbb86202989fb8aaf",
-    "ledger_sha256": "ace38efd8e121658c4e39df9112fa9b221634ce468bce8bbe616ec4683017d35",
-    "card_batches_sha256": "507274ed93d982ab537de247b2beeb965fa5bd8340870269c3027cf7562c3953",
-    "route_index_sha256": "30d18343dca4d2a5a32f845a724ce993edf3eecbb69dceb1daace0ec42cc5396",
-    "coverage_sha256": "a2e9307b4de8497d6f5587bd69178ddf6039b8a2a395f9b1637d1a52c6ef4e64"
+    "registry_sha256": "02e7f7ed54a11bbc9a75368fd68cfe77cc15080bf15660baabc074cd1484462c",
+    "ledger_sha256": "a28b2411135272934217508bd800fdf059bef2ace89152edfcd3e04d7a71104b",
+    "card_batches_sha256": "364fa98f3be6a23f6c4e95708be38d1dbe483e7d891b91dd4b978fd74478f205",
+    "route_index_sha256": "b470dec2586a33e18952042e756eaf23c4467bcdc5b14b8836105564f676cd73",
+    "coverage_sha256": "c40890d2412e8036245709eda250eb236f38df5620bc441b6aa6efed8f92793d"
   },
   "dimensions": [
     "identity",
@@ -24,7 +24,7 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 521,
+    "pages": 522,
     "entries": 145,
     "cards": 145,
     "routes": 536,
@@ -3256,6 +3256,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.f1aadca8dc3848c1a0aafa83f0e13f83",
+      "path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-aside-lazy-loading.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.page.0eb276434c29430e99bb17a65bc0ade9",
       "path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md",
       "kind": "page",
@@ -4034,17 +4041,18 @@
         "failure_recovery": "pass",
         "technical_owner": "partial",
         "owner_anchor": "pass",
-        "backlink": "pass",
+        "backlink": "missing",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial",
+        "technical_coverage": "partial-bounded",
         "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
-        "independent-review-missing"
+        "independent-review-missing",
+        "backlink-missing"
       ],
       "question": "Should the application populate the cache after a miss instead of routing every read through the cache layer?"
     },
@@ -7236,18 +7244,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should entries expire after a bounded time even without an explicit invalidation?"
@@ -7633,15 +7641,16 @@
     },
     {
       "pattern_id": "tycho.pattern.cache-aside-lazy-loading",
-      "technical": "partial",
+      "technical": "partial-bounded",
       "decision": "partial-bounded",
-      "overall": "partial",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "partial",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
-        "independent-review-missing"
+        "independent-review-missing",
+        "backlink-missing"
       ]
     },
     {
@@ -9238,14 +9247,14 @@
     },
     {
       "pattern_id": "tycho.pattern.ttl-based-expiration",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
