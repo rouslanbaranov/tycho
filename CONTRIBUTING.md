@@ -9,7 +9,8 @@ editorial rules.
 Read these documents first:
 
 - [AGENTS.md](AGENTS.md) — mandatory contributor rules.
-- [Independence and source admissibility](governance/INDEPENDENCE.md).
+- [Governance index](governance/README.md) and
+  [independence and source admissibility](governance/INDEPENDENCE.md).
 - [Authoring methodology](authoring/METHODOLOGY.md).
 - [Current state and next action](authoring/STATE.md).
 
