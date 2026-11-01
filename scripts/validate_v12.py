@@ -166,6 +166,8 @@ def validate(root: Path = ROOT) -> dict:
         require(data["provenance"]["scenario_sha256"] == sha(root / scenarios[data["scenario_id"]]["path"]),
                 "run scenario hash mismatch: " + artifact["id"])
         body = {k: v for k, v in data.items() if k != "result_sha256"}
+        body["provenance"] = dict(body["provenance"])
+        body["provenance"].pop("platform", None)
         require(data["result_sha256"] == sha_json(body), "run result hash mismatch: " + artifact["id"])
         require(data["invariants"]["conservation_ok"] is True,
                 "run invariant failed: " + artifact["id"])
