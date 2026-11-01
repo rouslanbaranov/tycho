@@ -174,8 +174,8 @@ See the [dedicated Claim Check owner note](claim-check.md).
 
 ### Correlation Identifier
 
-A correlation identifier ties together messages that belong to one request, workflow or
-conversation. **Tycho design model:** it needs a generation rule, propagation across
+A correlation identifier ties together messages that belong to one request or reply. **Tycho
+design model:** the same identifier may group a broader workflow or conversation, and it needs a generation rule, propagation across
 asynchronous boundaries, a retention window and a collision check. Uniqueness is scoped to the
 operation, not global. Azure Service Bus documents the transport property: "Enables an
 application to specify a context for the message for the purposes of correlation; for example,

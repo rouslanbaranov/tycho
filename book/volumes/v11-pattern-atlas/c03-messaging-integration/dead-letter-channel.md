@@ -35,12 +35,13 @@ evidence_scope:
   status: "source-linked"
   notes: "Dedicated card page; source bindings remain in the owner unit."
 content_review:
-  status: "self-checked"
-  reviewed_at: "2026-10-30"
-  reviewer: "Automated authoring agent"
-  proof_uri: null
+  status: "independent-reviewed"
+  reviewed_at: "2026-11-01"
+  reviewer: "DeepSeek Reviewer"
+  proof_uri: "authoring/rebinds/dlq-2026-11-01.md"
+  content_verified_at: "2026-11-01"
 authored_at: "2026-10-30"
-updated_at: "2026-10-30"
+updated_at: "2026-11-01"
 source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
