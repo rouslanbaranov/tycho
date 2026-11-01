@@ -18,7 +18,10 @@ class McpToolContractTests(unittest.TestCase):
         self.assertEqual(len(mcp_server.TOOL_ORDER), 11)
         for name in mcp_server.TOOL_ORDER:
             spec = mcp_server.TOOL_SPECS[name]
-            self.assertTrue(spec.get("description"))
+            description = spec.get("description")
+            self.assertTrue(description)
+            self.assertGreaterEqual(len(description), 200)
+            self.assertIn("use", description.lower())
             self.assertEqual(spec["inputSchema"]["type"], "object")
             self.assertFalse(spec["inputSchema"]["additionalProperties"])
             self.assertTrue(spec["annotations"]["readOnlyHint"])
@@ -59,6 +62,30 @@ class McpToolContractTests(unittest.TestCase):
         self.assertNotIn("## Tool map", onboarding)
         self.assertEqual(mcp_contract.INSTRUCTIONS, onboarding.strip())
         self.assertEqual(mcp_server.INSTRUCTIONS, onboarding.strip())
+
+    def test_tool_descriptions_route_alternatives(self):
+        routing = {
+            "tycho_search": (
+                "tycho_outline", "tycho_context", "tycho_compare",
+                "tycho_patterns"),
+            "tycho_batch": ("tycho_read", "tycho_page", "tycho_context"),
+            "tycho_outline": ("tycho_search", "tycho_context"),
+            "tycho_compare": ("tycho_context",),
+            "tycho_context": ("tycho_search", "tycho_compare", "tycho_batch"),
+            "tycho_read": ("tycho_page", "tycho_batch", "tycho_context"),
+            "tycho_page": ("tycho_read", "tycho_batch", "tycho_evidence"),
+            "tycho_patterns": (
+                "tycho_pattern", "tycho_page", "tycho_search"),
+            "tycho_pattern": (
+                "tycho_page", "tycho_search", "tycho_evidence"),
+            "tycho_evidence": ("search/read/page", "patterns/pattern"),
+        }
+        describe = mcp_server.TOOL_SPECS["tycho_describe"]["description"]
+        self.assertTrue(describe.startswith("Call this first"))
+        for name, alternatives in routing.items():
+            description = mcp_server.TOOL_SPECS[name]["description"]
+            for alternative in alternatives:
+                self.assertIn(alternative, description)
 
     def test_server_and_http_versions_agree(self):
         self.assertEqual(
