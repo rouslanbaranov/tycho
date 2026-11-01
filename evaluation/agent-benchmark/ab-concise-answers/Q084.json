@@ -1,0 +1,22 @@
+{
+  "task_id": "Q084",
+  "answer": "A `measured` input must carry a **named source** and a **measurement record** stating the method, sample size and period. Without both it is not measured by V12's definition, even with a precise number. The parameter block carries evidence status and source identifiers; the validator requires a source and measurement record for every `measured` parameter.\n\n`Measured` is one of four statuses: measured, assumed, derived, unknown. Status changes only with new evidence, and repeating an assumed value in a decision record does not make it measured. A derived input inherits the weakest status of its inputs unless the derivation is validated, and an unknown input must not be filled with an invented value. V12 uses measurement vocabulary (a value with uncertainty and, where stated, a coverage interval with its coverage probability) but does not perform a metrological uncertainty budget.\n\nThe check is structural, not semantic: the validator cannot confirm the source supports the parameter or that method, sample size and period are adequate; calibration laundering remains a listed failure mode. Every V12 model is uncalibrated and makes no production claim; the input table marks arrival rate, service mean, service CV, servers, queue capacity, timeout, dual-write lag, reconciliation capacity and divergence threshold as assumed, each with its missing measurement. The exact JSON keys of the measurement record are not established.",
+  "citations": [
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

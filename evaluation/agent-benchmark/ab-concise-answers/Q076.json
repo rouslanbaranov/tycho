@@ -1,0 +1,35 @@
+{
+  "task_id": "Q076",
+  "answer": "At every integration step, a stock-flow model should integrate the offered-work rate over the step into an amount, classify each unit at the declared ingress boundary as completed, rejected or backlog, then assert offered = completed + rejected + backlog after every update, not only at the end of the run. Each state variable carries a stock unit, each flow that unit per unit of time, and every parameter that multiplies a flow is reciprocal or dimensionless. Capacity binds per step: admitting a whole interval of arrivals at once, or serving more backlog than exists, produces negative stock. The V12 model uses a fixed 0.1-second step, asserts non-negativity after each update, and treats a persistent conservation gap as a modelling defect: it reports a conservation flag and aborts instead of writing a partial record. The discrete-event variant adds failed and in_system. Conservation is necessary but not sufficient, because a model can conserve offered work while assigning it to the wrong outcome, so timeout and retry paths are checked separately. Boundaries: the update-order convention (arrival crediting at step start or end, same-step service) is not fixed; an initial backlog generalizes the window identity; retries are attempts, not new logical demand; and V12 parameters are synthetic and uncalibrated, so conservation shows internal consistency, not real workload validity.",
+  "citations": [
+    "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+    "tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example",
+    "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model",
+    "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#1-workload-nouns-that-must-not-be-interchanged",
+    "tycho.page.bfa3a283746b42998825234aca63b101#2-open-versus-closed-arrivals-the-generator-can-hide-degradation",
+    "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+    "tycho.page.252426e0630c495d9cad7cb2c518fc69#workload-generators-closed-feedback-versus-independent-arrivals",
+    "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+    "tycho.chapter.a55ddaaa45a647e29b51d6b5c0adbe05#decision-and-worked-result",
+    "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#integrated-decision-and-reading-route"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

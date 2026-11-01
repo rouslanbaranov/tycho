@@ -1,0 +1,24 @@
+{
+  "task_id": "Q014",
+  "answer": "Physical point-in-time restore needs a consistent physical base backup of the cluster, not periodic SQL dumps, plus the complete archived WAL chain covering the interval from that backup to the chosen recovery point on the matching timeline. The backup reconstructs the data files; replay advances them. A missing or corrupt segment, archive lag, wrong encryption key or inaccessible archive blocks the restore, and archive lag raises data-loss risk. Restore needs a compatible PostgreSQL runtime, configuration, storage and key access. Configuration, secrets, tablespaces and cluster identity are not covered by WAL replay, so they are artifacts too; incremental base backups add their ancestors and WAL summaries, and retention must keep them. A streaming replica is no substitute, since it may already have replayed the deletion or corruption, and logical replication is not a physical whole-cluster backup. A proposed, not executed, safer response is to restore the base backup and WAL into an isolated target and pass database integrity plus application/business-effect reconciliation before cutover; a running database alone does not prove recovery. PostgreSQL 17 continuous-archiving documentation supports base backup plus WAL recovery, timelines and chain constraints, but no restore was executed and no RPO/RTO measured. A target earlier than the base backup's completion is unavailable from that backup, and control-file names, segment-boundary rules and replay timings are not established.",
+  "citations": [
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#5-backup-integrity-and-recovery-are-independently-testable",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+    "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+    "tycho.page.81efb7e6d72349768b6f202845cbe35e#purpose-and-mission",
+    "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#7-decision-and-evidence-limits",
+    "tycho.chapter.388c48be24414421a63481b37d05fdce#8-public-evidence-ledger-and-unverified-scope"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

@@ -1,0 +1,177 @@
+{
+  "pairs": [
+    {
+      "task_id": "Q002",
+      "question": "When can an in-place runtime upgrade address a modernization problem without moving data ownership?",
+      "core_claims": [
+        "An in-place runtime upgrade fits when the concrete driver is lifecycle or security support (a documented unsupported runtime or dependency) and the existing public API and persisted state do not need to move; its declared costs are runtime/library compatibility, old data encoding and mixed-version release.",
+        "In-place modernization keeps the externally visible state owner unchanged by default and uses branch-by-abstraction or a compatible migration step where internal changes cannot be made atomically, instead of reassigning data ownership.",
+        "The upgrade is proven in stages: old version unaffected under additive interfaces/schema (T1), cross-version reads/writes, idempotency and rejection in the mixed T2 phase, promotion only after measured SLO and data-integrity gates (T3), and cleanup only when no historic replay requires the old encoding (T4).",
+        "The alternative is falsified when the required dependency/runtime combination cannot run or externally required behavior cannot be preserved, and a new database alone does not make a replacement authoritative while two writers can accept edits without a conflict-resolution rule (dual write without a coordinated correctness protocol is not atomic commit).",
+        "A precondition is that the modernization outcome is defined independently of technology, for example removing a documented unsupported dependency without invalidating persisted data or external contracts, because age alone does not explain failure and an unknown issue requires investigation rather than a design imperative."
+      ],
+      "optional_claims": [
+        "For the synthetic runtime case the recorded decision state is CONDITIONAL_CANDIDATE for in-place upgrade and insufficient evidence for big-bang service extraction until an independent data/API boundary is demonstrated.",
+        "The DGS/Spring GraphQL consolidation is a compatibility-preserving service-interface example, not evidence of a data-ownership or extraction boundary."
+      ],
+      "answer_1": "An in-place runtime upgrade can address a modernization problem without moving data ownership only when the driver is lifecycle or security support - a documented unsupported runtime or dependency - and the existing public API and persisted state need not move. Declared costs: runtime/library compatibility, old data encoding and mixed-version release.\n\nBy default it keeps the externally visible state owner unchanged, using branch-by-abstraction or a compatible migration step where internal changes cannot be made atomically, rather than reassigning data ownership. The upgrade is proven in stages: the old version unaffected under additive interfaces/schema (T1); cross-version reads/writes, idempotency and rejection in the mixed T2 phase; promotion only after measured SLO and data-integrity gates (T3); cleanup only when no historic replay requires the old encoding (T4).\n\nThe alternative is falsified when the required dependency/runtime combination cannot run or externally required behavior cannot be preserved. A new database alone does not make a replacement authoritative while two writers accept edits without a conflict-resolution rule; dual write without a coordinated correctness protocol is not atomic commit.\n\nA precondition is that the modernization outcome is defined independently of technology, for example removing a documented unsupported dependency without invalidating persisted data or external contracts, because age alone does not explain failure and an unknown issue requires investigation, not a design imperative.",
+      "answer_2": "An in-place runtime upgrade can address a modernization problem when the main driver is lifecycle or security support (for example, a documented unsupported runtime or dependency), and the existing APIs and persisted state need not move, so one authoritative data writer can be preserved. It remains conditional: the required runtime/library combination must run, old data encoding must stay readable, and mixed-version releases must preserve externally required behavior, backed by contract tests and a reversible upgrade path. If those compatibility or behavior-preservation conditions fail, or the real problem requires a distinct capability/state owner or independent deployment, an in-place upgrade is contraindicated; moving a deployment boundary is not equivalent to transferring data ownership.",
+      "citations_1": [
+        "tycho.page.2eb290f6307f4797a5981510f1248d70#1-four-valid-starting-points",
+        "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#1-four-distinct-deployment-modes",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#2-compatibility-is-a-matrix-not-a-boolean",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#4-illustrative-failed-canary",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#6-compatibility-and-deployment-strategy-jointly-constrain-choice",
+        "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options",
+        "tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan"
+      ],
+      "citations_2": [
+        "tycho.page.19145078d87143b28387ab187d345c32#4-four-modernization-alternatives-and-contraindications",
+        "tycho.page.19145078d87143b28387ab187d345c32#5-target-architecture-and-transition-states-are-different-artifacts",
+        "tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#7-the-evidence-based-selection-outcome",
+        "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1#purpose-and-mission"
+      ]
+    },
+    {
+      "task_id": "Q010",
+      "question": "Why is p99 latency not a valid substitute for mean residence time in Little\u2019s Law?",
+      "core_claims": [
+        "Little's Law, L = lambda x W, is an average identity: W is the mean residence time of the same population inside the same measured boundary, whereas p99 is a tail threshold of the latency distribution, so the two are different quantities and p99 cannot stand in for W.",
+        "Substituting p99 changes the computed result rather than refining it: with 95% of requests at 0.10 s and 5% at 2.10 s the mean is 0.20 s, so at 120 completed operations/s the law infers 24 average outstanding operations, while inserting p99 = 2.10 s would produce 252, which is not a required concurrency.",
+        "A single mean equation cannot recover the latency distribution or guarantee an SLO, so the law can neither predict tail latency nor decide thread-pool, connection-pool, worker or instance counts.",
+        "Both inputs must describe the same boundary, population and time semantics: the rate must count the operations whose residence time W summarizes, and mixing a p99 from one dashboard scope with throughput from another breaks the accounting rather than merely adding error.",
+        "A finite observation window that ends with unfinished work invalidates the substitution: in the one-request toy timeline (arrival at t=0, exit at t=10, window [0,5)) the naive 0.20 x 10 = 2 contradicts the actual mean occupancy of 1, because the full residence time extends beyond the window."
+      ],
+      "optional_claims": [
+        "Kim & Whitt (2013) section 2.2 gives a special finite-interval equality only when the observed system begins and ends empty; a general finite-window estimate needs uncertainty analysis, not a screenshot of three averaged metrics.",
+        "Alternatives answer different questions: per-stage queue depth and service-time instrumentation, queueing models or simulation with validated distributions, controlled open or closed workload tests, and admission controls that report rejected work; none of these is supplied by the mean identity itself.",
+        "Even a correctly computed mean occupancy is not an observed maximum or a capacity setting: 24 is an inferred mean for the boundary, not a pool size, worker count, queue capacity or memory budget, and enlarging a pool can increase downstream contention instead of creating capacity."
+      ],
+      "answer_1": "p99 is a different statistic, not a refined estimate of W. Little's Law, L = \u03bb \u00d7 W, is an identity about long-run averages under a consistent boundary and population: W is the mean time admitted work spends inside that boundary, including waiting and service. p99 is a quantile threshold of the latency distribution, so \u03bb \u00d7 p99 is a rate times a tail cutoff, not mean occupancy. Substituting changes the result: with 95% of requests at 0.10 s and 5% at 2.10 s the mean is 0.20 s, so at 120 completed operations/s the law infers 24 mean outstanding operations, while p99 = 2.10 s gives 252, not a required concurrency. One mean equation cannot recover the distribution or guarantee an SLO, so the law cannot predict tail latency or size thread, connection, worker or instance counts; 24 is an inferred mean, not a pool size, and a larger pool can increase downstream contention. Both inputs must share one boundary, population and time semantics: the rate must count the operations W summarizes. A finite window that ends with unfinished work breaks the accounting \u2014 in the one-request timeline (arrival 0, exit 10, window [0,5)) 0.20 \u00d7 10 = 2 contradicts actual occupancy of 1. p99 stays right for tail objectives; only the substitution is invalid.",
+      "answer_2": "Little's Law is an average identity, L = lambda x W, where W is the mean residence time of work inside one consistently defined boundary. It follows from long-run conservation of counts, so the latency input the identity requires is the arithmetic mean time in the system, not an arbitrary quantile of the latency distribution. A p99 is a threshold: it reports a value that at most 1% of requests exceed and says nothing by itself about the mean or the rest of the distribution. Substituting p99 for W changes the quantity being multiplied by throughput and normally overstates mean occupancy when the tail is heavy. The book's synthetic example makes the error concrete: 95% of requests at 0.10 s and 5% at 2.10 s give a mean of 0.20 s but a p99 of 2.10 s; at 120 completed operations/s, L = 120 x 0.20 = 24 average outstanding operations, whereas 120 x 2.10 = 252 would be an invalid use of the law and a misleading claim about required concurrency. The reverse also fails: a p99 does not determine the mean, because a single mean equation does not reveal the full latency distribution or guarantee an SLO. Correct practice is to measure mean residence time over a stable, consistently bounded window (admission to exit for any reason, with finite-window and rejection caveats handled) and to report p99 separately as a tail/SLO metric, not as W.",
+      "citations_1": [
+        "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+        "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#integrated-decision-and-reading-route",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+        "tycho.page.eb130a7f820544a2ba0e0883c0ce587b#integrated-decision-and-reading-route",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes"
+      ],
+      "citations_2": [
+        "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+        "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#integrated-decision-and-reading-route"
+      ]
+    },
+    {
+      "task_id": "Q018",
+      "question": "Why does a bounded queue smooth a brief burst but fail to create sustainable processing capacity?",
+      "core_claims": [
+        "A bounded queue or admission discipline placed before the bottleneck absorbs a transient surge by converting concurrent execution into waiting or explicit rejection, stabilizing resource use only where deferral or rejection is permitted by the user contract.",
+        "A queue does not create processing capacity: when attempts on one authoritative key arrive faster than that key's safe serialization capacity, queue age and rejections grow while accepted completions stay capped by the invariant, however many application workers exist.",
+        "It only moves the work in time, so sustained offered demand above the scarce resource's service rate grows backlog, retry amplification and time-to-drain, and a system sustaining high RPS with unbounded queue age can still fail its latency SLO.",
+        "The queue adds obligations of its own: fairness, capacity and retry behavior must be measured, deferral can violate a synchronous-confirmation contract, and a queue does not replace the transaction correctness of the seat-allocation invariant.",
+        "Capacity has to be added at the verified scarce resource, because the bottleneck moves after optimization and more workers or deeper queues can worsen useful throughput when coordination cost or a downstream limit dominates."
+      ],
+      "optional_claims": [
+        "Measurement must respect boundaries: offered, admitted and exit rates are distinct, the exact balance N(t1) = N(t0) + A - D holds for a finite interval of accepted arrivals and all exits, and it does not assert rate equality during an overloaded burst.",
+        "For the burst example the decision state is MEASURE_FIRST: the queue and the extraction are both unjustified until offered load and the actual limiter are measured at an identical offered arrival schedule."
+      ],
+      "answer_1": "A bounded queue or admission discipline placed before the bottleneck absorbs a transient surge by converting concurrent execution into waiting or explicit rejection, stabilizing resource use only where deferral or rejection is permitted by the user contract. It is a buffer, not a processor: it decouples when work arrives from when it is served, but does not create sustainable processing capacity. When attempts on one authoritative key arrive faster than that key's safe serialization capacity, queue age and rejections grow while accepted completions stay capped by the invariant, however many application workers exist.\n\nIt only moves the work in time, so sustained offered demand above the scarce resource's service rate grows backlog, retry amplification and time-to-drain; a system sustaining high RPS with unbounded queue age can still fail its latency SLO. A larger buffer converts a rate deficit into waiting time and stored items, not additional completions.\n\nThe queue adds obligations of its own: fairness, capacity and retry behavior must be measured, deferral can violate a synchronous-confirmation contract, and a queue does not replace the transaction correctness of the seat-allocation invariant. Capacity must be added at the verified scarce resource, because the bottleneck moves after optimization and more workers or deeper queues can worsen useful throughput when coordination cost or a downstream limit dominates.",
+      "answer_2": "A bounded queue is a buffer between arrival and processing, so it decouples when work arrives from when it is served. During a brief burst the excess can wait in the queue while workers drain it at their sustainable rate: because producers and consumers run at different rates, the queue absorbs the spike and downstream sees the smoother consumer rate. That is load leveling, not additional throughput.\n\nThe sustainable rate is set by worker completions (service capacity), not by queue depth. If offered work exceeds the drain rate, the backlog and queue age grow at the difference even while every worker is busy. The synthetic walkthrough shows 120 requests/s against 80 completions/s producing about 800 outstanding requests in 20 seconds, and clearing that backlog after arrivals stop takes at least ten more seconds under idealized assumptions.\n\nA bound only caps how much backlog may accumulate before the policy must reject, block, or shed. Once the queue is full, requests are turned away rather than served, so a full bounded queue converts sustained overload into admission loss or expiry while throughput stays at capacity. In the saturation example, 30 requests/s offered against 24/s of service capacity leaves utilization at 1.0, throughput at 24/s, a rejection rate of about 0.2, and backlog pinned near the queue limit; hidden rejection would make the model look healthier than it is.\n\nThe pattern therefore fits only when bursts exceed consumer capacity temporarily and added latency is acceptable; it is contraindicated when backlog would violate a deadline or when the queue becomes an unbounded hiding place. Durable acceptance, retention and age bounds, and idempotent consumers must be owned. If the burst is sustained or work is not deferrable, shedding, backpressure, or provisioning are preferable, because raising sustainable capacity requires increasing service capacity or reducing admitted load to what the service can sustain. A queue can postpone the excess, but it cannot remove it.",
+      "citations_1": [
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+        "tycho.page.c33e9e4b605a4aa3b073a9f91437fc26#original-decision-model-a-finite-worker-and-waiting-budget",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+        "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#1-concurrency-parallel-execution-and-completed-throughput-differ",
+        "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+        "tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#alternatives-and-applicability-boundaries",
+        "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation"
+      ],
+      "citations_2": [
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+        "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory"
+      ]
+    },
+    {
+      "task_id": "Q056",
+      "question": "Why does a split message require an owned completion or partial-release rule when the number of parts is unknown?",
+      "core_claims": [
+        "When the number of split parts is unknown, no count-based completeness condition exists, so the consumer or aggregate cannot decide from a count that the split has finished.",
+        "Spring Integration's base splitter sets SEQUENCE_SIZE to zero for an iterator of unknown size and states that the aggregate group remains incomplete, directing a custom release strategy or send-partial-result-on-expiry.",
+        "Without an owned release or expiry rule, the split either never completes or leaks orphaned work; a declared rule releases a partial result or forces closure instead of reporting silent success.",
+        "A release or expiry is not evidence of successful completion: it yields a partial result or a forced closure, and only a known total part count makes completion decidable.",
+        "The Splitter decision therefore requires the outcome to be observable and the fan-out bounded, with each part carrying a correlation identity and sequence position; if completion cannot be owned, the composite should be kept whole."
+      ],
+      "optional_claims": [
+        "Apache Camel's value-based watermark is updated only when the split completes successfully, so an aborted split leaves it unchanged and the failed batch can be retried; completed effects must therefore remain idempotent or be deduplicated.",
+        "If the parts must succeed atomically, the composite should not be split; when the work is to combine related messages, an aggregator is the mirror-image choice.",
+        "An unknown part count leaves the Spring Integration aggregate incomplete; the source does not fix per-part idempotency, so that remains Tycho guidance rather than a source claim."
+      ],
+      "answer_1": "With an unknown number of parts, no count-based completeness condition exists, so the consumer or aggregate cannot decide from a count that the split has finished. Spring Integration's base splitter sets SEQUENCE_SIZE to zero for an iterator of unknown size and states that the aggregate group remains incomplete, directing a custom release strategy or send-partial-result-on-expiry. Without an owned release or expiry rule the split either never completes or leaks orphaned work; a declared rule releases a partial result or forces closure instead of reporting silent success. A release or expiry is not evidence of successful completion \u2014 it yields a partial result or forced closure, and only a known total part count makes completion decidable \u2014 so a partial result needs a caller-visible completeness marker. Camel's value-based watermark advances only when the split completes successfully, leaving an aborted split retryable and requiring idempotent or deduplicated effects. The decision therefore requires an observable outcome and bounded fan-out, each part carrying a correlation identity and sequence position; the rule also trades early release against holding state, and no default timeout is prescribed. If completion cannot be owned, keep the composite whole.",
+      "answer_2": "A split needs an owned completion or partial-release rule because, without a known part count, completion is not decidable: the aggregate group stays incomplete indefinitely rather than completing silently (Spring Integration sets SEQUENCE_SIZE to zero for an unknown-size iterator and leaves the group incomplete). Left alone, that open group holds tracking state and leaks orphaned work, so someone must own when to stop waiting. A custom ReleaseStrategy or send-partial-result-on-expiry provides that rule: it releases a partial result or forces closure, defines partial-result disposition and compensation ownership, and bounds fan-out. Critically, release or expiry closure is only a forced/partial closure, not evidence of successful completion; the same page's decision rule therefore requires either a known total count or an explicit release rule or expiry before splitting, and says a split with no completion marker leaks orphaned work and needs an owner.",
+      "citations_1": [
+        "tycho.page.46865c9b53984280ac3a15e86f5ae50c#overview",
+        "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+        "tycho.page.2c928286b62944769a4b0cab9fad6139#overview",
+        "tycho.page.60ae29b6b2a422214c18be04cf012b6e#cancellation-cost-and-alternatives"
+      ],
+      "citations_2": [
+        "tycho.page.46865c9b53984280ac3a15e86f5ae50c#overview",
+        "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview"
+      ]
+    },
+    {
+      "task_id": "Q080",
+      "question": "How does the V12 event queue break ties between events scheduled at the same time?",
+      "core_claims": [
+        "The V12 event queue is a heap ordered by scheduled time, then by priority, then by insertion sequence, so events at the same simulated time are separated first by priority.",
+        "The insertion sequence is a monotonically increasing integer, which makes the order total and deterministic and excludes dependence on dictionary iteration order or an unstable sort.",
+        "Because priority is compared before insertion sequence, a priority difference overrides the order in which same-time events were scheduled.",
+        "The verification case test_ties_use_priority_then_insertion schedules three events at the same time with different priorities and checks the processing order, and the test matrix records it as passing.",
+        "Passing that case proves only that the implemented order is deterministic and self-consistent, not that the chosen priority order matches a production scheduler."
+      ],
+      "optional_claims": [
+        "V12 rounds scheduled times to 12 decimal places and compares event times as floats, which the model declares sufficient for its synthetic scenarios; a model with very small time units would need a declared tolerance.",
+        "V12 resource queues are FIFO with capacity, a bulkhead and a timeout, and the engine implements neither priority nor preemption there, so using those needs a new contract and new tests rather than an undocumented flag."
+      ],
+      "answer_1": "V12 breaks a same-time tie with a heap ordered by scheduled time, then by priority, then by insertion sequence, so events at the same simulated time are separated first by priority. Among same-time events the lower numeric priority runs first: 0 for service completion and timeout, 1 for arrival, 2 for retry. If time and priority are both equal, the smaller insertion sequence runs first. The insertion sequence is a monotonically increasing integer, which makes the order total and deterministic and excludes dependence on dictionary iteration order or an unstable sort. Because priority is compared before insertion sequence, a priority difference overrides the order in which same-time events were scheduled.\n\nVerification case test_ties_use_priority_then_insertion schedules three same-time events with different priorities, checks the processing order, and the test matrix records it as passing. Passing that case proves only that the implemented order is deterministic and self-consistent, not that the chosen priority order matches a production scheduler.\n\n\"Same time\" is defined by rounding: V12 rounds scheduled times to 12 decimal places and compares event times as floats, which the model declares sufficient for its synthetic scenarios; very small time units would need a declared tolerance. Determinism is not cross-platform bit reproducibility, and event priority is not resource priority - the resource queue is FIFO without preemption.",
+      "answer_2": "The V12 event queue orders events lexicographically by (time, priority, insertion sequence). When two events share a scheduled time, the lower priority number is processed first, and if both time and priority are equal, the event inserted into the heap earlier (smaller monotonically increasing insertion sequence number) is processed first. Because the insertion sequence is unique and monotonic, the order is total and deterministic rather than dependent on heap or dictionary iteration order. V12 assigns priority 0 to service completion and timeout events, 1 to arrivals and 2 to retries, so at an identical timestamp a completion or timeout outranks an arrival, which outranks a retry; the insertion sequence then resolves the remaining completion-vs-timeout tie by scheduling order. This rule is a declared modeling choice, not a universal one, and the engine's determinism rules state that events at the same time are ordered by priority and insertion sequence.",
+      "citations_1": [
+        "tycho.page.f914586e44ea034deaf2710c570328fc#overview",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#evidence-ledger",
+        "tycho.page.687d2196433c3b076d00c73144dad431#components",
+        "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics"
+      ],
+      "citations_2": [
+        "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+        "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules"
+      ]
+    }
+  ]
+}

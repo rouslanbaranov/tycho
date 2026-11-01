@@ -1,0 +1,18 @@
+{
+  "task_id": "Q056",
+  "answer": "With an unknown number of parts, no count-based completeness condition exists, so the consumer or aggregate cannot decide from a count that the split has finished. Spring Integration's base splitter sets SEQUENCE_SIZE to zero for an iterator of unknown size and states that the aggregate group remains incomplete, directing a custom release strategy or send-partial-result-on-expiry. Without an owned release or expiry rule the split either never completes or leaks orphaned work; a declared rule releases a partial result or forces closure instead of reporting silent success. A release or expiry is not evidence of successful completion — it yields a partial result or forced closure, and only a known total part count makes completion decidable — so a partial result needs a caller-visible completeness marker. Camel's value-based watermark advances only when the split completes successfully, leaving an aborted split retryable and requiring idempotent or deduplicated effects. The decision therefore requires an observable outcome and bounded fan-out, each part carrying a correlation identity and sequence position; the rule also trades early release against holding state, and no default timeout is prescribed. If completion cannot be owned, keep the composite whole.",
+  "citations": [
+    "tycho.page.46865c9b53984280ac3a15e86f5ae50c#overview",
+    "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview",
+    "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+    "tycho.page.2c928286b62944769a4b0cab9fad6139#overview",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#cancellation-cost-and-alternatives"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

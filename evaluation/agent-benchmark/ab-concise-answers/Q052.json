@@ -1,0 +1,20 @@
+{
+  "task_id": "Q052",
+  "answer": "Use **branch by abstraction with a smaller, monitored rollout**: put an internal interface between callers and the old/new implementations in one deployable, shift traffic gradually through the runtime or configuration switch, and monitor a limited exposure slice instead of executing and diffing both on all work. The Parallel Run card names this as its competing alternative; the owner note repeats it for side-effecting operations.\n\nParallel run's costs are doubled compute, comparison storage and harness work, plus false confidence when the comparison ignores nondeterminism or side effects. It must not execute both for side-effecting operations such as sending an email or charging a card: the old path stays authoritative until cutover, and a candidate failure must never affect the response. Matching row counts or checksums do not prove semantic equality, since differing time windows, lossy null or value canonicalisation, or a fingerprint omitting business-critical fields can hide divergence; each comparison must be modelled as source snapshot, schema version, partition identity, job revision, equality rule and freshness window; reject any tuple differing without owner-approved normalisation.\n\nBoundaries: exhaustive comparison is better when cheap and meaningful; branch by abstraction needs an owned, removable seam and should be reversed when abstraction cost exceeds incremental benefit; a monitored rollout is not equivalence proof; no mismatch threshold, sample size or cost measurement is established.",
+  "citations": [
+    "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+    "tycho.page.b938ff1a06264492a425f2eff555ae7d#purpose-and-mission",
+    "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0#entry-inventory",
+    "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

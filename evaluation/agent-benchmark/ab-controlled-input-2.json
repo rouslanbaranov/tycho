@@ -1,0 +1,210 @@
+{
+  "pairs": [
+    {
+      "task_id": "Q004",
+      "question": "Which extra isolation concern remains when tenants share a connection pool but data permissions are correct?",
+      "core_claims": [
+        "The concern that remains is resource isolation: one tenant's burst can exhaust a shared connection, compute or queue pool even when every tenant's data permissions and row-level ACLs are correct.",
+        "Authorization answers which objects a request may touch, not how much shared capacity it may consume, so a correct tenant predicate cannot prevent noisy-neighbour interference or starvation in a common pool.",
+        "Sharing a pool therefore needs explicit fairness, per-tenant admission or resource quotas, and a test that saturates shared downstream resources to measure the noisy-neighbour effect separately from confidentiality.",
+        "Isolation is multidimensional - identity/authorization, data, resource and lifecycle/operations (or process, network, compute, data, cache, cryptographic and control plane) - and correctness in one dimension does not establish any other.",
+        "A dedicated pool is justified only when measured noisy-neighbour cost exceeds its operational cost, and a shared pool that strands capacity or fails to enforce quotas is a reversal condition rather than a deployment detail."
+      ],
+      "optional_claims": [
+        "A correct database tenant policy does not automatically protect a shared cache, search index or background consumer; those paths need tenant-scoped keys and tests with a foreign identifier.",
+        "In a cell-based deployment the router, identity service, configuration publisher, network and outbound dependencies remain shared risks, and outbound calls need per-cell connection and deadline budgets or isolated workers still block on one shared pool.",
+        "A tenant-aware query does not protect a wrongly scoped cache or background task; isolation must hold across the complete effect path."
+      ],
+      "answer_1": "Resource/capacity isolation remains. Correct tenant-scoped data permissions control which records a tenant may read or write, but they do not stop one tenant's workload from consuming or starving the shared connection pool and delaying other tenants (noisy-neighbour effects / connection-pool starvation). The book treats compute and resource isolation as a separate axis from identity and data isolation, warns that equal CPU limits alone do not prevent shared storage or connection-pool starvation, and says a shared pool with tenant-scoped predicates is cheaper at low scale only with explicit fairness and escape hatches; a shared pool can strand capacity or fail to enforce quotas, so dedicated resources are justified when measured noisy-neighbour cost (or compliance risk) dominates. At the connection level, pooled reuse also carries session-scoped state (session settings, temporary objects, prepared statements, LISTEN/NOTIFY and locks), so tenant/session context must not be assumed to persist across checkouts.",
+      "answer_2": "**Resource isolation.** Correct data permissions decide which rows or objects a tenant may read or write; they do not partition the pool's finite connection slots, wait queue, quota budget or failure domain. A tenant whose requests are slow, unbounded or retrying can hold or exhaust shared connections, making other tenants wait or time out. Authorization answers which objects a request may touch, not how much shared capacity it may consume, so a correct tenant predicate cannot prevent noisy-neighbour interference or starvation in a common pool. Sharing a pool therefore needs explicit fairness, per-tenant admission or quotas, bounded waits, escape hatches, and a test that saturates shared downstream resources to measure the noisy-neighbour effect separately from confidentiality. Isolation is multidimensional - identity/authorization, data, resource and lifecycle/operations (or process, network, compute, data, cache, cryptographic and control plane) - and correctness in one dimension does not establish any other. A dedicated pool is justified only when measured noisy-neighbour cost exceeds its operational cost; a shared pool that strands capacity or fails to enforce quotas is a reversal condition rather than a deployment detail. Boundary: a correct database policy does not protect a shared cache, search index or background consumer, and transaction pooling cannot preserve session state across transactions. Confidence is high on the concern, medium on the exact control set.",
+      "citations_1": [
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+        "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+        "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics"
+      ],
+      "citations_2": [
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs",
+        "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+        "tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use",
+        "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics",
+        "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery"
+      ]
+    },
+    {
+      "task_id": "Q012",
+      "question": "Why must a parallel-run comparison preserve an authoritative old result while testing a candidate?",
+      "core_claims": [
+        "A parallel run keeps the old implementation authoritative and returning the user-visible response while the candidate processes the same work only for comparison, so a candidate error or mismatch cannot reach the response.",
+        "Comparison is only meaningful against a preserved old result, and parallel run fits only side-effect-free, comparable outputs: running both implementations for side-effecting work such as sending an email or charging a card duplicates business effects.",
+        "The old authority is also the rollback route until cutover, and the old implementation may be retired only after explicit acceptance gates pass, such as matching row counts and checksums, no landing-latency regression and comparable resource use.",
+        "Meta's ingestion migration implemented this as a per-job lifecycle: an isolated shadow table first, then reverse shadow in which the new job writes production while the old job writes shadow, preserving a runnable rollback path and continuing comparisons.",
+        "Reverting routing is not a valid recovery after an incompatible data mutation; that state requires forward repair or tested recovery rather than treating the old path as a guaranteed undo."
+      ],
+      "optional_claims": [
+        "For dual-representation migrations with phased read/write authority, the decision playbook requires consumer inventory, mutation parity, reconciliation and a rollback horizon as evidence.",
+        "Doubled compute and comparison storage are real costs, and a comparison that ignores nondeterminism or side effects produces false confidence.",
+        "Equal row counts plus a coarse checksum can still miss business-significant semantics if the fingerprint omits a column, and a green shadow table can be stale when the source snapshot window differed; the playbook labels these hypothetical risks, not reported incidents."
+      ],
+      "answer_1": "Parallel run is a control, not a race. The old implementation's result must remain the system of record while the candidate runs alongside it; the candidate is compared but never serves the response. That preserves three things. First, an independent reference: without an authoritative old result, a difference cannot be attributed to the candidate, and 'equal' or 'green' output proves nothing. Second, safety: a candidate failure must never become a user-visible failure, so the old result must keep answering. Third, recovery: the old route must remain operational and authorized so the change can be held, reversed, or used as a reconciliation baseline. Retiring or overwriting the old authority before cutover destroys both the comparison and the fallback. Two limits: parallel run applies only to side-effect-free operations with comparable outputs; and the old result is authoritative for control, not an infallible business oracle - equality with a buggy legacy output is not proof of correctness.",
+      "answer_2": "A parallel run executes the same work in old and candidate implementations but grants production authority only to the old side, so the preserved old result stays authoritative: the comparison baseline, the response consumers receive, and the recovery point if the candidate fails. Overwrite it, let the candidate mutate it, or retire it before equivalence, and the comparison loses its reference, a defect can reach production, and rollback and reconciliation lose their state.\n\nComparison is meaningful only against that result: once the candidate can write the old store, a real bug, a timing difference and a snapshot mismatch become indistinguishable. It fits only side-effect-free, comparable outputs; running both sides for an email or card charge duplicates business effects.\n\nThe old authority is also the rollback route until cutover; retirement requires explicit acceptance gates: matching row counts and checksums, no landing-latency regression, comparable resource use. Meta's ingestion migration used a per-job lifecycle: isolated shadow table, then reverse shadow, the new job writing production while the old writes shadow, keeping a runnable rollback path and comparisons. Reverting routing is not valid recovery after an incompatible mutation; that needs forward repair or tested recovery.\n\nGreen means agreement under the observed boundary, not truth: identical outputs can share a semantic bug. No mismatch threshold, sample size or cost is established.",
+      "citations_1": [
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+        "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows"
+      ],
+      "citations_2": [
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+        "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+        "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority",
+        "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#execution-stages-validation-and-reversibility",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#concrete-migration-safety-mechanism",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#explicit-completion-and-rollback-contract",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+        "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+        "tycho.page.a2cd4465792a4740aa5150ad248fd420#engineering-walkthrough-a-falsifiable-cache-versus-query-experiment"
+      ]
+    },
+    {
+      "task_id": "Q050",
+      "question": "Why is an audit trail unreliable if the actor being audited can modify or delete the records?",
+      "core_claims": [
+        "The Audit Trail pattern's hard contraindication is exactly this case: reject when logs are mutable or deletable by the actor, because the pattern's premise is an append-only, attributable record.",
+        "An application that is compromised or self-interested can forge or erase evidence it writes itself, so accountability requires stronger isolation, append integrity (hash, sequence, signature or external witness) and verification rather than operational-log trust.",
+        "Attributability is part of the property: without recorded principal and delegation, action, target, policy decision, time and an immutable event identifier, a surviving byte sequence cannot be tied to an accountable actor.",
+        "Integrity must be designed and tested, not assumed: the distinction from operational logs is a durable event/effect identity with an explicit retention, access and integrity policy, since logs are often sampled, filtered, short-retention or best-effort.",
+        "Availability must be handled honestly: if the audit pipeline is unavailable the operator must pick a declared policy, such as rejecting the protected operation, buffering durably or accepting a stated loss risk, because best-effort asynchronous writing with a promise of no evidence gaps is a contradiction."
+      ],
+      "optional_claims": [
+        "An audit event must record what happened, not what code intended: an event written before a failed business transaction is not proof of a completed effect, so transactional or reconciliation mechanisms are needed when audit must agree with authoritative state.",
+        "Dropped operational logs and traces are diagnostic gaps, not evidence of 'no event', and least-privilege or role-based access choices both presuppose that some reviewable audit evidence exists."
+      ],
+      "answer_1": "An audit trail is reliable only if the record is independent of the actor it describes; when the audited actor can modify or delete it, three properties collapse. First, absence stops being informative: the book names \"log drop interpreted as no event\" as a characteristic failure, so a deleted entry is indistinguishable from an action that never happened, and the trail can no longer establish completeness or non-occurrence. Second, integrity is not the same as storage: tamper evidence and complete event capture require independent engineering controls, and encrypting at rest alone does not prove integrity, so an actor with write or delete authority can rewrite or erase precisely the events that would implicate them. Third, accountability becomes circular: a durable business audit exists to record who was authorized to change which authoritative state and what committed; if the subject of that judgment also administers the record's access and retention, the record only self-attests. The pattern card therefore treats logs mutable or deletable by the actor as a hard contraindication: reject. The remedy is separation of duties: append-only storage, access and retention control held by a party other than the audited actor, tamper-evident mechanisms, and a tested commit boundary before claiming durability.",
+      "answer_2": "An audit trail is only as trustworthy as the independence of its custody. If the audited actor can modify or delete the records, the trail becomes the actor's self-report: entries can be erased, rewritten, backdated or capture switched off, and deletion makes absence ambiguous: a removed record resembles one that never occurred, so integrity, completeness and attribution fail. The Audit Trail pattern's hard contraindication is this case: reject when logs are mutable or deletable by the actor, since the pattern presumes an append-only, attributable record. A compromised or self-interested application can forge evidence it writes itself, so accountability requires stronger isolation, append integrity (hash, sequence, signature or external witness) and verification rather than operational-log trust. Attributability needs recorded principal and delegation, action, target, policy decision, time and an immutable event identifier, or surviving bytes cannot be tied to an accountable actor. Integrity must be designed and tested: the distinction from operational logs is a durable event/effect identity with explicit retention, access and integrity policy. Availability must be honest: if the pipeline is unavailable, declare a policy - reject the protected operation, buffer durably, or accept a stated loss risk. Boundaries: root or whole-pipeline control defeats any software-only trail; mutable logs aid debugging but are not independent evidence; immutability conflicts with erasure duties and is disproportionate without a forensic retention requirement.",
+      "citations_1": [
+        "tycho.page.ebee5e8bd7ca90b878acad1df2d8630a#overview",
+        "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+        "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage"
+      ],
+      "citations_2": [
+        "tycho.page.ebee5e8bd7ca90b878acad1df2d8630a#overview",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+        "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#2-event-sourcing-what-becomes-authoritative",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#6-architecture-decisions-and-access-controls",
+        "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#least-privilege",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#1-start-with-protected-outcomes-and-an-explicit-threat-model",
+        "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+        "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records"
+      ]
+    },
+    {
+      "task_id": "Q058",
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "core_claims": [
+        "A poison row blocks the relay's progress: an outbox row that cannot be published holds up publication of the rows behind it, so an unhandled poison row stops the outbox from draining rather than affecting only itself.",
+        "The relay must have bounded attempts and age plus a terminal quarantine for poison rows, so a repeatedly failing row leaves the main path once the bound is reached instead of being retried indefinitely.",
+        "Operators must retain repair evidence for the quarantine: the row, its payload digest and its attempt history, kept for a declared retention window so a repair operator can diagnose, correct and republish it.",
+        "Recovery must be replay-safe: a crash after publish but before completion duplicates while a crash after commit but before publish retries, so consumers deduplicate by message ID or effect identity and a re-published quarantined row still applies once.",
+        "Schema or producer upgrade overlapping older consumers is a known way to produce poison messages and lag, so operators should plan version-compatibility tests, stop/go checks and a safe replay path, and should treat poisoned and retried messages as normal operating conditions."
+      ],
+      "optional_claims": [
+        "Point-to-point queue and competing-consumer guidance treats duplicate delivery and poison messages as normal, and a consumer architecture with no bounded-attempt or terminal path is a hard contraindication for competing consumers.",
+        "The relay also needs a publication key and per-aggregate ordering, so quarantine and replay decisions do not silently change the publication identity or the order of events for one aggregate.",
+        "An outbox is justified only when the lost-publication and duplicate-effect risk warrants relay complexity, the relay is actually operated, and event sourcing remains the stated alternative."
+      ],
+      "answer_1": "A poison row is not transient: an outbox row that cannot be published holds up the rows behind it, so an unhandled poison row stops the outbox draining rather than affecting only itself. Operators should plan a terminal exit, a governed quarantine and replay-safe repair, not more retries.\n\nBounded attempts and age give the row that exit: when the bound is reached, move it out of the relay's way into a terminal quarantine. Retain the row, its payload digest and attempt history for a declared retention window, so a repair operator can diagnose, correct and republish it. Alert on publisher health: oldest eligible entry age, relay/CDC lag, retries, dead-letter backlog.\n\nRecovery must be replay-safe. A crash after publish but before completion duplicates; a crash after commit but before publish retries. Consumers therefore deduplicate by message ID or effect identity, so a re-published quarantined row still applies once, and quarantine retention must match the deduplication horizon.\n\nSchema or producer upgrade overlapping older consumers is a known way to produce poison messages and lag: plan version-compatibility tests, stop/go checks and a safe replay path, and treat poisoned and retried messages as normal operating conditions. Quarantine is not the only terminal state, skipping a row opens an ordering gap, and no attempt counts, retention windows or per-relay blocking scope are established.",
+      "answer_2": "Plan for a bounded, auditable quarantine path, not open-ended retry. The relay is specified to carry bounded attempts and bounded age, a publication key, per-aggregate ordering and a terminal quarantine for poison rows, so a permanently invalid row should be pushed out of the publish path once its attempt/age budget is spent rather than retried forever. Because ordering is per aggregate, a parked row can stall later rows for the same aggregate: operators should expect head-of-line blocking and be able to state which aggregates or partitions are stalled, how far publication age lags, and whether skipping that row is acceptable for its consumers. Quarantine is a policy state, not delivery: classify transient, permanent and unknown outcomes, and treat a dead-letter queue or repair table as a holding and triage mechanism, not proof of delivery and not an automatically safe replayer. Retain in quarantine the row, payload digest and payload, headers, failure reason and attempt history for the declared retention window, with enough evidence to diagnose without leaking payloads, plus the declared source of truth for the affected record. Repair must be a separate reviewed decision (quarantined, then repair-authorized, then claimed under an explicit repair contract): either correct the input while preserving the same logical effect identity, or create an explicitly new operation if intent changed; replaying under a new ID merely to bypass deduplication risks a duplicate external effect, and current authorization should be rechecked before repair. Keep consumer-side deduplication by message ID or effect identity so a replay stays safe, and have the alternative ready when the failure is deterministic or the broker cannot retain evidence safely: retry with backoff, drop with an audit record, or park the work in a repair table or outbox, reversing the dead-letter choice when quarantine retention plus manual repair cost exceed the value of preserving the message. Budget observability and ownership too: alert on the age of the oldest unpublished row and on quarantine depth and age, not backlog depth alone, and name who owns human intervention and escalation. Test by killing the relay after commit but before publish and by replaying quarantined work while requiring correct effect identity. Limits: these are proposed tests and a synthetic state machine, not an exercised run, and no broker or workflow engine was executed.",
+      "citations_1": [
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#2-publication-schema-and-ordering-boundaries",
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#6-observability-and-validation-design",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#5-options-and-when-the-extra-components-are-unwarranted",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#4-failure-and-applicability-gates",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+        "tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices",
+        "tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+        "tycho.page.2c928286b62944769a4b0cab9fad6139#overview",
+        "tycho.page.1810c1f1f11648bdba66aafa5da60d33#7-practice-response-before-production-failure",
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points"
+      ],
+      "citations_2": [
+        "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#4-failure-and-applicability-gates",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview"
+      ]
+    },
+    {
+      "task_id": "Q082",
+      "question": "Which scenario inputs must remain aligned to compare checkout candidates fairly?",
+      "core_claims": [
+        "Candidates must be run at the same offered arrival rate; the worked checkout comparison holds lambda at 20 requests per second for candidates A, B and C.",
+        "They must also share the same serving capacity and queueing boundary: capacity 24 with the declared admission, bounded queue, server pool, per-attempt deadlines and bounded retries, otherwise success, p95 and timeout differences measure different systems.",
+        "Model and scenario identity must be pinned by hash: the run stores the SHA-256 of the model file and of its scenario file, and replay fails before producing a new number if either changes.",
+        "Engine and sampling context must be recorded and held constant: engine name and version, deterministic flag, seed base, replication count and input hash are required provenance, so a comparison is not contaminated by a different execution or sampling setup.",
+        "Metric and candidate binding must be identical: each metric records identifier, unit, direction and a business-comparable flag, and each candidate entry names its scenario, run set and owner pages within one decision record."
+      ],
+      "optional_claims": [
+        "A reviewable scope statement fixes purpose, boundary, resolution and validity, for example event-level resolution with one request class at a synthetic 20 requests per second and no production claim.",
+        "Each run also reports convergence status, relative error and threshold plus its uncertainty method and correlated-input flag; a missing field is a validation failure, not a note."
+      ],
+      "answer_1": "To compare candidate checkouts fairly, hold every scenario input constant except the candidate configuration: the same workload (same arrival process and rate, Poisson at 20 requests per second, same 1,800-second horizon and 300-second warmup), the same metric identifiers, units and definitions, the same seed base and deterministic seed = base + replication scheme, and the same hard constraints. Only the candidate configuration (server count, service-time distribution, queue capacity, timeout, retry budget, bulkhead and unit cost) is the intended experimental variable; giving one candidate a shorter warmup or a lower arrival rate invalidates the comparison, and a genuinely different workload must be declared as part of that candidate.",
+      "answer_2": "Hold every scenario input except the candidate configuration identical. Candidates must run at the same offered arrival rate; the worked checkout comparison holds lambda at 20 requests per second for candidates A, B and C. They must share the same serving capacity and queueing boundary: capacity 24 with the declared admission, bounded queue, server pool, per-attempt deadlines and bounded retries, otherwise success, p95 and timeout differences measure different systems. Model and scenario identity must be pinned by hash: the run stores the SHA-256 of the model file and of its scenario file, and replay fails before producing a new number if either changes. Engine and sampling context must be recorded and held constant: engine name and version, deterministic flag, seed base, replication count and input hash are required provenance. Metric and candidate binding must be identical: each metric records identifier, unit, direction and a business-comparable flag, and each candidate entry names its scenario, run set and owner pages within one decision record. Boundaries: alignment is necessary, not sufficient - inputs are synthetic and the model uncalibrated, so narrow intervals are sampling precision, not measured inputs. A different workload is allowed only as a declared workload family. Equal replication counts are not stated as a hard rule, and no mechanical cross-candidate equality gate is demonstrated.",
+      "citations_1": [
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes"
+      ],
+      "citations_2": [
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#overview",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#overview",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "task_id": "Q016",
+  "answer": "The gate is a bidirectional comparison of old and new representations: expected records, ordering and duplicate handling in both directions. Bounded sample checks, row counts or full-backup metadata cannot prove business equivalence.\n\nRead authority may switch only when measured replication lag, completeness and read semantics meet owner-agreed thresholds; write authority only when rollback behavior and consistency across old and new clients are documented. Every intermediate configuration must have exactly one declared authoritative owner, and mixed-version compatibility must be demonstrated in both directions before authority moves.\n\nAn irreversible destructive migration needs explicit approval beyond successful code pull requests, plus a rehearsed recovery path: old binaries must interpret new persisted state, consumers must still accept the old contract, and new-only durable effects must be reconcilable before cleanup removes the old schema. Cutover is gated on operational evidence: verified replication health, a cleared dead-letter queue, data freshness at zero and an active reverse-replication fallback.\n\nEquality is not correctness when both implementations share the same wrong semantics; a named business oracle is required, and happy-path-only comparisons are a refusal condition. Undefined identity mapping, unrecoverable writes or changed audit context are correct stops. A smaller reversible change or an additive mapping layer may be preferable. The sources establish no thresholds and record no executed cutover or restore.",
+  "citations": [
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+    "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+    "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#failure-analysis-and-evidence-provenance",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

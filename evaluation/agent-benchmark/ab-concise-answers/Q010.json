@@ -1,0 +1,22 @@
+{
+  "task_id": "Q010",
+  "answer": "p99 is a different statistic, not a refined estimate of W. Little's Law, L = λ × W, is an identity about long-run averages under a consistent boundary and population: W is the mean time admitted work spends inside that boundary, including waiting and service. p99 is a quantile threshold of the latency distribution, so λ × p99 is a rate times a tail cutoff, not mean occupancy. Substituting changes the result: with 95% of requests at 0.10 s and 5% at 2.10 s the mean is 0.20 s, so at 120 completed operations/s the law infers 24 mean outstanding operations, while p99 = 2.10 s gives 252, not a required concurrency. One mean equation cannot recover the distribution or guarantee an SLO, so the law cannot predict tail latency or size thread, connection, worker or instance counts; 24 is an inferred mean, not a pool size, and a larger pool can increase downstream contention. Both inputs must share one boundary, population and time semantics: the rate must count the operations W summarizes. A finite window that ends with unfinished work breaks the accounting — in the one-request timeline (arrival 0, exit 10, window [0,5)) 0.20 × 10 = 2 contradicts actual occupancy of 1. p99 stays right for tail objectives; only the substitution is invalid.",
+  "citations": [
+    "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+    "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+    "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#integrated-decision-and-reading-route",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+    "tycho.page.eb130a7f820544a2ba0e0883c0ce587b#integrated-decision-and-reading-route",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

@@ -1,0 +1,20 @@
+{
+  "task_id": "Q004",
+  "answer": "**Resource isolation.** Correct data permissions decide which rows or objects a tenant may read or write; they do not partition the pool's finite connection slots, wait queue, quota budget or failure domain. A tenant whose requests are slow, unbounded or retrying can hold or exhaust shared connections, making other tenants wait or time out. Authorization answers which objects a request may touch, not how much shared capacity it may consume, so a correct tenant predicate cannot prevent noisy-neighbour interference or starvation in a common pool. Sharing a pool therefore needs explicit fairness, per-tenant admission or quotas, bounded waits, escape hatches, and a test that saturates shared downstream resources to measure the noisy-neighbour effect separately from confidentiality. Isolation is multidimensional - identity/authorization, data, resource and lifecycle/operations (or process, network, compute, data, cache, cryptographic and control plane) - and correctness in one dimension does not establish any other. A dedicated pool is justified only when measured noisy-neighbour cost exceeds its operational cost; a shared pool that strands capacity or fails to enforce quotas is a reversal condition rather than a deployment detail. Boundary: a correct database policy does not protect a shared cache, search index or background consumer, and transaction pooling cannot preserve session state across transactions. Confidence is high on the concern, medium on the exact control set.",
+  "citations": [
+    "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+    "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs",
+    "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+    "tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use",
+    "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics",
+    "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

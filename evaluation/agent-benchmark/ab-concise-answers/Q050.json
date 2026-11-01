@@ -1,0 +1,24 @@
+{
+  "task_id": "Q050",
+  "answer": "An audit trail is only as trustworthy as the independence of its custody. If the audited actor can modify or delete the records, the trail becomes the actor's self-report: entries can be erased, rewritten, backdated or capture switched off, and deletion makes absence ambiguous: a removed record resembles one that never occurred, so integrity, completeness and attribution fail. The Audit Trail pattern's hard contraindication is this case: reject when logs are mutable or deletable by the actor, since the pattern presumes an append-only, attributable record. A compromised or self-interested application can forge evidence it writes itself, so accountability requires stronger isolation, append integrity (hash, sequence, signature or external witness) and verification rather than operational-log trust. Attributability needs recorded principal and delegation, action, target, policy decision, time and an immutable event identifier, or surviving bytes cannot be tied to an accountable actor. Integrity must be designed and tested: the distinction from operational logs is a durable event/effect identity with explicit retention, access and integrity policy. Availability must be honest: if the pipeline is unavailable, declare a policy - reject the protected operation, buffer durably, or accept a stated loss risk. Boundaries: root or whole-pipeline control defeats any software-only trail; mutable logs aid debugging but are not independent evidence; immutability conflicts with erasure duties and is disproportionate without a forensic retention requirement.",
+  "citations": [
+    "tycho.page.ebee5e8bd7ca90b878acad1df2d8630a#overview",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+    "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#2-event-sourcing-what-becomes-authoritative",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#6-architecture-decisions-and-access-controls",
+    "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#least-privilege",
+    "tycho.page.dde63373c50f4f4a80e727b6e160def5#1-start-with-protected-outcomes-and-an-explicit-threat-model",
+    "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+    "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#engineering-walkthrough-one-approved-business-change-three-incompatible-records"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}
