@@ -169,8 +169,10 @@ requires, and read-your-writes or monotonic guarantees must be enforced by routi
 or an authority read.
 
 A lag spike serves stale data even though replication is healthy; monitor applied position and lag,
-and route freshness-critical reads away from a lagging replica. Read from the leader or use a quorum
-read when freshness dominates; add replicas when read volume and tolerance for bounded staleness
+and route freshness-critical reads away from a lagging replica. PostgreSQL documents that
+"Read-only database servers can be combined relatively easily" and that asynchronous solutions
+can return "slightly stale results". Tycho guidance: read from the leader or use a quorum read
+when freshness dominates; add replicas when read volume and tolerance for bounded staleness
 justify the extra copies.
 
 **Limits.** Replica count and lag budgets must be owned; a failover to a stale replica can

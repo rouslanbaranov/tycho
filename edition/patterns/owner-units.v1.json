@@ -8996,9 +8996,16 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Read from the leader or use a quorum read when freshness dominates; add replicas when read volume and tolerance for bounded staleness justify the extra copies.",
-          "reason": "Text does not compare leader reads or quorum reads when freshness dominates."
+          "state": "supported",
+          "quote": "Read-only database servers can be combined relatively easily",
+          "reason": "PostgreSQL binds read-only replicas and stale asynchronous reads; leader/quorum preference and freshness rule are Tycho guidance.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.pg18-ha.2026-10-30",
+            "section": "Chapter 26. High Availability, Load Balancing, and Replication",
+            "quote": "Read-only database servers can be combined relatively easily.",
+            "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
+          }
         }
       },
       "decision_evidence": {
@@ -9018,7 +9025,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Alternative bound to PostgreSQL read-only servers and stale asynchronous reads; leader/quorum preference is Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.quorum-based-reads-writes",
