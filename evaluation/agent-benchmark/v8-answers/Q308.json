@@ -1,0 +1,388 @@
+{
+  "task_id": "Q308",
+  "answer": "# Q308 — Kafka transactions, capture identity and the retention boundary\n\n**Question scope:** one consumer group processes payment-capture records; per record it calls\nthe payment provider, updates an order row, then commits its Kafka position. A deploy\nrebalance happens while a capture request is in flight. The revoked instance finishes the\ncapture but never polls again; the successor replays the record. The team then enables a\nKafka transaction with `read_committed` and declares captures exactly-once.\n\n**Layers used:** `book` only (V04/C07 offsets-effects and the V04/C05 inbox page). The\nquestion is a mechanism/scope question, not a pattern-identity or model/run question, so\n`atlas` and `modeling-and-simulation` were not required. Snapshot:\n`3db217e9075d8572f71b62778b4ab91f1460bb9421174ede7e891136aa26101a`.\n\n**Short answer**\n\n1. **The claim is a scope error.** The Kafka transaction makes Kafka output records and the\n   consumed offset atomic *inside Kafka*. It does not enlist the payment provider or the\n   order database. The revoked instance's capture is already a completed remote effect when\n   the successor replays, and neither the transaction nor `read_committed` can undo,\n   suppress or even observe it. Enabling transactions changes what the successor sees on\n   Kafka topics; it does not change the number of provider captures.\n2. **The capture and the receipt must share one stable operation identity K**, derived from\n   the consumed record and scoped to the consumer and the capture effect (source message\n   identity + consumer/subscriber + effect scope). K must be simultaneously (a) the\n   provider's idempotency key on every attempt, (b) the unique receipt/inbox key committed\n   in the same local transaction as the order-row transition, and (c) the guard the order\n   row uses to reject a duplicate transition. If the provider key and the receipt key are\n   different values, the successor cannot connect \"this capture happened\" to \"this receipt\n   exists\"; it either captures again or skips the row update.\n3. **When the group's position falls outside retention, the position stops being a replay\n   cursor.** The requested offset no longer exists, `auto.offset.reset` picks a configured\n   policy, and no policy can recreate deleted records. `latest` can silently skip captures;\n   `earliest` starts at the earliest *retained* record, not the beginning of business\n   history. The exactly-once claim then has no evidence base for the gap: what was captured\n   is unknown until the provider ledger and the order store are reconciled, and a defensible\n   rebuild needs a source snapshot with an explicit change boundary. If that boundary is\n   unavailable, the honest output is \"insufficient evidence\", not exactly-once.\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| Transaction scope: Kafka vs external capture and order row | \"exactly-once read_committed transactional producer offset commit\"; \"kafka transaction external output system\"; \"consumer offset effect crash points\" | `tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points`; `...#rebalance-external-effects-and-expired-replay-positions` |\n| `read_committed` visibility semantics | \"read_committed aborted records visibility isolation\"; \"read_committed is not an application database isolation mode\" | `...#4-consumer-offset-effect-and-crash-points`; `...#rebalance-external-effects-and-expired-replay-positions` |\n| Rebalance/revocation and in-flight remote work | \"kafka rebalance revoked consumer in-flight work offset commit\"; \"max.poll.interval rebalance callback partition revoked\"; \"stale owner external API\" | `...#rebalance-external-effects-and-expired-replay-positions`; `tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination` |\n| Capture ↔ receipt identity | \"idempotency key replay duplicate external side effect consumer\"; \"message identity deduplication key composite consumer identity\"; \"durable receipt for K\" | `...#rebalance-external-effects-and-expired-replay-positions`; `tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity` |\n| Order-row atomicity and duplicate arbitration | \"consumer inbox deduplication receipt keyed by source offset\"; \"unique constraint dedup key\"; \"conditional state version\" | `tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity`; `tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination` |\n| Retention expiry of the group position and rebuild | \"offset out of range retention auto.offset.reset rebuild\"; \"expired replay positions\"; \"retention or compaction removes needed history\" | `tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions`; `...#5-failure-and-recovery-matrix` |\n\n## 2. Why the exactly-once claim is unsupported\n\n### 2.1 What the Kafka transaction actually covers\n\nA Kafka transaction can commit produced Kafka records and, in a supported\nconsume-transform-produce workflow, the consumed offsets together. That is a real and useful\nguarantee: the successor either sees the output records and the advanced position, or sees\nneither. It is also a guarantee whose jurisdiction ends at Kafka.\n\nThe book states the boundary directly: a Kafka transaction \"can coordinate publication to\nKafka partitions and (in supported consume-transform-produce workflows) offsets with Kafka\noutput, but it does not automatically enclose an unrelated SQL commit, payment provider or\nemail delivery\" [C1]. The same page's matrix says the Kafka transaction row \"Protects that\ndeclared Kafka boundary; external SQL still requires cooperation\" [C1]. And even with\ntransactional producers, \"the business application must decide how it atomically persists\nits\" own state and publication intent [C1].\n\nIn this scenario there are three durability authorities, not one:\n\n- the payment provider's capture ledger (remote, non-transactional with Kafka);\n- the order database (a separate local transaction);\n- the Kafka log and the group position (the only pair the Kafka transaction couples).\n\nA transaction cannot span the first two and the third. The team's error is to treat\n\"Kafka input offset and Kafka output are atomic\" as \"the capture and the position are\natomic\". They are different claims over different objects.\n\n### 2.2 `read_committed` is a visibility filter, not an end-to-end guarantee\n\n`read_committed` is \"an isolation choice for transactional Kafka records\", and the book\nis explicit that it is \"not proof that every consumer's external side effect happens once\"\n[C2]. It also has \"a precise visibility contract; it is not an isolation mode for the\napplication database\" [C2].\n\nConcretely, `read_committed` tells the successor which Kafka records from transactional\nproducers are visible. It does not tell the successor whether the provider captured the\npayment. The capture is not a Kafka record; it is an HTTP call to a different authority. If\nthe old instance's Kafka transaction aborts, the abort marker makes its Kafka output\ninvisible; it does not reverse a charge. If the old transaction commits, the successor may\nnot replay the input at all; but if it does replay (because the position was never\ncommitted), `read_committed` gives it no information about the earlier capture.\n\n### 2.3 The deploy trace, step by step\n\n1. Instance A owns partition P and reads capture record C at offset *o*.\n2. A calls the provider. The capture succeeds. A may also commit the order-row update.\n3. The deploy triggers a rebalance. A is revoked. \"Stopping polling or receiving a rebalance\n   callback does not retract that remote request\" [C3]. The capture is already durable at\n   the provider.\n4. A never polls again, so its offset commit path never runs; if it had opened a Kafka\n   transaction, that transaction eventually aborts, times out or is fenced. Every one of\n   those outcomes is a *Kafka-side* outcome. None of them is a provider refund.\n5. Successor B starts from the last committed position, which is still before *o*, and reads\n   C again. B has no durable evidence that A captured. B calls the provider again. The Kafka\n   transaction cannot tell B otherwise.\n6. The provider either sees a second capture (if the request identity differs or is absent)\n   or resolves the retry to the first capture (if the identity is stable and the provider\n   supports idempotency). The order row either transitions twice or rejects the second\n   transition under the receipt guard.\n\nThe book's original trace is exactly this shape: a consumer \"crashes before committing its\nnext consumer position 71. Its successor reads 70 again. A unique durable receipt for K,\ncommitted atomically with the SQL effect, can let the successor recognize the existing\nresult and move forward\" [C4]. The receipt is what repairs the window — not the Kafka\ntransaction.\n\n### 2.4 Why the usual repairs do not close the gap by themselves\n\n| Proposed repair | What it actually guarantees | Why the claim still fails |\n|---|---|---|\n| Enable a Kafka transaction | Kafka outputs + consumed offset commit atomically, within Kafka | The provider call and the order row are outside the transaction [C1] |\n| Enable `read_committed` | The successor sees only committed transactional Kafka records | Visibility of Kafka records says nothing about the provider ledger [C2] |\n| Commit the offset after the capture | Replay is possible but the effect may repeat | This is at-least-once for the effect; \"no perfect ordering of two independent commits creates an automatic global transaction\" [C4] |\n| Commit the offset before the capture | The successor may skip an effect that never committed | Converts duplicates into silent loss; the matrix names both rows [C5] |\n| Retry the provider | Safe only if the retry carries the same idempotency key | A fresh key per attempt or per instance is a new operation at the provider [C7, C10] |\n| Fence the stale producer/instance | The stale Kafka commit or destination write can be rejected | The HTTP capture already left the process; fencing does not deduplicate the effect [C11] |\n| Use a framework \"exactly-once\" mode | Bounded Kafka state/output topology only | The scope \"must be explicitly stated alongside connector and external sink behavior\" [C12] |\n\nThe book's own \"insufficient evidence\" question is the team's sentence: \"Kafka transactions\nare enabled, therefore our external transfer side effect can never happen twice\" — \"False\ninference. Need source input identity, sink transaction/idempotency, replay/failure tests,\nexternal provider contract and reconciliation policy\" [C6]. The decision gate adds: \"test\nproducer fencing, rebalance, source replay, crash-after-database-commit and expired dedup\nkeys\" [C6].\n\n### 2.5 The narrower statement that is supportable\n\nAfter the change, the team may say:\n\n> \"For the retained log and the declared Kafka topics, the consumed offset and the Kafka\n> outputs are transactionally coupled; the successor will not see a half-applied Kafka\n> effect. The payment capture is at-least-once with respect to redelivery and is suppressed\n> only by the durable operation identity K at the provider and in the order store. If the\n> provider does not honour K for the whole redelivery window, the capture is an explicit\n> unresolved-safety boundary.\"\n\nThat statement names the boundary of each guarantee. \"Captures are exactly-once\" does not:\nit silently quantifies over an external authority the transaction never controlled.\n\n## 3. The identity the capture and the receipt must share\n\n### 3.1 K, the operation identity\n\nDefine one value K per capture operation:\n\n- **Source message identity.** The consumed record's stable identity. For a Kafka source the\n  natural candidate is topic + partition + offset; if the record carries a stable business\n  event id, that can serve instead, provided it is stable across replay and unique per\n  capture operation.\n- **Consumer/effect scope.** \"The identity must include the correct subscriber and\n  event/effect scope; two different consumers legitimately process the same event into\n  different local states\" [C8]. The book's shared-store rule is \"a composite of the consumer\n  identity and the message identity\" [C8].\n- **Effect discriminator.** \"Capture for this payment\" rather than \"this order was touched\".\n  If one order can have several captures or partial captures, the order id alone is not an\n  operation identity; it would collapse distinct operations or fail to distinguish them.\n\nK must be deterministic: the same input record and effect scope must produce the same K on\nthe revoked instance, on the successor, after a restart, and after a DLQ replay.\n\n### 3.2 The three places K must appear\n\n1. **The provider idempotency key.** Every capture attempt for this operation carries K.\n   Then a retry is not a new charge; it resolves to the original result. The fencing page's\n   alternative for a provider that cannot fence stale callers is to \"use stable idempotent\n   operation identities where supported\" [C11].\n2. **The consumer receipt / inbox key.** The receipt is the local memory of K: a unique row\n   that says \"capture K was started / completed with this provider result\". The book's\n   repair is \"A unique durable receipt for K, committed atomically with the SQL effect\"\n   [C4].\n3. **The order-row guard.** The row transition must be conditional on the receipt state or\n   keyed by K, not a blind `UPDATE`. A \"durable idempotency/effect key must suppress the\n   duplicate row transition\" [C5]. Otherwise the successor can apply the order transition a\n   second time even when the provider deduplicated the money movement.\n\nThe critical equality is **provider key = receipt key = order-row guard key**. If the\nprovider key is random per attempt, the successor's replay is a new capture. If the receipt\nkey is random per attempt, the successor cannot find the earlier attempt even when the\nprovider deduplicated it. If the two are different stable values, the successor can charge\nonce and still fail to record it, or record it and still charge again.\n\n### 3.3 Atomicity and ordering of the local writes\n\nThe capture is remote, so the protocol needs two local phases, not one:\n\n1. **In-progress receipt.** In one local transaction, insert the receipt row for K (unique)\n   and, if the order model needs it, mark the order capture as pending. Commit. If the\n   insert conflicts, a concurrent attempt already owns K; read its state instead of calling\n   the provider again.\n2. **Provider call with K.** If the response is a definite success or a definite failure,\n   record it. If the response is lost, the outcome is unknown; do not mark completed.\n3. **Completed receipt + order transition.** In one local transaction, write the provider\n   result under K and apply the order-row transition. Commit. The receipt and the row move\n   together; the uniqueness constraint on K is the arbiter: \"two transactions can attempt to\n   insert a key, but only one can succeed\" [C9].\n4. **Commit the Kafka position.** Only now advance the group position.\n\nThis matches the book's two-phase route for external effects: \"an in-progress record, then a\ncompleted record, with stale records reconciled before acknowledgement\" [C10]. It also\nexplains why the inbox must be a real table: \"an in-memory set is not sufficient when the\ncontract requires restart-safe deduplication\" [C10].\n\nCrash behaviour under this protocol:\n\n| Crash point | Durable state | Successor action |\n|---|---|---|\n| After step 1, before the provider call | In-progress receipt K | Call the provider with K (first capture) or reconcile if a call may have happened |\n| After the provider call, before step 3 | In-progress receipt K, capture at provider | Query/retry with K; provider returns the original result; then complete |\n| After step 3, before step 4 | Completed receipt K, row transitioned | Recognize K, skip the provider call, commit the position |\n| After step 4 | Position advanced | Normal progress |\n\nThe book's invariant is exactly this windowed statement: \"at most one committed effect per\nconsumer and message identity within the declared retention window\" [C9]. The window matters;\nit is the subject of section 4.\n\n### 3.4 What K must not be\n\n- **A fresh UUID or random request id per attempt.** The provider sees a new operation; the\n  receipt sees a new key; the duplicate is not suppressed. This is the most common way an\n  \"idempotent\" capture is not idempotent.\n- **The order id alone.** If one order can have multiple capture operations, the order id is\n  not the operation identity. If it cannot, the order id may be a valid *scope*, but it still\n  has to be combined with the consumer/effect scope and used as the same value everywhere.\n- **An instance id, an ownership epoch, or a timestamp.** Those identify a holder or an\n  attempt, not the effect. The fencing page is clear that ownership and effect identity are\n  different: \"fencing alone does not deduplicate\" [C11], and \"unrelated side effects need\n  their own guard\" [C11].\n- **A key that exists only in memory.** It disappears at exactly the moment the successor\n  needs it.\n\n### 3.5 Fencing is necessary but not sufficient\n\nIf the destination can compare and persist an owner epoch, a stale instance's *writes* can be\nrejected: \"The destination must reject stale epochs or the operation remains explicitly\nunsafe\" [C11]. That protects the order row and any Kafka commit the stale instance attempts.\nIt does not protect the provider call, which may have completed before the epoch was\nestablished at the provider (and many providers have no epoch concept at all).\n\nThe book's decision rule is the right one for this scenario: for an external API that cannot\nfence stale callers, \"serialize through an authoritative effect owner, use stable idempotent\noperation identities where supported, or retain an explicit unresolved-safety boundary\"\n[C11]. In practice the team needs at least one of: a provider idempotency contract keyed by\nK, an authoritative capture service that serializes by K, or an explicit statement that a\nduplicate capture is possible and must be reconciled.\n\nAlso note the book's caution about the trigger itself: \"Avoid one universal claim that a\nmissed poll immediately moves every partition\" [C18]. The rebalance behaviour depends on the\ngroup protocol and configuration; the safety argument must not rest on \"the old instance\nmust have stopped\" — it may still be running.\n\n## 4. What changes when the group's position falls outside retention\n\n### 4.1 The mechanical change\n\nRetention deletes log segments. The committed group position names an offset in the deleted\nrange. \"If the requested offset no longer exists, auto.offset.reset chooses a configured\nbehavior; it cannot recreate deleted records\" [C13].\n\nTwo reset outcomes are possible and neither is a repair:\n\n- `latest`: the consumer jumps to the end. \"latest may skip missing history\" [C14]. Captures\n  for the deleted records are never made; orders stay stale; the consumer looks healthy\n  because lag is zero. \"A silent reset can turn a recovery failure into apparently healthy\n  but incomplete output\" [C14].\n- `earliest`: the consumer starts at \"the earliest retained history, not the beginning of\n  all business events\" [C14]. It reprocesses the retained tail. Duplicates are suppressed\n  only if the receipt for each operation still exists.\n\nA related but distinct failure is loss of the group's stored offset entry itself (offsets\ntopic retention). The inspected sections do not state that mechanism, so this is retained as\nan inference, not a source claim: the group would restart without a committed position and\nthe same reset semantics would apply. Either way, the position is no longer a trustworthy\nreplay cursor.\n\n### 4.2 What happens to the exactly-once claim\n\nThe claim has three supports, and retention removes all three:\n\n1. **The input set.** The transaction guarantee is defined over records in the log. If the\n   records below the log start offset are gone, \"each record exactly once\" no longer ranges\n   over the same set. There is nothing for the transaction or `read_committed` to replay.\n2. **The evidence.** The log was the evidence of what was processed. After deletion, the\n   only remaining evidence is the receipt table and the provider ledger. If the receipt\n   window also elapsed, there is no evidence at all.\n3. **The dedup window.** The marker lifetime \"must cover the maximum broker redelivery, DLQ\n   replay and historical replay horizon; a shorter window turns an expired identity into a\n   new message and can duplicate the effect\" [C16]. The invariant is explicitly \"within the\n   declared retention window\" [C16]. A reset to `earliest` after the receipt window has\n   passed re-executes old records as new business.\n\nSo after retention loss the accurate state is: **delivery for the gap is unknown**. Depending\non the reset policy it is skewed toward silent loss (`latest`) or toward replay with\nwindow-limited deduplication (`earliest`); it is not exactly-once under either policy. The\nKafka-side transaction guarantee remains true only for the retained records that are actually\nprocessed.\n\nThe book's failure matrix lists the same boundary from the other direction: \"Retention or\ncompaction removes needed history\" leaves a \"late/rebuilding consumer\" unable to reconstruct\nrequired state, and the check is the \"retention horizon, full snapshots/backfills and event\ncontract\" [C15].\n\n### 4.3 The data decision and the rebuild\n\nThe book's rule is to make this an explicit data decision, not a configuration default. The\navailable repair is a rebuild: \"An original rebuild protocol creates a source snapshot with\nan explicit change boundary, reconstructs a new projection, applies retained subsequent\nchanges with stable identities, compares completeness and then switches the read alias\"\n[C15]. It \"requires a source/CDC contract that actually closes the snapshot/change gap. If\nthat boundary is unavailable, record insufficient evidence instead of promising lossless\nrebuild\" [C15].\n\nFor this payment scenario the rebuild needs:\n\n- a source-side snapshot of orders at a declared boundary (or a provider-side statement of\n  captures in the gap);\n- the receipt table retained for the whole gap, or a provider query by K for every candidate\n  capture;\n- a comparison of \"one capture per logical payment\" between the provider ledger and the order\n  rows, with duplicates and missing captures classified;\n- an explicit switch (read alias, projection version) and a record of what could not be\n  proven.\n\nWithout that, the team can only say \"we do not know whether the gap captured zero, one or\ntwo payments per record\". That is the honest answer, and it is incompatible with the\nexactly-once declaration.\n\n### 4.4 What to test\n\nThe book's proposed cases are the right acceptance set: \"crash after SQL commit, delayed\nexternal response across revocation, partial batch completion, aborted Kafka transaction\nunder both isolation settings, offset older than retention and source rebuild while updates\ncontinue\" [C17]. The oracle is \"user-level effect completeness and duplicates resolved, not\nmerely zero consumer lag\" [C17]. Add the identity-specific cases: same K across restart,\nconcurrent old/new attempts on the same K, provider timeout with an unknown outcome,\nprovider idempotency-window expiry, and a reset to both `earliest` and `latest` after the\nreceipt window.\n\n## 5. Boundaries, contradictions and unknowns\n\n- **Design evidence, not execution.** The inspected material is documentation synthesis and\n  original synthetic reasoning. The page says the receipt and rebuild protocols are\n  \"original unexecuted designs\"; the synthetic protocol \"repairs this crash window only under\n  its stated local atomicity and retention assumptions\" [C17]. No broker, provider or\n  database was run for this answer.\n- **Kafka version.** The book pins Kafka 4.1 for the mechanism. Client configuration,\n  transaction timeouts, group protocol and static membership can change timing; the\n  `max.poll.interval` behaviour is explicitly configuration-dependent [C18].\n- **Provider contract unknown.** The corpus does not inspect any real provider's idempotency\n  semantics: key lifetime, whether a retry returns the original result, and whether the key\n  is scoped per account/merchant. The answer's \"capture is at-least-once\" is therefore the\n  safe reading; \"deduplicated\" is conditional on that external contract.\n- **Offsets-topic retention vs data retention.** The book section covers the requested offset\n  no longer existing (data retention). Loss of the group's stored offset entry is a related\n  mechanism not stated in the inspected text; it is flagged as inference.\n- **Concurrent attempts.** The book's uniqueness constraint arbitrates two inserts, but the\n  provider-side race (old instance's call in flight while the successor retries with K) is\n  safe only if the provider serializes by K or returns the original result. If it does not,\n  the book's alternative is to serialize through an authoritative effect owner or record an\n  unresolved boundary [C11].\n- **Tool limitation.** `outline` returned `snapshot-mismatch` (\"Route metadata and index\n  differ\") during this session; navigation used search plus read only. This does not affect\n  the section text that was read, but it is recorded rather than hidden.\n- **No production claim.** Nothing here asserts what the team's actual provider, broker or\n  database did. The answer is a mechanism and evidence-boundary analysis.\n\n## 6. Evidence map\n\n| Claim | Section key | Verbatim fragment |\n|---|---|---|\n| C1 | `...#rebalance-external-effects-and-expired-replay-positions` | \"Protects that declared Kafka boundary; external SQL still requires cooperation\" |\n| C1, C2, C4, C5, C6, C12, C17 | `...#4-consumer-offset-effect-and-crash-points` | \"A consumer group offset is a replay position, not proof that every user-visible effect succeeded.\" |\n| C3, C5, C15 | `...#5-failure-and-recovery-matrix` | \"In-flight work, offset commits and business effect identity\" |\n| C7, C8, C9, C10, C16 | `tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity` | \"at most one committed effect per consumer and message identity within the declared retention window.\" |\n| C11 | `tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination` | \"fencing alone does not deduplicate\" |\n| C12 | `tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#5-choose-the-processor-for-the-real-topology` | \"Kafka transaction/Streams `exactly_once_v2` scope\" |\n\nThe complete claim-by-claim ledger, including every quote and its status, is in the\n`claims` array of the answer JSON.\n\n## 7. Method and snapshot\n\n- `describe` was run first; layers are `book`, `atlas`, `modeling-and-simulation`. Only\n  `book` was needed for this mechanism question.\n- All cited sections were read through the CLI with `--volume book`; quotes were checked as\n  verbatim substrings of the read content before being entered in the ledger.\n- Search formulations per facet are in the facet matrix. Two consecutive searches added no\n  new evidence after the offsets-effects page, the inbox page and the fencing section were\n  read; the remaining searches were used only to confirm that no competing page contradicted\n  them.\n- Snapshot: `3db217e9075d8572f71b62778b4ab91f1460bb9421174ede7e891136aa26101a`; ranker\n  `tycho-section-fts5-bm25-v5`; citation scheme `tycho.section-key.v2`.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A Kafka transaction makes Kafka output records and consumed offsets atomic within Kafka; it does not make the payment-provider call or the order-row update atomic with them.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "Protects that declared Kafka boundary; external SQL still requires cooperation",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "but it does not automatically enclose an unrelated SQL commit, payment provider or email delivery.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "Even with transactional producers, the business application must decide how it atomically persists its",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "read_committed controls which transactional Kafka records a consumer can see; it is not an application-database isolation mode and does not prove that an external side effect happened once.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "it is not proof that every consumer's external side effect happens once.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "read_committed also has a precise visibility contract; it is not an isolation mode for the application database.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A rebalance revokes partition ownership but cannot cancel an in-flight remote capture; the revoked instance can finish the provider call after it stops polling.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "Stopping polling or receiving a rebalance callback does not retract that remote request.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "Guard the external effect with its own identity/ownership contract, drain or classify in-flight work, and commit only positions for resolved effects owned under the selected consumer protocol.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+          "quote": "In-flight work, offset commits and business effect identity",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Because the capture is outside the Kafka transaction, the successor's replay of the same record issues a second capture call; no ordering of the effect commit and the position commit prevents the duplicate by itself.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "No perfect ordering of two independent commits creates an automatic global transaction.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "A unique durable receipt for K, committed atomically with the SQL effect, can let the successor recognize the existing result and move forward.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The scenario is the effect-before-position, no-deduplication row: the successor repeats the effect unless the effect store resolves the duplicate identity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "Durable idempotency/effect key must suppress the duplicate row transition",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "A unique durable receipt for K, committed atomically with the SQL effect, can let the successor recognize the existing result and move forward.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Enabling transactions and read_committed therefore leaves the end-to-end exactly-once claim unsupported; the book explicitly calls the inference 'Kafka transactions are enabled, therefore the external side effect can never happen twice' false.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "Need source input identity, sink transaction/idempotency, replay/failure tests, external provider contract and reconciliation policy.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "test producer fencing, rebalance, source replay, crash-after-database-commit and expired dedup keys",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "The capture's provider idempotency key must be the same stable operation identity K that the consumer receipt records, so a replayed attempt resolves to the original capture result instead of a new charge.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "A unique durable receipt for K, committed atomically with the SQL effect, can let the successor recognize the existing result and move forward.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+          "quote": "use stable idempotent operation identities where supported",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "quote": "The identity must include the correct subscriber and event/effect scope; two different consumers legitimately process the same event into different local states.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "The identity is a composite of consumer/subscriber scope and source message identity for the capture effect, not just the order id or a bare event id.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "quote": "The identity must include the correct subscriber and event/effect scope; two different consumers legitimately process the same event into different local states.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "quote": "It scopes a shared store by \"a composite of the consumer identity\nand the message identity\".",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The receipt and the order-row transition must commit in one local transaction, with a uniqueness constraint on K so that concurrent duplicates resolve to one committed effect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "quote": "An inbox can persist a consumer's processed-event identity and business effect together in **one local transaction**.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "quote": "Use a uniqueness\nconstraint on the deduplication key such that two transactions can attempt to insert a key,\nbut only one can succeed.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "quote": "at most one committed effect per consumer and message identity within the\ndeclared retention window.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Deduplication must be restart-safe and stable across the rebalance and replay horizon; an in-memory set or a per-attempt identity is insufficient.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "quote": "An in-memory set is not sufficient when the contract requires restart-safe deduplication.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "quote": "The marker lifetime must cover the maximum broker redelivery, DLQ\nreplay and historical replay horizon; a shorter window turns an expired identity into a new\nmessage and can duplicate the effect.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Fencing and ownership epochs protect destination writes only where the destination checks and persists them; fencing alone does not deduplicate a capture, and a provider that cannot fence stale callers requires a stable idempotent operation identity or an explicit unresolved boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+          "quote": "The destination must reject stale epochs or the operation remains explicitly\nunsafe.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+          "quote": "fencing alone does not deduplicate",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+          "quote": "use stable idempotent operation identities where supported",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+          "quote": "Unrelated side effects need their own guard.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Any exactly-once statement is scoped to a bounded Kafka state/output topology and must state connector and external-sink behavior explicitly.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "exactly-once processing guarantee within a bounded Kafka state/output topology",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#5-choose-the-processor-for-the-real-topology",
+          "quote": "Kafka transaction/Streams `exactly_once_v2` scope",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#5-choose-the-processor-for-the-real-topology",
+          "quote": "Checkpoint + connector/sink-specific guarantee scope",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "When the group's requested offset no longer exists, auto.offset.reset chooses a policy and cannot recreate deleted records.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "If the requested offset no longer exists, auto.offset.reset chooses a configured behavior; it cannot recreate deleted records.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Reset outcomes differ materially: latest may skip missing history, earliest starts at the earliest retained history rather than the beginning, and a silent reset turns a recovery failure into apparently healthy but incomplete output.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "latest may skip missing history, while earliest means the earliest retained history, not the beginning of all business events.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "A silent reset can turn a recovery failure into apparently healthy but incomplete output.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "After retention loss the group position is no longer a replay cursor; what happened to captures in the deleted range is unknown and must be settled by reconciliation and rebuild, not inferred from the offset.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "A silent reset can turn a recovery failure into apparently healthy but incomplete output.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+          "quote": "Retention or compaction removes needed history",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "An original rebuild protocol creates a source snapshot with an explicit change boundary, reconstructs a new projection, applies retained subsequent changes with stable identities, compares completeness and then switches the read alias.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "If that boundary is unavailable, record insufficient evidence instead of promising lossless rebuild.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The receipt window must outlive the broker, DLQ and historical-replay horizons; once an identity expires, the same record looks new and the effect can duplicate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "quote": "The marker lifetime must cover the maximum broker redelivery, DLQ\nreplay and historical replay horizon; a shorter window turns an expired identity into a new\nmessage and can duplicate the effect.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "quote": "at most one committed effect per consumer and message identity within the\ndeclared retention window.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The defensible post-incident statement is narrower: the Kafka boundary is transactional only for the retained log, the capture is at-least-once plus durable deduplication or an unresolved boundary, and the acceptance oracle is one capture per logical payment with reconciled provider status, not consumer lag.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "A consumer group offset is a replay position, not proof that every user-visible effect succeeded.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "Require user-level effect completeness and duplicates resolved, not merely zero consumer lag.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "The synthetic receipt protocol repairs this crash window only under its stated local atomicity and retention assumptions.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Kafka's missed-poll behavior is configuration- and protocol-dependent, so the answer must not assert that any revoked instance immediately loses every partition.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "Avoid one universal claim that a missed poll immediately moves every partition.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+    "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+    "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#5-choose-the-processor-for-the-real-topology"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
