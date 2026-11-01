@@ -1624,9 +1624,39 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Describe separately the externally resolved name, the service membership view, the connection destination and the backend selected for each request.",
-          "reason": "Source page does not separate externally resolved name, membership, connection destination and selected backend."
+          "reason": "Azure documents encapsulated instance registration, Kubernetes separates Ingress routes from a Service's Pod membership, Gateway API separates the Gateway address, Host match and Service IP/EndpointSlices, and Envoy separates route matching from the upstream cluster and host. The four-layer decomposition is Tycho synthesis.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-routing.2026-10-21",
+            "section": "Multiple instances of the same service",
+            "quote": "The complexity of registering and unregistering service instances is encapsulated in the gateway.",
+            "revision": "c2c7ecda427fb76fa98431ccfab5aa20c610e1fc9d2485293625da7e2b435b4f"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-ingress.2026-11-01",
+              "section": "Terminology",
+              "quote": "A Kubernetes Service that identifies a set of Pods using label selectors.",
+              "revision": "43cd6851dcbfb321feee973e676f9c2b6369cdc328a3b4d1279a0c779e7cd688"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-gateway-api.2026-11-01",
+              "section": "HTTPRoute",
+              "quote": "For a Service backend, an implementation may represent the backend network endpoint as a Service IP or the backing EndpointSlices of the Service.",
+              "revision": "309a8a58019953a763e9eb7f6251cdde02772aab8b4b3e7acc42a5bdd7ccc3ff"
+            },
+            {
+              "source_id": "src.envoy",
+              "ledger_record": "read.envoy-http-routing.2026-11-01",
+              "section": "HTTP routing",
+              "quote": "At a high level the router takes an incoming HTTP request, matches it to an upstream cluster, acquires a connection pool to a host in the upstream cluster, and forwards the request.",
+              "revision": "d16659a8025833f15c330a33909c59f29b2de1de5b262993e42d63e23725491c"
+            }
+          ]
         },
         "failure_recovery": {
           "state": "supported",
@@ -1641,15 +1671,52 @@
           }
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A reverse proxy, client-side discovery or a BFF may be preferable when routing policy is simple or the gateway would become a hidden shared dependency.",
-          "reason": "Source page does not name reverse proxy, client discovery or BFF alternatives."
+          "reason": "Azure bounds the pattern to multi-service routing and warns about a single point of failure and bottleneck; Kubernetes lists LoadBalancer and NodePort without Ingress; Envoy describes edge reverse-proxy handling and a service-to-service mesh. The preference rule, client-side discovery and BFF alternatives are Tycho guidance.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-routing.2026-10-21",
+            "section": "When to use this pattern",
+            "quote": "This pattern might not be suitable when you have a simple application that uses only one or two services.",
+            "revision": "c2c7ecda427fb76fa98431ccfab5aa20c610e1fc9d2485293625da7e2b435b4f"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-gateway-routing.2026-10-21",
+              "section": "Issues and considerations",
+              "quote": "The gateway service can introduce a single point of failure.",
+              "revision": "c2c7ecda427fb76fa98431ccfab5aa20c610e1fc9d2485293625da7e2b435b4f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-gateway-routing.2026-10-21",
+              "section": "Issues and considerations",
+              "quote": "The gateway service can introduce a bottleneck.",
+              "revision": "c2c7ecda427fb76fa98431ccfab5aa20c610e1fc9d2485293625da7e2b435b4f"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-ingress.2026-11-01",
+              "section": "Alternatives",
+              "quote": "You can expose a Service in multiple ways that don't directly involve the Ingress resource:",
+              "revision": "43cd6851dcbfb321feee973e676f9c2b6369cdc328a3b4d1279a0c779e7cd688"
+            },
+            {
+              "source_id": "src.envoy",
+              "ledger_record": "read.envoy-http-routing.2026-11-01",
+              "section": "HTTP routing",
+              "quote": "This is useful both for handling edge traffic (traditional reverse proxy request handling) as well as for building a service to service Envoy mesh",
+              "revision": "d16659a8025833f15c330a33909c59f29b2de1de5b262993e42d63e23725491c"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "gateway-routing",
         "question": "Should a gateway route requests to the responsible backend using an explicit contract rather than exposing every backend address to clients?",
-        "competing_alternative": "Direct client-to-backend calls or a simpler reverse proxy. Reverse the choice when routing logic becomes domain logic or the gateway cannot observe backend health.",
+        "competing_alternative": "Direct client-to-backend calls, a simpler reverse proxy, client-side discovery or a BFF. Azure's pattern says gateway routing may not suit a simple application and warns that the gateway can become a single point of failure; Envoy describes edge reverse-proxy handling and a service-to-service mesh. Reverse the choice when routing logic becomes domain logic or the gateway cannot observe backend health. The choice rule is Tycho guidance.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -1658,12 +1725,29 @@
         "source_id": "src.microsoft-cloud-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.k8s-ingress.2026-11-01",
+            "revision": "43cd6851dcbfb321feee973e676f9c2b6369cdc328a3b4d1279a0c779e7cd688"
+          },
+          {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.k8s-gateway-api.2026-11-01",
+            "revision": "309a8a58019953a763e9eb7f6251cdde02772aab8b4b3e7acc42a5bdd7ccc3ff"
+          },
+          {
+            "source_id": "src.envoy",
+            "ledger_record": "read.envoy-http-routing.2026-11-01",
+            "revision": "d16659a8025833f15c330a33909c59f29b2de1de5b262993e42d63e23725491c"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Atlas anchor points at this section; it states the routing/selection contract but not gateway request routing rules."
+      "notes": "Invariant and alternative bound 2026-11-01 to the Azure Gateway Routing page, Kubernetes Ingress and Gateway API pages, and Envoy HTTP routing; the four-layer route decomposition and the alternative-choice rule remain Tycho synthesis. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.gateway-aggregation",
@@ -18213,7 +18297,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Gateway routing and health endpoint monitoring now have separate dedicated units."
     },
@@ -18607,11 +18691,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 99,
+    "invariant_supported": 100,
     "failure_recovery_supported": 98,
-    "alternative_supported": 99,
-    "technical_partial_bounded": 10,
-    "technical_partial": 48,
+    "alternative_supported": 100,
+    "technical_partial_bounded": 11,
+    "technical_partial": 47,
     "technical_name_only": 0,
     "technical_sufficient": 87,
     "decision_partial_bounded": 58,
