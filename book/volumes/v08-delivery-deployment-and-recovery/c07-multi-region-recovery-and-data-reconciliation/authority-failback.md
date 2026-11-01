@@ -25,17 +25,26 @@ route_hints:
     - "authority"
     - "failback"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.postgresql"
+    - "src.sre"
+    - "src.aws-route53"
+    - "src.azure-site-recovery"
   claim_ids: []
-  status: "unknown"
-  notes: "Bounded question from tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  status: "source-linked"
+  notes: >-
+    Bound 2026-10-31 to five public units: AWS Route 53 active-active and
+    active-passive failover; Azure Site Recovery failover and failback; PostgreSQL
+    17 failover and promotion; and Google SRE testing disaster. src.aws-route53
+    and src.azure-site-recovery are registered. No claim-level mapping,
+    independent review or source-completeness claim is made.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-31"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-31"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -156,15 +165,67 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Failover-Failback
 
-Failover moves authority from region A to a surviving region B under an explicit decision;
-failback is a second migration from B back to A, not the inverse operation. Hold writes when
-fencing evidence is missing, and do not treat DNS pointing as sufficient authority transfer.
+**Mechanism.** Failover moves authority from region A to a surviving region B under an
+explicit decision; failback is a second migration from B back to A, not the inverse
+operation. PostgreSQL defines the database step: "If the primary server fails then the
+standby server should begin failover procedures", and promotion of a log-shipping standby
+runs `pg_ctl promote` or `pg_promote()`. Route 53 defines the traffic step: active-passive
+failover keeps a secondary "on standby in case all the primary resources become
+unavailable", and "When the primary resource is unhealthy, Route 53 responds to DNS queries
+using the secondary record." **Tycho reading:** health-checked DNS moves clients; it does
+not move data authority, replication position or accepted operation history.
 
-Quarantine A, reconcile any divergent writes under one selected authority, verify user journeys, then
-reintroduce A as a replica or standby before considering promotion. A failback that merely points DNS
-back can resurrect stale writes and split authority. Record the authority epoch, the data
-reconciliation evidence and the rollback gate.
+**Invariant.** Quarantine A, reconcile any divergent writes under one selected authority,
+verify user journeys, then reintroduce A as a replica or standby before considering
+promotion. PostgreSQL says that when the old primary restarts "you must have a mechanism
+for informing the old primary that it is no longer the primary"; STONITH is "necessary to
+avoid situations where both systems think they are the primary, which will lead to
+confusion and ultimately data loss." Azure Site Recovery requires the source VM to be shut
+down before failback and synchronization to be complete before the operation. **Tycho
+rule:** record an authority epoch, fencing evidence and a reconciled operation ledger
+before routing; a green health check is not fencing.
 
-Stay on the promoted region and rebuild the old region as a standby when failback risk exceeds its
-benefit. Failback is a fit when the old region can be proven consistent and the authority switch is
-observable.
+**Failure and recovery.** A failback that merely points DNS back can resurrect stale
+writes and split authority. Route 53 documents that active-passive selection follows
+health status, and its weighted variant warns that the setup "can make your web
+application or website unreliable" when the last healthy resource cannot absorb the load.
+PostgreSQL records the consequence of two primaries as "confusion and ultimately data
+loss". Azure Site Recovery warns that "If the source VM is powered on then it fails and
+thus fails the failback operation." Google SRE describes offline disaster recovery tools
+that compute a "checkpoint state that is equivalent to cleanly stopping the service" and
+says that if the offline constraints "must be broken, it’s much harder to show confidence
+that the associated tool implementation will work at any time on short notice." **Tycho
+runbook:** keep the old writer fenced, reconcile accepted and unknown operations, verify a
+real user journey, and record the achieved RPO/RTO and any loss before declaring recovery.
+
+**Alternative.** Stay on the promoted region and rebuild the old region as a standby when
+failback risk exceeds its benefit. PostgreSQL says "To return to normal operation, a
+standby server must be recreated, either on the former primary system when it comes up, or
+on a third, possibly new, system"; `pg_rewind` can shorten that rebuild. Azure Site
+Recovery's reprotect step "sends initial data to the target location, and then replicates
+delta information for the VMs to the target". **Tycho choice rule:** failback is a new
+migration, not a rollback; if fencing or reconciliation evidence is incomplete, keep
+serving from the promoted region and rebuild the old region as a standby instead.
+
+**Limits.** Retention, replication lag and application consistency determine the actual
+recovery point; an untested failback is a hypothesis. Record the authority owner, the
+fencing evidence, the reconciliation result and the last drill date.
+
+**Bound source limits.** Five public units were inspected on 2026-10-31: AWS Route 53,
+*Active-active and active-passive failover*; Azure Site Recovery, *Run a failover from
+on-premises to Azure* and *Tutorial: Fail back Azure VM to the primary region*; PostgreSQL
+17, *26.3. Failover*; and Google SRE, *Testing for Reliability*, section *Testing
+Disaster*. The exact units are
+<https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-types.html>,
+<https://learn.microsoft.com/en-us/azure/site-recovery/site-recovery-failover>,
+<https://learn.microsoft.com/en-us/azure/site-recovery/azure-to-azure-tutorial-failback>,
+<https://www.postgresql.org/docs/17/warm-standby-failover.html> and
+<https://sre.google/sre-book/testing-reliability/>. Bound and retained records:
+`read.aws-route53-failover.2026-10-31`, `read.azure-asr-failover.2026-10-31`,
+`read.azure-asr-failback.2026-10-31`, `read.pg-failover.2026-10-31` and
+`read.sre-testing-disaster.2026-10-31`; `src.aws-route53` and `src.azure-site-recovery`
+are registered. They are documentation and a book chapter, not benchmarks or production
+observations. The PostgreSQL page has no Last-Modified header or ETag; the AWS and Azure
+pages carry Last-Modified timestamps. No database, DNS change,
+failover, failback or disaster exercise was run. The authority-epoch rule, reconciliation
+order, user-journey gate and choice rule remain Tycho guidance.

@@ -34,18 +34,25 @@ evidence_scope:
     - "src.kubernetes"
     - "src.kleppmann-distributed-locking"
     - "src.jepsen-consistency"
+    - "src.lamport-time"
+    - "src.mattern-vector-time"
+    - "src.kafka"
+    - "src.kafka-design"
     - "src.temporal"
   claim_ids: []
   status: "source-linked"
-  notes: "9 cards cite read units; owner links are bounded."
+  notes: >-
+    9 cards cite read units; owner links are bounded. Distributed Workflow
+    Orchestration moved to a dedicated page on 2026-11-01 with Temporal, AWS
+    Step Functions and Cadence sources; no sufficient coverage.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-11-01"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-11-01"
+source_inspection_date: "2026-11-01"
 content_verified_at: null
 ---
 # V11/C08 — Distributed coordination
@@ -212,36 +219,7 @@ Monitoring.
 
 ### Fencing Tokens
 
-**Identity.** Fencing Tokens; family Distributed coordination; kind coordination-pattern;
-priority core.
-
-**Decision question.** Should every write carry an epoch/token so the destination rejects
-a stale owner?
-
-**Good-fit conditions.** The destination can compare tokens; tokens increase
-monotonically; stale owners may still run but cannot commit.
-
-**Hard contraindications.** Reject when the resource cannot enforce tokens, when tokens
-can be reused, or when the lock is only an efficiency optimization.
-
-**Competing alternative.** Lease-only ownership or single-writer routing. Reverse the
-choice when destination enforcement cost exceeds the stale-write risk it removes.
-
-**Failure and recovery.** Token bypass and epoch reuse are common; verify destination
-enforcement in the owner section.
-
-**Technical owner.** [Fencing Tokens](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#fencing-tokens) — destination fencing is bounded, not a universal token protocol.
-
-**Sources.**
-[src.kleppmann-distributed-locking](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-fencing.2026-10-21: all nine served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Distributed Lock; Lease-Based Ownership; Leader Election; Idempotent
-Receiver.
+See the [dedicated Fencing Tokens card](fencing-tokens.md).
 
 ### Quorum Coordination
 
@@ -277,108 +255,15 @@ owner guidance. The source is a public pattern/documentation unit, not a benchma
 
 ### Causal Ordering
 
-**Identity.** Causal Ordering; family Distributed coordination; kind coordination-pattern;
-priority advanced.
-
-**Decision question.** Should operations that are causally related preserve their order
-without requiring a total order?
-
-**Good-fit conditions.** Happens-before relationships are meaningful; causal metadata such
-as vector clocks can be carried; concurrent operations may diverge but must converge once
-the same updates are visible.
-
-**Hard contraindications.** Reject when a total order is required, when causal metadata
-cannot be kept with the operation, when clients switch servers without a session
-guarantee, or when concurrent writes have no merge rule.
-
-**Competing alternative.** Total ordering via consensus or per-key ordering. Reverse the
-choice when causal metadata cost exceeds ordering benefit.
-
-**Failure and recovery.** Partition, reordered delivery, lost metadata and server switching
-can expose missing dependencies. Keep durable causal metadata, replay/deduplicate, and
-define a merge; if total order is mandatory, use consensus and accept its cost.
-
-**Technical owner.** [Causal Ordering](../../v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md#causal-ordering) — causal ordering is bounded, not a universal clock service.
-
-**Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-causal.2026-10-21: both served headings read; Example,
-convergence and sticky availability are unheaded paragraphs. The source is a public
-pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Session Consistency; Consensus; Read Replicas; Event Sourcing.
+See the [dedicated Causal Ordering card](causal-ordering.md).
 
 ### Session Consistency
 
-**Identity.** Session Consistency; family Distributed coordination; kind
-coordination-pattern; priority advanced.
-
-**Decision question.** Should one client session preserve selected read/write observations
-across replicas?
-
-**Good-fit conditions.** A session token can route/stick; monotonic reads or
-read-your-writes are required; failover preserves the token.
-
-**Hard contraindications.** Reject when global linearizability is required, when sessions
-cannot be maintained, or when failover loses session state.
-
-**Competing alternative.** Strong consistency or eventual consistency without session
-guarantees. Reverse the choice when session routing/failover cost exceeds client
-experience benefit.
-
-**Failure and recovery.** Token loss, server switching and multiwriter frontiers are
-common. Preserve the token across failover, bound waits, and return a retryable failure
-rather than serving an older snapshot.
-
-**Technical owner.** [Session Consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#session-consistency) — session consistency is bounded, not a complete client-session protocol.
-
-**Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-jepsen.2026-10-21: section "Consistency Models". The record has no
-standalone Session guarantees section; session-specific claims rely on the page body's
-monotonic-reads/read-your-writes links, not this record. The source is a public
-pattern/documentation unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Causal Ordering; Read Replicas; Leader-Follower Replication.
+See the [dedicated Session Consistency card](session-consistency.md).
 
 ### Distributed Workflow Orchestration
 
-**Identity.** Distributed Workflow Orchestration; family Distributed coordination; kind
-coordination-pattern; priority core.
-
-**Decision question.** Should a durable orchestration engine own multi-step progress,
-timers and recovery?
-
-**Good-fit conditions.** Steps span services or long timers; progress must survive crashes;
-activities can be idempotent; retries, cancellation and compensation are business
-decisions; the team can operate a durable engine and version its histories.
-
-**Hard contraindications.** Reject when one local transaction suffices, when workflow state
-has no owner, when replay/versioning cannot be governed, or when orchestration becomes a
-hidden monolith.
-
-**Competing alternative.** Saga choreography or a simple queue pipeline. Reverse the
-choice when central workflow state and engine operations exceed coordination benefit.
-
-**Failure and recovery.** Stuck workflows, duplicate activities, lost timers,
-nondeterministic replay and version conflicts are common. Replay from durable history,
-keep activities idempotent and use a repair state for unknown external effects.
-
-**Technical owner.** [Distributed Workflow Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#distributed-workflow-orchestration) — durable workflow coordination is bounded, not a Temporal product guide.
-
-**Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-temporal-workflows.2026-10-21: all four served headings read.
-The record supports durable orchestration only; saga
-compensation semantics are synthetic guidance, not a source claim. The source is a public
-pattern/documentation unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Saga Orchestration; Process Manager; Transactional Outbox;
-Lease-Based Ownership.
+See the [dedicated Distributed Workflow Orchestration card](distributed-workflow-orchestration.md).
 
 ## Chapter result and counterexample
 

@@ -52,13 +52,42 @@ def validate(root=ROOT):
     sources = {s['id'] for s in json.loads((root/'sources/register.json').read_text())['sources']}
     inspections = json.loads((root/manifest['inspection_record']).read_text())['inspections']
     inspected = {x['source_id'] for x in inspections}
+    overlay_path = root/'edition/patterns/split-source-additions.v1.json'
+    overlay = {'additions': []}
+    if overlay_path.is_file():
+        overlay = json.loads(overlay_path.read_text())
+        require(overlay.get('schema_version') == 1, 'split-source-additions-version')
+    ledger = json.loads((root/'edition/patterns/reading-ledger.v1.json').read_text())
+    ledger_map = {r['id']: r for r in ledger['records']}
+    overlay_by_path = {}
+    overlay_by_record = {}
+    seen_add = set()
+    for add in overlay.get('additions', []):
+        path = add['path']
+        require(path not in overlay_by_path, 'split-source-additions-duplicate-page')
+        overlay_by_path[path] = add
+        overlay_by_record[add['base_record_id']] = add
+        require(add['source_id'] in sources, 'split-source-additions-source')
+        record = ledger_map.get(add['ledger_record'])
+        require(record is not None, 'split-source-additions-ledger')
+        require(record.get('source_id') == add['source_id'], 'split-source-additions-ledger-source')
+        require(add['section'] in (record.get('sections_read') or []), 'split-source-additions-section')
+        require(add['revision'] == record.get('content_sha256'), 'split-source-additions-revision')
+        require(add['inspection_date'] == record.get('access_date'), 'split-source-additions-date')
+        key = (path, add['source_id'])
+        require(key not in seen_add, 'split-source-additions-duplicate-source')
+        seen_add.add(key)
     for record in additions:
         path = record['path']
         require(path in documents, 'enrichment-missing-document')
-        text = view.read_text(path)
+        extra = overlay_by_record.get(record['id'])
+        text = (root / extra['path']).read_text() if extra else view.read_text(path)
         meta, body = split(text)
         current_sha = sha(text)
-        require(current_sha == record['sha256']
+        expected_sha = extra.get('content_sha256') if extra else None
+        if expected_sha:
+            require(current_sha == expected_sha, 'split-source-additions-content')
+        require(current_sha == (expected_sha or record['sha256'])
                 or authorized(root, 'enrichment_documents', path,
                               record['sha256'], current_sha),
                 'enrichment-new-document-drift')
@@ -66,7 +95,15 @@ def validate(root=ROOT):
                 'enrichment-document-identity')
         require(meta['route_hints']['questions'] == [record['question']],
                 'enrichment-question-drift')
-        require(meta['evidence_scope']['source_ids'] == record['source_ids'],
+        extra = overlay_by_record.get(record['id'])
+        allowed_sources = list(record['source_ids'])
+        effective_date = record.get('source_inspection_date', '2026-10-20')
+        if extra:
+            require(extra.get('base_record_id') == record['id'],
+                    'split-source-additions-base')
+            allowed_sources.append(extra['source_id'])
+            effective_date = max(effective_date, extra['inspection_date'])
+        require(meta['evidence_scope']['source_ids'] == allowed_sources,
                 'enrichment-source-drift')
         if record.get('origin_page'):
             # A verbatim split inherits the origin page's source bindings and
@@ -78,7 +115,7 @@ def validate(root=ROOT):
             require(set(record['source_ids']) <= sources & inspected, 'enrichment-uninspected-source')
         require(meta['content_review']['status'] == 'self-checked'
                 and meta['content_verified_at'] is None, 'enrichment-fabricated-acceptance')
-        require(meta['source_inspection_date'] == record.get('source_inspection_date', '2026-10-20'),
+        require(meta['source_inspection_date'] == effective_date,
                 'enrichment-inspection-date')
         require(body.count('\n# ') == 1, 'enrichment-heading-count')
     edits = manifest['modified_documents']

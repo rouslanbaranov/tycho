@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 113 |
+| Reviewed by independent agent | 40 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 22, "reviewed-by-independent-agent": 113}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 95, "reviewed-by-independent-agent": 40}.
 
 ## Review procedure
 
@@ -51,7 +51,7 @@ blank verdict template in the machine-readable file.
 
 - **API Gateway**
   Current: pass; historical: None; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Asynchronous Request-Reply**
   Current: reject; historical: None; re-review: pass; report: pass-with-findings.
@@ -67,7 +67,7 @@ blank verdict template in the machine-readable file.
 
 - **Backend for Frontend (BFF)**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Backup, PITR and Restore**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -79,11 +79,11 @@ blank verdict template in the machine-readable file.
 
 - **Branch by Abstraction**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Bulkhead**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Cache Invalidation**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -91,7 +91,7 @@ blank verdict template in the machine-readable file.
 
 - **Cache Stampede Protection**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Cache-Aside / Lazy Loading**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -107,7 +107,7 @@ blank verdict template in the machine-readable file.
 
 - **Causal Ordering**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **CDN / Edge Caching**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -115,15 +115,15 @@ blank verdict template in the machine-readable file.
 
 - **Cell-Based Architecture**
   Current: pass; historical: None; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Change Data Capture (CDC)**
   Current: pass; historical: None; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Circuit Breaker**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Claim Check**
   Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
@@ -131,7 +131,7 @@ blank verdict template in the machine-readable file.
 
 - **Clean / Onion Architecture**
   Current: pass; historical: None; re-review: pass; report: None.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Client-Side Discovery**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -139,15 +139,15 @@ blank verdict template in the machine-readable file.
 
 - **Command Query Responsibility Segregation (CQRS)**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Command-Side Replica**
   Current: pass; historical: None; re-review: pass; report: None.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Compensating Transaction**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Competing Consumers**
   Current: pass; historical: None; re-review: pass; report: pass.
@@ -155,11 +155,11 @@ blank verdict template in the machine-readable file.
 
 - **Consensus**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Consistent Hashing**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Content-Based Router**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -175,7 +175,7 @@ blank verdict template in the machine-readable file.
 
 - **CQRS Read Projections**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Dark Launching / Shadow Traffic**
   Current: reject; historical: None; re-review: pass; report: pass-with-findings.
@@ -183,27 +183,27 @@ blank verdict template in the machine-readable file.
 
 - **Database per Service**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Dead Letter Channel / DLQ**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Deadline Propagation**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Deployment Stamps**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Distributed Cache**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Distributed Lock**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Distributed Tracing**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -215,11 +215,11 @@ blank verdict template in the machine-readable file.
 
 - **Domain Events**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Domain-Driven Design / Bounded Context**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Durable Subscriber**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -227,7 +227,7 @@ blank verdict template in the machine-readable file.
 
 - **Event Sourcing**
   Current: pass; historical: None; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Event-Driven Consumer**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -239,7 +239,7 @@ blank verdict template in the machine-readable file.
 
 - **Expand-and-Contract Schema**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Failover / Failback**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -251,7 +251,7 @@ blank verdict template in the machine-readable file.
 
 - **Feature Flags / Feature Toggles**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Federated Identity**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -259,19 +259,19 @@ blank verdict template in the machine-readable file.
 
 - **Fencing Tokens**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Gatekeeper**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Gateway Aggregation**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Gateway Offloading**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Gateway Routing**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -283,7 +283,7 @@ blank verdict template in the machine-readable file.
 
 - **GitOps**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Graceful Degradation**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -291,19 +291,19 @@ blank verdict template in the machine-readable file.
 
 - **Health Endpoint Monitoring**
   Current: pass; historical: None; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Health, Readiness and Liveness Checks**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Hedged Requests**
   Current: pass; historical: None; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Hexagonal Architecture / Ports and Adapters**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Horizontal Scaling**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -311,11 +311,11 @@ blank verdict template in the machine-readable file.
 
 - **Idempotency Key**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Idempotent Receiver**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Immutable Infrastructure**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -323,23 +323,23 @@ blank verdict template in the machine-readable file.
 
 - **Index Table**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Layered Architecture**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Leader Election**
   Current: pass; historical: None; re-review: pass; report: None.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Leader-Follower Replication**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Lease-Based Ownership**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Least Privilege**
   Current: pass; historical: None; re-review: pass; report: pass.
@@ -355,7 +355,7 @@ blank verdict template in the machine-readable file.
 
 - **Materialized View**
   Current: pass; historical: None; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Message Broker / Messaging Bridge**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -367,15 +367,15 @@ blank verdict template in the machine-readable file.
 
 - **Microservices Architecture**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Modular Monolith**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Multi-Leader Replication**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Multi-Level Caching**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -387,11 +387,11 @@ blank verdict template in the machine-readable file.
 
 - **Negative Caching**
   Current: pass; historical: None; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Online Data Migration**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Parallel Run**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -411,15 +411,15 @@ blank verdict template in the machine-readable file.
 
 - **Polyglot Persistence**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Priority Queue**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Process Manager / Routing Slip**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Publish/Subscribe**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -427,15 +427,15 @@ blank verdict template in the machine-readable file.
 
 - **Queue-Based Load Leveling**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Quorum Coordination**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Quorum-Based Reads/Writes**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Rate Limiting**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -447,7 +447,7 @@ blank verdict template in the machine-readable file.
 
 - **Read Replicas**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Read-Through Cache**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -463,15 +463,15 @@ blank verdict template in the machine-readable file.
 
 - **Retry with Exponential Backoff**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Retry with Jitter**
   Current: pass; historical: None; re-review: pass; report: None.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Reverse Proxy**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Rolling Deployment**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -479,15 +479,15 @@ blank verdict template in the machine-readable file.
 
 - **Saga**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Saga Choreography**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Saga Orchestration**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Scatter-Gather**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -507,11 +507,11 @@ blank verdict template in the machine-readable file.
 
 - **Service-Oriented Architecture (SOA)**
   Current: pass; historical: None; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Session Consistency**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Sharding**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -519,7 +519,7 @@ blank verdict template in the machine-readable file.
 
 - **Shuffle Sharding**
   Current: pass; historical: None; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Sidecar**
   Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
@@ -527,7 +527,7 @@ blank verdict template in the machine-readable file.
 
 - **Single Flight / Request Coalescing**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **SLI/SLO and Error Budgets**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -547,7 +547,7 @@ blank verdict template in the machine-readable file.
 
 - **Strangler Fig**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Structured Logging**
   Current: pass; historical: None; re-review: pass; report: None.
@@ -559,7 +559,7 @@ blank verdict template in the machine-readable file.
 
 - **Tenant-Based Resource Isolation**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Throttling**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -567,11 +567,11 @@ blank verdict template in the machine-readable file.
 
 - **Timeout**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Transactional Inbox**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Transactional Outbox**
   Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
@@ -583,7 +583,7 @@ blank verdict template in the machine-readable file.
 
 - **Two-Phase Commit (2PC)**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Valet Key**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -591,7 +591,7 @@ blank verdict template in the machine-readable file.
 
 - **Vertical Scaling**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Workload Identity / mTLS**
   Current: reject; historical: None; re-review: pass; report: pass-with-findings.
@@ -603,7 +603,7 @@ blank verdict template in the machine-readable file.
 
 - **Write-Behind / Write-Back**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Write-Through Cache**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

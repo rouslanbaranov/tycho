@@ -234,17 +234,17 @@ pool preserves order only when partition assignment is stable.
 
 ### Message Filter
 
-A message filter has a single output channel. If content matches the criteria, the message is
-routed to the output channel. If content does not match, the message is discarded and produces
-no downstream output. The public pattern page is publisher-abridged and does not state a
-rejected-message disposition, audit record or recovery path, so those remain unknown and out of
-scope for this note. A content-based router examines message content and routes each message to
-a different channel. Prefer the router when messages require different destinations or routing
-must choose among channels. Routing can be based on field existence, specific field values or
-configurable rules. The filter's predicate is the only selection criterion. Filtering removes
-messages from a channel; it does not choose among destinations. A router can become a point of
-frequent maintenance and may take the form of a rules engine. The filter has one output and no
-destination choice. A non-matching message is removed. The filter evaluates each message.
+A message filter has a single output channel. If content matches the criteria, the message is routed
+to the output channel. If content does not match, the message is discarded and produces no
+downstream output. The served page states: "If the message content does not match the criteria, the
+message is discarded." It states no rejected-message disposition, audit record, retention or
+recovery path; those remain unknown and outside this note. A recovery design would need a separate
+retained source, replay or dead-letter path, which is Tycho synthesis, not a claim from this source.
+A content-based router examines message content and routes each message to a different channel.
+Prefer the router when messages require different destinations or routing must choose among
+channels; the filter fits only a single-output pass-or-discard decision. Source:
+read.batch2-filter.2026-10-21; served revision
+899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c.
 
 ### Canonical Data Model
 

@@ -48,7 +48,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-11-01"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -133,13 +133,62 @@ See the [dedicated Transactional Outbox owner note](transactional-outbox.md).
 ### Distributed Workflow Orchestration
 
 A durable workflow records progress as a state machine, not as an in-memory coroutine. Steps,
-timers, retries, human tasks and compensation must survive process loss.
+timers, retries, human tasks and compensation must survive process loss. Temporal records each
+command and event in an Event History and replays that history to rebuild state after a crash
+([Temporal Workflows](https://docs.temporal.io/workflows)); Cadence documents the same replay
+model ([Cadence workflow engine](https://cadenceworkflow.io/docs/concepts/workflow-engine/)).
+Recovery replays durable history, so activities need stable identities and explicit retry,
+cancel and compensation outcomes. The state machine is a coordination record, not a claim
+that every external call is atomic.
 
-Recovery replays durable history, so activities need stable identities and explicit retry, cancel
-and compensation outcomes. Keep a repair state for an unknown external effect; a completed flag is
-not proof that the effect committed. Version workflow code so replay preserves meaning. Record the
-workflow version and repair owner in the runbook.
+**Failure and recovery (Tycho synthesis).** A worker can call an external service and crash before
+the result is recorded. Temporal states that an Activity Task can be lost "after the Activity
+Function is called and the Worker crashed", then relies on the activity retry policy to retry it
+([Temporal Activity Execution](https://docs.temporal.io/activity-execution)). AWS Step Functions
+fails an activity execution with `ExecutionTimedOut` when the worker does not call
+neither `SendTaskSuccess` nor `SendTaskFailure` arrives and no heartbeat is sent, invalidates the
+task token, and can later redrive the
+failed Task state (AWS activities,
+<https://docs.aws.amazon.com/step-functions/latest/dg/concepts-activities.html>;
+AWS redrive,
+<https://docs.aws.amazon.com/step-functions/latest/dg/redrive-executions.html>).
+Cadence "does not recover activity state" and regular activities may execute more than once under
+a retry policy ([Cadence Activities](https://cadenceworkflow.io/docs/concepts/activities/)). AWS
+Standard workflows are exactly-once for "your tasks and states" per execution attempt unless a
+`Retry` is declared; redrive reruns the failed Task state even without an ASL Retry and can
+duplicate its external effect, while Express workflows are at-least-once (AWS workflow types,
+<https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html>).
+Those guarantees cover the orchestration record, not the external effect. Keep a repair state for
+an unknown external effect; a completed flag is not proof that the effect committed. That repair
+rule is Tycho guidance. **Tycho guidance:** version workflow code so replay preserves meaning. Record the workflow
+version and repair owner in the runbook.
 
-Use choreography, a job table or a simple queue when steps are few, timers are short, or no engine
-can be operated. An engine is justified by long waits, visibility and compensation.
-Escalate a history that cannot progress to the named workflow owner.
+**Alternative (Tycho comparison).** Use choreography, a job table or a simple queue when steps
+are few, timers are short, or no engine can be operated. Temporal's job-queue guidance uses a
+Workflow only to orchestrate several activities or hold state
+between steps ([Temporal Job queues](https://docs.temporal.io/evaluate/features/job-queue));
+Cadence says a queue is usually the right tool for "simple fire-and-forget fanout", and describes
+the queue-plus-database pattern as working for "simple flows" while dispersing state across tables
+([Cadence FAQ](https://cadenceworkflow.io/faq/cadence-faq/);
+[Cadence workflow engine](https://cadenceworkflow.io/docs/concepts/workflow-engine/)). Temporal's
+Saga comparison lists event-driven choreography as an alternative
+([Temporal Saga pattern](https://docs.temporal.io/design-patterns/saga-pattern)). The operability
+condition and the final selection rule are Tycho guidance; an engine is justified by long waits,
+visibility and compensation. **Tycho guidance:** escalate a history that cannot progress to the
+named workflow owner.
+
+**Sources and limits.** The 2026-11-01 records bind Temporal *Workflows*, *Activities*, *Activity
+Execution*, *Saga Pattern* and *Job queues*; AWS Step Functions *Choosing workflow type*,
+*Activities*, *Redrive* and *Best practices*; and Cadence *Activities*, *FAQ* and *Workflow
+Engine*. Proposed records: `read.temporal-workflows.2026-11-01`,
+`read.temporal-activities.2026-11-01`, `read.temporal-activity-execution.2026-11-01`,
+`read.temporal-saga-pattern.2026-11-01`, `read.temporal-job-queue.2026-11-01`,
+`read.aws-step-functions-workflow-types.2026-11-01`,
+`read.aws-step-functions-activities.2026-11-01`,
+`read.aws-step-functions-redrive.2026-11-01`,
+`read.aws-step-functions-best-practices.2026-11-01`,
+`read.cadence-activities.2026-11-01`, `read.cadence-faq.2026-11-01` and
+`read.cadence-workflow-engine.2026-11-01`. Source identity `src.temporal` is existing;
+`src.aws-step-functions` and `src.cadence` are proposed and not yet in the shared register. No
+engine, worker, activity, timer, retry, outage or repair state was exercised; no independent
+review is claimed.

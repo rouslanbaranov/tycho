@@ -39,6 +39,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.soa-model"
+    - "src.microservices"
   claim_ids: []
   status: "source-linked"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
@@ -48,7 +49,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -60,7 +61,7 @@ content_verified_at: null
 
 <!-- /tycho-question-source -->
 
-> **Pattern atlas:** [Microservices Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#microservices-architecture) — decision conditions and contraindications.
+> **Pattern atlas:** [Microservices Architecture](../../v11-pattern-atlas/c01-application-boundaries/microservices-architecture.md#microservices-architecture) — decision conditions and contraindications.
 > [Service-Oriented Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#service-oriented-architecture-soa) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.acb452608a8b42898aae7482c27f5f04:0 -->
 ## Purpose and mission
@@ -99,10 +100,13 @@ Each service publishes its contract, version policy and supported consumer set. 
 hidden synchronous chains and lockstep migrations undermine that boundary regardless of
 repository layout. A shared client library does not make contract changes independent.
 
-Budget the remote surface explicitly: timeouts, retries, stable effect identity, partial failure,
-tracing and rollback rehearsals. Retried commands carry a stable idempotency key or a natural
-unique effect, and the owner records the outcome. Record which dependency failures may degrade a
-journey and who decides to disable a path.
+Because services can fail at any time, applications must be designed to tolerate the failure of a
+service and respond as gracefully as possible; recovery depends on detecting failures quickly and,
+if possible, restoring service automatically. Budget the remote surface explicitly: timeouts,
+retries with a stable effect identity, tracing and rollback rehearsals. Record which dependency
+failures may degrade a journey and who decides to disable a path. The cited article covers failure
+tolerance and restoration; it does not specify a timeout value, an idempotency or retry
+mechanism, an observability signal or a recovery-time bound. Those remain Tycho guidance.
 
 One team owning every invariant may do better with a modular monolith than with remote
 boundaries. Revisit the split when release coupling or blast radius stops matching the stated

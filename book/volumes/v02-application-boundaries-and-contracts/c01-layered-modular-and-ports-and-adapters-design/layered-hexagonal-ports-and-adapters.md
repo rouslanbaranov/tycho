@@ -46,7 +46,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -174,12 +174,24 @@ Clean and onion styles place domain rules at the centre and let source dependenc
 only, with application services coordinating use cases and outer layers supplying technology
 adapters. The dependency rule, not the number of drawn rings, is the mechanism. No domain module may
 import a framework, transport or storage dependency, and an automated build check must enforce the
-direction rather than a diagram.
+direction rather than a diagram. The automated build check is Tycho guidance, not a source claim:
+the source states the inward rule, not an enforcement mechanism.
 
 Convenience imports erode the boundary until the domain must change for a technology reason; the
-remedy is an enforceable dependency test and a deliberate adapter, not another layer name. Hexagonal
-ports and adapters expresses the same inward rule with explicit application ports; prefer the
-simpler layering when the port indirection adds no tested change benefit.
+remedy is an enforceable dependency test and a deliberate adapter, not another layer name. That
+dependency-test and adapter remedy is Tycho guidance, not a source claim; the source describes
+keeping outer data structures out of inner circles, not a specific test or adapter design. Hexagonal
+ports and adapters expresses the same inward rule with explicit application ports, so it is a
+variant rather than a competing alternative. The competing alternative is presentation-domain-data
+layering: dependencies run top to bottom, presentation depends on the domain, and the domain depends
+on its data source. Keeping the domain independent of its data source is arranged by introducing a
+mapper between the domain and data layers, the variation Fowler calls Hexagonal Architecture.
+Fowler states: “A common variation is to arrange things so that the domain does not depend on its
+data sources by introducing a mapper between the domain and data source layers. This approach is
+often referred to as a Hexagonal Architecture.”
+
+Reverse the clean/onion choice when that independence is not the protected boundary, or when the
+mapper adds no tested change benefit; that reversal is Tycho guidance, not a source claim.
 
 **Boundary data.** Domain entities stay inside the boundary; data crossing it is a DTO or
 port contract with an owned mapper. The adapter validates transport input, the domain refuses

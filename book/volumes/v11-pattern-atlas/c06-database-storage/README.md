@@ -33,20 +33,30 @@ evidence_scope:
     - "src.citus"
     - "src.postgresql"
     - "src.cassandra"
+    - "src.dynamo"
+    - "src.riak"
     - "src.microservices-patterns"
     - "src.flyway"
     - "src.gh-ost"
+    - "src.aws-cqrs"
+    - "src.microsoft-cloud-patterns"
+    - "src.debezium-outbox"
   claim_ids: []
   status: "source-linked"
-  notes: "13 cards cite read units; Polyglot Persistence is bounded."
+  notes: >-
+    13 cards cite read units; Index Table binds all four dimensions; Polyglot
+    Persistence binds invariant and recovery; Backup/PITR has a dedicated card.
+    Online Data Migration moved to a dedicated page on 2026-10-31 with Stripe,
+    PostgreSQL 18.6 pg_dump/COPY, the AWS DMS User Guide and Flyway
+    expand/contract guidance; the changed-mapping case remains a Tycho hazard.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-31"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # V11/C06 — Database and storage architecture
@@ -62,9 +72,10 @@ public article and the V05/C04 selection section.
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
-check its conditions and contraindications, then read the exact owner section.
+Page count is content-dependent. This chapter uses a landing page plus dedicated card
+pages for moved entries; a later split is an editorial change, not a plan failure. Start
+with the card, check its conditions and contraindications, then read the exact owner
+section.
 
 ## Entry inventory
 
@@ -73,35 +84,7 @@ none claims sufficient technical or decision coverage.
 
 ### Sharding
 
-**Identity.** Sharding; family Database and storage architecture; kind
-data-distribution-pattern; priority core.
-
-**Decision question.** Should data be split across shards by a partition key to scale
-beyond one node?
-
-**Good-fit conditions.** A stable partition key exists; cross-shard transactions are
-avoidable; routing and rebalancing are owned; hotspots can be measured.
-
-**Hard contraindications.** Reject when one node suffices, when the key creates hot
-tenants, or when cross-shard joins/transactions dominate.
-
-**Competing alternative.** Partitioning within one database or vertical scaling. Reverse
-the choice when operational shard complexity exceeds scale benefit.
-
-**Failure and recovery.** Hotspots and resharding are common; verify routing/rebalancing
-in the owner section.
-
-**Technical owner.** [Sharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#sharding) — shard key choice and resharding cost are bounded; per-engine placement is platform-specific.
-
-**Sources.** [src.citus](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-citus.2026-10-21: sections "Concepts". The source is a public
-pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Partitioning; Consistent Hashing; Online Data Migration; Read
-Replicas.
+See the [dedicated Sharding card](sharding.md).
 
 ### Partitioning
 
@@ -136,35 +119,7 @@ unit, not a benchmark.
 
 ### Consistent Hashing
 
-**Identity.** Consistent Hashing; family Database and storage architecture; kind
-data-distribution-pattern; priority core.
-
-**Decision question.** Should keys and nodes share a hash ring so membership changes move
-only a fraction of data?
-
-**Good-fit conditions.** Membership changes often; the hash ring is owned; virtual
-nodes/replication are configured; key distribution is measured.
-
-**Hard contraindications.** Reject when a static assignment is stable, when the ring
-creates hotspots, or when rebalancing cannot be observed.
-
-**Competing alternative.** Modulo sharding or explicit range assignment. Reverse the
-choice when ring operations and virtual-node tuning exceed movement savings.
-
-**Failure and recovery.** Hotspots and uneven rebalancing are common; verify ring
-ownership in the owner section.
-
-**Technical owner.** [Resharding is a multi-state data transition](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md#consistent-hashing) — resharding transition is bounded, not a consistent-hashing implementation.
-
-**Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-cassandra-arch.2026-10-21: sections "Overview", "Features",
-"Operating". The page does not describe consistent hashing, replication factor or consistency
-levels; consistent-hashing guidance here is synthetic and needs a dedicated source. The source
-is a public documentation unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Sharding; Partitioning; Resharding; Read Replicas.
+See the [dedicated Consistent Hashing card](consistent-hashing.md).
 
 ### Leader-Follower Replication
 
@@ -199,35 +154,7 @@ unit, not a benchmark.
 
 ### Multi-Leader Replication
 
-**Identity.** Multi-Leader Replication; family Database and storage architecture; kind
-replication-pattern; priority advanced.
-
-**Decision question.** Should more than one node accept writes for the same data?
-
-**Good-fit conditions.** Write locality/availability requires multiple leaders; conflict
-policy is explicit; versioning and reconciliation are owned.
-
-**Hard contraindications.** Reject when one leader meets availability, when conflicts
-cannot be resolved, or when monotonic writes are mandatory.
-
-**Competing alternative.** Leader-follower or quorum writes. Reverse the choice when
-conflict handling and divergent histories exceed locality benefit.
-
-**Failure and recovery.** Conflicting writes and reconciliation are common; verify
-versioning in the owner section.
-
-**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#multi-leader-replication) — replication/leader change is bounded, not a complete multi-leader protocol.
-
-**Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-cassandra-dynamo.2026-10-21: all nineteen served headings
-read. The source is a public
-pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Leader-Follower Replication; Quorum; Read Replicas; Conflict
-Resolution.
+See the [dedicated Multi-Leader Replication card](multi-leader-replication.md).
 
 ### Read Replicas
 
@@ -261,102 +188,15 @@ unit, not a benchmark.
 
 ### Quorum-Based Reads / Writes
 
-**Identity.** Quorum-Based Reads/Writes; family Database and storage architecture; kind
-replication-pattern; priority advanced.
-
-**Decision question.** Should reads and writes require intersecting majorities to
-guarantee consistency?
-
-**Good-fit conditions.** Replica count and failure domains are known; quorum arithmetic is
-explicit; latency of majority calls is acceptable.
-
-**Hard contraindications.** Reject when a single leader suffices, when quorum latency
-violates the budget, or when failure domains make majority meaningless.
-
-**Competing alternative.** Leader-based replication or eventual consistency. Reverse the
-choice when quorum availability/latency cost exceeds consistency benefit.
-
-**Failure and recovery.** Quorum loss and slow replicas are common; verify failure
-envelope in the owner section.
-
-**Technical owner.** [Quorum-Based Reads / Writes](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-based-reads-writes) — quorum arithmetic is bounded, not a universal consistency guarantee.
-
-**Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-cassandra-dynamo.2026-10-21: all nineteen served
-headings read. The source is a public
-pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Leader-Follower Replication; Multi-Leader Replication; Read Replicas;
-2PC.
+See the [dedicated Quorum-Based Reads / Writes card](quorum-based-reads-writes.md).
 
 ### Index Table
 
-**Identity.** Index Table; family Database and storage architecture; kind
-data-structure-pattern; priority core.
-
-**Decision question.** Should a separate lookup table maintain a secondary access path?
-
-**Good-fit conditions.** The access path is stable; index maintenance and write cost are
-acceptable; consistency with the source is owned.
-
-**Hard contraindications.** Reject when the primary index suffices, when dual-write
-consistency cannot be maintained, or when the lookup is rarely used.
-
-**Competing alternative.** Secondary index or query-time join. Reverse the choice when
-index maintenance and drift exceed lookup benefit.
-
-**Failure and recovery.** Stale index rows and write amplification are common; verify
-lifecycle in the owner section.
-
-**Technical owner.** [Index Table](../../v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md#index-table) — index lifecycle is bounded, not a full access-path catalogue.
-
-**Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-indexes.2026-10-21: all nineteen headings read
-across the chapter and its twelve section pages. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Partitioning; Materialized View; CQRS Read Projections; Sharding.
+See the [dedicated Index Table card](index-table.md).
 
 ### Polyglot Persistence
 
-**Identity.** Polyglot Persistence; family Database and storage architecture; kind
-data-pattern; priority core.
-
-**Decision question.** Should different data responsibilities use different stores
-while one authoritative boundary owns consistency?
-
-**Good-fit conditions.** Distinct responsibilities have materially different access
-patterns; one store cannot meet a measured requirement; cross-store ownership,
-freshness and failure handling are explicit; the team can operate each store.
-
-**Hard contraindications.** Reject when one store meets the requirement, when no
-authoritative owner exists, when cross-store consistency is undocumented, or when the
-team cannot operate the additional store.
-
-**Competing alternative.** Single store with derived projections or query-time joins.
-Reverse the choice when coordination, migration and operational cost exceed the
-workload benefit.
-
-**Failure and recovery.** Stale projections, dual-write ambiguity and partial migration
-are common; verify freshness and rebuild in the owner section.
-
-**Technical owner.** [Polyglot Persistence](../../v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md#polyglot-persistence)
-— bounded selection criteria, not a complete multi-store design.
-
-**Sources.** [src.fowler-polyglot](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-fowler-polyglot.2026-10-22: sections "Polyglot Persistence",
-"Notes". The thematic paragraph labels DatabaseThaw, Complexity and consistency, and Strategic
-versus utility projects are not headings; linked material was not read. The source is a public
-article, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** CQRS Read Projections; CDC; Sharding; Materialized View.
+See the [dedicated Polyglot Persistence card](polyglot-persistence.md).
 
 ### CQRS Read Projections
 
@@ -425,66 +265,11 @@ Retirement.
 
 ### Online Data Migration
 
-**Identity.** Online Data Migration; family Database and storage architecture; kind
-migration-pattern; priority core.
-
-**Decision question.** Should data be backfilled while the system continues serving reads
-and writes?
-
-**Good-fit conditions.** Writes continue during migration; dual-read/write or CDC is
-owned; validation and cutover are gated.
-
-**Hard contraindications.** Reject when a maintenance window is acceptable, when no
-reconciliation path exists, or when migration load would exhaust the source.
-
-**Competing alternative.** Offline migration or a full export/import. Reverse the choice
-when online complexity exceeds downtime cost.
-
-**Failure and recovery.** Stale backfills and cutover ambiguity are common; verify
-acceptance in the owner section.
-
-**Technical owner.** [Online Data Migration](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#online-data-migration) — backfill acceptance is bounded, not an online migration tool guide.
-
-**Sources.** [src.gh-ost](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-gh-ost.2026-10-21: all ten served headings read. The
-source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Expand-and-Contract Schema; Sharding; CDC; Backup/PITR.
+See the [dedicated Online Data Migration card](online-data-migration.md).
 
 ### Backup, PITR and Restore
 
-**Identity.** Backup, PITR and Restore; family Database and storage architecture; kind
-recovery-pattern; priority core.
-
-**Decision question.** Should recovery rely on base backups plus point-in-time WAL/log
-replay?
-
-**Good-fit conditions.** Recovery objectives are stated; backup retention and WAL
-continuity are owned; restore drills are scheduled.
-
-**Hard contraindications.** Reject when no restore has been tested, when WAL/backup
-continuity has gaps, or when RPO/RTO cannot be measured.
-
-**Competing alternative.** Snapshot-only recovery or replica failover. Reverse the choice
-when snapshot/restore cost meets recovery needs.
-
-**Failure and recovery.** Corrupt backups and untested restores are common; verify PITR in
-the owner section.
-
-**Technical owner.** [Backup, restore and recovery drills: proving data recoverability](../../v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md#backup-pitr-and-restore) — backup/restore is bounded, not a universal RPO/RTO model.
-
-**Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-archiving.2026-10-21: all thirteen headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Leader-Follower Replication; Read Replicas; Expand-and-Contract;
-Disaster Recovery.
+See the [dedicated Backup, PITR and Restore card](backup-pitr-and-restore.md).
 
 ## Chapter result and counterexample
 

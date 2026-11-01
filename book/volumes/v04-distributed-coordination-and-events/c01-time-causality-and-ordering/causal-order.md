@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -49,7 +49,13 @@ This page belongs to [V04/C01 — Time, causality and ordering](README.md). Use 
 <!-- tycho-question-source:tycho.page.d4822cc1e71c4f73896b7f6509f6daae:1 -->
 ## 1. The happens-before relation describes causal knowledge
 
-Leslie Lamport's 1978 paper *Time, Clocks, and the Ordering of Events in a Distributed System* introduces an ordering relation on events that can represent a partial order; its published abstract specifically contrasts this causal relation with the total-order extensions possible through logical-clock schemes. The paper is listed in Lamport's publication bibliography and Microsoft Research's original-paper record. This page uses that *abstract and bibliographic scope*, rather than claiming a line-by-line review of its PDF. [E01]
+Leslie Lamport's 1978 paper *Time, Clocks, and the Ordering of Events in a Distributed
+System* introduces an ordering relation on events that can represent a partial order; its
+published abstract specifically contrasts this causal relation with the total-order
+extensions possible through logical-clock schemes. The paper is listed in Lamport's
+publication bibliography and Microsoft Research's original-paper record. This page binds
+short passages from the author-hosted PDF inspected on 2026-10-30; it does not reproduce
+the paper's formal proofs. [E01]
 
 For two events `a` and `b`, the commonly used happens-before definition has three generating rules:
 
@@ -74,7 +80,17 @@ sequenceDiagram
 
 Text alternative: process P acts and sends a message to Q, so its event precedes Q's reception. R acts independently; the diagram contains no evidence that Q's event precedes or follows R's.
 
-An integer **Lamport logical clock** can be incremented for a local event, attached to messages, and advanced on reception so that causal predecessors have smaller timestamps. However, the converse does **not** follow: two events with ordered clock numbers may still be causally unrelated. Adding a deterministic process-ID tie-breaker produces one reproducible total ordering; it does not create a real causal dependency. A vector-clock mechanism can represent additional causal distinctions at the cost of metadata associated with participating processes; a full algorithm comparison is outside this page's bounded evidence.
+An integer **Lamport logical clock** can be incremented for a local event, attached to messages,
+and advanced on reception so that causal predecessors have smaller timestamps. However, the
+converse does **not** follow: two events with ordered clock numbers may still be causally
+unrelated. Adding a deterministic process-ID tie-breaker produces one reproducible total
+ordering; it does not create a real causal dependency. Lamport's paper defines the relation with
+three generating rules and calls the result "a partial ordering of the events"; its Clock
+Condition requires causal precedence to imply smaller timestamps, but "we cannot expect the
+converse condition to hold as well". Mattern's vector-time paper gives each process "a vector of
+length n, where n is the total number of processes" and sends that vector with each message;
+comparing vectors preserves concurrency that a scalar clock collapses. The per-replica cost is
+Tycho's characterization of that metadata, not a measurement in either paper.
 
 **Decision impact:** if the business only needs every item to preserve its own update order, requiring global total order can introduce unnecessary coordination. If conflicting updates of a shared invariant must be serialized, merely generating timestamps does not create atomic or correct resolution.
 
@@ -84,16 +100,38 @@ variant requires all nodes to converge once the same updates are visible. Causal
 such as vector clocks carries the dependency; Lamport clocks alone cannot distinguish
 concurrency. [E03]
 
-**Failure and recovery.** A partition can preserve availability only while each client
-stays on one server; reconnecting elsewhere can expose missing dependencies. Lost
-metadata, reordered messages or a switched server can violate causal order. Recovery
-needs durable causal metadata, replay/deduplication and an explicit merge for concurrent
-writes. If total order is required, use consensus or sequential consistency and accept
-the availability and latency cost.
+**Failure and recovery (Tycho synthesis).** Jepsen calls causal consistency "sticky available":
+"even in the presence of network partitions, every client connected to a non-faulty node can make
+progress. However, clients must stick to the same server." A partition is therefore survivable
+only while a client stays on one non-faulty server; reconnecting elsewhere can expose missing
+dependencies. Lamport notes that "messages may be received out of order", and Mattern's abstract
+describes a snapshot algorithm "where messages may be received out of order". If the vector
+metadata is dropped, or the messages that carry it are reordered, the receiver loses the evidence
+needed to reconstruct happens-before. **Tycho inference.** The server-switch and metadata-loss
+failure paths follow from these requirements; they are not experiments. **Tycho recovery rule.**
+Persist causal metadata with the operation, replay idempotently and deduplicate, and define an
+explicit merge for concurrent writes. Jepsen states that "Convergent causal systems require that
+the values of objects in the system converge to identical values, once the same operations are
+visible", and that conflict resolution is left "up to the implementation".
 
-**Alternative.** Use total order via consensus, per-key ordering, or session guarantees
-(read-your-writes, monotonic reads) when full causal metadata is too costly. Reverse the
-choice when causal metadata and convergence cost exceed the ordering requirement. [E03]
+**Alternative (Tycho comparison).** Jepsen describes sequential consistency as the total-order model when a total order is
+required and the caller is willing to accept the cost: "When a total order is required, and you’re willing to
+sacrifice availability (and latency), consider sequential consistency". [E03] A replicated log is
+one implementation family: Kafka describes "A replicated log" as modelling "the process of
+coming into consensus on the order of a series of values", with "a leader who chooses the
+ordering". Lamport's logical-clock construction can also extend the partial order to a total
+order, but he notes that the ordering "depends upon the system of clocks" and "is not unique";
+"It is only the partial ordering which is uniquely determined by the system of events." [E01] A
+total order is therefore a stronger serialization contract than causality: it adds a chosen order
+and its coordination, availability or latency cost. Kafka's guarantee is narrower: "any consumer
+of a given topic-partition will always read that partition’s events in exactly the same order as
+they were written", and events with the same key share a partition. **Tycho reading.** Kafka does
+not state a cross-partition order; per-key ordering is not a topic-wide total order. **Tycho choice
+rule.** Use the weakest order that satisfies the invariant: causal metadata plus a merge rule when
+concurrency is acceptable, per-key ordering when the invariant is key-scoped, and a total-order
+mechanism such as a consensus-backed log when every replica must serialize the same operations.
+Each step adds coordination cost; the sources establish the mechanisms and their availability
+cost, not a universal threshold.
 
 <!-- /tycho-question-source -->
 
@@ -178,6 +216,19 @@ Causal ordering fits when cross-item happens-before is real, metadata can travel
 and concurrent writes have a merge rule. Reject it when total order is mandatory, metadata cannot
 travel, clients switch servers without session continuity, or no merge rule exists.
 
-Partition, reordered delivery, lost metadata and a server switch can expose missing dependencies.
-Keep durable causal metadata, replay and deduplicate, and define the merge. If total order is
-mandatory, use consensus and accept its coordination cost.
+**Failure and recovery (Tycho synthesis).** A partition remains survivable while a client
+stays on one non-faulty server; reconnecting elsewhere is safe only if session continuity and
+causal metadata are re-established, otherwise it can expose missing dependencies.
+Reordered delivery and lost vector metadata can remove the evidence needed to reconstruct
+happens-before; persist causal metadata, replay/deduplicate and define a merge. Tycho guidance:
+converge once the same operations are visible. The server-switch, metadata-loss and
+convergence rules are Tycho inferences from Jepsen's stickiness requirement and Lamport's
+out-of-order note.
+
+**Alternative (Tycho comparison).** A total order is therefore a stronger serialization contract
+than causality: it adds a chosen order and its coordination, availability or latency cost.
+Jepsen describes sequential consistency as the total-order model, with a conditional
+availability and latency cost; Kafka describes a leader-based replicated log that agrees on the
+order, guarantees order per partition and routes same-key events to one partition by default
+producer partitioning. Per-key ordering is not a topic-wide total order; that reading
+is Tycho.

@@ -34,20 +34,30 @@ evidence_scope:
     - "src.microservices-patterns"
     - "src.temporal"
     - "src.ietf-idempotency-key"
+    - "src.aws-idempotency"
+    - "src.stripe-idempotency"
     - "src.debezium-outbox"
     - "src.postgresql"
     - "src.postgres-logical"
+    - "src.oracle-distributed-transactions"
+    - "src.microsoft-cloud-patterns"
+    - "src.kafka-design"
+    - "src.aws-cqrs"
   claim_ids: []
   status: "source-linked"
-  notes: "14 cards cite read units; owner links are bounded."
+  notes: >-
+    14 cards cite read units; Idempotency Key binds four; Transactional Inbox
+    adds four. CDC moved to a dedicated page on 2026-10-31 with Debezium,
+    PostgreSQL 18 logical decoding and replication slots, and Kafka Connect
+    units; the dual-write comparison remains an unbound heuristic.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-31"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
-source_inspection_date: "2026-10-22"
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # V11/C04 — Data consistency, transactions and event sourcing
@@ -65,9 +75,9 @@ saga page may own the consistency contract without owning every pattern mechanis
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
-check its conditions and contraindications, then read the exact owner section.
+Page count is content-dependent. This chapter uses a landing page plus a dedicated card
+page for CQRS; a later split is an editorial change, not a plan failure. Start with the
+card, check its conditions and contraindications, then read the exact owner section.
 
 ## Entry inventory
 
@@ -76,37 +86,7 @@ none claims sufficient technical or decision coverage.
 
 ### Command Query Responsibility Segregation (CQRS)
 
-**Identity.** CQRS; family Data consistency, transactions and event sourcing; kind
-architecture-pattern; priority core.
-
-**Decision question.** Should command and query models be separated so reads and writes
-can evolve independently?
-
-**Good-fit conditions.** Read and write workloads differ; projections can be asynchronous;
-stale reads are acceptable; duplicate/order handling is owned.
-
-**Hard contraindications.** Reject when one model meets both needs, when every read requires
-immediate consistency with no version-wait or authority-read path, or when projection maintenance
-has no owner.
-
-**Competing alternative.** Single model with indexes/views. Reverse the choice when
-projection lag and dual-model complexity exceed read-scale benefit.
-
-**Failure and recovery.** Projection lag, duplicate apply, cursor gaps and schema drift are
-common; make the apply idempotent, commit view and cursor atomically, and rebuild with side
-effects disabled.
-
-**Technical owner.** [Command Query Responsibility Segregation (CQRS)](../../../distributed/cqrs-event-sourcing-and-projections.md#command-query-responsibility-segregation-cqrs) — projection freshness is the bounded owner, not a full CQRS implementation guide.
-
-**Sources.** [src.fowler-cqrs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-cqrs.2026-10-21: sections "CQRS", "When to use it", "Further
-Reading". The source is a public pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Event Sourcing; Materialized View; Command-Side Replica; Domain
-Events.
+See the [dedicated CQRS card](cqrs.md).
 
 ### Event Sourcing
 
@@ -180,37 +160,7 @@ public pattern/specification unit, not a benchmark.
 
 ### Saga
 
-**Identity.** Saga; family Data consistency, transactions and event sourcing; kind
-transaction-pattern; priority core.
-
-**Decision question.** Should a multi-service business process be coordinated through
-local transactions and compensations?
-
-**Good-fit conditions.** Steps cross service boundaries; intermediate states are
-acceptable; compensation is a business decision; progress is durable.
-
-**Hard contraindications.** Reject when one local transaction can preserve the invariant,
-when no compensation is possible, or when intermediate visibility is unacceptable.
-
-**Competing alternative.** Single local transaction or two-phase commit. Reverse when steps do
-not genuinely cross independent owners or compensation is
-unsafe.
-
-**Failure and recovery.** Partial completion and compensation failure are common; verify
-saga protocol in the owner section.
-
-**Technical owner.** [Saga](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga) — saga recovery is the bounded owner, not a full saga engine.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-saga.2026-10-21: all eleven served headings read.
-The source is a public pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Saga Choreography; Saga Orchestration; Compensating Transaction;
-Transactional Outbox.
+See the [dedicated Saga card](saga.md).
 
 ### Saga Choreography
 
@@ -317,106 +267,15 @@ See the [dedicated Transactional Outbox card](transactional-outbox.md).
 
 ### Transactional Inbox
 
-**Identity.** Transactional Inbox; family Data consistency, transactions and event
-sourcing; kind data-pattern; priority core.
-
-**Decision question.** Should message identity and consumer effect be recorded atomically
-to suppress duplicates?
-
-**Good-fit conditions.** Messages carry stable identity; the effect is local; identity
-retention covers redelivery; concurrent duplicates are handled.
-
-**Hard contraindications.** Reject when the consumer is naturally idempotent, when
-identity cannot be retained, or when the effect spans multiple authorities.
-
-**Competing alternative.** A unique constraint/conditional insert on effect identity, a
-producer outbox or an idempotent downstream API. Reverse when the inbox table and retention
-cost exceed the duplicate-impact risk.
-
-**Failure and recovery.** Expired identities and concurrent duplicates are common; verify
-inbox atomicity in the owner section.
-
-**Technical owner.** [Inbox processing and atomic consumer effects](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/inbox-atomicity.md#3-inbox-and-consumer-local-atomicity) — inbox atomicity is bounded, not a complete idempotent-consumer recipe.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-idempotent-consumer.2026-10-21: all five served
-headings read. The source is a public
-pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Idempotent Receiver; Idempotency Key; Transactional Outbox;
-Deduplication.
+See the [dedicated Transactional Inbox card](transactional-inbox.md).
 
 ### Idempotency Key
 
-**Identity.** Idempotency Key; family Data consistency, transactions and event sourcing;
-kind api-pattern; priority core.
-
-**Decision question.** Should a client-supplied key let the server recognize retries of
-one logical request?
-
-**Good-fit conditions.** Retries are expected; key scope, payload fingerprint and retention
-window are defined; the server records the outcome atomically with the effect.
-
-**Hard contraindications.** Reject when operations are naturally idempotent, when keys can
-collide across tenants, or when retention cannot cover the retry window.
-
-**Competing alternative.** Natural idempotency, a uniqueness rule or one writer. Reverse the
-choice when key storage and fingerprinting cost exceed retry risk.
-
-**Failure and recovery.** Expiry ends historical deduplication; a reused key with changed
-intent is a conflict, not idempotency. Reject mismatched fingerprints and keep the record
-for the retry window.
-
-**Technical owner.** [Idempotency Key](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md#idempotency-key) — retry/idempotency is bounded, not a complete HTTP idempotency guide.
-
-**Sources.**
-[src.ietf-idempotency-key](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-ietf.2026-10-21: all twenty-four served headings
-read. The source is a public pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Idempotent Receiver; Transactional Inbox; Retry with Exponential
-Backoff; Correlation Identifier.
+See the [dedicated Idempotency Key card](idempotency-key.md).
 
 ### Change Data Capture (CDC)
 
-**Identity.** Change Data Capture (CDC); family Data consistency, transactions and event
-sourcing; kind data-pattern; priority core.
-
-**Decision question.** Should database changes be captured as a replayable stream instead
-of dual-written by the application?
-
-**Good-fit conditions.** The database log is available; ordering per key is sufficient;
-schema evolution is handled; consumers can tolerate duplicates.
-
-**Hard contraindications.** Reject when the log is unavailable or unsupported, when
-cross-table ordering is required, or when schema changes cannot be governed.
-
-**Competing alternative.** Transactional outbox plus relay, dual-write with reconciliation or
-scheduled batch extraction. Reverse when log access is unavailable, the source cannot retain a
-slot, or connector operations exceed the replay benefit.
-
-**Failure and recovery.** Connector lag, WAL/slot retention, schema changes and
-snapshot-to-stream gaps are common; monitor lag/slot health, resnapshot deliberately and make
-downstream apply idempotent.
-
-**Technical owner.** [Change Data Capture (CDC)](../../v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md#change-data-capture-cdc) — CDC replay is bounded, not a full connector operations guide.
-
-**Sources.** [src.postgres-logical](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch8-postgres-logical.2026-10-22: section "Chapter 29. Logical
-Replication". The source is public PostgreSQL documentation, not a benchmark or connector
-operations guide.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Transactional Outbox; Event Sourcing; Materialized View; Command-Side
-Replica.
+See the [dedicated Change Data Capture (CDC) card](change-data-capture-cdc.md).
 
 ### Materialized View
 
@@ -486,35 +345,7 @@ Service.
 
 ### Two-Phase Commit (2PC)
 
-**Identity.** Two-Phase Commit (2PC); family Data consistency, transactions and event
-sourcing; kind transaction-pattern; priority advanced.
-
-**Decision question.** Should a distributed transaction use a prepare/commit protocol
-across resource managers?
-
-**Good-fit conditions.** Participants support a prepare phase; the coordinator is highly
-available; blocking and recovery are acceptable; the invariant spans resources.
-
-**Hard contraindications.** Reject when participants cannot prepare, when coordinator
-failure would block critical resources, or when compensation-based saga is sufficient.
-
-**Competing alternative.** Saga/compensation or one local transaction. Reverse the choice
-when blocking and coordinator complexity exceed atomicity benefit.
-
-**Failure and recovery.** Prepared transactions can hold locks and block recovery; verify
-protocol limits in the owner section.
-
-**Technical owner.** [Two-Phase Commit (2PC)](../../v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md#two-phase-commit-2pc) — local/global commit limits are bounded, not a 2PC protocol reference.
-
-**Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-pg-2pc.2026-10-21: the single served heading read.
-The source is a public pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Saga; Compensating Transaction; Transactional Outbox; Distributed
-Transactions.
+See the [dedicated Two-Phase Commit (2PC) card](two-phase-commit-2pc.md).
 
 ## Chapter result and counterexample
 

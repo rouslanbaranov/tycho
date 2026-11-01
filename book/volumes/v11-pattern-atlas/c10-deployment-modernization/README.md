@@ -30,27 +30,41 @@ route_hints:
     - "decision layer"
 evidence_scope:
   source_ids:
+    - "src.aws-immutable-infrastructure"
     - "src.fowler-dark-launching"
     - "src.istio-traffic-mirroring"
     - "src.k8s-deployments"
     - "src.argo-rollouts"
+    - "src.flagger-deployment-strategies"
+    - "src.sre-workbook"
+    - "src.aws-blue-green-deployments"
     - "src.fowler-feature-toggles"
     - "src.opengitops"
     - "src.ibm-immutable-infrastructure"
     - "src.fowler-strangler"
+    - "src.aws-strangler"
     - "src.fowler-branch"
     - "src.flyway"
+    - "src.mysql"
+    - "src.postgresql"
+    - "src.appconfig-rollout"
+    - "src.aws-branch"
+    - "src.hashicorp-immutable-vms"
   claim_ids: []
   status: "source-linked"
-  notes: "12 cards cite read units; owner links are bounded."
+  notes: >-
+    12 cards cite read units; owner links are bounded. GitOps moved to a
+    dedicated page on 2026-11-01 with OpenGitOps principles v1.0.0, Argo CD
+    reconciliation, drift, security and availability, and Flux concepts, drift,
+    verification and monitoring; no sufficient coverage.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-11-01"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-26"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-11-01"
+source_inspection_date: "2026-11-01"
 content_verified_at: null
 ---
 # V11/C10 — Deployment and legacy modernization
@@ -68,8 +82,8 @@ transition-state page may own the reversibility contract without owning every pa
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
+Page count is content-dependent. This chapter uses a landing page plus a dedicated
+card page; a later split is an editorial change, not a plan failure. Start with the card,
 check its conditions and contraindications, then read the exact owner section.
 
 ## Entry inventory
@@ -143,193 +157,27 @@ Controlled Cutover.
 
 ### Canary Release
 
-**Identity.** Canary Release; family Deployment and legacy modernization; kind
-deployment-pattern; priority core.
-
-**Decision question.** Should a new version receive a small traffic share before full
-promotion?
-
-**Good-fit conditions.** A measurable signal exists; traffic can be split; abort/rollback
-is defined; the canary is representative; shared-state compatibility is explicit.
-
-**Hard contraindications.** Reject when traffic cannot be split, when metrics are too
-noisy, or when the canary shares hidden state with the baseline.
-
-**Competing alternative.** Blue/green or feature flag. Reverse the choice when canary
-analysis cost exceeds risk reduction.
-
-**Failure and recovery.** Low-traffic blindness, metric leakage and shared-state
-contamination are common; a binary rollback does not undo committed data.
-
-**Technical owner.** [Canary Release](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#canary-release) — canary analysis and abort are bounded; metric selection is service-specific.
-
-**Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-argo-canary.2026-10-21: all fifteen served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Blue/Green; Rolling Deployment; Feature Flags; Dark Launching.
+See the [dedicated Canary Release card](canary-release.md).
 
 ### Feature Flags-Feature Toggles
 
-**Identity.** Feature Flags / Feature Toggles; family Deployment and legacy modernization;
-kind deployment-pattern; priority core.
-
-**Decision question.** Should activation be decoupled from deployment through a runtime
-toggle?
-
-**Good-fit conditions.** Toggle ownership, expiry, scope and kill switch are defined; the
-default fails safe; flag evaluation is observable.
-
-**Hard contraindications.** Reject when a toggle would become permanent configuration
-debt, when no owner removes it, or when it hides a broken deployment.
-
-**Competing alternative.** Deploy dark code with no toggle or a separate release train.
-Reverse the choice when toggle lifecycle cost exceeds decoupling benefit.
-
-**Failure and recovery.** Stale snapshots, flag interactions, permanent flags and
-unauthorized overrides are common; audit changes, expire flags and bound snapshot age.
-
-**Technical owner.** [Feature Flags / Feature Toggles](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md#feature-flags-feature-toggles) — flags are bounded, not a full toggle-lifecycle platform.
-
-**Sources.**
-[src.fowler-feature-toggles](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-fowler-feature-toggles.2026-10-21: all seven top-level sections
-and 40 headings read. The source is a public
-pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Canary Release; Dark Launching; GitOps; Configuration Rollout.
+See the [dedicated Feature Flags-Feature Toggles card](feature-flags.md).
 
 ### GitOps
 
-**Identity.** GitOps; family Deployment and legacy modernization; kind delivery-pattern;
-priority core.
-
-**Decision question.** Should desired state be versioned and reconciled automatically from
-a Git source?
-
-**Good-fit conditions.** Desired state is declarative and reviewed; reconciliation is
-observable; secrets/drift are handled; rollback is a revert commit.
-
-**Hard contraindications.** Reject when imperative one-off changes dominate, when the
-reconciler is unowned, or when secrets cannot be managed safely.
-
-**Competing alternative.** Pipeline-driven deployment or manual release. Reverse the
-choice when reconciliation latency/ownership exceeds audit benefit.
-
-**Failure and recovery.** Drift, controller outage, a compromised repository and stale
-artifact references are common; alert on drift, revert reviewed commits and scope credentials.
-
-**Technical owner.** [GitOps](../../v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md#gitops) — GitOps is bounded to desired-state reconciliation.
-
-**Sources.** [src.opengitops](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-opengitops.2026-10-21: all seven served headings read. The source
-is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Immutable Infrastructure; Rolling Deployment; Feature Flags; CI/CD
-Provenance.
+See the [dedicated GitOps card](gitops.md).
 
 ### Immutable Infrastructure
 
-**Identity.** Immutable Infrastructure; family Deployment and legacy modernization; kind
-delivery-pattern; priority core.
-
-**Decision question.** Should infrastructure be replaced rather than mutated in place?
-
-**Good-fit conditions.** Images/artifacts are versioned; state is externalized;
-replacement and rollback are automated.
-
-**Hard contraindications.** Reject when in-place state cannot be externalized, when
-replacement is too slow, or when configuration drift is invisible.
-
-**Competing alternative.** Mutable servers with configuration management. Reverse the
-choice when replacement cost exceeds drift/recovery benefit.
-
-**Failure and recovery.** Orphaned state and image drift are common; verify lifecycle in
-the owner section.
-
-**Technical owner.** [Immutable Infrastructure](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/immutable-infrastructure.md#immutable-infrastructure) — immutable replacement and drift are bounded, not a cloud product.
-
-**Sources.**
-[src.ibm-immutable-infrastructure](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-ibm-immutable.2026-10-21: all twelve served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** GitOps; Blue/Green; Rolling Deployment; Infrastructure as Code.
+See the [dedicated Immutable Infrastructure card](immutable-infrastructure.md).
 
 ### Strangler Fig
 
-**Identity.** Strangler Fig; family Deployment and legacy modernization; kind
-modernization-pattern; priority core.
-
-**Decision question.** Should a legacy capability be replaced incrementally behind a
-routing seam rather than by a rewrite?
-
-**Good-fit conditions.** A seam can intercept and route old/new; coexistence is funded;
-routing and data compatibility are explicit; rollback is possible until a no-return point.
-
-**Hard contraindications.** Reject when the legacy has no seam, when dual-running data
-cannot be reconciled, or when the team cannot own two paths.
-
-**Competing alternative.** Branch by abstraction, parallel run or a big-bang replacement.
-Reverse the choice when coexistence cost exceeds incremental replacement benefit.
-
-**Failure and recovery.** Interception may be impossible, callers may bypass the façade,
-and old/new state can diverge; detect bypass, hold and route back until proven.
-
-**Technical owner.** [Strangler Fig](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md#strangler-fig) — strangler is bounded to transition-state reasoning.
-
-**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Branch by Abstraction; Parallel Run; Dark Launching; Controlled
-Cutover.
+See the [dedicated Strangler Fig card](strangler-fig.md).
 
 ### Branch by Abstraction
 
-**Identity.** Branch by Abstraction; family Deployment and legacy modernization; kind
-modernization-pattern; priority core.
-
-**Decision question.** Should an internal abstraction seam allow old/new implementations
-to coexist in one deployable?
-
-**Good-fit conditions.** The seam can be introduced without breaking callers; both
-implementations preserve the same contract; removal date and reversible switch are owned.
-
-**Hard contraindications.** Reject when no internal seam exists, when the abstraction adds
-no substitution value, or when the old implementation cannot coexist.
-
-**Competing alternative.** Strangler Fig, a façade or a parallel run. Reverse the choice
-when abstraction cost exceeds incremental change benefit.
-
-**Failure and recovery.** Permanent seams, bypass around the abstraction and divergent
-behavior are common; use contract tests, a bounded switch and a removal owner.
-
-**Technical owner.** [Branch by Abstraction](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#branch-by-abstraction) — branch by abstraction is bounded to internal interface replacement.
-
-**Sources.** [src.fowler-branch](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-fowler-branch.2026-10-21: sections "Branch By Abstraction",
-"Further Reading", "Acknowledgements", "Notes". The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Strangler Fig; Parallel Run; Feature Flags; Controlled Cutover.
+See the [dedicated Branch by Abstraction card](branch-by-abstraction.md).
 
 ### Parallel Run
 
@@ -341,35 +189,7 @@ See the [dedicated Dark Launching card](dark-launching.md).
 
 ### Expand-and-Contract
 
-**Identity.** Expand-and-Contract; family Deployment and legacy modernization; kind
-migration-pattern; priority core.
-
-**Decision question.** Should a schema change be rolled out in expand, migrate and
-contract stages?
-
-**Good-fit conditions.** Old/new readers coexist; compatibility window is owned;
-backfill/validation are explicit.
-
-**Hard contraindications.** Reject when downtime is acceptable and a direct migration is
-simpler, when no compatibility window exists, or when rollback is impossible.
-
-**Competing alternative.** Big-bang migration, parallel run or versioned API cutover.
-Reverse when no compatibility window is possible or the dataset is small enough to pause.
-
-**Failure and recovery.** Partial backfills and old readers are common; verify gates in
-the owner section.
-
-**Technical owner.** [Expand-and-Contract](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md#expand-and-contract) — expand/contract is bounded to reader/writer compatibility.
-
-**Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-flyway.2026-10-21: all seventeen served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Online Data Migration; Controlled Cutover; Reader/Writer
-Compatibility; Backup/PITR.
+See the [dedicated Expand-and-Contract card](expand-and-contract.md).
 
 ### Controlled Cutover
 

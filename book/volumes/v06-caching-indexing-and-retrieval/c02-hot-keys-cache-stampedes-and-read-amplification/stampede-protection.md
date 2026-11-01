@@ -27,16 +27,22 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.sre-cascading"
+    - "src.redis"
+    - "src.cloudflare-cache-stampede"
+    - "src.aws-caching-challenges"
+    - "src.go-singleflight"
+    - "src.aws-ttl-jitter"
+    - "src.aws-per-cache-stampede"
   claim_ids: []
-  status: "unknown"
+  status: "source-linked"
   notes: "Bounded question from tycho.page.e0f0d5b68f834acbae94cc6714895dd3; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-31"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-21"
+updated_at: "2026-10-31"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -132,20 +138,120 @@ A refresh mutex limits stampede work but **does not necessarily prevent stale in
 
 ### Cache Stampede Protection
 
-A cache stampede occurs when many concurrent readers miss or decide that a cached value needs
-refreshing, then issue many redundant expensive origin loads. The problem is synchronized work
-amplification, not merely a low hit ratio.
+**Mechanism — synchronized misses, not a low hit ratio (Tycho summary, source-bound).**
+A cache stampede occurs when many concurrent readers miss or decide that a cached value
+needs refreshing, then issue many redundant expensive origin loads. Cloudflare's image-service
+example shows the mechanism: after the cache expires, "these 10 requests are going to go
+directly to the image server", and "When the image server sees these 10 requests all happening
+at the same time, it gets overloaded." AWS describes the same event as the "thundering herd"
+situation, "in which many clients make requests that need the same uncached downstream
+resource at approximately the same time." Tycho's reading: the defect is correlated work
+amplification, not merely a low hit ratio; the policy must bound concurrent origin loads per
+key and total source work.
 
-A stampede policy must bound concurrent origin loads per key and total source work, and
-stale-while-revalidate is only valid when the operation accepts the stale value. An expired lease can
-release a second refresh while the first is still writing; jittered TTLs do not protect one extremely
-hot key. Add a per-key lock or lease, jitter the refresh time, and expose origin-load concurrency.
-If the coordination service is unavailable, fail closed with a bounded wait or serve a declared
-stale value; never retry unbounded.
+The countermeasure families differ in scope and failure mode:
 
-Jittered TTL is a competing technique for simultaneous expiry of *different* keys; one extremely hot
-key can still stampede. A distributed refresh lease or request coalescing is preferable when one key
-dominates and stale data is acceptable for the operation.
+- **Single-flight within process.** Reduces multiple concurrent source loads per key on one
+  instance; many replicas still load in parallel.
+- **Distributed refresh lease.** Reduces duplicate concurrent refreshes across instances;
+  lease expiry/failure, fencing and stale-writer concerns remain.
+- **Jittered TTL.** Spreads simultaneous expiry of *different* keys; one extremely hot key
+  can still stampede.
+- **Stale-while-revalidate.** Hides user wait during refresh; the stale result must be
+  acceptable for that operation.
+- **Proactive refresh/prewarm.** Reduces a cold-start miss spike; extra background origin
+  work and false freshness assumptions remain.
+- **Source admission/bulkhead.** Limits origin overload; some reads must wait, reject or
+  degrade explicitly.
+- **Versioned projection.** Supports controlled update and monotonic read semantics; extra
+  storage, ordering/replay and version migration remain.
+
+**Invariant — one refresh per key and a bounded source budget (Tycho rule, source-bound).**
+Redis states the lock invariant as "Safety property: Mutual exclusion. At any given moment,
+only one client can hold a lock." Go's singleflight package gives the in-process version:
+"Do executes and returns the results of the given function, making sure that only one
+execution is in-flight for a given key at a time", and "If a duplicate comes in, the
+duplicate caller waits for the original to complete and receives the same results." Tycho's
+rule: coalesce or lease refreshes per key, cap total source admission, and make the
+wait/reject/declared-stale choice explicit. Stale-while-revalidate is valid only when the
+operation accepts the stale value. A per-process singleflight is not a global bound: every
+replica can still load the same key in parallel.
+
+**Failure and recovery — leases expire, leaders fail, waiters need an outcome (Tycho
+runbook, source-bound).**
+Redis warns that "a client may acquire the lock, get blocked performing some operation for
+longer than the lock validity time (the time at which the key will expire), and later remove
+the lock, that was already acquired by some other client"; a random lock value makes deletion
+safe, and "You should implement fencing tokens." Cloudflare adds that a lock service "might
+be unavailable", and probabilistic early expiration avoids that dependency but "does so at
+the cost of not guaranteeing the number of requests going to the origin server: maybe zero
+for an extended period, maybe more than one." Go's `Forget` gives a way out: "Forget tells
+the singleflight to forget about a key", and "Future calls to Do for this key will call the
+function rather than waiting for an earlier call to complete"; `DoChan` returns a channel
+that "will not be closed." Tycho's runbook: on lease or leader failure, stop admitting
+duplicate work, bound the wait, share one outcome record with every waiter, fence a stale
+writer before it installs an old value, and return an explicit wait/reject/declared-stale
+response when the source budget is exhausted; never retry unbounded.
+
+**Alternative — probabilistic early expiration, jittered TTL, or a lock (Tycho choice
+rule, source-bound).**
+Cloudflare contrasts the lock with probabilistic cache revalidation, which "does not suffer
+from these, given it does not reach out to an external service but rolls a die with the local
+randomness generator"; it can refresh before expiry based on a probability, at the cost that
+"maybe zero for an extended period, maybe more than one" request reaches the origin. AWS's
+Valkey guide gives the jitter alternative: "If a bunch of cache entries share the same TTL
+(and are written at the same time), they all expire at the same time. Suddenly every request
+is a cache miss and your database gets hammered. The fix is dead simple: ✨Jitter✨." A fixed
+early-refresh window is not enough: Cloudflare observes that "all requests are going to be
+made 5 minutes in advance, and that does not solve our cache stampede problem." Tycho's
+choice rule: use probabilistic early expiration when occasional extra origin loads are
+acceptable and no coordination service is wanted; use jittered TTL when many different keys
+expire together, recognizing that one extremely hot key can still stampede; use a
+distributed lease or request coalescing when one key dominates and duplicate loads are
+unacceptable; reverse the
+choice when coordination latency and failure outweigh source protection. An AWS Builder
+Center community article (Portuguese) also describes an XFetch-style ElastiCache adapter; it
+is community content, not AWS documentation, and is listed as bounded context rather than
+certified behavior.
+
+**Source boundary.** Public documentation and articles, accessed 2026-10-31. No cache, lock,
+lease, coalescing or load test was executed. Quotes are short excerpts; line breaks are
+editorial wrapping and whitespace is normalized. New source ids and ledger records are
+registered in the shared source register and reading ledger by the B52 integration; they
+remain bounded evidence, not benchmarks. Tycho-labelled sentences are synthesis, not source
+claims.
+
+- Cloudflare, *Sometimes I cache: implementing lock-free probabilistic caching*; published
+  2024-12-26, modified 2026-07-30; canonical text SHA-256
+  `1095c942825ca57d17f82796398957e8dfa6fac01eb7fe2c0a47b52752220a19`; raw HTML
+  SHA-256 `b95a03f213e8ab798292b1680a0bec71ee0e9ff242b94e7816616438e1935649`;
+  record `read.cloudflare-sometimes-i-cache.2026-10-31`.
+- AWS Builders' Library, *Caching challenges and strategies*; published and last modified
+  2019-12-05; canonical text SHA-256
+  `55f310713a99dd8282b6e4e569538462793e6387a3c1ca6251a6aa1c42e739a1`; raw HTML
+  SHA-256 `874cf4ac6ee84772dc37446ec34e41d8adc076a32a3f8c8e5468c9fd50587759`;
+  record `read.aws-caching-challenges.2026-10-31`.
+- Redis documentation, *Distributed Locks with Redis*; Last-Modified 2026-10-30;
+  canonical text SHA-256
+  `628a3026cdbad3121deb6f604d43f9e01317db9d0f7bb74f9ea4e1524291bb17`; raw HTML
+  SHA-256 `b96df057bbf4b9d2a321d47c3a319fe796b8705bb56ee5e62a819679d1d01ec7`;
+  record `read.redis-distributed-locks.2026-10-31` under `src.redis`.
+- Go documentation, *singleflight package*; version v0.24.0; page published 2026-09-23;
+  canonical text SHA-256
+  `a3810adc75c789bbe3c59a2aa1ca627bcdedfc9962703c444234a99f225762c4`; raw HTML
+  SHA-256 `ad466f6794e6bf6e5abf197636ca6db4fbbf270e45e6fbc798914aff4dd50c55`;
+  record `read.go-singleflight.2026-10-31` under `src.go-singleflight`.
+- AWS Builder Center, *Database Caching on AWS with Valkey: A Developer's Guide*;
+  published and last modified 2026-03-27; canonical text SHA-256
+  `75b455cb1f36e9b17d840a5e20cacf68d56bd6a2d65e334098f3196d3451df07`; raw HTML
+  SHA-256 `74a56d3425c6cda548bf924c4249af84525b5aa4b4f730159032c61b3e25f093`;
+  record `read.aws-valkey-ttl-jitter.2026-10-31` under `src.aws-ttl-jitter`.
+- AWS Builder Center community article (Portuguese), *Resiliência Extrema em Camadas de
+  Acesso a Dados*; published and last modified 2026-06-17; canonical text SHA-256
+  `631905b81459a0deb70c8c675b4ae76b68a9f41cd23fb0e6bb6472e77e7a0c0f`; raw HTML
+  SHA-256 `9625cea708d39110ef1d16fe95d9138efc6a4fec3066a177ec403c7fe5d7dbd8`;
+  record `read.aws-community-per.2026-10-31` under
+  `src.aws-per-cache-stampede`; community content, not AWS documentation.
 
 ### Single Flight-Request Coalescing
 

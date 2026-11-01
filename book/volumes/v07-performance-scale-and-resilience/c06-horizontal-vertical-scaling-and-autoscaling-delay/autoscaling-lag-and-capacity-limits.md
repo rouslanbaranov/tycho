@@ -41,6 +41,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.k8s-hpa"
+    - "src.kubernetes"
   claim_ids: []
   status: "source-linked"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
@@ -50,7 +51,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -69,7 +70,7 @@ content_verified_at: null
 
 > **Pattern atlas:**
 > [Horizontal Scaling](../../v11-pattern-atlas/c09-scalability/README.md#horizontal-scaling) — decision conditions and contraindications.
-> [Vertical Scaling](../../v11-pattern-atlas/c09-scalability/README.md#vertical-scaling) — decision conditions and contraindications.
+> [Vertical Scaling](../../v11-pattern-atlas/c09-scalability/vertical-scaling.md#vertical-scaling) — decision conditions and contraindications.
 > [Autoscaling](../../v11-pattern-atlas/c09-scalability/README.md#autoscaling) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.49d9df04c0b4488e936b02e580a62271:0 -->
@@ -123,16 +124,27 @@ Vertical scaling changes resources available to existing replicas. It can raise 
 throughput without adding partition or routing complexity, but it changes the failure domain: one
 larger node is still one node.
 
-Neither horizontal nor vertical scaling can increase throughput past a serial or externally fixed
-bottleneck. A resize usually needs a restart or migration, so the old capacity is unavailable during
+Each node has a maximum capacity for each of the resource types: the amount of CPU and memory it
+can provide for Pods. Tycho synthesis: serial or externally fixed bottlenecks can cap throughput
+regardless of scaling. Tycho synthesis: when in-place resize is unavailable, a resize requires
+restart or migration and the old capacity is unavailable during
 the change; bound the maintenance window and keep a fallback. The provider must allow a larger size,
 and cost must not grow superlinearly with that size. Measure the resource that actually saturates,
 not only CPU, and verify that the operating system, runtime and dependency can use the larger
 allocation.
 
-Horizontal scaling or sharding may be preferable when the workload partitions and a single node is
-an unacceptable failure domain. Vertical scaling is a fit when the workload is hard to partition and
-the resize can be staged safely.
+Horizontal scaling may be preferable when the workload partitions and a single node is an
+unacceptable failure domain. The Kubernetes autoscaling page frames the same choice as either
+changing the replica count (horizontal scaling) or adjusting resources in place (vertical
+scaling). It states:
+
+> When you scale a workload, you can either increase or decrease the number of replicas managed by
+> the workload, or adjust the resources available to the replicas in-place. The first approach is
+> referred to as horizontal scaling, while the second is referred to as vertical scaling.
+
+The page defines the two approaches but does not state when horizontal scaling is preferable;
+partition, failure-domain and restart conditions remain Tycho synthesis. Vertical scaling is a fit
+when the workload is hard to partition and the resize can be staged safely.
 
 ### Autoscaling
 

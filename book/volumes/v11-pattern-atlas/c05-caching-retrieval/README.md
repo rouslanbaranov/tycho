@@ -33,20 +33,27 @@ evidence_scope:
     - "src.hazelcast"
     - "src.aws-caching-strategies"
     - "src.microsoft-caching-guidance"
+    - "src.redis"
     - "src.google-cdn-negative-caching"
     - "src.rfc5861"
+    - "src.rfc9111-enrichment"
+    - "src.mdn-cache-control"
     - "src.microsoft-cloud-patterns"
   claim_ids: []
   status: "source-linked"
-  notes: "14 cards cite read units; owner links are bounded."
+  notes: >-
+    14 cards cite read units; owner links are bounded. Negative Caching moved to
+    a dedicated page on 2026-10-31 with RFC 9111, CloudFront 4xx/5xx processing,
+    OWASP authorization-decision reuse guidance and Cloudflare status-code
+    defaults; the Google Cloud CDN per-status TTL example is retained.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-31"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # V11/C05 — Caching and retrieval
@@ -64,9 +71,10 @@ own authority/freshness without owning every cache implementation.
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
-check its conditions and contraindications, then read the exact owner section.
+Page count is content-dependent. This chapter uses a landing page plus dedicated card
+pages for moved entries; a later split is an editorial change, not a plan failure. Start
+with the card, check its conditions and contraindications, then read the exact owner
+section.
 
 ## Entry inventory
 
@@ -279,71 +287,11 @@ See the [dedicated TTL-Based Expiration card](ttl-based-expiration.md).
 
 ### Negative Caching
 
-**Identity.** Negative Caching; family Caching and retrieval; kind caching-pattern;
-priority core.
-
-**Decision question.** Should failures or empty results be cached like successful
-responses?
-
-**Good-fit conditions.** The failure is stable enough to cache; TTL is short; negative
-entries cannot hide a later valid result; status-specific policy exists.
-
-**Hard contraindications.** Reject when failures are transient, when caching an error
-would hide recovery, or when negative entries leak existence or authorization.
-
-**Competing alternative.** Bypass, a per-principal key, or a short TTL with backoff.
-Reverse when repeated misses amplify origin load.
-
-**Failure and recovery.** A cached denial can outlive a create/grant or leak across principals;
-scope keys by tenant/principal, delete or version on change, bound TTL and test revocation.
-
-**Technical owner.** [Negative caching and discriminating experiments](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md#4-negative-caching-and-evicted-authorization) — negative-cache policy is bounded, not a universal error-cache rule.
-
-**Sources.**
-[src.google-cdn-negative-caching](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-google-negative.2026-10-21: all eleven served headings
-read. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** TTL-Based Expiration; CDN / Edge Caching; Cache Invalidation; Cache
-Stampede Protection.
+See the [dedicated Negative Caching card](negative-caching.md).
 
 ### Cache Stampede Protection
 
-**Identity.** Cache Stampede Protection; family Caching and retrieval; kind
-caching-pattern; priority core.
-
-**Decision question.** Should concurrent misses be coordinated so they do not all hit the
-source at once?
-
-**Good-fit conditions.** A hot key can expire under load; source capacity is limited;
-coordination failure has a fallback; duplicate fills are acceptable.
-
-**Hard contraindications.** Reject when the source can absorb the miss burst, when
-coordination would block all callers, or when single-flight state has no owner.
-
-**Competing alternative.** TTL jitter or prewarming. Reverse the choice when coordination
-latency and failure outweigh source protection.
-
-**Failure and recovery.** Lease loss, retry storms and expired-lease double refresh are
-common; measure origin QPS, coalesce refreshes and cap source admission.
-
-**Technical owner.** [Cache Stampede Protection](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#cache-stampede-protection) — stampede protection is bounded, not a single-flight implementation.
-
-**Sources.**
-[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Manage concurrency in a cache",
-"Implement caching patterns", and read.batch4-sre-cascading.2026-10-21 section "Preventing
-Server Overload". The sources cover concurrency and cold-cache/source overload; coalescing and
-lease policy are synthetic owner guidance. The sources are public pattern/documentation units,
-not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Single Flight; TTL-Based Expiration; Cache Invalidation;
-Stale-While-Revalidate.
+See the [dedicated Cache Stampede Protection card](cache-stampede.md).
 
 ### Single Flight / Request Coalescing
 
@@ -380,101 +328,15 @@ synthetic owner guidance. The source is a public pattern/documentation unit, not
 
 ### Stale-While-Revalidate
 
-**Identity.** Stale-While-Revalidate; family Caching and retrieval; kind caching-pattern;
-priority advanced.
-
-**Decision question.** Should a stale response be served while a refresh runs in the
-background?
-
-**Good-fit conditions.** The contract tolerates bounded staleness; refresh has an owner;
-the stale window is explicit; failure can fall back.
-
-**Hard contraindications.** Reject when read-after-write is mandatory, when stale data
-would mislead a decision, or when refresh cannot be bounded.
-
-**Competing alternative.** Blocking refresh or TTL-only expiry. Reverse the choice when
-stale responses violate a business contract.
-
-**Failure and recovery.** Background refresh failure can extend staleness; verify
-boundaries in the owner section.
-
-**Technical owner.** [Stale fills and regeneration ownership](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md#stale-while-revalidate) — stale-fill ownership is bounded, not a full HTTP cache specification.
-
-**Sources.** [src.rfc5861](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-rfc5861.2026-10-21: sections "Introduction", "The
-stale-while-revalidate Cache-Control Extension". The source is a public
-pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Cache Invalidation; TTL-Based Expiration; Cache Stampede Protection;
-CDN / Edge Caching.
+See the [dedicated Stale-While-Revalidate card](stale-while-revalidate.md).
 
 ### Multi-Level Caching
 
-**Identity.** Multi-Level Caching; family Caching and retrieval; kind caching-pattern;
-priority core.
-
-**Decision question.** Should data be cached in more than one tier with different latency
-and freshness?
-
-**Good-fit conditions.** Each tier has a distinct role; promotion/invalidation across
-tiers is owned; local staleness is bounded.
-
-**Hard contraindications.** Reject when one tier suffices, when cross-tier invalidation
-cannot be tested, or when duplicate caching only adds inconsistency.
-
-**Competing alternative.** Single distributed cache or local-only cache. Reverse the
-choice when tier coordination cost exceeds latency benefit.
-
-**Failure and recovery.** Cross-tier stale data and invalidation fan-out are common;
-verify placement in the owner section.
-
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#multi-level-caching) — multi-level authority and coherence are bounded; per-tier eviction is page-specific.
-
-**Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-hazelcast-near.2026-10-21: all fifteen served headings read. The source is a
-public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Distributed Cache; Cache Invalidation; CDN / Edge Caching;
-Cache-Aside.
+See the [dedicated Multi-Level Caching card](multi-level-caching.md).
 
 ### CDN / Edge Caching
 
-**Identity.** CDN / Edge Caching; family Caching and retrieval; kind caching-pattern;
-priority core.
-
-**Decision question.** Should content be cached at the edge close to clients rather than
-only at the origin?
-
-**Good-fit conditions.** Content is cacheable and versioned; private data is excluded;
-origin protection and purge are owned; edge failure is handled.
-
-**Hard contraindications.** Reject when content is highly personalized or uncacheable,
-when purge cannot meet the freshness contract, or when edge configuration is unowned.
-
-**Competing alternative.** Origin cache or direct origin. Reverse the choice when
-cacheability and purge cost outweigh latency benefit.
-
-**Failure and recovery.** Stale private content and purge failures are common; verify
-cacheability in the owner section.
-
-**Technical owner.** [CDN / Edge Caching](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#cdn-edge-caching) — edge caching is bounded, not a CDN product manual.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-static.2026-10-21: all nine served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Cache Invalidation; TTL-Based Expiration; Negative Caching;
-Multi-Level Caching.
+See the [dedicated CDN / Edge Caching card](cdn-edge-caching.md).
 
 ## Chapter result and counterexample
 

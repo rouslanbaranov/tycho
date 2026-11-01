@@ -122,14 +122,14 @@
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Explicit invalidation or versioned keys may be preferable when the source change must be visible immediately. TTL is a fit when bounded staleness is acceptable and the origin can absorb the refill rate.",
-          "rationale": "Pairs TTL with invalidation/versioned keys; frames bounded staleness."
+          "quote": "For data that must be current, use shorter TTLs or bypass the cache entirely and read from the source data store.",
+          "rationale": "Source recommends a shorter TTL or bypass when data must be current."
         },
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "A TTL reduces the period during which data might be out of date. Size/weight eviction bounds memory and may remove useful hot entries, creating origin read bursts. A TTL shorter than the source's change rate reduces staleness but increases load; a longer TTL does the opposite. Jitter the expiry across keys to avoid synchronized bursts.",
-          "rationale": "Gives the shorter-TTL versus origin-load trade-off."
+          "quote": "If you make it too short, objects expire too quickly and you reduce the benefits of using the cache. If you make the period too long, you risk the data becoming stale.",
+          "rationale": "States the too-short/too-long range between reduced benefit and stale data."
         }
       ],
       "adjudication": "confirmed",
@@ -152,14 +152,14 @@
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "A stampede policy must bound concurrent origin loads per key and total source work, and stale-while-revalidate is only valid when the operation accepts the stale value. An expired lease can release a second refresh while the first is still writing; jittered TTLs do not protect one extremely hot key.",
-          "rationale": "Per-key bound, lease hazards and the single hot-key limit."
+          "quote": "Tycho's rule: coalesce or lease refreshes per key, cap total source admission, and make the wait/reject/declared-stale choice explicit. Stale-while-revalidate is valid only when the operation accepts the stale value. A per-process singleflight is not a global bound: every replica can still load the same key in parallel.",
+          "rationale": "Per-key bound, stale acceptance and the non-global singleflight limit."
         },
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Jittered TTL is a competing technique for simultaneous expiry of *different* keys; one extremely hot key can still stampede. A distributed refresh lease or request coalescing is preferable when one key dominates and stale data is acceptable for the operation.",
-          "rationale": "Coalescing/lease preferred for one dominating key."
+          "quote": "Tycho's choice rule: use probabilistic early expiration when occasional extra origin loads are acceptable and no coordination service is wanted; use jittered TTL when many different keys expire together, recognizing that one extremely hot key can still stampede; use a distributed lease or request coalescing when one key dominates and duplicate loads are unacceptable; reverse the choice when coordination latency and failure outweigh source protection.",
+          "rationale": "Jitter cannot protect one hot key; a distributed lease or coalescing is preferred when one key dominates."
         }
       ],
       "adjudication": "confirmed",
@@ -176,19 +176,19 @@
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Stale-while-revalidate serves the current stale value while one owner refreshes it in the background, within a bounded stale window. The stale window and the refresh owner must be bounded and observable, and a failed refresh must not extend the window indefinitely.",
+          "quote": "The stale window is bounded by the declared delta-seconds, and a failed or inconclusive refresh must not extend it.",
           "rationale": "Serves stale during refresh inside a bounded window."
         },
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "A failing refresh keeps serving the same stale value; cap the stale age, surface refresh failures and fall back to a blocking read when the bound is reached.",
+          "quote": "A failed or inconclusive refresh may keep serving stale only inside the window; after the bound, the next request blocks and is handled normally.",
           "rationale": "Hard bound ends stale service with a blocking read."
         },
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "section_id": "3-local-cache-eviction-and-refresh-are-different-actions",
-          "quote": "- **expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit; - **expire-after-access:** frequently accessed values may remain resident longer (subject to other bounds); - **refresh-after-write:** an old value may remain visible while a new load runs, with configured failure/expiration behavior; - **size/weight eviction:** bounds memory and may remove useful hot entries, creating origin read bursts.",
+          "quote": "- **expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit; - **expire-after-access:** frequently accessed values may remain resident longer (subject to other bounds); - **refresh-after-write:** an old value may remain visible while a new load runs, with configured failure/expiration behavior; - **size/weight eviction:** bounds memory by evicting entries not used recently or often when the cache exceeds its configured size or weight.",
           "rationale": "Separates refresh (soft) from expiry (hard) service behaviour."
         },
         {
@@ -391,14 +391,14 @@
         {
           "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "An idempotency key belongs to the operation owner, who defines its scope, fingerprint inputs and retention period. Callers choose a value only within that published contract. The owner also names the conflict response and the record a support engineer may inspect.",
-          "rationale": "Owner defines scope, fingerprint inputs and retention."
+          "quote": "An idempotency key belongs to the operation owner, who defines its scope, fingerprint inputs and retention period. Callers choose a value only within that published contract.",
+          "rationale": "Owner defines scope, fingerprint inputs and retention; callers stay within the published contract."
         },
         {
           "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "The outcome record and business effect must commit together; a later separate write leaves a window for duplicate execution. The owner treats a changed fingerprint on a reused key as a new decision rather than a replay.",
-          "rationale": "Outcome record commits with the effect; changed fingerprint is a conflict."
+          "quote": "The outcome record and business effect must commit together; a later separate write leaves a window for duplicate execution.",
+          "rationale": "The outcome record commits with the effect; a changed fingerprint on a reused key is a new decision."
         },
         {
           "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
@@ -457,7 +457,7 @@
         {
           "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "The invariant is one authority and one effect identity per step; the saga never claims atomicity or rollback. A lost acknowledgment is an unknown outcome, not a failure, and a failed compensation remains a repair item. Use one local transaction when all effects fit one owner, or two-phase commit when participants can hold prepared state and atomic visibility is mandatory.",
+          "quote": "Tycho synthesis: the invariant is one authority and one effect identity per step; the saga never claims atomicity or rollback.",
           "rationale": "Saga never claims atomicity or rollback."
         },
         {
@@ -932,14 +932,14 @@
         {
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Consistent hashing maps keys onto a ring so adding or removing a node moves only the adjacent share of keys instead of remapping the whole keyspace. Clients and owners must agree on a versioned mapping, and a key must retain one authoritative owner at any mapping epoch.",
-          "rationale": "Adding or removing a node moves only the adjacent share of keys."
+          "quote": "With K keys spread over N equal-share nodes, adding or removing one node should move about K/N keys: the joining or leaving node's share, not the whole keyspace.",
+          "rationale": "Adding or removing a node moves only the joining or leaving share of keys."
         },
         {
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "**Limits.** Virtual nodes improve balance but add metadata and lookup cost; a ring without epoch fencing can route a write to two owners during a change.",
-          "rationale": "Virtual nodes improve balance; ring changes need epoch fencing."
+          "quote": "Tycho's runbook: detect hot token ranges and hot keys, bound token counts against repair and outage cost, record the ownership epoch at every membership change, and treat hinted handoff as temporary protection rather than repair. A ring without epoch fencing can still route one key to two owners during a change.",
+          "rationale": "Bound token counts and record the ownership epoch; a ring change still needs fencing."
         },
         {
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
@@ -1064,7 +1064,7 @@
         {
           "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Several nodes accept writes for the same logical data and replicate them to each other, so every accepted write must eventually converge to one declared outcome. The system must define a conflict-resolution rule and preserve every acknowledged effect according to that rule; silent last-writer-wins is not a convergence proof.",
+          "quote": "Cassandra versions every mutation with a timestamp and resolves updates according to the conflict-resolution rule of last write wins. Tycho synthesis, not a source claim: every accepted write must eventually converge to one declared outcome, the system must declare that rule, a convergence proof must preserve every acknowledged effect, and silent last-writer-wins is not sufficient.",
           "rationale": "Concurrent writers must define a conflict-resolution rule."
         }
       ],
@@ -1344,7 +1344,7 @@
         {
           "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md",
           "section_id": "least-privilege",
-          "quote": "Permission creep and long-lived credentials widen the blast radius without any visible incident; review grants on a schedule and prefer short-lived scoped credentials. Coarse roles are simpler to administer for small stable systems; narrow them once measured access reviews or incident impact justify the overhead.",
+          "quote": "When no narrow role can express the task, keep a task-capable identity and require independent approval by more than one principal before a high-value action executes, instead of splitting the entitlement.",
           "rationale": "Review grants; prefer short-lived scoped credentials."
         },
         {
@@ -1482,7 +1482,7 @@
         {
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible with readers still running the previous version, and the contract phase is gated by observed reader absence. The protocol owns the compatibility window, the reader inventory and the rollback or forward-repair decision.",
+          "quote": "Expand-and-contract is a rollout protocol, not a schema diagram: the expand and migrate phases must remain compatible with readers still running the previous version, while the contract phase is the gated removal that follows observed reader absence. The protocol owns the compatibility window, the reader inventory and the rollback or forward-repair decision.",
           "rationale": "Each phase stays compatible; contract is gated by observed reader absence."
         },
         {
@@ -1535,7 +1535,7 @@
         {
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible with readers still running the previous version, and the contract phase is gated by observed reader absence. The protocol owns the compatibility window, the reader inventory and the rollback or forward-repair decision.",
+          "quote": "Expand-and-contract is a rollout protocol, not a schema diagram: the expand and migrate phases must remain compatible with readers still running the previous version, while the contract phase is the gated removal that follows observed reader absence. The protocol owns the compatibility window, the reader inventory and the rollback or forward-repair decision.",
           "rationale": "Contract phase is gated by observed reader absence."
         }
       ],

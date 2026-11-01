@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-29",
+  "updated": "2026-11-01",
   "registry_version": "0.2.0",
-  "registry_sha256": "9be0c2c62ee4cfc2e907fb86481f96baebbce8b82779aecbebae9369b87e7125",
-  "route_index_snapshot": "eaf94e6bb7daad921c4171b7af0569eb4666c795b4b4bdd53f1ead322983ec57",
+  "registry_sha256": "45fe09f5b66b117591d270f8a4ad1702b9c6de70cb42020dbb86202989fb8aaf",
+  "route_index_snapshot": "0010349a962b48cff5dff5ab2542f721a10b5a987d056365578822c1ca8f60b9",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -54,9 +54,49 @@
           "status": "read",
           "read_record_id": "read.monolith-first.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.spring-modulith",
+          "unit": "Verifying Application Module Structure",
+          "unit_type": "documentation-page",
+          "url": "https://docs.spring.io/spring-modulith/reference/1.3/verification.html",
+          "sections": [
+            "Verifying Application Module Structure"
+          ],
+          "status": "read",
+          "read_record_id": "read.spring-modulith-verification.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.spring-modulith",
+          "unit": "Fundamentals",
+          "unit_type": "documentation-page",
+          "url": "https://docs.spring.io/spring-modulith/reference/1.3/fundamentals.html",
+          "sections": [
+            "Application Modules",
+            "Advanced Application Modules",
+            "Explicit Application Module Dependencies",
+            "Named Interfaces"
+          ],
+          "status": "read",
+          "read_record_id": "read.spring-modulith-fundamentals.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.spring-modulith",
+          "unit": "Working with Application Events",
+          "unit_type": "documentation-page",
+          "url": "https://docs.spring.io/spring-modulith/reference/1.3/events.html",
+          "sections": [
+            "Working with Application Events",
+            "The Event Publication Registry"
+          ],
+          "status": "read",
+          "read_record_id": "read.spring-modulith-events.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 1 public page read; claims limited to the ledger record."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to Spring Modulith 1.3.12 verification, fundamentals and events pages plus the existing Monolith First record; named owner, single-deployable framing and blast radius remain Tycho analysis. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.microservices-architecture",
@@ -204,9 +244,24 @@
           "status": "read",
           "read_record_id": "read.clean-architecture.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.fowler-layering",
+          "unit": "Presentation Domain Data Layering — article",
+          "unit_type": "article",
+          "url": "https://martinfowler.com/bliki/PresentationDomainDataLayering.html",
+          "sections": [
+            "Presentation Domain Data Layering",
+            "Further Reading",
+            "Acknowledgements",
+            "Notes"
+          ],
+          "status": "read",
+          "read_record_id": "read.fowler-layering.2026-10-21",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 1 article read; covers clean/onion comparison, not a full implementation."
+      "notes": "Batch 1 article read plus the 2026-10-29 Fowler layering unit read; claims limited to the ledger records."
     },
     {
       "pattern_id": "tycho.pattern.domain-driven-design-bounded-context",
@@ -226,9 +281,39 @@
           "status": "read",
           "read_record_id": "read.fowler-bounded-context.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-ddd",
+          "unit": "Use domain analysis to model microservices — Azure Architecture Center",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis",
+          "sections": [
+            "Introduction",
+            "Scenario: Drone delivery",
+            "Analyze the domain",
+            "Example: Drone delivery application",
+            "Define bounded contexts"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-ddd.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.ddd-reference",
+          "unit": "DDD Reference — summary booklet (2015-03 PDF)",
+          "unit_type": "book-chapter",
+          "url": "https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf",
+          "sections": [
+            "Definitions",
+            "Bounded Context",
+            "Ubiquitous Language"
+          ],
+          "status": "read",
+          "read_record_id": "read.ddd-reference-bounded-context.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Bounded-context focus only; full DDD reference remains an additional source."
+      "notes": "Bounded-context focus using Fowler’s article, Microsoft’s domain-analysis page and the Evans 2015-03 summary. Microsoft and Evans support co-created vocabulary, domain-expert objection, context maps and iterative boundaries; a single named arbiter and expert review before a boundary move remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.database-per-service",
@@ -253,9 +338,83 @@
           "status": "read",
           "read_record_id": "read.microservices-database-per-service.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microservices-patterns",
+          "unit": "Saga — pattern page",
+          "unit_type": "pattern-page",
+          "url": "https://microservices.io/patterns/data/saga.html",
+          "sections": [
+            "Pattern: Saga",
+            "Context",
+            "Problem",
+            "Forces",
+            "Solution",
+            "Example: Choreography-based saga",
+            "Example: Orchestration-based saga",
+            "Resulting context",
+            "Related patterns",
+            "Learn more",
+            "Example code"
+          ],
+          "status": "read",
+          "read_record_id": "read.batch2-saga.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microservices-patterns",
+          "unit": "Transactional Outbox — pattern page",
+          "unit_type": "pattern-page",
+          "url": "https://microservices.io/patterns/data/transactional-outbox.html",
+          "sections": [
+            "Pattern: Transactional outbox",
+            "Also known as",
+            "Context",
+            "Problem",
+            "Forces",
+            "Solution",
+            "Result context",
+            "Related patterns",
+            "Learn more"
+          ],
+          "status": "read",
+          "read_record_id": "read.batch2-outbox.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microservices-patterns",
+          "unit": "Shared database — pattern page",
+          "unit_type": "pattern-page",
+          "url": "https://microservices.io/patterns/data/shared-database.html",
+          "sections": [
+            "Pattern: Shared database",
+            "Context",
+            "Problem",
+            "Forces",
+            "Untitled solution, benefits and drawbacks prose"
+          ],
+          "status": "read",
+          "read_record_id": "read.microservices-shared-database.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.monolith-first",
+          "unit": "Monolith First — article",
+          "unit_type": "article",
+          "url": "https://martinfowler.com/bliki/MonolithFirst.html",
+          "sections": [
+            "Monolith First",
+            "Microservices Guide",
+            "Further Reading",
+            "Notes",
+            "Acknowledgements"
+          ],
+          "status": "read",
+          "read_record_id": "read.monolith-first.2026-10-21",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 1 public page read; claims limited to the ledger record."
+      "notes": "Failure/recovery and alternative bound 2026-10-30 to microservices.io Database per Service, Saga, Transactional outbox and Shared database pages plus the existing Monolith First article; replica freshness and enforced shared-database ownership remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.self-contained-service",
@@ -392,9 +551,93 @@
           "status": "read",
           "read_record_id": "read.microservices-api-gateway.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-api-gateway",
+          "unit": "Throttle requests to your REST APIs for better throughput in API Gateway",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-throttling.html",
+          "sections": [
+            "Overview",
+            "How throttling limit settings are applied in API Gateway",
+            "Account-level throttling per Region"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-api-gateway-throttling.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-api-gateway",
+          "unit": "Set up a stage for a REST API in API Gateway",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-stages.html",
+          "sections": [
+            "Overview",
+            "Create a new stage",
+            "Modify stage settings"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-api-gateway-stages.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-api-management",
+          "unit": "Authentication and authorization to APIs in Azure API Management",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/api-management/authentication-authorization-overview",
+          "sections": [
+            "Authentication versus authorization",
+            "OAuth flow",
+            "OAuth 2.0 authorization scenarios in API Management",
+            "Scenario 1 - Client app authorizes directly to backend",
+            "Scenario 2 - Client app authorizes to API Management",
+            "Scenario 3: API Management authorizes to backend",
+            "Client side options",
+            "Service side options"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-api-management-authorization.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-api-management",
+          "unit": "Self-hosted gateway overview",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/api-management/self-hosted-gateway-overview",
+          "sections": [
+            "Connectivity to Azure",
+            "Connectivity failures"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-api-management-self-hosted-gateway.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-api-management",
+          "unit": "Azure API Management policy reference - rate-limit",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/api-management/rate-limit-policy",
+          "sections": [
+            "Limit call rate by subscription"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-api-management-rate-limit.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-api-management",
+          "unit": "Azure API Management policy reference - quota",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/api-management/quota-policy",
+          "sections": [
+            "Set usage quota by subscription"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-api-management-quota.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 1 public page read; claims limited to the ledger record."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to Azure, AWS and microservices.io public pages; bypass and total-backend outage remain Tycho analysis. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.gateway-routing",
@@ -512,9 +755,71 @@
           "status": "read",
           "read_record_id": "read.microsoft-bff.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Backends for Frontends — pattern page (2026-10-30 re-read)",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends",
+          "sections": [
+            "Backends for Frontends pattern",
+            "Context and problem",
+            "Solution",
+            "Problems and considerations",
+            "When to use this pattern",
+            "Workload design",
+            "Example",
+            "Flow A for the first page request from the mobile client",
+            "Flow B for the first page cached request from the mobile client",
+            "Flow C for the first request from the desktop client",
+            "Design",
+            "Next steps",
+            "Related resources"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-bff.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-bff",
+          "unit": "Backends for Frontends Pattern — AWS Front-End Web & Mobile",
+          "unit_type": "engineering-article",
+          "url": "https://aws.amazon.com/blogs/mobile/backends-for-frontends-pattern/",
+          "sections": [
+            "Introduction (untitled)",
+            "The BFF pattern",
+            "Components of an event-driven BFF on AWS",
+            "Building an event-driven REST BFF using API Gateway",
+            "Building an event-driven GraphQL BFF using AppSync",
+            "Conclusion"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-bff.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microservices-patterns",
+          "unit": "API Gateway — pattern page",
+          "unit_type": "pattern-page",
+          "url": "https://microservices.io/patterns/apigateway.html",
+          "sections": [
+            "Context",
+            "Problem",
+            "Forces",
+            "Solution",
+            "Variation: Backends for frontends",
+            "Examples",
+            "Resulting context",
+            "Related patterns",
+            "Known uses",
+            "Example application"
+          ],
+          "status": "read",
+          "read_record_id": "read.microservices-api-gateway.2026-10-21",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 1 public page read; claims limited to the ledger record."
+      "notes": "BFF mechanism and failure/recovery bound 2026-10-30 to Microsoft, AWS and microservices.io pattern pages; composition contract, duplication policy, drift, versioning and client-contract testing remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.api-composition",
@@ -655,6 +960,18 @@
           "status": "read",
           "read_record_id": "read.microservices-server-discovery.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.envoy",
+          "unit": "Service discovery — Envoy documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/service_discovery",
+          "sections": [
+            "On eventually consistent service discovery"
+          ],
+          "status": "read",
+          "read_record_id": "read.envoy-service-discovery-consistency.2026-10-29",
+          "blocked_reason": null
         }
       ],
       "notes": "Batch 1 public page read; claims limited to the ledger record."
@@ -716,7 +1033,7 @@
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 1 public page read; claims limited to the ledger record."
+      "notes": "Batch 1 public page read; the 2026-10-29 failure/recovery binding uses the same record; claims limited to the ledger record."
     },
     {
       "pattern_id": "tycho.pattern.publish-subscribe",
@@ -829,6 +1146,25 @@
           ],
           "status": "read",
           "read_record_id": "read.batch2-request-reply.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microservices-patterns",
+          "unit": "Messaging — pattern page",
+          "unit_type": "pattern-page",
+          "url": "https://microservices.io/patterns/communication-style/messaging.html",
+          "sections": [
+            "Context",
+            "Forces",
+            "Problem",
+            "Solution",
+            "Examples",
+            "Resulting context",
+            "Related patterns",
+            "See also"
+          ],
+          "status": "read",
+          "read_record_id": "read.microservices-communication-messaging.2026-10-29",
           "blocked_reason": null
         }
       ],
@@ -1149,6 +1485,55 @@
           "status": "read",
           "read_record_id": "read.batch2-dlq.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-sqs-dlq",
+          "unit": "Using dead-letter queues in Amazon SQS — Amazon Simple Queue Service",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html",
+          "sections": [
+            "Using dead-letter queues in Amazon SQS",
+            "Using policies for dead-letter queues",
+            "Understanding message retention periods for dead-letter queues"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-sqs-dlq.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-service-bus-dlq",
+          "unit": "Overview of Service Bus dead-letter queues — Azure Service Bus",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues",
+          "sections": [
+            "The dead-letter queue",
+            "Moving messages to the DLQ",
+            "Maximum delivery count",
+            "Application-level dead-lettering"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-service-bus-dlq.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.hookdeck-dlq-alternatives",
+          "unit": "Alternatives to Dead-Letter Queues for Webhook Reliability — Hookdeck",
+          "unit_type": "engineering-article",
+          "url": "https://hookdeck.com/webhooks/guides/alternatives-to-dead-letter-queues",
+          "sections": [
+            "Introduction (unlabelled)",
+            "The Database Persistence Pattern",
+            "The Retry Table Pattern",
+            "The Circuit Breaker Pattern",
+            "The Transactional Outbox Pattern",
+            "The Event Sourcing Approach",
+            "The Saga Pattern",
+            "Issue-Based Failure Management",
+            "Choosing the Right Approach"
+          ],
+          "status": "read",
+          "read_record_id": "read.hookdeck-dlq-alternatives.2026-10-30",
+          "blocked_reason": null
         }
       ],
       "notes": "Batch 2 public unit read; claims limited to the ledger record."
@@ -1191,6 +1576,22 @@
           ],
           "status": "read",
           "read_record_id": "read.batch2-idempotent.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Idempotent Consumer pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/idempotent-consumer",
+          "sections": [
+            "Choose a stable deduplication key",
+            "Commit the processed key and the side effects atomically",
+            "Guard against concurrent duplicates",
+            "Handle side effects that can't join the transaction",
+            "Problems and considerations"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-idempotent-consumer.2026-10-30",
           "blocked_reason": null
         }
       ],
@@ -1404,9 +1805,47 @@
           "status": "read",
           "read_record_id": "read.fowler-cqrs.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "CQRS pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+          "sections": [
+            "Context and problem",
+            "Solution",
+            "Separate read models and write models",
+            "Separate models in a single data store",
+            "Separate models in different data stores",
+            "Benefits of CQRS",
+            "Problems and considerations",
+            "When to use this pattern",
+            "Workload design",
+            "Combine the Event Sourcing and CQRS patterns",
+            "Benefits of combining the Event Sourcing and CQRS patterns",
+            "Considerations for how to combine the Event Sourcing and CQRS patterns",
+            "Example",
+            "Next step",
+            "Related resources"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-cqrs.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-cqrs",
+          "unit": "CQRS pattern — AWS Prescriptive Guidance",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-data-persistence/cqrs-pattern.html",
+          "sections": [
+            "CQRS pattern"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-cqrs.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Foundation unit read; claims limited to the ledger record."
+      "notes": "Bounded three-unit plan: Fowler for the conceptual update/display split, shared-database option and applicability; Microsoft for read/write models, read-only projections, the Transactional Outbox plus idempotent consumer and replay-based regeneration; AWS for command/query separation, command-side validation and eventual consistency. No projector crash, cursor protocol, production rebuild or independent reproduction is claimed."
     },
     {
       "pattern_id": "tycho.pattern.event-sourcing",
@@ -1485,6 +1924,20 @@
           ],
           "status": "read",
           "read_record_id": "read.batch2-saga.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Saga distributed transactions pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga",
+          "sections": [
+            "Solution",
+            "Key concepts in the Saga pattern",
+            "Problems and considerations"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-saga-azure.2026-10-30",
           "blocked_reason": null
         }
       ],
@@ -1621,9 +2074,77 @@
           "status": "read",
           "read_record_id": "read.batch2-idempotent-consumer.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Idempotent Consumer pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/idempotent-consumer",
+          "sections": [
+            "Choose a stable deduplication key",
+            "Commit the processed key and the side effects atomically",
+            "Guard against concurrent duplicates",
+            "Handle side effects that can't join the transaction",
+            "Problems and considerations"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-idempotent-consumer.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Implement the Transactional Outbox pattern by using Azure Cosmos DB",
+          "unit_type": "article",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-out-box-cosmos",
+          "sections": [
+            "Solution",
+            "Error handling"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-transactional-outbox-cosmos.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kafka-design",
+          "unit": "Design — Apache Kafka 4.1 documentation (exactly-once and offsets)",
+          "unit_type": "documentation-page",
+          "url": "https://kafka.apache.org/41/design/design/",
+          "sections": [
+            "Consumer Position",
+            "Message Delivery Semantics",
+            "Using Transactions"
+          ],
+          "status": "read",
+          "read_record_id": "read.kafka41-design-exactly-once.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "SELECT — The Locking Clause (PostgreSQL 18 documentation)",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/sql-select.html",
+          "sections": [
+            "The Locking Clause"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgresql-select-locking.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.debezium-outbox",
+          "unit": "Outbox Event Router — Debezium documentation (2026-10-31 binding)",
+          "unit_type": "documentation-page",
+          "url": "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+          "sections": [
+            "Outbox Event Router",
+            "Basic outbox table"
+          ],
+          "status": "read",
+          "read_record_id": "read.debezium-outbox-binding.2026-10-31",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 2 public unit read; claims limited to the ledger record."
+      "notes": "Batch 2 public unit read; four additional units read on 2026-10-31 for mechanism, invariant, failure/recovery and alternative."
     },
     {
       "pattern_id": "tycho.pattern.idempotency-key",
@@ -1632,9 +2153,9 @@
       "required_units": [
         {
           "source_id": "src.ietf-idempotency-key",
-          "unit": "Idempotency-Key HTTP Header Field — IETF draft",
+          "unit": "The Idempotency-Key HTTP Header Field — IETF Internet-Draft 08",
           "unit_type": "specification",
-          "url": "https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-07.txt",
+          "url": "https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-08.txt",
           "sections": [
             "Introduction",
             "Notational Conventions",
@@ -1647,26 +2168,58 @@
             "Client",
             "Resource",
             "Idempotency Enforcement",
-            "Error Handling",
-            "IANA Considerations",
-            "The Idempotency-Key HTTP Request Header Field (IANA)",
-            "Implementation Status",
-            "Implementing the Concept",
-            "Security Considerations",
-            "Examples",
-            "References",
-            "Normative References",
-            "Informative References",
-            "Appendix A. Changes from Draft-06",
-            "Acknowledgments",
-            "Authors' Addresses"
+            "Error Handling"
           ],
           "status": "read",
-          "read_record_id": "read.batch2-ietf.2026-10-21",
+          "read_record_id": "read.ietf-idempotency-key-08.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-idempotency",
+          "unit": "Making retries safe with idempotent APIs — Amazon Builders' Library",
+          "unit_type": "engineering-article",
+          "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+          "sections": [
+            "Introduction",
+            "Retrying and side effects",
+            "Reducing client complexity",
+            "Late arriving requests",
+            "Same client request ID, different intent"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-idempotency.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.stripe-idempotency",
+          "unit": "Idempotent requests — Stripe API Reference",
+          "unit_type": "documentation-page",
+          "url": "https://docs.stripe.com/api/idempotent_requests",
+          "sections": [
+            "Idempotent requests"
+          ],
+          "status": "read",
+          "read_record_id": "read.stripe-idempotent-requests.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Idempotent Consumer pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/idempotent-consumer",
+          "sections": [
+            "Choose a stable deduplication key",
+            "Commit the processed key and the side effects atomically",
+            "Guard against concurrent duplicates",
+            "Handle side effects that can't join the transaction",
+            "Problems and considerations"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-idempotent-consumer.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 2 public unit read; claims limited to the ledger record."
+      "notes": "All four technical dimensions bound 2026-10-31 to IETF draft-08, AWS Builders' Library, Stripe and Azure Architecture Center; the key ownership, atomic-commit, conflict-response and alternative rules remain Tycho."
     },
     {
       "pattern_id": "tycho.pattern.change-data-capture-cdc",
@@ -1674,33 +2227,110 @@
       "priority": "core",
       "required_units": [
         {
-          "source_id": "src.postgres-logical",
-          "unit": "Chapter 29. Logical Replication",
+          "source_id": "src.debezium-architecture",
+          "unit": "Debezium Architecture — public documentation",
           "unit_type": "documentation-page",
-          "url": "https://www.postgresql.org/docs/current/logical-replication.html",
+          "url": "https://debezium.io/documentation/reference/stable/architecture.html",
           "sections": [
-            "Chapter 29. Logical Replication"
+            "Debezium Architecture",
+            "Debezium Server",
+            "Debezium Engine"
           ],
           "status": "read",
-          "read_record_id": "read.batch8-postgres-logical.2026-10-22",
+          "read_record_id": "read.debezium-architecture.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.debezium-postgresql",
+          "unit": "Debezium connector for PostgreSQL — public documentation",
+          "unit_type": "documentation-page",
+          "url": "https://debezium.io/documentation/reference/stable/connectors/postgresql.html",
+          "sections": [
+            "Overview",
+            "Snapshots",
+            "Streaming changes",
+            "Transaction metadata",
+            "Change event keys",
+            "truncate events",
+            "WAL disk space consumption",
+            "Monitoring",
+            "Behavior when things go wrong"
+          ],
+          "status": "read",
+          "read_record_id": "read.debezium-postgresql.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgres-logical-decoding",
+          "unit": "PostgreSQL 18 47.2 Logical Decoding Concepts",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/logicaldecoding-explanation.html",
+          "sections": [
+            "47.2.1 Logical Decoding",
+            "47.2.2 Replication Slots",
+            "47.2.5 Exported Snapshots"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgres-logical-decoding.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgres-replication-config",
+          "unit": "PostgreSQL 18 19.6 Replication settings",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/runtime-config-replication.html",
+          "sections": [
+            "19.6.2 Primary Server, max_slot_wal_keep_size and idle_replication_slot_timeout"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgres-slot-retention.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kafka-connect-guide",
+          "unit": "Kafka Connect 4.1 Connector Development Guide",
+          "unit_type": "documentation-page",
+          "url": "https://kafka.apache.org/41/kafka-connect/connector-development-guide/",
+          "sections": [
+            "Core Concepts and APIs",
+            "Streams and Records",
+            "Task Example - Source Task",
+            "Resuming from Previous Offsets",
+            "Exactly-once source connectors"
+          ],
+          "status": "read",
+          "read_record_id": "read.kafka-connect-offsets.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kafka-connect",
+          "unit": "Kafka Connect 4.1 Overview",
+          "unit_type": "documentation-page",
+          "url": "https://kafka.apache.org/41/kafka-connect/overview/",
+          "sections": [
+            "Overview",
+            "feature list",
+            "automatic offset management"
+          ],
+          "status": "read",
+          "read_record_id": "read.kafka-connect-overview.2026-10-31",
           "blocked_reason": null
         },
         {
           "source_id": "src.debezium-outbox",
-          "unit": "Outbox Event Router — Debezium documentation",
+          "unit": "Outbox Event Router — Debezium documentation (2026-10-31 binding)",
           "unit_type": "documentation-page",
           "url": "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
           "sections": [
             "Outbox Event Router",
-            "Configuration",
-            "Example"
+            "Basic outbox table"
           ],
           "status": "read",
-          "read_record_id": "read.batch2-debezium-outbox.2026-10-21",
+          "read_record_id": "read.debezium-outbox-binding.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "PostgreSQL logical replication read for general log-based CDC; the Debezium outbox unit is retained as a comparison and is not the card citation."
+      "notes": "Six public units bound 2026-10-31: Debezium architecture and PostgreSQL connector documentation, PostgreSQL 18 logical decoding and replication-slot settings, and Kafka Connect overview and connector-development offset guidance. The retained Debezium outbox unit supports the alternative. read.batch8-postgres-logical.2026-10-22 is retained in foundation records as historical evidence. The invariant is conditional on key/partition and transaction metadata; dual-write reconciliation remains an unbound heuristic."
     },
     {
       "pattern_id": "tycho.pattern.materialized-view",
@@ -1784,6 +2414,75 @@
           ],
           "status": "read",
           "read_record_id": "read.batch2-pg-2pc.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "PREPARE TRANSACTION — PostgreSQL 18",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/18/sql-prepare-transaction.html",
+          "sections": [
+            "PREPARE TRANSACTION",
+            "Description",
+            "Notes"
+          ],
+          "status": "read",
+          "read_record_id": "read.pg-prepare-transaction.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.oracle-distributed-transactions",
+          "unit": "Distributed Transactions Concepts — Oracle Database 26",
+          "unit_type": "documentation-page",
+          "url": "https://docs.oracle.com/en/database/oracle/oracle-database/26/admin/distributed-transactions-concepts.html",
+          "sections": [
+            "Two-Phase Commit Mechanism",
+            "Commit Point Site",
+            "Prepare Phase",
+            "Commit Phase",
+            "In-Doubt Transactions",
+            "About In-Doubt Transactions",
+            "Automatic Resolution of In-Doubt Transactions",
+            "Manual Resolution of In-Doubt Transactions"
+          ],
+          "status": "read",
+          "read_record_id": "read.oracle-distributed-transactions.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microservices-patterns",
+          "unit": "Saga — pattern page",
+          "unit_type": "pattern-page",
+          "url": "https://microservices.io/patterns/data/saga.html",
+          "sections": [
+            "Pattern: Saga",
+            "Context",
+            "Problem",
+            "Forces",
+            "Solution",
+            "Example: Choreography-based saga",
+            "Example: Orchestration-based saga",
+            "Resulting context",
+            "Related patterns",
+            "Learn more",
+            "Example code"
+          ],
+          "status": "read",
+          "read_record_id": "read.batch2-saga.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Saga distributed transactions pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga",
+          "sections": [
+            "Solution",
+            "Key concepts in the Saga pattern",
+            "Problems and considerations"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-saga-azure.2026-10-30",
           "blocked_reason": null
         }
       ],
@@ -2000,6 +2699,72 @@
       "priority": "core",
       "required_units": [
         {
+          "source_id": "src.rfc9111-enrichment",
+          "unit": "RFC 9111 — HTTP Caching",
+          "unit_type": "specification",
+          "url": "https://www.rfc-editor.org/rfc/rfc9111.txt",
+          "sections": [
+            "2. Overview of Cache Operation",
+            "3. Storing Responses in Caches",
+            "3.5. Storing Responses to Authenticated Requests",
+            "4.2.2. Calculating Heuristic Freshness",
+            "4.2.4. Serving Stale Responses",
+            "7.2. Timing Attacks",
+            "7.3. Caching of Sensitive Information"
+          ],
+          "status": "read",
+          "read_record_id": "read.rfc9111-negative-caching.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "CloudFront — HTTP 4xx and 5xx status-code processing",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/HTTPStatusCodes.md",
+          "sections": [
+            "Introduction",
+            "HTTP 4xx and 5xx status codes that CloudFront caches",
+            "HTTP 4xx status codes that CloudFront caches based on Cache-Control headers",
+            "How CloudFront processes errors if you haven't configured custom error pages",
+            "How CloudFront processes errors if you have configured custom error pages"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudfront-status-codes.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.owasp-authorization-decisions",
+          "unit": "OWASP — Authorization Decisions and Output Handling Cheat Sheet",
+          "unit_type": "documentation-page",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Decisions_And_Output_Handling_Cheat_Sheet.html",
+          "sections": [
+            "Introduction",
+            "Single and Batch Decisions",
+            "Enforcing Access to Collections",
+            "Retrieve Authorized Resource Identifiers",
+            "Security Considerations",
+            "References"
+          ],
+          "status": "read",
+          "read_record_id": "read.owasp-authorization-decisions.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudflare-cache-status",
+          "unit": "Cloudflare — Cache by status code",
+          "unit_type": "documentation-page",
+          "url": "https://developers.cloudflare.com/cache/how-to/configure-cache-status-code/",
+          "sections": [
+            "Introduction",
+            "Caching limits",
+            "Edge TTL",
+            "Syntax"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudflare-cache-status.2026-10-31",
+          "blocked_reason": null
+        },
+        {
           "source_id": "src.google-cdn-negative-caching",
           "unit": "Use negative caching — Google Cloud documentation",
           "unit_type": "documentation-page",
@@ -2022,7 +2787,7 @@
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 tail public unit read; claims limited to the ledger record."
+      "notes": "Four public sources bound 2026-10-31: RFC 9111, CloudFront 4xx/5xx processing, OWASP authorization-decision reuse and Cloudflare status-code TTL. The Google per-status TTL example is retained. The protocol text does not use the term negative caching; OWASP and Cloudflare do not define HTTP authorization caching semantics."
     },
     {
       "pattern_id": "tycho.pattern.cache-stampede-protection",
@@ -2046,9 +2811,127 @@
           "status": "read",
           "read_record_id": "read.batch3-ms-caching.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudflare-cache-stampede",
+          "unit": "Sometimes I cache: implementing lock-free probabilistic caching — Cloudflare Blog",
+          "unit_type": "engineering-article",
+          "url": "https://blog.cloudflare.com/sometimes-i-cache/",
+          "sections": [
+            "Background",
+            "Setup",
+            "Expectation about cache revalidation",
+            "The usual solution: a cache lock",
+            "First dive into probabilities given a stable request rate",
+            "Adaptive cache revalidation",
+            "Optimal cache stampede solution",
+            "Conclusion"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudflare-sometimes-i-cache.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-caching-challenges",
+          "unit": "Caching challenges and strategies — AWS Builders' Library",
+          "unit_type": "engineering-article",
+          "url": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
+          "sections": [
+            "The ecstasy and the agony of caches",
+            "When we use caching",
+            "Local caches",
+            "External caches",
+            "Inline vs. side caches",
+            "Cache expiration",
+            "Other considerations",
+            "Amazon best practices and considerations"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-caching-challenges.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.redis",
+          "unit": "Distributed Locks with Redis — Redis documentation",
+          "unit_type": "documentation-page",
+          "url": "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/",
+          "sections": [
+            "Safety and Liveness Guarantees",
+            "Why Failover-based Implementations Are Not Enough",
+            "Correct Implementation with a Single Instance",
+            "The Redlock Algorithm",
+            "Disclaimer about consistency",
+            "Analysis of Redlock"
+          ],
+          "status": "read",
+          "read_record_id": "read.redis-distributed-locks.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.go-singleflight",
+          "unit": "singleflight package — Go Packages",
+          "unit_type": "documentation-page",
+          "url": "https://pkg.go.dev/golang.org/x/sync/singleflight",
+          "sections": [
+            "Overview",
+            "type Group",
+            "func (*Group) Do",
+            "func (*Group) DoChan",
+            "func (*Group) Forget",
+            "type Result",
+            "Example"
+          ],
+          "status": "read",
+          "read_record_id": "read.go-singleflight.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-ttl-jitter",
+          "unit": "Database Caching on AWS with Valkey: A Developer's Guide — AWS Builder Center",
+          "unit_type": "article",
+          "url": "https://builder.aws.com/content/3BX14CsK2OwUkAjyscUT0ApbBIu",
+          "sections": [
+            "TL;DR",
+            "Why Caching?",
+            "The Two Patterns You Actually Need",
+            "Cache-Aside",
+            "Write-Through",
+            "So, what's the downside?",
+            "Serialization Overhead",
+            "TTL: The Goldilocks Problem",
+            "Cache Invalidation",
+            "Thundering Herd (and TTL Jitter)",
+            "Multi-Tier Caching with Moka",
+            "Valkey on AWS",
+            "Wrapping Up"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-valkey-ttl-jitter.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-per-cache-stampede",
+          "unit": "Resiliência Extrema em Camadas de Acesso a Dados: Mitigando Cache Stampede com Amazon ElastiCache e Probabilistic Early Expiration — AWS Builder Center",
+          "unit_type": "article",
+          "url": "https://builder.aws.com/content/3Eom8qVfc73P2fGNUks4d4HqWge",
+          "sections": [
+            "abstract",
+            "Pré-requisitos",
+            "Passo a Passo",
+            "Provisionamento Determinístico do Amazon ElastiCache",
+            "O Colapso do Cache Miss e Bloqueios Distribuídos (Mutex)",
+            "Latência Constante com Probabilistic Early Expiration (XFetch)",
+            "Invalidação Reativa e Desacoplamento Orientado a Eventos",
+            "Solução de Problemas Comuns",
+            "Conclusão",
+            "Referências and footer"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-community-per.2026-10-31",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "Batch 3 public unit read; four technical dimensions bound 2026-10-31 to Cloudflare, AWS Builders' Library, Redis, Go singleflight, AWS TTL jitter and a bounded AWS Builder Center community XFetch article; no runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.single-flight-request-coalescing",
@@ -2100,9 +2983,35 @@
           "status": "read",
           "read_record_id": "read.batch3-rfc5861.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.rfc9111-enrichment",
+          "unit": "HTTP caching — RFC 9111",
+          "unit_type": "specification",
+          "url": "https://www.rfc-editor.org/rfc/rfc9111.txt",
+          "sections": [
+            "4.2.4. Serving Stale Responses",
+            "5.5. Warning"
+          ],
+          "status": "read",
+          "read_record_id": "read.rfc9111-stale.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mdn-cache-control",
+          "unit": "Cache-Control header — MDN",
+          "unit_type": "documentation-page",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control",
+          "sections": [
+            "stale-while-revalidate",
+            "Age"
+          ],
+          "status": "read",
+          "read_record_id": "read.mdn-cache-control.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 tail public unit read; claims limited to the ledger record."
+      "notes": "The bounded window and inconclusive-validation fallback use RFC 5861; the stale-permission rule and Warning obsolescence use RFC 9111; the directive example uses MDN. The single refresh owner and refresh-failure telemetry remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.multi-level-caching",
@@ -2134,9 +3043,64 @@
           "status": "read",
           "read_record_id": "read.batch3-hazelcast-near.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.hazelcast",
+          "unit": "Near Cache 5.6 (2026-10-30 revision) — Hazelcast documentation",
+          "unit_type": "documentation-page",
+          "url": "https://docs.hazelcast.com/hazelcast/5.6/cluster-performance/near-cache",
+          "sections": [
+            "Near Cache",
+            "Hazelcast Data Structures with Near Cache Support",
+            "Configuring Near Cache",
+            "Near Cache Configuration Examples",
+            "Near Cache Example for IMap",
+            "Near Cache Example for JCache Clients",
+            "Example for Near Cache with High-Density Memory Store",
+            "Near Cache Eviction",
+            "Near Cache Expiration",
+            "Caching of null values",
+            "Near Cache Invalidation",
+            "Near Cache Consistency",
+            "Eventual Consistency",
+            "Locally Initiated Changes",
+            "Near Cache Preloader"
+          ],
+          "status": "read",
+          "read_record_id": "read.hazelcast-near-cache.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.redis",
+          "unit": "Client-side caching introduction — Redis documentation",
+          "unit_type": "documentation-page",
+          "url": "https://redis.io/docs/latest/develop/clients/client-side-caching/",
+          "sections": [
+            "Client-side caching introduction",
+            "Updating the cache when the data changes",
+            "Usage recommendations"
+          ],
+          "status": "read",
+          "read_record_id": "read.redis-client-side-caching.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-caching-guidance",
+          "unit": "PERF03-BP05 Implement data access patterns that utilize caching — AWS Well-Architected",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/perf_data_access_patterns_caching.md",
+          "sections": [
+            "Implementation guidance",
+            "Client-side caching",
+            "Remote caching",
+            "Implementation steps"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-caching-guidance.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "The 2026-10-30 Hazelcast, Redis and AWS units support invalidation, loss detection, disconnect flush and TTL bounds; per-tier scope, version check, promotion rule and local-only comparison remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.cdn-edge-caching",
@@ -2162,9 +3126,117 @@
           "status": "read",
           "read_record_id": "read.batch3-ms-static.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-cdn",
+          "unit": "How caching works — Azure CDN",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/cdn/cdn-how-caching-works",
+          "sections": [
+            "Introduction to caching",
+            "Content delivery network caching",
+            "Determining which files can be cached",
+            "Default caching behavior"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-cdn-how-caching.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-cdn",
+          "unit": "Caching behavior with caching rules — Azure CDN",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/previous-versions/azure/cdn/cdn-caching-rules",
+          "sections": [
+            "Caching behavior settings",
+            "Cache expiration duration",
+            "Global and custom rule processing order"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-cdn-caching-rules.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-cdn",
+          "unit": "Purge an Azure CDN endpoint — Azure CDN",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/cdn/cdn-purge-endpoint",
+          "sections": [
+            "Purge contents from an Azure CDN endpoint"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-cdn-purge.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "Understand the cache key — Amazon CloudFront",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html",
+          "sections": [
+            "Default cache key",
+            "Customize the cache key"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudfront-cache-key.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "Add custom headers to origin requests — Amazon CloudFront",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html",
+          "sections": [
+            "Configure CloudFront to forward the Authorization header"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudfront-auth-header.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "Manage how long content stays in the cache (expiration) — Amazon CloudFront",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html",
+          "sections": [
+            "Use headers to control cache duration for individual objects",
+            "Specify the amount of time that CloudFront caches objects"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudfront-expiration.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "Invalidate files to remove content — Amazon CloudFront",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html",
+          "sections": [
+            "Choose between invalidating files and using versioned file names"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudfront-invalidation.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.rfc9111-enrichment",
+          "unit": "HTTP caching — RFC 9111",
+          "unit_type": "specification",
+          "url": "https://www.rfc-editor.org/rfc/rfc9111.txt",
+          "sections": [
+            "3.5. Storing Responses to Authenticated Requests",
+            "4. Constructing Responses from Caches",
+            "4.1. Calculating Cache Keys with the Vary Header Field",
+            "4.4. Invalidating Stored Responses",
+            "5.2.2.5. no-store",
+            "5.2.2.7. private"
+          ],
+          "status": "read",
+          "read_record_id": "read.rfc9111-edge-cache.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "The Azure and CloudFront pages support cache-key, authorization, freshness and purge limits; RFC 9111 supports the shared-cache and private-cache rules. The triad formulation and the direct-origin name remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.sharding",
@@ -2182,9 +3254,165 @@
           "status": "read",
           "read_record_id": "read.batch3-citus.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.mongo-sharding",
+          "unit": "Sharding — MongoDB Database Manual",
+          "unit_type": "documentation-page",
+          "url": "https://www.mongodb.com/docs/manual/sharding/",
+          "sections": [
+            "Sharding",
+            "Sharded Cluster",
+            "Shard Keys",
+            "Chunks",
+            "Balancer and Even Data Distribution",
+            "Advantages of Sharding",
+            "Considerations Before Sharding",
+            "Reshard to Shard",
+            "Sharded and Non-Sharded Collections",
+            "Connecting to a Sharded Cluster"
+          ],
+          "status": "read",
+          "read_record_id": "read.mongo-sharding.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mongo-sharding",
+          "unit": "Choose a Shard Key — MongoDB Database Manual",
+          "unit_type": "documentation-page",
+          "url": "https://www.mongodb.com/docs/manual/core/sharding-choose-a-shard-key/",
+          "sections": [
+            "Shard Key Cardinality",
+            "Shard Key Frequency",
+            "Monotonically Changing Shard Keys",
+            "Sharding Query Patterns"
+          ],
+          "status": "read",
+          "read_record_id": "read.mongo-choose-key.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mongo-sharding",
+          "unit": "Troubleshoot Shard Keys — MongoDB Database Manual",
+          "unit_type": "documentation-page",
+          "url": "https://www.mongodb.com/docs/manual/core/sharding-troubleshooting-shard-keys/",
+          "sections": [
+            "Jumbo Chunks",
+            "Uneven Load Distribution",
+            "Decreased Query Performance Over Time"
+          ],
+          "status": "read",
+          "read_record_id": "read.mongo-troubleshoot-key.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mongo-sharding",
+          "unit": "Sharded Cluster Balancer — MongoDB Database Manual",
+          "unit_type": "documentation-page",
+          "url": "https://www.mongodb.com/docs/manual/core/sharding-balancer-administration/",
+          "sections": [
+            "Balancer Internals",
+            "Range Migration Procedure",
+            "Migration Thresholds",
+            "Range Migration and Replication",
+            "Maximum Number of Documents Per Range to Migrate",
+            "Range Deletion Performance Tuning",
+            "Reshard to Balance"
+          ],
+          "status": "read",
+          "read_record_id": "read.mongo-balancer.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mongo-sharding",
+          "unit": "Reshard a Collection — MongoDB Database Manual",
+          "unit_type": "documentation-page",
+          "url": "https://www.mongodb.com/docs/manual/core/sharding-reshard-a-collection/",
+          "sections": [
+            "About this Task",
+            "Before you Begin",
+            "Behavior",
+            "Minimum Duration of a Resharding Operation",
+            "Retryable Writes",
+            "Reshard Limitations",
+            "Error Case",
+            "Duplicate _id Values"
+          ],
+          "status": "read",
+          "read_record_id": "read.mongo-reshard.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.citus",
+          "unit": "Cluster Management — Citus 13.0.1 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://docs.citusdata.com/en/v13.0/admin_guide/cluster_management.html",
+          "sections": [
+            "Choosing Cluster Size",
+            "Rebalance Shards without Downtime",
+            "How it Works",
+            "Dealing With Node Failures",
+            "Worker Node Failures",
+            "Coordinator Node Failures",
+            "Tenant Isolation"
+          ],
+          "status": "read",
+          "read_record_id": "read.citus-cluster.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.citus",
+          "unit": "Choosing Distribution Column — Citus 13.0.1 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://docs.citusdata.com/en/v13.0/sharding/data_modeling.html",
+          "sections": [
+            "Best Practices",
+            "Table Co-Location",
+            "Distributing Tables by ID",
+            "Distributing Tables by tenant"
+          ],
+          "status": "read",
+          "read_record_id": "read.citus-datamodel.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "High Availability, Load Balancing, and Replication — PostgreSQL 18 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/18/high-availability.html",
+          "sections": [
+            "Chapter 26. High Availability, Load Balancing, and Replication"
+          ],
+          "status": "read",
+          "read_record_id": "read.pg18-ha.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "Table Partitioning — PostgreSQL documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/ddl-partitioning.html",
+          "sections": [
+            "5.12. Table Partitioning",
+            "5.12.1. Overview",
+            "5.12.2. Declarative Partitioning",
+            "5.12.2.1. Example",
+            "5.12.2.2. Partition Maintenance",
+            "5.12.2.3. Limitations",
+            "5.12.3. Partitioning Using Inheritance",
+            "5.12.3.1. Example",
+            "5.12.3.2. Maintenance for Inheritance Partitioning",
+            "5.12.3.3. Caveats",
+            "5.12.4. Partition Pruning",
+            "5.12.5. Partitioning and Constraint Exclusion",
+            "5.12.6. Best Practices for Declarative Partitioning"
+          ],
+          "status": "read",
+          "read_record_id": "read.batch3-pg-partition.2026-10-21",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "The 2026-10-30 MongoDB, Citus and PostgreSQL units support hotspot, balancer, reshard, replication and alternative statements; map drift, split brain, per-key throttle, dual-read/verify and the selection rule remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.partitioning",
@@ -2236,9 +3464,99 @@
           "status": "read",
           "read_record_id": "read.batch3-cassandra-arch.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.karger",
+          "unit": "Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web",
+          "unit_type": "paper",
+          "url": "https://www.cs.princeton.edu/courses/archive/fall09/cos521/Handouts/consistenthashing.pdf",
+          "sections": [
+            "Abstract",
+            "1 Introduction",
+            "4 Consistent Hashing",
+            "4.1 Definitions",
+            "4.2 Construction"
+          ],
+          "status": "read",
+          "read_record_id": "read.karger-consistent-hashing.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.dynamo",
+          "unit": "Dynamo: Amazon's Highly Available Key-value Store — SOSP 2007 paper",
+          "unit_type": "paper",
+          "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+          "sections": [
+            "4.2 Partitioning Algorithm",
+            "4.3 Replication",
+            "4.6 Handling Failures: Hinted Handoff",
+            "4.7 Handling permanent failures: Replica synchronization",
+            "4.9 Adding/Removing Storage Nodes"
+          ],
+          "status": "read",
+          "read_record_id": "read.dynamo-consistent-hashing.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cassandra",
+          "unit": "Dynamo — Apache Cassandra 5.0 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
+          "sections": [
+            "Dataset Partitioning: Consistent Hashing",
+            "Consistent Hashing using a Token Ring",
+            "Multiple Tokens per Physical Node (vnodes)"
+          ],
+          "status": "read",
+          "read_record_id": "read.cassandra-dynamo-consistent-hashing.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.riak",
+          "unit": "Vnodes — Riak KV 2.2.3",
+          "unit_type": "documentation-page",
+          "url": "https://docs.riak.com/riak/kv/2.2.3/learn/concepts/vnodes/index.html",
+          "sections": [
+            "Vnodes",
+            "The Number of Vnodes in a Cluster",
+            "The Role of Vnodes",
+            "Vnodes and Replication Properties"
+          ],
+          "status": "read",
+          "read_record_id": "read.riak-vnodes.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.riak",
+          "unit": "Clusters — Riak KV 2.2.3",
+          "unit_type": "documentation-page",
+          "url": "https://docs.riak.com/riak/kv/2.2.3/learn/concepts/clusters/index.html",
+          "sections": [
+            "The Ring",
+            "Intelligent Replication",
+            "Gossiping"
+          ],
+          "status": "read",
+          "read_record_id": "read.riak-clusters.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.riak",
+          "unit": "Adding and Removing Nodes — Riak KV 2.2.3",
+          "unit_type": "documentation-page",
+          "url": "https://docs.riak.com/riak/kv/2.2.3/using/cluster-operations/adding-removing-nodes/index.html",
+          "sections": [
+            "Add a Node to an Existing Cluster",
+            "Joining Nodes to Form a Cluster",
+            "Note on ring changes",
+            "Removing a Node From a Cluster"
+          ],
+          "status": "read",
+          "read_record_id": "read.riak-adding-removing-nodes.2026-10-31",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "Seven public units: the retained Cassandra overview scope limit plus the Karger 1997 paper, Dynamo SOSP 2007, Cassandra 5.0 Dynamo page and three Riak KV 2.2.3 pages read 2026-10-31. Coverage remains partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.leader-follower-replication",
@@ -2313,9 +3631,23 @@
           "status": "read",
           "read_record_id": "read.batch3-cassandra-dynamo.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "26.1. Comparison of Different Solutions — PostgreSQL 18",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/different-replication-solutions.html",
+          "sections": [
+            "26.1. Comparison of Different Solutions",
+            "Asynchronous Multimaster Replication",
+            "Synchronous Multimaster Replication"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgresql-replication-solutions.2026-10-29",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 tail public unit read; claims limited to the ledger record."
+      "notes": "Batch 3 tail public unit read; the 2026-10-29 PostgreSQL 18 section 26.1 comparison supports the leader-follower and multi-master alternative."
     },
     {
       "pattern_id": "tycho.pattern.read-replicas",
@@ -2390,9 +3722,56 @@
           "status": "read",
           "read_record_id": "read.batch3-cassandra-dynamo.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.cassandra",
+          "unit": "Read repair — Apache Cassandra documentation",
+          "unit_type": "documentation-page",
+          "url": "https://cassandra.apache.org/doc/latest/cassandra/managing/operating/read_repair.html",
+          "sections": [
+            "Read repair",
+            "Expectation of Monotonic Quorum Reads",
+            "Table level configuration of monotonic reads"
+          ],
+          "status": "read",
+          "read_record_id": "read.cassandra-read-repair.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.dynamo",
+          "unit": "Dynamo: Amazon's Highly Available Key-value Store — SOSP 2007 paper",
+          "unit_type": "paper",
+          "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+          "sections": [
+            "4.4 Data Versioning",
+            "4.5 Execution of get() and put() operations",
+            "4.6 Handling Failures: Hinted Handoff",
+            "4.7 Handling permanent failures: Replica synchronization",
+            "4.8 Membership and Failure Detection",
+            "4.9 Adding/Removing Storage Nodes"
+          ],
+          "status": "read",
+          "read_record_id": "read.dynamo-sosp2007.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.riak",
+          "unit": "Replication Properties — Riak KV 2.2.3",
+          "unit_type": "documentation-page",
+          "url": "https://github.com/basho/basho_docs/blob/6409dd9c93b08f0a6e959a1874b5568c88172f3a/content/riak/kv/2.2.3/developing/app-guide/replication-properties.md",
+          "sections": [
+            "N Value and Replication",
+            "Primary Reads and Writes with PR and PW",
+            "Durable Writes with DW",
+            "Symbolic Consistency Names",
+            "Illustrative Scenarios"
+          ],
+          "status": "read",
+          "read_record_id": "read.riak-replication-properties.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 tail public unit read; claims limited to the ledger record."
+      "notes": "The Dynamo architecture page supports R + W > N and best-effort repair; the read-repair page supports monotonic quorum reads and most-up-to-date returns; the SOSP 2007 paper supports quorum arithmetic, vector-clock reconciliation, hinted handoff, anti-entropy and membership handoff; Riak 2.2.3 supports sloppy/strict quorum, read repair and timestamp/vector-clock resolution. Old/new quorum overlap and a highest-version selector remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.index-table",
@@ -2428,9 +3807,60 @@
           "status": "read",
           "read_record_id": "read.batch3-pg-indexes.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "11.9. Index-Only Scans and Covering Indexes — PostgreSQL 17 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/17/indexes-index-only-scans.html",
+          "sections": [
+            "11.9. Index-Only Scans and Covering Indexes"
+          ],
+          "status": "read",
+          "read_record_id": "read.pg17-index-only-scans.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-sql-server",
+          "unit": "Create indexes with included columns — SQL Server",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/sql/relational-databases/indexes/create-indexes-with-included-columns?view=sql-server-ver17",
+          "sections": [
+            "In this article",
+            "Design Recommendations",
+            "Limitations"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-included-columns.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.use-the-index-luke",
+          "unit": "Index-Only Scan: Avoiding Table Access — Use The Index, Luke",
+          "unit_type": "book-chapter",
+          "url": "https://use-the-index-luke.com/sql/clustering/index-only-scan-covering-index",
+          "sections": [
+            "Index-Only Scan: Avoiding Table Access",
+            "INCLUDE: Non-key Columns"
+          ],
+          "status": "read",
+          "read_record_id": "read.luke-index-only-scan.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-dynamodb-gsi",
+          "unit": "Overloading Global Secondary Indexes in DynamoDB — Amazon DynamoDB Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-gsi-overloading.html",
+          "sections": [
+            "Overloading Global Secondary Indexes in DynamoDB"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-dynamodb-gsi-overloading.2026-10-31",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "Four public units read 2026-10-31; all four technical dimensions bound to PostgreSQL 17 index-only scans, SQL Server included columns, Use The Index Luke and DynamoDB GSI overloading; no runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.polyglot-persistence",
@@ -2451,6 +3881,96 @@
           "blocked_reason": null
         },
         {
+          "source_id": "src.aws-cqrs",
+          "unit": "CQRS pattern — AWS Prescriptive Guidance",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-data-persistence/cqrs-pattern.html",
+          "sections": [
+            "CQRS pattern"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-cqrs.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "CQRS pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+          "sections": [
+            "Context and problem",
+            "Solution",
+            "Separate read models and write models",
+            "Separate models in a single data store",
+            "Separate models in different data stores",
+            "Benefits of CQRS",
+            "Problems and considerations",
+            "When to use this pattern",
+            "Workload design",
+            "Combine the Event Sourcing and CQRS patterns",
+            "Benefits of combining the Event Sourcing and CQRS patterns",
+            "Considerations for how to combine the Event Sourcing and CQRS patterns",
+            "Example",
+            "Next step",
+            "Related resources"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-cqrs.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.debezium-outbox",
+          "unit": "Outbox Event Router — Debezium documentation (2026-10-31 refresh)",
+          "unit_type": "documentation-page",
+          "url": "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+          "sections": [
+            "Outbox Event Router",
+            "Example outbox message",
+            "Basic outbox table",
+            "Basic configuration",
+            "Configuration options"
+          ],
+          "status": "read",
+          "read_record_id": "read.debezium-outbox.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "Chapter 29. Logical Replication — PostgreSQL 18 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/logical-replication.html",
+          "sections": [
+            "Chapter 29. Logical Replication"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgresql-logical-replication.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "29.7. Conflicts — PostgreSQL 18 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/logical-replication-conflicts.html",
+          "sections": [
+            "29.7. Conflicts"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgresql-logical-replication-conflicts.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "29.8. Restrictions — PostgreSQL 18 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/logical-replication-restrictions.html",
+          "sections": [
+            "29.8. Restrictions"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgresql-logical-replication-restrictions.2026-10-31",
+          "blocked_reason": null
+        },
+        {
           "source_id": "src.ddia",
           "unit": "Designing Data-Intensive Applications — polyglot persistence",
           "unit_type": "book-chapter",
@@ -2461,7 +3981,7 @@
           "blocked_reason": "Commercial book; no lawful full-text access recorded."
         }
       ],
-      "notes": "Public bliki article read; the commercial DDIA unit remains blocked and is not cited as support."
+      "notes": "Invariant and failure/recovery bound 2026-10-31 to AWS, Microsoft, Debezium and PostgreSQL public units; the four-part invariant and recovery sequence remain Tycho."
     },
     {
       "pattern_id": "tycho.pattern.cqrs-read-projections",
@@ -2533,28 +4053,104 @@
       "priority": "core",
       "required_units": [
         {
-          "source_id": "src.gh-ost",
-          "unit": "gh-ost README — online schema migration",
-          "unit_type": "documentation-page",
-          "url": "https://github.com/github/gh-ost",
+          "source_id": "src.m9-st01",
+          "unit": "Online migrations at scale — Stripe engineering article",
+          "unit_type": "engineering-article",
+          "url": "https://stripe.com/blog/online-migrations",
           "sections": [
-            "gh-ost",
-            "GitHub's online schema migration for MySQL",
-            "How?",
-            "Highlights",
-            "Usage",
-            "What's in a name?",
-            "License",
-            "Community",
-            "Download/binaries/source",
-            "Authors"
+            "A pattern for online migrations",
+            "Part 1: Dual writing",
+            "Part 2: Changing all read paths",
+            "Part 3: Changing all write paths",
+            "Part 4: Removing old data",
+            "Conclusion"
           ],
           "status": "read",
-          "read_record_id": "read.batch3-gh-ost.2026-10-21",
+          "read_record_id": "read.stripe-online-migrations.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "PostgreSQL 18.6 pg_dump",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/app-pgdump.html",
+          "sections": [
+            "Description",
+            "Options",
+            "Notes",
+            "Examples",
+            "Diagnostics"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgres-pgdump.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "PostgreSQL 18.6 COPY",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/sql-copy.html",
+          "sections": [
+            "Description",
+            "Parameters",
+            "Outputs",
+            "Notes",
+            "File Formats",
+            "Examples",
+            "Compatibility"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgres-copy.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-dms",
+          "unit": "AWS DMS User Guide — What is AWS DMS?",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/dms/latest/userguide/Welcome.md",
+          "sections": [
+            "What is AWS Database Migration Service?",
+            "Migration tasks that AWS DMS performs"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-dms-overview.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-dms",
+          "unit": "AWS DMS User Guide — Creating tasks for ongoing replication",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Task.CDC.md",
+          "sections": [
+            "Creating tasks for ongoing replication using AWS DMS",
+            "Full-load plus CDC and CDC-only task types",
+            "Determining a CDC native start point",
+            "Using a checkpoint as a CDC start point",
+            "Stopping a task at a commit point or server time",
+            "Bidirectional replication"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-dms-cdc.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.flyway-expand-contract",
+          "unit": "Flyway fleet rollout — expand/contract guidance",
+          "unit_type": "documentation-page",
+          "url": "https://documentation.red-gate.com/x/NoJvF",
+          "sections": [
+            "Core principles",
+            "Driving the fleet",
+            "Backward-compatible changes (expand/contract)",
+            "Handling failures",
+            "Proactive drift checks"
+          ],
+          "status": "read",
+          "read_record_id": "read.flyway-expand-contract.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 tail public unit read; claims limited to the ledger record."
+      "notes": "Four public sources (six pages) bound 2026-10-31: Stripe's dual-write article; PostgreSQL 18.6 pg_dump and COPY; the AWS DMS User Guide overview and CDC task pages; and Flyway's fleet-rollout expand/contract section. The invariant is an application-level consistency rule, the DMS checkpoint is cached rather than per-commit, and a changed mapping remains an untested Tycho hazard. read.batch3-gh-ost.2026-10-21 is retained in foundation records as historical mechanism evidence."
     },
     {
       "pattern_id": "tycho.pattern.backup-pitr-and-restore",
@@ -2563,9 +4159,9 @@
       "required_units": [
         {
           "source_id": "src.postgresql",
-          "unit": "Continuous Archiving and PITR — PostgreSQL documentation",
+          "unit": "Continuous Archiving and Point-in-Time Recovery (PITR) — PostgreSQL 17 documentation",
           "unit_type": "documentation-page",
-          "url": "https://www.postgresql.org/docs/current/continuous-archiving.html",
+          "url": "https://www.postgresql.org/docs/17/continuous-archiving.html",
           "sections": [
             "25.3. Continuous Archiving and PITR",
             "25.3.1. Setting Up WAL Archiving",
@@ -2582,11 +4178,82 @@
             "25.3.8. Caveats"
           ],
           "status": "read",
-          "read_record_id": "read.batch3-pg-archiving.2026-10-21",
+          "read_record_id": "read.pg-pitr.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-backup",
+          "unit": "What is AWS Backup? — AWS Backup Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html",
+          "sections": [
+            "What is AWS Backup?",
+            "Feature overview",
+            "Centralized backup management",
+            "Policy-based backup",
+            "Cross-Region backup",
+            "Backup activity monitoring",
+            "Secure your data in backup vaults"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-backup.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-backup",
+          "unit": "Restore testing — AWS Backup Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing.html",
+          "sections": [
+            "Overview",
+            "Restore testing compared with restore process",
+            "Restore testing management",
+            "Restore testing validation",
+            "Audit restore testing",
+            "Restore testing quotas and parameters"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-backup-restore-testing.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-backup",
+          "unit": "What is the Azure Backup service? — Microsoft Learn",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/backup/backup-overview",
+          "sections": [
+            "What is the Azure Backup service?",
+            "When to use Azure Backup",
+            "What can I back up?",
+            "How Azure Backup works",
+            "Key components in Azure Backup",
+            "Why use Azure Backup?",
+            "Security and ransomware protection by Azure Backup",
+            "Design considerations for workload protection"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-backup.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre",
+          "unit": "Data Integrity: What You Read Is What You Wrote — Site Reliability Engineering",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/data-integrity/",
+          "sections": [
+            "Backups Versus Archives",
+            "Delivering a Recovery System, Rather Than a Backup System",
+            "Challenges of Maintaining Data Integrity Deep and Wide",
+            "Knowing That Data Recovery Will Work",
+            "Hope Is Not a Strategy",
+            "Conclusion"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-data-integrity.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "Four dimensions bound 2026-10-31 to five public units: PostgreSQL 17 PITR, AWS Backup overview and restore testing, Azure Backup overview, and Google SRE data integrity. No runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.circuit-breaker",
@@ -2614,9 +4281,64 @@
           "status": "read",
           "read_record_id": "read.batch4-r4j-circuit.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Circuit breaker pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker",
+          "sections": [
+            "Context and problem",
+            "Solution",
+            "Problems and considerations",
+            "When to use this pattern",
+            "Workload design"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-circuit-breaker.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-backoff",
+          "unit": "Timeouts, retries, and backoff with jitter — AWS Builders' Library",
+          "unit_type": "engineering-article",
+          "url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/",
+          "sections": [
+            "Introduction",
+            "Failures Happen",
+            "Timeouts",
+            "Retries and backoff",
+            "Jitter",
+            "Conclusion"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-builders-timeouts-retries.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-overload",
+          "unit": "Handling Overload — complete public chapter",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/handling-overload/",
+          "sections": [
+            "Handling Overload",
+            "The Pitfalls of \"Queries per Second\"",
+            "Per-Customer Limits",
+            "Client-Side Throttling",
+            "Client request rejection probability",
+            "Criticality",
+            "Utilization Signals",
+            "Handling Overload Errors",
+            "Deciding to Retry",
+            "Load from Connections",
+            "Conclusions"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-overload.2026-10-21",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "All four technical dimensions bound 2026-10-31 to Resilience4j, Microsoft Azure Architecture Center, AWS Builders' Library and Google SRE; the minimum-volume rule, comparison boundary, dependency attribution and alternative choice remain Tycho."
     },
     {
       "pattern_id": "tycho.pattern.bulkhead",
@@ -2749,9 +4471,36 @@
           "status": "read",
           "read_record_id": "read.batch4-sre-cascading.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.grpc-deadlines",
+          "unit": "Deadlines — gRPC guide",
+          "unit_type": "documentation-page",
+          "url": "https://grpc.io/docs/guides/deadlines/",
+          "sections": [
+            "Overview",
+            "Deadlines on the Client",
+            "Deadlines on the Server",
+            "Deadline Propagation"
+          ],
+          "status": "read",
+          "read_record_id": "read.grpc-deadlines.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.grpc-protocol",
+          "unit": "gRPC over HTTP2 — protocol specification",
+          "unit_type": "specification",
+          "url": "https://github.com/grpc/grpc/blob/36a2ae2930d02c392e6e471c0d95d9d6e0c62dc9/doc/PROTOCOL-HTTP2.md",
+          "sections": [
+            "Requests"
+          ],
+          "status": "read",
+          "read_record_id": "read.grpc-protocol.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "The relative timeout, clock-skew conversion and server cancellation use gRPC Deadlines; the omitted-header infinite timeout uses gRPC over HTTP2; per-stage checks and the absolute-deadline example use Google SRE. Monotonic-clock use, bounded skew and durable cleanup remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.fallback",
@@ -2819,9 +4568,79 @@
           "status": "read",
           "read_record_id": "read.batch4-sre-cascading.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-overload",
+          "unit": "Handling Overload — complete public chapter",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/handling-overload/",
+          "sections": [
+            "Handling Overload",
+            "The Pitfalls of \"Queries per Second\"",
+            "Per-Customer Limits",
+            "Client-Side Throttling",
+            "Client request rejection probability",
+            "Criticality",
+            "Utilization Signals",
+            "Handling Overload Errors",
+            "Deciding to Retry",
+            "Load from Connections",
+            "Conclusions"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-overload.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-best-practices",
+          "unit": "A Collection of Best Practices for Production Services — Google SRE book appendix",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/service-best-practices/",
+          "sections": [
+            "A Collection of Best Practices for Production Services",
+            "Capacity Planning",
+            "Overloads and Failure"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-best-practices-overload.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-load-shedding",
+          "unit": "Using load shedding to avoid overload — AWS Builder Center",
+          "unit_type": "engineering-article",
+          "url": "https://builder.aws.com/content/3Eun1EEyX6p2e3VYNyRLSJzLuMV/using-load-shedding-to-avoid-overload",
+          "sections": [
+            "Using load shedding to avoid overload",
+            "Introduction",
+            "The anatomy of overload",
+            "Testing",
+            "Visibility",
+            "Load shedding effects on automatic scaling and Availability Zone failure",
+            "Load shedding mechanisms",
+            "Thinking about overload differently"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-load-shedding.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kubernetes",
+          "unit": "Horizontal Pod Autoscaling — Kubernetes documentation",
+          "unit_type": "documentation-page",
+          "url": "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+          "sections": [
+            "Horizontal Pod Autoscaling",
+            "Stability of workload scale",
+            "Configurable scaling behavior",
+            "Stabilization window"
+          ],
+          "status": "read",
+          "read_record_id": "read.k8s-hpa.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "Failure/recovery and alternative bound 2026-10-30 to Google SRE cascading/overload/best-practices, AWS load shedding and Kubernetes HPA; silent-correctness judgment, degradation hysteresis application and the alternative choice rule remain Tycho."
     },
     {
       "pattern_id": "tycho.pattern.load-shedding",
@@ -2931,9 +4750,67 @@
           "status": "read",
           "read_record_id": "read.batch4-rabbit-reliability.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Queue-Based Load Leveling pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling",
+          "sections": [
+            "Context and problem",
+            "Solution",
+            "Problems and considerations",
+            "When to use this pattern",
+            "Workload design",
+            "Example",
+            "Next steps",
+            "Related resources"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-queue-based-load-leveling.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-sqs",
+          "unit": "What is Amazon Simple Queue Service? — Amazon SQS Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html",
+          "sections": [
+            "What is Amazon Simple Queue Service?",
+            "Benefits of using Amazon SQS",
+            "Basic Amazon SQS architecture",
+            "Distributed queues",
+            "Message lifecycle",
+            "Differences between Amazon SQS, Amazon MQ, and Amazon SNS"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-sqs-welcome.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-overload",
+          "unit": "Handling Overload — complete public chapter",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/handling-overload/",
+          "sections": [
+            "Handling Overload",
+            "The Pitfalls of \"Queries per Second\"",
+            "Per-Customer Limits",
+            "Client-Side Throttling",
+            "Client request rejection probability",
+            "Criticality",
+            "Utilization Signals",
+            "Handling Overload Errors",
+            "Deciding to Retry",
+            "Load from Connections",
+            "Conclusions"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-overload.2026-10-21",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "All four technical dimensions bound 2026-10-31 to Microsoft Azure Architecture Center, AWS SQS and Google SRE Handling Overload; the four-part admission rule, durable-ack rule and shedding choice remain Tycho."
     },
     {
       "pattern_id": "tycho.pattern.priority-queue",
@@ -2970,11 +4847,78 @@
             "Why Policy Definition is not Supported for Priority Queues"
           ],
           "status": "read",
-          "read_record_id": "read.batch4-rabbit-priority.2026-10-21",
+          "read_record_id": "read.rabbitmq-priority-queues.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Priority Queue pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/priority-queue",
+          "sections": [
+            "Context and problem",
+            "Solution",
+            "Single queue",
+            "Multiple queues",
+            "Single consumer pool",
+            "Multiple consumer pools",
+            "Problems and considerations",
+            "General recommendations",
+            "Multiple queue recommendations",
+            "When to use this pattern",
+            "Workload design",
+            "Example"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-priority-queue-pattern.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-service-bus-amqp",
+          "unit": "AMQP 1.0 in Azure Service Bus and Event Hubs protocol guide — Azure Service Bus",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-protocol-guide",
+          "sections": [
+            "Messages",
+            "Header",
+            "Properties"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-service-bus-amqp-message-mapping.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-sqs",
+          "unit": "Amazon SQS queue types — Amazon SQS Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html",
+          "sections": [
+            "Amazon SQS queue types"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-sqs-queue-types.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-sqs",
+          "unit": "Amazon SQS fair queues — Amazon SQS Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-fair-queues.html",
+          "sections": [
+            "Amazon SQS fair queues",
+            "Steady state",
+            "Noisy neighbor impact",
+            "Mitigation with fair queues",
+            "How to use fair queues",
+            "When to use fair queues",
+            "Fair queues CloudWatch metrics"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-sqs-fair-queues.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "Five public units read 2026-10-31; all four technical dimensions bound to RabbitMQ priority support, the Azure Priority Queue pattern, Service Bus AMQP message mapping, SQS queue types and SQS fair queues; no runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.hedged-requests",
@@ -2982,19 +4926,63 @@
       "priority": "advanced",
       "required_units": [
         {
-          "source_id": "src.morning-paper-tail-at-scale",
-          "unit": "The Tail at Scale — secondary summary",
-          "unit_type": "article",
-          "url": "https://blog.acolyer.org/2015/01/15/the-tail-at-scale/",
+          "source_id": "src.sre-cascading",
+          "unit": "Addressing Cascading Failures — public chapter",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/addressing-cascading-failures/",
           "sections": [
-            "The Tail at Scale"
+            "Cancellation propagation"
           ],
           "status": "read",
-          "read_record_id": "read.batch4-hedged.2026-10-21",
+          "read_record_id": "read.sre-cascading-hedging.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.tail-at-scale",
+          "unit": "The Tail at Scale — CACM digital edition",
+          "unit_type": "article",
+          "url": "https://mags.acm.org/communications/201302/?pg=79",
+          "sections": [
+            "Hedged requests"
+          ],
+          "status": "read",
+          "read_record_id": "read.tail-at-scale-hedged.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.grpc-hedging",
+          "unit": "Request Hedging — gRPC guide",
+          "unit_type": "documentation-page",
+          "url": "https://grpc.io/docs/guides/request-hedging/",
+          "sections": [
+            "Overview",
+            "Use cases",
+            "Configuring hedging in gRPC",
+            "Hedging policy",
+            "Throttling Hedged RPCs",
+            "Server Pushback"
+          ],
+          "status": "read",
+          "read_record_id": "read.grpc-hedging.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-backoff",
+          "unit": "Timeouts, retries, and backoff with jitter — AWS Builders' Library",
+          "unit_type": "engineering-article",
+          "url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/",
+          "sections": [
+            "Timeouts",
+            "Retries and backoff",
+            "Jitter",
+            "Deciding when to retry"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-backoff-hedging.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 tail public unit read; claims limited to the ledger record."
+      "notes": "Four public units bound 2026-10-31: Google SRE cancellation propagation, the 2013 Tail at Scale hedged-request section, gRPC request hedging and AWS retry/backoff guidance; the alternative is narrowed to measured-timeout and jittered-retry comparisons; slow-path and independent-read clauses remain unbound Tycho heuristics. read.batch4-hedged.2026-10-21 is retained as historical secondary-summary evidence."
     },
     {
       "pattern_id": "tycho.pattern.health-endpoint-monitoring",
@@ -3026,15 +5014,165 @@
           "status": "read",
           "read_record_id": "read.batch4-k8s-probes.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-cascading",
+          "unit": "Addressing Cascading Failures — public chapter",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/addressing-cascading-failures/",
+          "sections": [
+            "Addressing Cascading Failures",
+            "Causes of Cascading Failures and Designing to Avoid Them",
+            "Server Overload",
+            "Resource Exhaustion",
+            "Service Unavailability",
+            "Preventing Server Overload",
+            "Queue Management",
+            "Load Shedding and Graceful Degradation",
+            "Retries",
+            "Latency and Deadlines",
+            "Slow Startup and Cold Caching",
+            "Always Go Downward in the Stack",
+            "Triggering Conditions for Cascading Failures",
+            "Testing for Cascading Failures",
+            "Immediate Steps to Address Cascading Failures",
+            "Closing Remarks"
+          ],
+          "status": "read",
+          "read_record_id": "read.batch4-sre-cascading.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-frontend-enrichment",
+          "unit": "Load Balancing at the Frontend — public chapter",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/load-balancing-frontend/",
+          "sections": [
+            "Load Balancing at the Frontend",
+            "Power Isn't the Answer",
+            "Load Balancing Using DNS",
+            "Load Balancing at the Virtual IP Address"
+          ],
+          "status": "read",
+          "read_record_id": "read.batch5-sre-frontend.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-elastic-load-balancing",
+          "unit": "Health checks for Application Load Balancer target groups — Elastic Load Balancing documentation",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html",
+          "sections": [
+            "Health checks for Application Load Balancer target groups",
+            "Health check settings",
+            "Target health status"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-elb-health-checks.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-cloudwatch-synthetics",
+          "unit": "Synthetic monitoring (canaries) — Amazon CloudWatch documentation",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html",
+          "sections": [
+            "Synthetic monitoring (canaries)"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-synthetics-canaries.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-workbook",
+          "unit": "Alerting on SLOs — The Site Reliability Workbook, Chapter 5",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/workbook/alerting-on-slos/",
+          "sections": [
+            "Chapter 5 - Alerting on SLOs",
+            "Alerting on SLOs",
+            "Alerting Considerations"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-workbook-slos.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "Failure/recovery and alternative bound 2026-10-30 to Kubernetes probes, Google SRE cascading/frontend and SLO chapters, and AWS ELB and synthetic monitoring; shared-dependency mass ejection, cached health and the alternative-choice rule remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.failover-failback",
       "catalog_name": "Failover / Failback",
       "priority": "core",
       "required_units": [
+        {
+          "source_id": "src.postgresql",
+          "unit": "26.3. Failover — PostgreSQL 17 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/17/warm-standby-failover.html",
+          "sections": [
+            "26.3. Failover"
+          ],
+          "status": "read",
+          "read_record_id": "read.pg-failover.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-route53",
+          "unit": "Active-active and active-passive failover — Amazon Route 53 Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-types.html",
+          "sections": [
+            "Active-active failover",
+            "Active-passive failover",
+            "Configuring active-passive failover with one primary and one secondary resource",
+            "Configuring active-passive failover with weighted records"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-route53-failover.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-site-recovery",
+          "unit": "Run a failover from on-premises to Azure — Azure Site Recovery",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/site-recovery/site-recovery-failover",
+          "sections": [
+            "Before you start",
+            "Run a failover",
+            "Track failovers",
+            "Next steps"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-asr-failover.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-site-recovery",
+          "unit": "Tutorial: Fail back Azure VM to the primary region — Azure Site Recovery",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/site-recovery/azure-to-azure-tutorial-failback",
+          "sections": [
+            "Prerequisites",
+            "Fail back to the primary region",
+            "Reprotect VMs"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-asr-failback.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre",
+          "unit": "Testing for Reliability — Site Reliability Engineering, section Testing Disaster",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/testing-reliability/",
+          "sections": [
+            "Testing Disaster"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-testing-disaster.2026-10-31",
+          "blocked_reason": null
+        },
         {
           "source_id": "src.postgresql",
           "unit": "Log-Shipping Standby Servers — PostgreSQL documentation",
@@ -3067,7 +5205,7 @@
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 tail read; Failover/Failback uses the PostgreSQL standby record as a bounded database failover example."
+      "notes": "Four dimensions bound 2026-10-31 to five public units: AWS Route 53 failover routing, Azure Site Recovery failover and failback, PostgreSQL 17 promotion, and Google SRE disaster recovery testing. The retained PostgreSQL log-shipping unit remains historical evidence. No runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.leader-election",
@@ -3227,9 +5365,70 @@
           "status": "read",
           "read_record_id": "read.batch4-causal.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.lamport-time",
+          "unit": "Time, Clocks, and the Ordering of Events in a Distributed System — Leslie Lamport (CACM 1978)",
+          "unit_type": "paper",
+          "url": "https://lamport.azurewebsites.net/pubs/time-clocks.pdf",
+          "sections": [
+            "Abstract",
+            "Introduction",
+            "The Partial Ordering",
+            "Logical Clocks",
+            "Ordering the Events Totally"
+          ],
+          "status": "read",
+          "read_record_id": "read.lamport-time.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mattern-vector-time",
+          "unit": "Virtual Time and Global States of Distributed Systems — Friedemann Mattern (author-hosted paper)",
+          "unit_type": "paper",
+          "url": "https://vs.inf.ethz.ch/publ/papers/VirtTimeGlobStates.pdf",
+          "sections": [
+            "Abstract",
+            "1 Introduction",
+            "5 The concept of time",
+            "6 Virtual time",
+            "7 Vector time",
+            "8 The structure of vector time"
+          ],
+          "status": "read",
+          "read_record_id": "read.mattern-vector-time.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kafka",
+          "unit": "Introduction — Apache Kafka 4.1 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://kafka.apache.org/41/getting-started/introduction/",
+          "sections": [
+            "Introduction",
+            "Main Concepts and Terminology"
+          ],
+          "status": "read",
+          "read_record_id": "read.kafka-introduction.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kafka-design",
+          "unit": "Design — Apache Kafka 4.1 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://kafka.apache.org/41/design/design/",
+          "sections": [
+            "Design",
+            "Replication",
+            "Replicated Logs: Quorums, ISRs, and State Machines (Oh my!)",
+            "Consumer Position"
+          ],
+          "status": "read",
+          "read_record_id": "read.kafka-design.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 tail public unit read; claims limited to the ledger record."
+      "notes": "Failure/recovery and alternative bound 2026-10-30 to Lamport's partial-order paper, Mattern's vector-time paper, Kafka's 4.1 Introduction and Design pages and Jepsen's causal-consistency page; server-switch and metadata-loss inferences, the cross-partition reading and the choice rule remain Tycho."
     },
     {
       "pattern_id": "tycho.pattern.session-consistency",
@@ -3237,19 +5436,76 @@
       "priority": "advanced",
       "required_units": [
         {
-          "source_id": "src.jepsen-consistency",
+          "source_id": "src.azure-cosmos-consistency",
+          "unit": "Consistency levels in Azure Cosmos DB — Microsoft Learn",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels",
+          "sections": [
+            "Session consistency",
+            "Guarantees associated with consistency levels",
+            "Consistency guarantees in practice"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-cosmos-consistency.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mongodb-causal-consistency",
+          "unit": "Causal Consistency and Read and Write Concerns — MongoDB Manual",
+          "unit_type": "documentation-page",
+          "url": "https://www.mongodb.com/docs/manual/core/causal-consistency-read-write-concerns/",
+          "sections": [
+            "Causal Consistency and Read and Write Concerns",
+            "Scenarios",
+            "Read Concern \"majority\" and Write concern \"majority\"",
+            "Read Concern \"majority\" and Write concern {w: 1}",
+            "Read Concern \"local\" and Write concern {w: 1}",
+            "Read Concern \"local\" and Write concern \"majority\""
+          ],
+          "status": "read",
+          "read_record_id": "read.mongodb-causal-consistency.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.jepsen-session-models",
           "unit": "Consistency Models — Jepsen",
           "unit_type": "documentation-page",
           "url": "https://jepsen.io/consistency/models",
           "sections": [
-            "Consistency Models"
+            "Consistency Models",
+            "Processes",
+            "Histories"
           ],
           "status": "read",
-          "read_record_id": "read.batch4-jepsen.2026-10-21",
+          "read_record_id": "read.jepsen-consistency-models.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.jepsen-read-your-writes",
+          "unit": "Read Your Writes — Jepsen",
+          "unit_type": "documentation-page",
+          "url": "https://jepsen.io/consistency/models/read-your-writes",
+          "sections": [
+            "Read Your Writes"
+          ],
+          "status": "read",
+          "read_record_id": "read.jepsen-read-your-writes.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.jepsen-monotonic-reads",
+          "unit": "Monotonic Reads — Jepsen",
+          "unit_type": "documentation-page",
+          "url": "https://jepsen.io/consistency/models/monotonic-reads",
+          "sections": [
+            "Monotonic Reads"
+          ],
+          "status": "read",
+          "read_record_id": "read.jepsen-monotonic-reads.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "Five public units read 2026-10-31; session-token mechanics, session-guarantee scope, partition/failure behavior and causal alternative bound; no benchmark or independent reproduction."
     },
     {
       "pattern_id": "tycho.pattern.distributed-workflow-orchestration",
@@ -3258,21 +5514,174 @@
       "required_units": [
         {
           "source_id": "src.temporal",
-          "unit": "Temporal Workflow — durable orchestration",
+          "unit": "Temporal Workflows",
           "unit_type": "documentation-page",
           "url": "https://docs.temporal.io/workflows",
           "sections": [
-            "Temporal Workflow",
             "Intro to Workflows",
             "How Workflow replay works",
             "Resuming a Workflow"
           ],
           "status": "read",
-          "read_record_id": "read.batch2-temporal-workflows.2026-10-21",
+          "read_record_id": "read.temporal-workflows.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.temporal",
+          "unit": "What is a Temporal Activity?",
+          "unit_type": "documentation-page",
+          "url": "https://docs.temporal.io/activities",
+          "sections": [
+            "Full page"
+          ],
+          "status": "read",
+          "read_record_id": "read.temporal-activities.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.temporal",
+          "unit": "Activity Execution",
+          "unit_type": "documentation-page",
+          "url": "https://docs.temporal.io/activity-execution",
+          "sections": [
+            "Activity Execution lifecycle",
+            "Cancellation",
+            "What is Asynchronous Activity Completion?"
+          ],
+          "status": "read",
+          "read_record_id": "read.temporal-activity-execution.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.temporal",
+          "unit": "Saga Pattern",
+          "unit_type": "documentation-page",
+          "url": "https://docs.temporal.io/design-patterns/saga-pattern",
+          "sections": [
+            "Overview",
+            "Problem",
+            "Solution",
+            "When to register compensations",
+            "When to use",
+            "Benefits and trade-offs",
+            "Comparison with alternatives",
+            "Best practices",
+            "Common pitfalls"
+          ],
+          "status": "read",
+          "read_record_id": "read.temporal-saga-pattern.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.temporal",
+          "unit": "Job queues",
+          "unit_type": "documentation-page",
+          "url": "https://docs.temporal.io/evaluate/features/job-queue",
+          "sections": [
+            "What you get that a queue library doesn't give you",
+            "When to use a Standalone Activity instead of a Workflow"
+          ],
+          "status": "read",
+          "read_record_id": "read.temporal-job-queue.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-step-functions",
+          "unit": "Choosing workflow type in Step Functions",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html",
+          "sections": [
+            "Standard Workflows",
+            "Express Workflows",
+            "Execution guarantees in Step Functions workflows"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-step-functions-workflow-types.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-step-functions",
+          "unit": "Learn about Activities in Step Functions",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-activities.html",
+          "sections": [
+            "Overview",
+            "Waiting for an Activity Task to Complete",
+            "API list"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-step-functions-activities.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-step-functions",
+          "unit": "Restarting state machine executions with redrive in Step Functions",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/step-functions/latest/dg/redrive-executions.html",
+          "sections": [
+            "Redrive behavior of individual states",
+            "Retry behavior of redriven executions"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-step-functions-redrive.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-step-functions",
+          "unit": "Best practices for Step Functions",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/step-functions/latest/dg/sfn-best-practices.html",
+          "sections": [
+            "Using timeouts to avoid stuck Step Functions workflow executions"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-step-functions-best-practices.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cadence",
+          "unit": "Activities | Cadence",
+          "unit_type": "documentation-page",
+          "url": "https://cadenceworkflow.io/docs/concepts/activities/",
+          "sections": [
+            "Retries",
+            "Long Running Activities",
+            "Local Activities"
+          ],
+          "status": "read",
+          "read_record_id": "read.cadence-activities.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cadence",
+          "unit": "Cadence FAQ",
+          "unit_type": "documentation-page",
+          "url": "https://cadenceworkflow.io/faq/cadence-faq/",
+          "sections": [
+            "When should I use Cadence instead of a message queue (Kafka, SQS, RabbitMQ)?",
+            "How does Cadence handle failures?"
+          ],
+          "status": "read",
+          "read_record_id": "read.cadence-faq.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cadence",
+          "unit": "Workflow Engine and Workflow Orchestration | Cadence",
+          "unit_type": "documentation-page",
+          "url": "https://cadenceworkflow.io/docs/concepts/workflow-engine/",
+          "sections": [
+            "What a workflow engine does",
+            "How Cadence differs from queue + database patterns",
+            "Workflows must be deterministic",
+            "Core concepts"
+          ],
+          "status": "read",
+          "read_record_id": "read.cadence-workflow-engine.2026-11-01",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "Temporal workflows, activities, replay, saga and job queues; AWS Step Functions workflow types, activities, redrive and best practices; and Cadence activities, FAQ and workflow engine bound 2026-11-01; no runtime test or promotion."
     },
     {
       "pattern_id": "tycho.pattern.load-balancing",
@@ -3422,6 +5831,20 @@
           "status": "read",
           "read_record_id": "read.batch5-k8s-resources.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.kubernetes",
+          "unit": "Autoscaling Workloads — Kubernetes documentation",
+          "unit_type": "documentation-page",
+          "url": "https://kubernetes.io/docs/concepts/workloads/autoscaling/",
+          "sections": [
+            "Autoscaling Workloads",
+            "Scaling workloads manually",
+            "Scaling workloads automatically"
+          ],
+          "status": "read",
+          "read_record_id": "read.autoscaling-workloads-vertical.2026-10-29",
+          "blocked_reason": null
         }
       ],
       "notes": "Batch 5 public unit read; claims limited to the ledger record."
@@ -3557,9 +5980,64 @@
           "status": "read",
           "read_record_id": "read.batch5-deployment-stamps.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Deployment Stamps — pattern page (2026-10-31 refresh)",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/deployment-stamp",
+          "sections": [
+            "Deployment Stamps pattern",
+            "Context and problem",
+            "Solution",
+            "Problems and considerations",
+            "When to use this pattern",
+            "Workload design",
+            "Example",
+            "Deployment",
+            "Capacity planning",
+            "Traffic routing",
+            "Next steps",
+            "Contributors",
+            "Related resources"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-deployment-stamps.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-workbook",
+          "unit": "Canarying Releases — The Site Reliability Workbook, Chapter 16",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/workbook/canarying-releases/",
+          "sections": [
+            "Separating Components That Change at Different Rates",
+            "Dependencies and Isolation",
+            "Related Concepts",
+            "Blue/Green Deployment",
+            "Traffic Teeing",
+            "full Chapter 16 body"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-workbook-canarying.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cell-boundaries",
+          "unit": "What is a cell-based architecture?",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/reducing-scope-of-impact-with-cell-based-architecture/what-is-a-cell-based-architecture.html",
+          "sections": [
+            "What is a cell-based architecture?",
+            "A typical workload",
+            "A workload with cell-based architecture"
+          ],
+          "status": "read",
+          "read_record_id": "read.batch7-cell-boundaries.2026-10-22",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 5 public unit read; claims limited to the ledger record."
+      "notes": "Invariant and alternative bound 2026-10-31 to the Azure Deployment Stamps refresh, AWS cell-based architecture and Google SRE Canarying Releases; routing/state ownership, the isolation-first comparison and the reversal condition remain Tycho."
     },
     {
       "pattern_id": "tycho.pattern.geode",
@@ -3581,11 +6059,105 @@
             "Examples"
           ],
           "status": "read",
-          "read_record_id": "read.batch5-geode.2026-10-21",
+          "read_record_id": "read.geode-pattern.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-traffic-manager",
+          "unit": "Traffic Manager routing methods",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/traffic-manager/traffic-manager-routing-methods",
+          "sections": [
+            "Priority traffic-routing method",
+            "Weighted traffic-routing method",
+            "Performance traffic-routing method",
+            "Geographic traffic-routing method",
+            "Multivalue traffic-routing method",
+            "Subnet traffic-routing method",
+            "FAQs"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-traffic-manager-routing.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-traffic-manager",
+          "unit": "Traffic Manager endpoint monitoring",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/traffic-manager/traffic-manager-monitoring",
+          "sections": [
+            "Configure endpoint monitoring",
+            "How endpoint monitoring works",
+            "Endpoint and profile status",
+            "Endpoint failover and recovery",
+            "Traffic-routing methods",
+            "Enable or disable health checks",
+            "Always Serve",
+            "Firewall Setup for Health Checks",
+            "FAQs"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-traffic-manager-monitoring.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-traffic-manager",
+          "unit": "Azure Traffic Manager FAQ",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/traffic-manager/traffic-manager-faqs",
+          "sections": [
+            "Is Traffic Manager resilient to Azure region failures?",
+            "How does the choice of resource group location affect Traffic Manager?",
+            "What is DNS TTL and how does it impact my users?",
+            "How can I resolve a 500 (Internal Server Error) problem when using Traffic Manager?"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-traffic-manager-faq.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-multiregion-design",
+          "unit": "Multiregion network design",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/networking/design-guide/multi-region",
+          "sections": [
+            "What this article covers",
+            "Availability zones versus regional redundancy",
+            "How to choose a cross-region traffic routing approach",
+            "Design considerations",
+            "Active-active versus active-passive deployment patterns",
+            "Active-active",
+            "Active-passive",
+            "Choosing between active-active and active-passive networking",
+            "Data replication and latency",
+            "Cost considerations",
+            "Security considerations",
+            "Related articles"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-multiregion-network.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-multiregion-appservice",
+          "unit": "Multiple-region architectures for Azure App Service",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/web-apps/guides/multi-region-app-service/multi-region-app-service",
+          "sections": [
+            "Recovery objectives and approach comparison",
+            "Recommendations",
+            "Active-active architecture",
+            "Active-passive architecture",
+            "Considerations",
+            "Cross-region replication",
+            "Monitor multiple-region web apps"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-appservice-multiregion.2026-11-01",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 5 tail public unit read; claims limited to the ledger record."
+      "notes": "Geodes pattern, Traffic Manager routing, monitoring and FAQ, multiregion network design and multiple-region App Service guidance bound 2026-11-01; no runtime test or promotion."
     },
     {
       "pattern_id": "tycho.pattern.static-content-hosting",
@@ -3621,21 +6193,107 @@
       "priority": "core",
       "required_units": [
         {
+          "source_id": "src.aws-saas-lens",
+          "unit": "Tenant Isolation — SaaS Lens",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/tenant-isolation.html",
+          "sections": [
+            "Tenant Isolation"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-saas-lens-tenant-isolation.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-saas-lens",
+          "unit": "Pool isolation — SaaS Lens",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/pool-isolation.html",
+          "sections": [
+            "Pool isolation",
+            "Pool model pros and cons",
+            "Pros",
+            "Cons"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-saas-lens-pool-isolation.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-saas-lens",
+          "unit": "Preventing cross tenant access — SaaS Lens",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/preventing-cross-tenant-access.html",
+          "sections": [
+            "Preventing cross tenant access"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-saas-lens-preventing-cross-tenant.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kubernetes",
+          "unit": "Multi-tenancy — Kubernetes documentation",
+          "unit_type": "documentation-page",
+          "url": "https://kubernetes.io/docs/concepts/security/multi-tenancy/",
+          "sections": [
+            "Use cases",
+            "Multiple teams",
+            "Multiple customers",
+            "Terminology",
+            "Tenants",
+            "Isolation",
+            "Control plane isolation",
+            "Namespaces",
+            "Access controls",
+            "Quotas",
+            "Data Plane Isolation",
+            "Network isolation",
+            "Storage isolation",
+            "Sandboxing containers",
+            "Node Isolation",
+            "Additional Considerations",
+            "API Priority and Fairness",
+            "Quality-of-Service (QoS)",
+            "DNS",
+            "Operators",
+            "Implementations",
+            "Namespace per tenant",
+            "Virtual control plane per tenant"
+          ],
+          "status": "read",
+          "read_record_id": "read.k8s-multitenancy.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "PostgreSQL 18: 5.9. Row Security Policies",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+          "sections": [
+            "5.9. Row Security Policies"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgres-rowsecurity.2026-10-31",
+          "blocked_reason": null
+        },
+        {
           "source_id": "src.microsoft-multitenant",
-          "unit": "Architectural Approaches for a Multitenant Solution — Microsoft Learn",
+          "unit": "Architectural approaches for a multitenant solution — Azure Architecture Center",
           "unit_type": "documentation-page",
           "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/overview",
           "sections": [
+            "Introduction",
             "Deployment Stamps pattern",
             "Intended audience",
             "Related resource"
           ],
           "status": "read",
-          "read_record_id": "read.batch5-ms-multitenant.2026-10-21",
+          "read_record_id": "read.ms-multitenant-approaches.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 5 tail public unit read; claims limited to the ledger record."
+      "notes": "Four public sources (six units) bound 2026-10-31: AWS SaaS Lens tenant isolation, pool isolation and serverless tenant scoping; Kubernetes multi-tenancy; PostgreSQL row security; and Microsoft multitenant approaches. The earlier Microsoft record read.batch5-ms-multitenant.2026-10-21 is retained as historical context."
     },
     {
       "pattern_id": "tycho.pattern.rolling-deployment",
@@ -3732,9 +6390,56 @@
           "status": "read",
           "read_record_id": "read.batch5-argo-canary.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.flagger-deployment-strategies",
+          "unit": "Deployment Strategies — Flagger documentation",
+          "unit_type": "documentation-page",
+          "url": "https://docs.flagger.app/usage/deployment-strategies.md",
+          "sections": [
+            "Deployment Strategies",
+            "Canary Release",
+            "A/B Testing",
+            "Blue/Green Deployments",
+            "Blue/Green with Traffic Mirroring",
+            "Canary Release with Session Affinity"
+          ],
+          "status": "read",
+          "read_record_id": "read.flagger-deployment-strategies.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-workbook",
+          "unit": "Canarying Releases — The Site Reliability Workbook, Chapter 16",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/workbook/canarying-releases/",
+          "sections": [
+            "Separating Components That Change at Different Rates",
+            "Dependencies and Isolation",
+            "Related Concepts",
+            "Blue/Green Deployment",
+            "Traffic Teeing",
+            "full Chapter 16 body"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-workbook-canarying.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-blue-green-deployments",
+          "unit": "Best Practices for Managing Data Synchronization and Schema Changes — Blue/Green Deployments on AWS",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/blue-green-deployments/best-practices-for-managing-data-synchronization-and-schema-changes.html",
+          "sections": [
+            "Best Practices for Managing Data Synchronization and Schema Changes",
+            "Decoupling Schema Changes from Code Changes"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-blue-green-data.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 5 public unit read; claims limited to the ledger record."
+      "notes": "Canary mechanism and failure/recovery use Argo Rollouts; the invariant uses AWS shared-data-store and backward-compatible-schema guidance plus Google SRE shared-infrastructure and stateful-teeing limits; the alternative uses Flagger mirroring idempotency plus Google SRE feature flags/blue-green and the Argo rolling mimic. The reads-only default, data-compatibility separation and alternative-choice rule remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.feature-flags-feature-toggles",
@@ -3758,9 +6463,161 @@
           "status": "read",
           "read_record_id": "read.batch5-fowler-feature-toggles.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.openfeature-spec",
+          "unit": "Flag Evaluation API — OpenFeature specification",
+          "unit_type": "documentation-page",
+          "url": "https://openfeature.dev/specification/sections/flag-evaluation/",
+          "sections": [
+            "Overview",
+            "1.4. Detailed Flag Evaluation",
+            "1.7. Provider Lifecycle Management"
+          ],
+          "status": "read",
+          "read_record_id": "read.openfeature-flag-evaluation.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.openfeature-spec",
+          "unit": "Types and Data Structures — OpenFeature specification",
+          "unit_type": "documentation-page",
+          "url": "https://openfeature.dev/specification/types/",
+          "sections": [
+            "Evaluation Details",
+            "Provider Status"
+          ],
+          "status": "read",
+          "read_record_id": "read.openfeature-types.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.launchdarkly-flags",
+          "unit": "Kill switch flags — LaunchDarkly documentation",
+          "unit_type": "documentation-page",
+          "url": "https://launchdarkly.com/docs/home/flags/killswitch/",
+          "sections": [
+            "About kill switch flags"
+          ],
+          "status": "read",
+          "read_record_id": "read.launchdarkly-killswitch.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.launchdarkly-flags",
+          "unit": "Change history — LaunchDarkly documentation",
+          "unit_type": "documentation-page",
+          "url": "https://launchdarkly.com/docs/home/releases/change-history",
+          "sections": [
+            "View the change history",
+            "View a change entry"
+          ],
+          "status": "read",
+          "read_record_id": "read.launchdarkly-change-history.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.launchdarkly-flags",
+          "unit": "Reducing technical debt from feature flags — LaunchDarkly documentation",
+          "unit_type": "documentation-page",
+          "url": "https://launchdarkly.com/docs/guides/flags/technical-debt/",
+          "sections": [
+            "Temporary and permanent flags",
+            "Include flags in your workflow’s definition of “done”"
+          ],
+          "status": "read",
+          "read_record_id": "read.launchdarkly-technical-debt.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.launchdarkly-flags",
+          "unit": "Flag evaluation rules in server-side SDKs — LaunchDarkly documentation",
+          "unit_type": "documentation-page",
+          "url": "https://launchdarkly.com/docs/sdk/concepts/flag-evaluation-rules",
+          "sections": [
+            "Preliminary checks"
+          ],
+          "status": "read",
+          "read_record_id": "read.launchdarkly-flag-evaluation-rules.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-app-configuration",
+          "unit": "Feature management overview — Azure App Configuration",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-feature-management",
+          "sections": [
+            "Feature management overview",
+            "Switch (On/Off)",
+            "Rollout"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-feature-management-overview.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-app-configuration",
+          "unit": ".NET feature management — Azure App Configuration",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/azure-app-configuration/feature-management-dotnet-reference",
+          "sections": [
+            "Feature filters",
+            "Caching"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-feature-management-dotnet.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-app-configuration",
+          "unit": "Access Azure App Configuration using Microsoft Entra ID — Azure App Configuration",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-enable-rbac",
+          "sections": [
+            "Overview"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-appconfig-rbac.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.appconfig-rollout",
+          "unit": "Deploying feature flags and configuration data in AWS AppConfig",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/appconfig/latest/userguide/deploying-feature-flags.html",
+          "sections": [
+            "Deploying feature flags and configuration data in AWS AppConfig"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-appconfig-feature-flags.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.appconfig-rollout",
+          "unit": "Working with deployment strategies — AWS AppConfig",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-creating-deployment-strategy.html",
+          "sections": [
+            "Working with deployment strategies"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-appconfig-deployment-strategies.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.appconfig-rollout",
+          "unit": "Deploying a configuration — AWS AppConfig",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-deploying.html",
+          "sections": [
+            "Deploying a configuration"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-appconfig-deploying.2026-10-31",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 5 public unit read; claims limited to the ledger record."
+      "notes": "Mechanism, invariant, failure/recovery and alternative bound 2026-10-31 to OpenFeature, LaunchDarkly, Microsoft Azure App Configuration and AWS AppConfig, with retained Fowler and AWS branch context; no runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.gitops",
@@ -3769,24 +6626,177 @@
       "required_units": [
         {
           "source_id": "src.opengitops",
-          "unit": "OpenGitOps — principles",
+          "unit": "OpenGitOps — GitOps Principles v1.0.0",
           "unit_type": "specification",
-          "url": "https://opengitops.dev/",
+          "url": "https://raw.githubusercontent.com/open-gitops/documents/v1.0.0/PRINCIPLES.md",
           "sections": [
-            "What is OpenGitOps?",
-            "GitOps Principles v1.0.0",
             "Declarative",
             "Versioned and Immutable",
             "Pulled Automatically",
-            "Continuously Reconciled",
-            "Past Events"
+            "Continuously Reconciled"
           ],
           "status": "read",
-          "read_record_id": "read.batch5-opengitops.2026-10-21",
+          "read_record_id": "read.opengitops-principles.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.argocd",
+          "unit": "Automated Sync Policy — Argo CD",
+          "unit_type": "documentation-page",
+          "url": "https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/",
+          "sections": [
+            "Automated Sync Policy",
+            "Automatic Pruning",
+            "Automatic Self-Healing",
+            "Automatic Retry with a limit",
+            "Automated Sync Semantics"
+          ],
+          "status": "read",
+          "read_record_id": "read.argocd-auto-sync.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.argocd",
+          "unit": "Diffing Customization — Argo CD",
+          "unit_type": "documentation-page",
+          "url": "https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/",
+          "sections": [
+            "Diffing Customization",
+            "Application Level Configuration",
+            "System-Level Configuration"
+          ],
+          "status": "read",
+          "read_record_id": "read.argocd-diffing.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.argocd",
+          "unit": "Best Practices — Argo CD",
+          "unit_type": "documentation-page",
+          "url": "https://argo-cd.readthedocs.io/en/stable/user-guide/best_practices/",
+          "sections": [
+            "Best Practices",
+            "Separating Config Vs. Source Code Repositories",
+            "Leaving Room For Imperativeness",
+            "Ensuring Manifests At Git Revisions Are Truly Immutable"
+          ],
+          "status": "read",
+          "read_record_id": "read.argocd-best-practices.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.argocd",
+          "unit": "Security — Argo CD",
+          "unit_type": "documentation-page",
+          "url": "https://argo-cd.readthedocs.io/en/stable/operator-manual/security/",
+          "sections": [
+            "Security",
+            "Git & Helm Repositories",
+            "Unauthorized Deployments",
+            "Remote bases and helm chart dependencies",
+            "Secrets",
+            "External Cluster Credentials",
+            "Cluster RBAC"
+          ],
+          "status": "read",
+          "read_record_id": "read.argocd-security.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.argocd",
+          "unit": "High Availability — Argo CD",
+          "unit_type": "documentation-page",
+          "url": "https://argo-cd.readthedocs.io/en/stable/operator-manual/high_availability/",
+          "sections": [
+            "High Availability",
+            "Scaling Up",
+            "argocd-repo-server",
+            "argocd-application-controller",
+            "Monorepo Scaling Considerations",
+            "Use Fully Qualified Git References"
+          ],
+          "status": "read",
+          "read_record_id": "read.argocd-ha.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.flux",
+          "unit": "Core Concepts — Flux",
+          "unit_type": "documentation-page",
+          "url": "https://fluxcd.io/flux/concepts/",
+          "sections": [
+            "GitOps",
+            "Gitless GitOps",
+            "GitOps Toolkit (gotk)",
+            "Sources",
+            "Reconciliation",
+            "Kustomization",
+            "Bootstrap",
+            "Continuous Delivery",
+            "Continuous Deployment",
+            "Progressive Delivery"
+          ],
+          "status": "read",
+          "read_record_id": "read.flux-concepts.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.flux",
+          "unit": "Kustomization — Flux",
+          "unit_type": "documentation-page",
+          "url": "https://fluxcd.io/flux/components/kustomize/kustomizations/",
+          "sections": [
+            "Kustomization",
+            "Example",
+            "Writing a Kustomization spec",
+            "Source reference",
+            "Prune",
+            "Interval",
+            "Retry interval",
+            "Path",
+            "Target namespace",
+            "Suspend",
+            "Health checks",
+            "Dependencies"
+          ],
+          "status": "read",
+          "read_record_id": "read.flux-kustomization.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.flux",
+          "unit": "Git Repositories — Flux",
+          "unit_type": "documentation-page",
+          "url": "https://fluxcd.io/flux/components/source/gitrepositories/",
+          "sections": [
+            "Git Repositories",
+            "Artifact",
+            "Secret reference",
+            "Verification",
+            "SSH verification"
+          ],
+          "status": "read",
+          "read_record_id": "read.flux-gitrepository.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.flux",
+          "unit": "Flux Prometheus metrics — Flux",
+          "unit_type": "documentation-page",
+          "url": "https://fluxcd.io/flux/monitoring/metrics/",
+          "sections": [
+            "Flux Prometheus metrics",
+            "Controller metrics",
+            "Resource metrics",
+            "Monitoring setup",
+            "Flux Grafana dashboards"
+          ],
+          "status": "read",
+          "read_record_id": "read.flux-monitoring.2026-11-01",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 5 public unit read; claims limited to the ledger record."
+      "notes": "OpenGitOps principles v1.0.0, Argo CD reconciliation, drift, security and availability, and Flux concepts, drift, verification and metrics bound 2026-11-01; no runtime test or promotion."
     },
     {
       "pattern_id": "tycho.pattern.immutable-infrastructure",
@@ -3814,9 +6824,67 @@
           "status": "read",
           "read_record_id": "read.batch5-ibm-immutable.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.ibm-immutable-infrastructure",
+          "unit": "What is Immutable Infrastructure? — IBM (full page, 2026-10-30)",
+          "unit_type": "article",
+          "url": "https://www.ibm.com/think/topics/immutable-infrastructure",
+          "sections": [
+            "What is immutable infrastructure?",
+            "How does immutable infrastructure work?",
+            "Provisioning with infrastructure as code",
+            "Deployment through CI/CD pipelines",
+            "External data storage",
+            "Recovery",
+            "Benefits of immutable infrastructure",
+            "Predictable server state",
+            "Improved horizontal scalability",
+            "Enhanced security",
+            "Challenges of immutable infrastructure"
+          ],
+          "status": "read",
+          "read_record_id": "read.ibm-immutable.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-immutable-infrastructure",
+          "unit": "REL08-BP04 Deploy using immutable infrastructure — AWS Well-Architected Framework",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/framework/rel_tracking_change_management_immutable_infrastructure.html",
+          "sections": [
+            "REL08-BP04 Deploy using immutable infrastructure",
+            "Benefits of establishing this best practice",
+            "Implementation guidance",
+            "Drift detection",
+            "Implementation steps",
+            "Resources"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-immutable-infrastructure.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.hashicorp-immutable-vms",
+          "unit": "Create immutable virtual machines — HashiCorp Well-Architected Framework",
+          "unit_type": "documentation-page",
+          "url": "https://developer.hashicorp.com/well-architected-framework/define-and-automate-processes/define/immutable-infrastructure/virtual-machines",
+          "sections": [
+            "Create immutable virtual machines",
+            "Why use immutable virtual machines",
+            "Build machine images with Packer",
+            "Deploy immutable VMs with Terraform",
+            "Query machine images dynamically",
+            "Immutable VM workflow",
+            "HashiCorp resources",
+            "Next steps"
+          ],
+          "status": "read",
+          "read_record_id": "read.hashicorp-immutable-vms.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 5 tail public unit read; claims limited to the ledger record."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to AWS REL08-BP04, HashiCorp immutable VMs and IBM's full page; digest recording and rebuild equality remain Tycho."
     },
     {
       "pattern_id": "tycho.pattern.strangler-fig",
@@ -3834,6 +6902,22 @@
           ],
           "status": "read",
           "read_record_id": "read.fowler-strangler.2026-10-21",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-strangler",
+          "unit": "Strangler fig pattern — AWS Prescriptive Guidance",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-decomposing-monoliths/strangler-fig.html",
+          "sections": [
+            "Strangler fig pattern",
+            "Transform",
+            "Coexist",
+            "Eliminate",
+            "Advantages and disadvantages"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-strangler.2026-10-29",
           "blocked_reason": null
         }
       ],
@@ -3858,9 +6942,21 @@
           "status": "read",
           "read_record_id": "read.batch5-fowler-branch.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-branch",
+          "unit": "Branch by abstraction pattern — AWS Prescriptive Guidance",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-decomposing-monoliths/branch-by-abstraction.html",
+          "sections": [
+            "Branch by abstraction pattern"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-branch.2026-10-29",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 5 public unit read; claims limited to the ledger record."
+      "notes": "Batch 5 public unit read plus the 2026-10-29 AWS page read; claims limited to the ledger records."
     },
     {
       "pattern_id": "tycho.pattern.parallel-run",
@@ -3969,9 +7065,87 @@
           "status": "read",
           "read_record_id": "read.batch3-flyway.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.fowler-parallel-change",
+          "unit": "Parallel Change — martinfowler.com bliki",
+          "unit_type": "article",
+          "url": "https://martinfowler.com/bliki/ParallelChange.html",
+          "sections": [
+            "Article body"
+          ],
+          "status": "read",
+          "read_record_id": "read.fowler-parallel-change.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-blue-green-deployments",
+          "unit": "Best Practices for Managing Data Synchronization and Schema Changes — Blue/Green Deployments on AWS",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/blue-green-deployments/best-practices-for-managing-data-synchronization-and-schema-changes.html",
+          "sections": [
+            "Best Practices for Managing Data Synchronization and Schema Changes",
+            "Decoupling Schema Changes from Code Changes"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-blue-green-data.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "PostgreSQL 18.6 Documentation — ALTER TABLE",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/sql-altertable.html",
+          "sections": [
+            "Description",
+            "Notes",
+            "Examples"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgresql-alter-table.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "PostgreSQL 18.6 Documentation — Explicit Locking",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+          "sections": [
+            "13.3.1. Table-Level Locks"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgresql-explicit-locking.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mysql",
+          "unit": "MySQL 8.4 Reference Manual — 17.12.1 Online DDL Operations",
+          "unit_type": "documentation-page",
+          "url": "https://docs.oracle.com/cd/E17952_01/mysql-8.4-en/innodb-online-ddl-operations.html",
+          "sections": [
+            "Column Operations",
+            "Adding a column",
+            "Dropping a column",
+            "Changing the column data type"
+          ],
+          "status": "read",
+          "read_record_id": "read.mysql-online-ddl.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mysql",
+          "unit": "MySQL 8.4 Reference Manual — ALTER TABLE",
+          "unit_type": "documentation-page",
+          "url": "https://docs.oracle.com/cd/E17952_01/mysql-8.4-en/alter-table.html",
+          "sections": [
+            "Performance and Space Requirements"
+          ],
+          "status": "read",
+          "read_record_id": "read.mysql-alter-table.2026-10-31",
+          "blocked_reason": null
         }
       ],
-      "notes": "Reused public unit; supports a bounded comparison, not a full dedicated treatment of this entry."
+      "notes": "Mechanism, invariant, failure/recovery and alternative bound 2026-10-31 to Fowler Parallel Change, AWS blue/green schema guidance, PostgreSQL 18.6 DDL locking and MySQL 8.4 online DDL; no runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.controlled-cutover",
@@ -4375,11 +7549,98 @@
             "Specification"
           ],
           "status": "read",
-          "read_record_id": "read.batch6-otel-traces.2026-10-21",
+          "read_record_id": "read.otel-traces.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.otel",
+          "unit": "Context propagation — OpenTelemetry",
+          "unit_type": "documentation-page",
+          "url": "https://opentelemetry.io/docs/concepts/context-propagation/",
+          "sections": [
+            "Context",
+            "Propagation",
+            "Example",
+            "Traces",
+            "Logs",
+            "Metrics",
+            "Custom Context Propagation",
+            "Security best practices",
+            "External services",
+            "Baggage",
+            "Support in Language SDKs",
+            "Specification"
+          ],
+          "status": "read",
+          "read_record_id": "read.otel-context-propagation.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.otel",
+          "unit": "Sampling — OpenTelemetry",
+          "unit_type": "documentation-page",
+          "url": "https://opentelemetry.io/docs/concepts/sampling/",
+          "sections": [
+            "Terminology",
+            "Why sampling?",
+            "When to sample",
+            "When not to sample",
+            "Head Sampling",
+            "Tail Sampling",
+            "Support",
+            "Collector",
+            "Language SDKs",
+            "Vendors"
+          ],
+          "status": "read",
+          "read_record_id": "read.otel-sampling.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.trace-context",
+          "unit": "Trace Context — W3C Recommendation 23 November 2021",
+          "unit_type": "specification",
+          "url": "https://www.w3.org/TR/2021/REC-trace-context-1-20211123/",
+          "sections": [
+            "Abstract",
+            "2.2 Solution",
+            "2.3 Design Overview",
+            "3.2.2 traceparent Header Field Values",
+            "3.2.2.3 trace-id",
+            "3.2.2.4 parent-id",
+            "3.2.2.5.1 Sampled flag",
+            "3.2.4 Versioning of traceparent",
+            "3.4 Mutating the traceparent Field",
+            "4.2 No traceparent Received",
+            "4.3 A traceparent is Received",
+            "8.1 Uniqueness of trace-id",
+            "8.2 Randomness of trace-id"
+          ],
+          "status": "read",
+          "read_record_id": "read.w3c-trace-context.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.dapper",
+          "unit": "Dapper, a Large-Scale Distributed Systems Tracing Infrastructure — Google Technical Report dapper-2010-1, April 2010",
+          "unit_type": "paper",
+          "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf",
+          "sections": [
+            "Abstract",
+            "1 Introduction",
+            "2.2 Instrumentation points",
+            "2.4 Sampling",
+            "4.4 Adaptive sampling",
+            "4.5 Coping with aggressive sampling",
+            "4.6 Additional sampling during collection",
+            "6.1 Using Dapper during development"
+          ],
+          "status": "read",
+          "read_record_id": "read.dapper-tracing.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 6 public unit read; Health checks reuse the batch 4 Kubernetes probe record; ASVS entries are verification-framing only."
+      "notes": "Mechanism, invariant, failure/recovery and alternative bound 2026-10-31 to five public units: OpenTelemetry traces, context propagation and sampling; W3C Trace Context; and Google Dapper. No runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.structured-logging",
@@ -4413,9 +7674,42 @@
           "status": "read",
           "read_record_id": "read.batch6-otel-logs.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.owasp-asvs",
+          "unit": "OWASP ASVS 5.0.0 — application security verification",
+          "unit_type": "specification",
+          "url": "https://github.com/OWASP/ASVS/raw/v5.0.0/5.0/OWASP_Application_Security_Verification_Standard_5.0.0_en.pdf",
+          "sections": [
+            "V1 Encoding and Sanitization",
+            "V2 Validation and Business Logic",
+            "V3 Web Frontend Security",
+            "V4 API and Web Service",
+            "V5 File Handling",
+            "V6 Authentication",
+            "V7 Session Management",
+            "V8 Authorization",
+            "V9 Self-contained Tokens",
+            "V10 OAuth and OIDC",
+            "V11 Cryptography",
+            "V12 Secure Communication",
+            "V13 Configuration",
+            "V14 Data Protection",
+            "V15 Secure Coding and Architecture",
+            "V16 Security Logging and Error Handling",
+            "V17 WebRTC",
+            "Appendix A",
+            "Appendix B",
+            "Appendix C",
+            "Appendix D",
+            "Appendix E"
+          ],
+          "status": "read",
+          "read_record_id": "read.batch6-asvs.2026-10-21",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 6 public unit read; Health checks reuse the batch 4 Kubernetes probe record; ASVS entries are verification-framing only."
+      "notes": "Batch 6 public unit read; Health checks reuse the batch 4 Kubernetes probe record; ASVS V16 supplies the structured-logging invariant and failure/recovery evidence."
     },
     {
       "pattern_id": "tycho.pattern.audit-trail",
@@ -4445,7 +7739,7 @@
       "required_units": [
         {
           "source_id": "src.sre",
-          "unit": "Defining SLOs — Google SRE",
+          "unit": "Service Level Objectives — Site Reliability Engineering, chapter 4",
           "unit_type": "book-chapter",
           "url": "https://sre.google/sre-book/service-level-objectives/",
           "sections": [
@@ -4469,11 +7763,89 @@
             "Agreements in Practice"
           ],
           "status": "read",
-          "read_record_id": "read.batch6-sre-slo.2026-10-21",
+          "read_record_id": "read.sre-book-slo.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-workbook",
+          "unit": "Implementing SLOs — The Site Reliability Workbook, chapter 2",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/workbook/implementing-slos/",
+          "sections": [
+            "What to Measure: Using SLIs",
+            "Choosing an Appropriate Time Window",
+            "Getting Stakeholder Agreement",
+            "Establishing an Error Budget Policy",
+            "Decision Making Using SLOs and Error Budgets"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-workbook-implementing-slos.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-workbook",
+          "unit": "Alerting on SLOs — The Site Reliability Workbook, chapter 5",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/workbook/alerting-on-slos/",
+          "sections": [
+            "Alerting Considerations",
+            "Ways to Alert on Significant Events",
+            "4: Alert on Burn Rate",
+            "6: Multiwindow, Multi-Burn-Rate Alerts",
+            "Low-Traffic Services and Error Budget Alerting",
+            "Conclusion"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-workbook-alerting-on-slos.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.prometheus",
+          "unit": "Alerting rules — Prometheus documentation",
+          "unit_type": "documentation-page",
+          "url": "https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/",
+          "sections": [
+            "Defining alerting rules",
+            "Inspecting alerts during runtime",
+            "Sending alert notifications"
+          ],
+          "status": "read",
+          "read_record_id": "read.prometheus-alerting-rules.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.prometheus",
+          "unit": "Defining recording rules — Prometheus documentation",
+          "unit_type": "documentation-page",
+          "url": "https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/",
+          "sections": [
+            "Configuring rules",
+            "Recording rules",
+            "Limiting alerts and series",
+            "Failed rule evaluations due to slow evaluation"
+          ],
+          "status": "read",
+          "read_record_id": "read.prometheus-recording-rules.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.openslo",
+          "unit": "Specification — OpenSLO",
+          "unit_type": "specification",
+          "url": "https://openslo.com/specification/",
+          "sections": [
+            "Introduction",
+            "Specification / Goals",
+            "General Schema",
+            "Custom Data Types",
+            "Object Types / SLO"
+          ],
+          "status": "read",
+          "read_record_id": "read.openslo-specification.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 6 public unit read; Health checks reuse the batch 4 Kubernetes probe record; ASVS entries are verification-framing only."
+      "notes": "Six public units read 2026-10-31: Google SRE Workbook Implementing SLOs and Alerting on SLOs; Google SRE Book Service Level Objectives; OpenSLO Specification; Prometheus Alerting rules and Defining recording rules. All four technical dimensions are bound; no runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.synthetic-monitoring",
@@ -4481,41 +7853,68 @@
       "priority": "core",
       "required_units": [
         {
-          "source_id": "src.sre-workbook",
-          "unit": "Monitoring Systems with Advanced Analytics — SRE Workbook",
+          "source_id": "src.sre",
+          "unit": "Monitoring Distributed Systems — Site Reliability Engineering, chapter 6",
           "unit_type": "book-chapter",
-          "url": "https://sre.google/workbook/monitoring/",
+          "url": "https://sre.google/sre-book/monitoring-distributed-systems/",
           "sections": [
-            "Monitoring",
-            "Desirable Features of a Monitoring Strategy",
-            "Speed",
-            "Calculations",
-            "Interfaces",
-            "Alerts",
-            "Sources of Monitoring Data",
-            "Examples",
-            "Move information from logs to metrics",
-            "Improve both logs and metrics",
-            "Keep logs as the data source",
-            "Managing Your Monitoring System",
-            "Treat Your Configuration as Code",
-            "Encourage Consistency",
-            "Prefer Loose Coupling",
-            "Metrics with Purpose",
-            "Intended Changes",
-            "Dependencies",
-            "Saturation",
-            "Status of Served Traffic",
-            "Implementing Purposeful Metrics",
-            "Testing Alerting Logic",
-            "Conclusion"
+            "Definitions",
+            "Black-Box Versus White-Box",
+            "The Four Golden Signals"
           ],
           "status": "read",
-          "read_record_id": "read.batch6-sre-workbook-monitoring.2026-10-21",
+          "read_record_id": "read.sre-book-blackbox-monitoring.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.prometheus",
+          "unit": "Blackbox exporter — Prometheus",
+          "unit_type": "documentation-page",
+          "url": "https://github.com/prometheus/blackbox_exporter",
+          "sections": [
+            "Blackbox exporter",
+            "Checking the results",
+            "Controlling log level for probe logs",
+            "Configuration",
+            "Prometheus Configuration",
+            "DNS resolution of targets",
+            "Security"
+          ],
+          "status": "read",
+          "read_record_id": "read.prometheus-blackbox-exporter.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-cloudwatch-synthetics",
+          "unit": "Synthetic monitoring (canaries) — Amazon CloudWatch documentation",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html",
+          "sections": [
+            "Synthetic monitoring (canaries)"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-synthetics-canaries.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-app-insights-availability",
+          "unit": "Application Insights availability tests — Azure Monitor",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability",
+          "sections": [
+            "Introduction",
+            "Types of availability tests",
+            "Create an availability test",
+            "Availability alerts",
+            "See your availability test results",
+            "Testing behind a firewall"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-app-insights-availability.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 6 public unit read; Health checks reuse the batch 4 Kubernetes probe record; ASVS entries are verification-framing only."
+      "notes": "Four public units read 2026-10-31 for the synthetic-monitoring dimensions: Google SRE Book Monitoring Distributed Systems, Prometheus Blackbox exporter, AWS CloudWatch Synthetics canaries and Azure Application Insights availability tests."
     },
     {
       "pattern_id": "tycho.pattern.health-readiness-and-liveness-checks",
@@ -4547,23 +7946,51 @@
           "status": "read",
           "read_record_id": "read.batch4-k8s-probes.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Health Endpoint Monitoring pattern — Microsoft Learn",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/health-endpoint-monitoring",
+          "sections": [
+            "Health Endpoint Monitoring pattern",
+            "When to use this pattern"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-health-endpoint.2026-10-29",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 6 public unit read; Health checks reuse the batch 4 Kubernetes probe record; ASVS entries are verification-framing only."
+      "notes": "Batch 6 public unit read; Health checks reuse the batch 4 Kubernetes probe record; the 2026-10-29 Microsoft Health Endpoint Monitoring unit supports the transport-level and telemetry alternative."
     }
   ],
   "summary": {
     "entries": 145,
-    "required_units": 164,
-    "read_units": 163,
+    "required_units": 381,
+    "read_units": 380,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 135
+    "ledger_records": 345
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
     "read.microsoft-cloud-patterns.2026-10-21",
     "read.microservices-patterns.2026-10-21",
-    "read.eip-messaging.2026-10-21"
+    "read.eip-messaging.2026-10-21",
+    "read.batch2-ietf.2026-10-21",
+    "read.batch4-rabbit-priority.2026-10-21",
+    "read.batch6-sre-slo.2026-10-21",
+    "read.batch4-jepsen.2026-10-21",
+    "read.batch6-sre-workbook-monitoring.2026-10-21",
+    "read.batch6-otel-traces.2026-10-21",
+    "read.batch3-pg-archiving.2026-10-21",
+    "read.batch4-hedged.2026-10-21",
+    "read.batch8-postgres-logical.2026-10-22",
+    "read.batch2-debezium-outbox.2026-10-21",
+    "read.batch3-gh-ost.2026-10-21",
+    "read.batch5-ms-multitenant.2026-10-21",
+    "read.batch5-opengitops.2026-10-21",
+    "read.batch2-temporal-workflows.2026-10-21",
+    "read.batch5-geode.2026-10-21"
   ]
 }

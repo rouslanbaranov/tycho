@@ -32,18 +32,21 @@ evidence_scope:
   source_ids:
     - "src.microservices-patterns"
     - "src.microsoft-cloud-patterns"
+    - "src.aws-bff"
     - "src.envoy"
+    - "src.aws-api-gateway"
+    - "src.azure-api-management"
   claim_ids: []
   status: "source-linked"
   notes: "12 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-30"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C02 — API and service communication
@@ -62,8 +65,8 @@ mechanism.
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
+Page count is content-dependent. This chapter uses a landing page plus dedicated card
+pages; a later split is an editorial change, not a plan failure. Start with the card,
 check its conditions and contraindications, then read the exact owner section.
 
 ## Entry inventory
@@ -73,40 +76,7 @@ none claims sufficient technical or decision coverage.
 
 ### API Gateway
 
-**Identity.** API Gateway; family API and service communication; kind integration
-pattern; priority core.
-
-**Decision question.** Should external clients enter through a managed gateway that
-owns routing, authentication and cross-cutting edge policy?
-
-**Good-fit conditions.** Multiple clients or backends share edge concerns; routing,
-TLS, authentication or rate policy must be consistent; the gateway can be operated and
-observed as a critical component; backend authority remains explicit.
-
-**Hard contraindications.** Reject the claim when one simple client can call one
-backend directly; when the gateway would become an unowned single point of failure;
-when it hides domain authorization in the backend; when every request needs a unique
-policy that the gateway cannot safely express.
-
-**Competing alternative.** A reverse proxy with a narrow edge contract, or direct
-backend exposure with client-side policy. Reverse the choice when gateway complexity
-and outage blast radius exceed the shared edge benefit.
-
-**Failure and recovery.** Gateway bypass, configuration drift, stale routes, confused
-authentication and an outage blocking every backend are common. Keep backend authorization,
-test the bypass path and version gateway policy.
-
-**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#api-gateway) — edge identity and gateway boundary; not a full API management specification.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-api-gateway.2026-10-21: all ten served headings
-read. Pattern page, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Gateway Routing; Gateway Aggregation; Gateway Offloading; Reverse
-Proxy.
+See the [dedicated API Gateway card](api-gateway.md).
 
 ### Gateway Routing
 
@@ -218,38 +188,7 @@ headings read. Vendor pattern page, not a benchmark.
 
 ### Backend for Frontend (BFF)
 
-**Identity.** Backend for Frontend; alias BFF; family API and service communication;
-kind integration pattern; priority core.
-
-**Decision question.** Should each client population get a tailored server contract,
-rather than share one general-purpose API?
-
-**Good-fit conditions.** Client populations have materially different interaction
-needs; a team can own each BFF; shared domain services remain authoritative; duplicated
-client-specific composition is acceptable.
-
-**Hard contraindications.** Reject the claim when one client contract is adequate; when
-BFFs would duplicate domain logic; when no team owns a BFF lifecycle; when the split
-multiplies deployments without a measured client benefit.
-
-**Competing alternative.** A shared API with client-side selection when the differences are
-small. Reverse the choice when BFF maintenance and duplication exceed the client fit
-benefit.
-
-**Failure and recovery.** Contract drift between the BFF and the domain API and duplicated
-logic is a risk. Recovery requires versioned composition and contract tests; verify the
-API contract boundary in the owner section.
-
-**Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#backend-for-frontend-bff) — BFF tailoring has a dedicated owner section; it is bounded, not a complete API contract guide.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-bff.2026-10-21: all thirteen served headings
-read. Vendor pattern page, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** API Gateway; Gateway Aggregation; API Composition; Reverse Proxy.
+See the [dedicated Backend for Frontend (BFF) card](backend-for-frontend.md).
 
 ### API Composition
 
@@ -364,39 +303,7 @@ Proxy.
 
 ### Server-Side Discovery
 
-**Identity.** Server-Side Discovery; family API and service communication; kind
-discovery pattern; priority core.
-
-**Decision question.** Should a proxy or load balancer own service lookup and backend
-selection for the caller?
-
-**Good-fit conditions.** Clients should stay simple; the intermediary can observe
-health and membership; selection policy is centrally owned; the extra hop and proxy
-lifecycle are acceptable.
-
-**Hard contraindications.** Reject the claim when the intermediary becomes an unowned
-single point; when it cannot observe backend health; when clients need a selection
-policy the proxy cannot express; when the extra hop violates a hard latency budget.
-
-**Competing alternative.** Client-side discovery or static endpoints. Reverse the
-choice when proxy blast radius and operational cost exceed the client simplification
-benefit.
-
-**Failure and recovery.** Proxy outage, stale membership, retry amplification and a shared
-proxy bottleneck are common. Health-check backends, expose a degraded path and bound retries.
-
-**Technical owner.** [Server-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#server-side-discovery) — discovery and selection; server-side specifics are bounded to the linked section.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-server-discovery.2026-10-21: Server-side service
-discovery, sections "Context", "Problem", "Forces", "Solution", "Examples", "Resulting
-context", "Related patterns". Pattern page, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Service Discovery; Client-Side Discovery; Gateway Routing; API
-Gateway.
+See the [dedicated Server-Side Discovery card](server-side-discovery.md).
 
 ### Asynchronous Request-Reply
 
@@ -404,39 +311,7 @@ See the [dedicated Asynchronous Request-Reply card](async-request-reply.md).
 
 ### Gatekeeper
 
-**Identity.** Gatekeeper; family API and service communication; kind security pattern;
-priority advanced.
-
-**Decision question.** Should a narrow gatekeeper validate and shape requests before
-they reach a sensitive backend, rather than exposing the backend directly?
-
-**Good-fit conditions.** A small validation surface can reject malformed or
-unauthorized requests; the gatekeeper can authenticate and forward trusted context;
-the backend retains object-level authorization; the gatekeeper is highly available.
-
-**Hard contraindications.** Reject the claim when the gatekeeper would become the only
-authorization check; when it forwards unchecked identity or tenant headers; when its
-outage blocks all access; when validation logic needs backend domain state.
-
-**Competing alternative.** Backend-side validation and authorization, or an API gateway
-with a narrow policy. Reverse the choice when gatekeeper complexity and blast radius
-exceed the reduced attack surface.
-
-**Failure and recovery.** False trust in forwarded identity, stale policy and gatekeeper
-outage are common. Recovery requires explicit trust boundaries and backend checks;
-verify the authorization boundary in the owner section.
-
-**Technical owner.** [Authorization boundaries and multitenancy: domain ownership and isolation](../../v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md#gatekeeper) — authorization boundary; gatekeeper mechanics are bounded to the linked section.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gatekeeper.2026-10-21: all nine served headings
-read. Vendor pattern page, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** API Gateway; Gateway Offloading; Zero Trust Architecture; Valet
-Key.
+See the [dedicated Gatekeeper card](gatekeeper.md).
 
 ## Chapter result and counterexample
 

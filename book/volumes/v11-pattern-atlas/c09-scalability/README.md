@@ -38,17 +38,25 @@ evidence_scope:
     - "src.cortex-shuffle-sharding"
     - "src.cell-boundaries"
     - "src.microsoft-multitenant"
+    - "src.sre-workbook"
   claim_ids: []
   status: "source-linked"
-  notes: "10 cards cite read units; owner links are bounded."
+  notes: >-
+    10 cards cite read units; owner links are bounded. Tenant-Based Resource
+    Isolation moved to a dedicated page on 2026-10-31 with AWS SaaS Lens tenant,
+    pool and cross-tenant guidance, Kubernetes multi-tenancy, PostgreSQL row
+    security and Microsoft multitenant approaches. Geode moved to a dedicated
+    page on 2026-11-01 with the Geodes pattern, Traffic Manager routing,
+    monitoring and FAQ, multiregion network design and multiple-region App
+    Service guidance; coverage remains partial-bounded.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-11-01"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-11-01"
+source_inspection_date: "2026-11-01"
 content_verified_at: null
 ---
 # V11/C09 — Scalability and load distribution
@@ -140,34 +148,7 @@ unit, not a benchmark.
 
 ### Vertical Scaling
 
-**Identity.** Vertical Scaling; family Scalability and load distribution; kind
-scalability-pattern; priority core.
-
-**Decision question.** Should capacity be added by increasing CPU/memory/IO on one
-instance?
-
-**Good-fit conditions.** The workload fits one node; the provider allows a larger size;
-restart/downtime is acceptable.
-
-**Hard contraindications.** Reject when a single-node ceiling is near, when failover
-requires multiple nodes, or when cost grows superlinearly.
-
-**Competing alternative.** Horizontal scaling or partitioning. Reverse the choice when the
-larger node no longer meets availability/cost constraints.
-
-**Failure and recovery.** Ceiling and restart risk are common; verify limits in the owner
-section.
-
-**Technical owner.** [Vertical Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#vertical-scaling) — resource ceiling and restart cost are bounded; instance sizing is platform-specific.
-
-**Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-k8s-resources.2026-10-21: all thirty-three served
-headings read. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Horizontal Scaling; Autoscaling; Capacity Planning; Contention.
+See the [dedicated Vertical Scaling card](vertical-scaling.md).
 
 ### Autoscaling
 
@@ -268,68 +249,11 @@ unit, not a benchmark.
 
 ### Deployment Stamps
 
-**Identity.** Deployment Stamps; family Scalability and load distribution; kind
-scalability-pattern; priority core.
-
-**Decision question.** Should independent deployment units be replicated as stamps for
-scale, isolation or locality?
-
-**Good-fit conditions.** Each stamp can be independently operated; routing/state ownership
-is explicit; duplication cost is acceptable.
-
-**Hard contraindications.** Reject when one deployment suffices, when stamps would share a
-hidden global dependency, or when routing/state duplication is unowned.
-
-**Competing alternative.** Cell-based architecture or one shared deployment. Reverse the
-choice when stamp operations and duplication exceed isolation benefit.
-
-**Failure and recovery.** Configuration drift and state duplication are common; verify
-boundaries in the owner section.
-
-**Technical owner.** [Deployment Stamps](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#deployment-stamps) — independent deployment units for scale, isolation or locality, with routing keys and upgrade ownership.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-deployment-stamps.2026-10-21: all thirteen served
-headings read. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Cell-Based Architecture; Geode; Tenant Isolation; Multi-Region.
+See the [dedicated Deployment Stamps card](deployment-stamps.md).
 
 ### Geode
 
-**Identity.** Geode; family Scalability and load distribution; kind scalability-pattern;
-priority advanced.
-
-**Decision question.** Should identical nodes be deployed across regions behind a global
-routing layer?
-
-**Good-fit conditions.** Latency/locality matters; data replication and failover are
-owned; global routing can direct clients.
-
-**Hard contraindications.** Reject when one region meets latency/availability, when data
-replication cannot be reconciled, or when global routing adds a single point.
-
-**Competing alternative.** Cell-based single-region deployment or active-passive recovery.
-Reverse the choice when cross-region consistency and cost exceed locality benefit.
-
-**Failure and recovery.** Replication lag and regional failover are common; verify
-recovery in the owner section.
-
-**Technical owner.** [Disaster recovery: measured RTO/RPO, fencing and state reconciliation](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md#geode) — geode is bounded to regional recovery; not a product template.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-geode.2026-10-21: all seven served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Deployment Stamps; Cell-Based Architecture; Multi-Region Recovery;
-CDN.
+See the [dedicated Geode card](geode.md).
 
 ### Static Content Hosting
 
@@ -337,36 +261,7 @@ See the [dedicated Static Content Hosting card](static-content-hosting.md).
 
 ### Tenant-Based Resource Isolation
 
-**Identity.** Tenant-Based Resource Isolation; family Scalability and load distribution;
-kind scalability-pattern; priority core.
-
-**Decision question.** Should tenants receive isolated compute/data/networking quotas
-rather than share one unbounded pool?
-
-**Good-fit conditions.** Tenant identity is known; noisy-neighbor risk is material;
-quotas/isolation can be enforced and observed.
-
-**Hard contraindications.** Reject when one tenant exists, when isolation would strand
-most capacity, or when quotas cannot be enforced at the resource.
-
-**Competing alternative.** Shared pool with per-tenant rate limits. Reverse the choice
-when isolation cost exceeds noisy-neighbor risk.
-
-**Failure and recovery.** Quota bypass and cross-tenant leakage are common; verify
-isolation in the owner section.
-
-**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#tenant-based-resource-isolation) — tenant isolation is bounded, not a full control catalogue.
-
-**Sources.**
-[src.microsoft-multitenant](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-ms-multitenant.2026-10-21: all three served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Cell-Based Architecture; Rate Limiting; Bulkhead; Multitenant
-Isolation.
+See the [dedicated Tenant-Based Resource Isolation card](tenant-based-resource-isolation.md).
 
 ## Chapter result and counterexample
 

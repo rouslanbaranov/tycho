@@ -1,5 +1,16 @@
 # Current state — Tycho
 
+> **Current promotion snapshot — 2026-10-31 (authoritative):** **83 of 145** entries
+> are technical/decision `sufficient`; **7** are owner-accepted (2026-10-28).
+> **62** entries remain. Timing covers 63 promotion cycles: mean **46.8 min**
+> (range 6-388, including reviewer/integration wait); forecast **2.9 / 3.9 / 6.2**
+> days (optimistic/base/pessimistic). The dated audit notes below describe the
+> 2026-10-21 baseline and are historical. B47 Consistent Hashing, B48 Circuit Breaker, B49 Expand-and-Contract B50 Transactional Inbox B51 Feature Flags B52 Cache Stampede B53 Index Table B54 Priority Queue B55 SLI/SLO B56 Session Consistency B57 Synthetic Monitoring B58 Distributed Tracing B59 Backup/PITR B60 Failover-Failback B61 Hedged Requests B62 CDC B63 Online Data Migration B64 Negative Caching B65 Tenant Isolation B66 GitOps B67 Workflow Orchestration Branch by Abstraction and Geode were promoted on
+> 2026-10-31 after the Codex review; owner acceptance remains open. See
+> [the integration record](B47-CONSISTENT-HASHING-INTEGRATION-2026-10-31.md) and
+> [the 2026-10-31 hand-off](HANDOFF-2026-10-31.md).
+
+
 > **Review-policy change — 2026-10-27:** the human-review gate is retired for future work.
 > For book-content or atlas-structure changes, independent review is performed by a
 > different AI harness from a different vendor, read-only and pinned to HEAD. Tooling,

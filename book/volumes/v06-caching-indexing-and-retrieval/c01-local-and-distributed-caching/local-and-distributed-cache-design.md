@@ -45,7 +45,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -194,18 +194,64 @@ may need prewarming or a bounded fallback. Invalidation timing is part of the re
 ### Multi-Level Caching
 
 A multi-level cache keeps a fast local tier in front of a shared tier, trading fewer remote reads
-for more places that can hold a stale copy. Every tier must receive the invalidation, or each tier
-must carry a bounded staleness contract and a version check.
+for more places that can hold a stale copy. Hazelcast describes a Near Cache as a copy of
+distributed data "in local memory for very fast access" that is "eventually consistent"; it warns
+that "Strong consistency is not maintained; you might read stale data." Redis client-side caching
+maintains a local cache that "reduces network traffic between a Redis client and the server, which
+generally improves performance," but "cache misses, tracking, and invalidation messages always add
+a slight performance penalty."
 
-Tier divergence serves different values from different processes; version keys and measure the
-propagation delay of each invalidation path. Promote a value to the local tier only after the
-shared tier accepts the version; a local-only tier is the alternative when invalidation paths
-cannot be bounded. One shared cache keeps a single copy but pays remote latency; add a local tier
-when the measured remote-read cost exceeds the staleness and invalidation effort.
+**Invariant (Tycho synthesis).** Every tier must receive the invalidation, or it must detect a
+missed invalidation and bound how long a stale copy can be served. The selected sources support
+the parts. Hazelcast says invalidation events "can be lost due to the fire-and-forget fashion of
+the eventing system" and that "If an event is lost, reads from Near Cache can indefinitely be
+stale"; it detects invalidation losses and, after detection, makes stale data unreachable and
+directs reads "to the underlying IMap/JCache to fetch the fresh data." Redis sends "an invalidation
+message to all clients that have accessed that key previously" when a tracked key is written, and
+"If any connection from a client gets disconnected (including one from a connection pool), then
+the client will flush all keys from the client-side cache." AWS Well-Architected says to
+"Configure a cache invalidation strategy, such as a time-to-live (TTL), for all data that balances
+freshness of data and reducing pressure on backend datastore." Tycho guidance: a version check is
+one way to enforce the bound; no selected source states it as a per-tier requirement. The
+disjunction and per-tier scope are Tycho synthesis; the sources describe one local tier, not every
+cache topology. Test the bound for every tier, including after a cold start and a rolling deploy.
+
+**Failure and recovery.** A lost invalidation is a common cause: Hazelcast detects the loss and
+directs reads to the underlying structure, Redis flushes the local cache on disconnect, and a TTL
+bounds the stale copy. Tycho guidance: tier divergence can serve different values from different
+processes, so use version keys and measure the propagation delay of each invalidation path. Test
+the lost-invalidation, disconnect-flush and TTL paths, including after a cold start and a rolling
+deploy.
+
+**Alternative (Tycho synthesis).** A remote cache avoids duplicate local copies and gives "more
+consistent responses between clients, better efficiency in stored data"; its cost is "higher
+latency, as an additional network hop is required to check the remote cache." A local tier stores
+data "in the closest location possible (the client itself), resulting in the lowest possible
+latency," but duplicate copies create "data inconsistency between those clients." AWS says
+client-side caching "can be used alongside remote caching for multi-level caching to improve the
+latency." Tycho guidance: add a local tier only when measured remote-read cost exceeds the
+staleness and invalidation effort; a local-only cache is the alternative when invalidation paths
+cannot be bounded, and it gives up the shared copy. The promotion rule is also Tycho guidance:
+promote a value to the local tier only after the shared tier accepts the version.
 
 **Limits.** Each added tier multiplies invalidation paths and failure modes; a tier without an
-owner becomes an unbounded stale copy. Test each tier during a rolling deploy and after a cold
-start.
+owner becomes an unbounded stale copy. The selected sources document product behavior and general
+guidance, not this book's deployment. No cache cluster was configured, no invalidation was run and
+no latency was measured. Test each tier during a rolling deploy and after a cold start.
+
+- Hazelcast, "Near Cache", `read.hazelcast-near-cache.2026-10-30`, version 5.6,
+  HTML `3dafe42787ec7b957abf573e69f9ad506eb3a7cec4b1031372b9e7b506e1af7f`,
+  article text `7a90d5773194eebdc81c567da7a8eebf7550b0669e156cd9398ab0013486b70e`:
+  local-copy, eventual-consistency, invalidation-loss and loss-detection statements.
+- Redis, "Client-side caching introduction",
+  `read.redis-client-side-caching.2026-10-30`, HTML
+  `2fe5199edb619ef4fc3bc17d72312ba5b356ce061c0ca82b2950a10cae15561d`, main text
+  `cd9a01d947a7526971b77d903ae2b37845ad2cabf4115a26dd17dc5a26485f20`:
+  local-cache, tracking, invalidation and disconnect-flush statements.
+- AWS, "PERF03-BP05 Implement data access patterns that utilize caching",
+  `read.aws-caching-guidance.2026-10-30`, Markdown
+  `2a8596fad95cec9fcea60751e31a9190a76fcb0f773ee83c1c51d8775ff83ceb`:
+  client-side, remote and multi-level caching statements and the TTL invalidation step.
 
 ### Distributed Cache
 

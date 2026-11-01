@@ -29,15 +29,15 @@ evidence_scope:
     - "src.enterprise-integration"
   claim_ids: []
   status: "source-linked"
-  notes: "Moved card page; source binding remains in the owner unit."
+  notes: "Moved card page; failure/recovery binding and revision in the owner unit."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-28"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-28"
-updated_at: "2026-10-28"
-source_inspection_date: "2026-10-28"
+updated_at: "2026-10-29"
+source_inspection_date: "2026-10-29"
 content_verified_at: null
 ---
 
@@ -59,16 +59,20 @@ content. Prefer the router when messages require different destinations or routi
 among channels; the filter fits only a single-output pass-or-discard decision.
 
 **Failure and recovery.** A non-matching message is discarded and produces no downstream
-output. The public page is publisher-abridged: it does not state a rejected-message disposition,
-audit record or recovery path, so those remain unknown and out of scope for this card.
+output. The served page states: "If the message content does not match the criteria, the message
+is discarded." It states no rejected-message disposition, audit record, retention or recovery
+path; those remain unknown and out of scope for this card. A recovery design would need a
+separate retained source, replay or dead-letter path, which is Tycho synthesis, not a claim from
+this source.
 
 **Technical owner.** [Message selection: filters and routing](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-filter) — bounded to predicate filtering, not every router.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read records read.batch2-filter.2026-10-21 and read.batch2-content-router.2026-10-28.
-read.batch2-filter.2026-10-21 is publisher-abridged: it serves no rejected-message disposition
-or audit text, so those remain unknown and out of scope. The source is public documentation,
-not a benchmark.
+read.batch2-filter.2026-10-21 serves the Message Filter and RabbitMQ example sections at
+revision `899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c`; it is
+publisher-abridged and states no rejected-message disposition, audit record, retention or
+recovery path. The source is public documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

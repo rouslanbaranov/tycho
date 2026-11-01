@@ -34,7 +34,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-31"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -131,16 +131,81 @@ source claim.
 
 ### Consistent Hashing
 
-Consistent hashing maps keys onto a ring so adding or removing a node moves only the adjacent share
-of keys instead of remapping the whole keyspace. Clients and owners must agree on a versioned
-mapping, and a key must retain one authoritative owner at any mapping epoch.
+**Mechanism — a hash ring with virtual nodes (Tycho summary, source-bound).** A consistent hash
+function maps keys and nodes into one circular space. A key belongs to the first node encountered
+clockwise from its hash position, and each physical node normally claims many small positions,
+called tokens or virtual nodes, rather than one large arc. Karger et al. describe the construction
+as giving each bucket multiple points in the unit interval and assigning each item to the closest
+point. Dynamo says the output range of a hash function is treated as a fixed circular space or
+"ring" and that each node gets multiple points, called virtual nodes. Cassandra says it "maps every
+node to one or more tokens on a continuous hash ring" and walks the ring in one direction. Riak
+computes a 160-bit hash per bucket/key pair, maps it to an ordered ring, and gives each vnode one
+partition. The ring, clockwise ownership and token model are source-bound; the ownership-epoch rule
+below is Tycho.
 
-A ring change temporarily routes a key to the wrong owner or serves an incomplete copy; dual-read or
-version-check during the transition and record the epoch. Virtual nodes and the replication factor
-are configuration, not optional: size them for balance and failure, and detect hotspots before
-they become a single-node bottleneck. Explicit key-range assignment gives direct control of hot
-ranges; choose consistent hashing when node membership changes often and manual range planning is
-impractical.
+**Invariant — a membership change moves only the affected share (Tycho rule, source-bound
+premise).** With K keys spread over N equal-share nodes, adding or removing one node should move
+about K/N keys: the joining or leaving node's share, not the whole keyspace. Karger et al. state
+that the expected fraction moved is "the minimum needed to maintain a balanced load"; Dynamo says
+departure or arrival "only affects its immediate neighbors"; Cassandra says consistent hashing
+"only has to move a small fraction of the keys"; Riak says each node is normally responsible for
+"1/(number of nodes) of the ring." Tycho's rule is stricter than any single source: measure the
+actual moved fraction, because random tokens, unequal vnode counts and hot keys can exceed the
+ideal share. The ~1/N figure is an expectation under balance, not a guarantee.
 
-**Limits.** Virtual nodes improve balance but add metadata and lookup cost; a ring without epoch
-fencing can route a write to two owners during a change.
+**Failure and recovery — hotspots, node loss and repair (Tycho runbook, source-bound mechanics).**
+Hotspots are the failure the original paper targets: its title names "Relieving Hot Spots," and it
+notes that hot spots occur when many clients access one server. Uneven token ranges produce uneven
+request load, and Cassandra warns that each token adds failure combinations and raises outage
+probability. Node loss is handled by moving the lost node's ranges and load: Dynamo disperses an
+unavailable node's load across remaining nodes and sends missed replicas to a hinted node; when the
+node recovers, hinted replicas are delivered and anti-entropy repairs permanent divergence. Riak
+documents removing an irrecoverable crashed node from another node and transferring its partitions.
+Tycho's runbook: detect hot token ranges and hot keys, bound token counts against repair and outage
+cost, record the ownership epoch at every membership change, and treat hinted handoff as temporary
+protection rather than repair. A ring without epoch fencing can still route one key to two owners
+during a change.
+
+**Alternative — modulo, ranges and rendezvous (Tycho choice rule, source-bound modulo contrast).**
+Modulo hashing assigns a key to hash(key) mod N. Cassandra says adding one node "might invalidate
+almost all of the mappings"; Karger et al. describe the same central-redistribution problem for
+classical hash functions when machines join. Explicit range assignment instead gives an operator
+direct control over hot ranges and split points, at the cost of manual planning. Rendezvous
+(highest-random-weight) hashing scores each key against every node and picks the winner, so no ring
+or shared token map is required. Tycho's choice rule: use consistent hashing when membership changes
+often and per-key movement must be bounded; use explicit ranges when range locality and operator
+control dominate; use modulo only when N is fixed; use rendezvous when a shared ring is
+unacceptable. Reverse the choice when ring operations and virtual-node tuning cost more than the
+movement they save. Only the modulo contrast is source-bound here; the range and rendezvous
+comparisons are Tycho synthesis.
+
+**Source boundary.** Public sources accessed 2026-10-31; all are papers or living documentation,
+not benchmarks or executed cluster tests. Quotes are short excerpts. Line breaks are editorial;
+Karger PDF line-end hyphenation is joined, and Cassandra extraction spacing before punctuation is
+normalized. Tycho-labelled sentences are synthesis, not source claims. Records in the shared
+reading ledger:
+
+- Karger, Lehman, Leighton, Panigrahy, Levine and Lewin, "Consistent Hashing and Random Trees:
+  Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web," STOC '97,
+  pp. 654-663, DOI 10.1145/258533.258660; public PDF SHA-256
+  `0ccf4b8b1b4a1d4b7e5a411c98d1a1c890e863f71cccdddaf9cdc272015262d2`; extracted text SHA-256
+  `cdaf06a423a62b790cea18bc0adc50fbc71a4c17682f7e08b098c13c0d8fe6c4`; record
+  `read.karger-consistent-hashing.2026-10-31`.
+- DeCandia et al., "Dynamo: Amazon's Highly Available Key-value Store," SOSP 2007, sections
+  4.2, 4.3, 4.6, 4.7 and 4.9; PDF SHA-256
+  `5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4`; extracted text SHA-256
+  `2da247073d091ba83236b71dd9c5c56a19516f9f7b2e29258a0e3b5c4d4fb140`; record
+  `read.dynamo-consistent-hashing.2026-10-31`.
+- Apache Cassandra 5.0, "Dynamo," sections "Consistent Hashing using a Token Ring" and "Multiple
+  Tokens per Physical Node (vnodes)"; raw HTML SHA-256
+  `6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65`; article text SHA-256
+  `b613129d96ffae22bf20f43807093b18973b75d5e1b79c1b43aa2ffad4b45f39`; record
+  `read.cassandra-dynamo-consistent-hashing.2026-10-31`.
+- Riak KV 2.2.3, "Vnodes," "Clusters" and "Adding / Removing Nodes," pinned to `basho_docs`
+  commit `6409dd9c93b08f0a6e959a1874b5568c88172f3a`; page SHA-256 values
+  `3fe623f7bbe206b9b289894607b0ff08748414a65060c6229a274ef7d986c204`,
+  `ea246f176b17e21a6225d4fb9f5ba7a60fe90958ed07ef5da07efff05afbdfc5` and
+  `67d14c75a3edb078f0d49591eea02d0b60cd5d7b4ebbfd49e632ec60705fe23f`; records read.
+- The existing `read.batch3-cassandra-arch.2026-10-21` record remains a scope limit: it
+  explicitly does not support a token ring. The existing Dynamo and Riak records remain valid
+  for their narrower sections and are not stretched to cover these claims.

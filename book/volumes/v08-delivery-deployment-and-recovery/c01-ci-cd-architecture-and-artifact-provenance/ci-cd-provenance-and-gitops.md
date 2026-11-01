@@ -42,7 +42,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
+updated_at: "2026-11-01"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -124,16 +124,67 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### GitOps
 
-GitOps treats a versioned desired-state repository as reviewed intent. The reconciler pulls a
-commit, applies the difference and records the observed revision; the repository is neither a build
-log nor a credentials store.
+GitOps treats a versioned desired-state repository as reviewed intent. OpenGitOps requires desired
+state "expressed declaratively" and "stored in a way that enforces immutability, versioning", pulled
+by agents that "automatically pull the desired state declarations from the source" and "continuously
+observe actual system state and attempt to apply the desired state" (OpenGitOps — Principles
+v1.0.0). Argo CD compares "the desired manifests in Git" with "the live state in the cluster" (Argo
+CD — Automated Sync Policy); Flux describes an automated process that "ensures that the deployed
+environment matches the state specified in one or more Git repositories" (Flux — Core Concepts). **Tycho guidance:** the reconciler records the observed revision; the repository is neither a
+build log nor a credentials store.
 
-Rollback is a revert commit, which needs a linear, reviewable history and an immutable artifact
-reference. Pin image digests and verify the commit signature. Secrets stay out of plaintext: use an
-external secret reference or sealed value that the controller can resolve with least privilege.
-Controller outage, drift, repository compromise and stale artifact references are common; alert on
-reconciliation failure rather than assuming convergence, and name a drift owner.
+**Tycho rule:** rollback is a revert commit, which needs a linear, reviewable history and an
+immutable artifact reference. Pin image digests and verify the commit signature: Argo CD warns that "gaining
+unauthorized write access to a git repository trusted by Argo CD will have serious security
+implications" (Argo CD — Security), and Flux can enable "the verification of Git commit signatures"
+against keys of "trusted Git authors" (Flux — GitRepository). **Tycho rule:** secrets stay out of plaintext; use an external secret reference or sealed value
+that the controller can resolve with least privilege.
 
-A pipeline-driven deployment, manual release or imperative operator may be preferable when
-imperative one-off changes dominate or no reconciler owner exists. GitOps fits when the environment
-can be reconciled from a reviewable repository.
+**Failure and recovery (Tycho synthesis).** Controller outage, drift, repository compromise and
+stale artifact references are the common failures: reconciliation is periodic and controller-driven,
+a green sync does not prove convergence, failed syncs are not retried against the same revision, and
+a trusted repository is a deployment path. Argo CD polls Git "every 3m by default" (Argo CD — High Availability); Flux reconciles each
+resource on its configured interval, so an unavailable controller stops convergence while
+workloads keep serving. "It is possible for an
+application to be OutOfSync even immediately after a successful Sync operation", for example because
+"A controller or mutating webhook is altering the object after it was submitted to Kubernetes" (Argo
+CD — Diffing Customization); Flux warns that direct `kubectl` edits "will be promptly reverted"
+(Flux — Core Concepts). Recovery is constrained: "Automatic sync will not reattempt a sync if the
+previous sync attempt against the same commit-SHA and parameters had failed", and "Rollback cannot
+be performed against an application with automated sync enabled" (Argo CD — Automated Sync Policy),
+so the reviewed commit must be reverted deliberately. Repository compromise is a deployment path: an
+attacker with "access to a trusted git repo" can "update the deployment manifest deploy malicious
+container images" or "delete resources in git causing them to be pruned in the live environment"
+(Argo CD — Security). Stale references survive caching and remote bases: Argo CD "caches the
+generated manifests (for 24h by default)" and "the expected manifests can change even though the
+repo has not changed" when a Kustomize remote base or an unversioned Helm chart moves (Argo CD —
+High Availability); pin "a Git tag or commit SHA" rather than a moving base (Argo CD — Best
+Practices). Alert on reconciliation failure instead of assuming convergence: Flux's monitoring example
+exposes a `ready` label that "shows the readiness of the resource" (Flux — Prometheus metrics). Verify commit signatures, pin tags and digests, keep secrets external, and name a drift
+owner. The controller-outage consequence and this runbook are Tycho guidance; the selected pages
+document periodic reconciliation, caching and repository trust, not an outage drill.
+
+**Alternative (Tycho comparison).** A pipeline that applies directly remains a valid deployment
+model, a manual sync remains available for pruning, and an imperative change is sometimes
+deliberate: Argo CD's benefit is that "CI/CD pipelines no longer need direct access to the Argo CD
+API server to perform the deployment", because "the pipeline makes a commit and push to the Git
+repository" instead (Argo CD — Automated Sync Policy). Argo CD's guidance says "It may be desired to
+leave room for some imperativeness/automation, and not have everything defined in your Git
+manifests" (Argo CD — Best Practices). Flux also documents a "Gitless GitOps" model whose
+controllers are "fully decoupled from Git" and use container registries as the source of truth (Flux
+— Core Concepts). These alternatives are preferable when imperative one-off changes dominate, when
+the pipeline already holds deployment authority, or when no reconciler owner exists; that selection
+rule is Tycho guidance, not a source claim. GitOps fits when the environment can be reconciled from
+a reviewable repository.
+
+**Sources and limits.** The 2026-11-01 records bind OpenGitOps *GitOps Principles v1.0.0* (tag
+`v1.0.0`); Argo CD *Automated Sync Policy*, *Diffing Customization*, *Best Practices*, *Security*
+and *High Availability* read through the moving `stable` alias; and Flux *Core Concepts*,
+*Kustomization*, *GitRepository* and *Prometheus metrics*. Read records:
+`read.opengitops-principles.2026-11-01`, `read.argocd-auto-sync.2026-11-01`,
+`read.argocd-diffing.2026-11-01`, `read.argocd-best-practices.2026-11-01`,
+`read.argocd-security.2026-11-01`, `read.argocd-ha.2026-11-01`, `read.flux-concepts.2026-11-01`,
+`read.flux-gitrepository.2026-11-01` and
+`read.flux-monitoring.2026-11-01`. The grouping of these failure modes, the controller-outage consequence and the selection rule
+are Tycho synthesis; the drift, compromise and caching mechanisms are source-bound. No
+reconciler, cluster, outage or compromised repository was exercised, and no independent review is claimed.

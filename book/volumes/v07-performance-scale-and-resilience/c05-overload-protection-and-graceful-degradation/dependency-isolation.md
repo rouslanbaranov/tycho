@@ -27,6 +27,8 @@ route_hints:
     - "isolation"
 evidence_scope:
   source_ids:
+    - "src.resilience4j"
+    - "src.microsoft-cloud-patterns"
     - "src.aws-backoff"
     - "src.sre-overload"
   claim_ids: []
@@ -38,7 +40,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-22"
+updated_at: "2026-10-31"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -114,21 +116,91 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Circuit Breaker
 
-A circuit breaker is a state machine around one dependency: closed counts outcomes over a
-rolling window, open rejects fast for a cooldown, half-open admits a bounded probe. The
-threshold needs a minimum request volume so one failure does not trip a quiet dependency.
+**Mechanism — a three-state proxy around one dependency (Tycho summary, source-bound).** A
+circuit breaker is a state machine around one dependency: closed counts outcomes over a rolling
+window, open rejects fast for a cooldown, half-open admits a bounded probe. The three normal
+states are CLOSED, OPEN and HALF_OPEN; DISABLED and FORCED_OPEN are special states and are out
+of scope here. Resilience4j says its
+CircuitBreaker "is implemented via a finite state machine with three normal states: CLOSED, OPEN
+and HALF_OPEN" and uses "a sliding window to store and aggregate the outcome of calls." Azure
+says the proxy can be implemented "as a state machine that includes the following states": closed
+routes the request and counts failures, open fails immediately, and half-open admits "a limited
+number of requests." The state model is source-bound; one breaker per dependency, scoped to the
+failure it can observe, is Tycho's rule. Resilience4j also exposes a slow-call rate; its exact
+duration and threshold are deployment-specific, and treating a slow call as a breaker symptom is
+Tycho.
 
-The open state records why it opened and the cooldown; half-open limits concurrent probes and
-closes only after consecutive successes. Rejected calls are not dependency failures and need
-their own metric. A breaker must not replace timeout, backpressure or a retry budget, and an
-open caused by local resource exhaustion hides the real bottleneck.
+**Invariant — a rate threshold needs a volume gate (Tycho rule, source-bound).** Threshold
+semantics need both a rate and a minimum volume. Resilience4j says the failure rate "can only be
+calculated, if a minimum number of calls were recorded"; with nine calls recorded and a minimum
+of ten, "the CircuitBreaker will not trip open even if all 9 calls have failed." Its default
+`minimumNumberOfCalls` is 100. Azure says "the failure threshold triggers the Open state only
+when a specified number of failures occur during a specified interval." The sources use different threshold models rather than one shared boundary: Resilience4j
+compares a failure rate ("equal or greater" than the threshold) after a minimum call volume;
+Azure triggers on a failure count within a specified interval and does not state a rate
+threshold. Tycho's rule: declare and test the comparison, count only
+calls recorded in the current window, and keep failed calls, slow calls, ignored exceptions and
+rejected calls in separate counters. A rejected call is not a dependency failure.
 
-An open breaker needs an explicit fallback or fail-fast contract; a fallback that calls the
-same dependency or an unbounded alternate path only hides the outage. Record fallback
-ownership and the user-visible degradation.
+**Failure and recovery — open is a hypothesis, half-open is a bounded probe (Tycho runbook,
+source-bound mechanics).** The open state records why it opened and the cooldown; half-open
+admits a bounded number of probes. Azure closes when all permitted requests succeed;
+Resilience4j closes when the permitted-call failure rate is below the threshold, so a permitted
+failure can still close it. A stricter consecutive-success rule is Tycho synthesis. Resilience4j
+says that after the wait duration it "permits a configurable number of calls" and rejects
+further calls "until all permitted calls have completed"; Azure says a limited number of
+requests pass and "if any request fails" the breaker reverts to open. Azure says "The Half-Open
+state helps prevent a recovering service from suddenly being flooded with requests" and that
+"System recovery is based on external operations," so open is not recovery. Tycho's warning:
+an open caused by local resource exhaustion hides the real bottleneck. Azure lists access to local private resources as a consideration; SRE's utilization
+signals are "based on the state local to the task." Attribute a rejection to the dependency only
+when dependency-local failures, not local saturation, drove it. An open breaker still needs an
+explicit fallback or fail-fast contract; a fallback that calls the same dependency or an
+unbounded alternate path only hides the outage.
 
-A retry budget with jitter, a rate limit or a bounded timeout may be preferable when failures
-are not fast. A breaker is a fit when failures are fast and repeated calls amplify them.
+**Alternative — retry budget, rate limit or bounded timeout (Tycho choice rule, source-bound
+trade-offs).** AWS says retries are "selfish" and mitigates the amplification risk "by limiting retries
+locally using a token bucket." It also says jitter "adds some amount of randomness to the backoff to spread the
+retries around in time." Google SRE caps retries with per-request and per-client budgets, and caps outgoing traffic so that "requests above the
+cap fail locally without even reaching the network." SRE says that when a large subset of tasks is
+overloaded, "requests should not be retried and errors should bubble up all the way to the caller
+(e.g., returning an error to the end user)." AWS makes the timeout a budget too: "Setting a
+timeout too high reduces its usefulness, because resources are still consumed while the client
+waits for the timeout." Azure contrasts the breaker with retry and says waiting for a reset
+"might introduce unacceptable delays"; it also warns that a breaker "might not fully protect
+applications from failures in external services that have long time-out periods." Tycho's rule:
+bound the timeout first, because a breaker cannot shorten a call that never returns. Use a
+breaker when failures are dependency-local, observable and repeated calls amplify them, whether
+the symptom is an error or a slow call. When failures are caller-specific or caused by local
+saturation, prefer a retry budget with jitter, a rate limit or a bounded timeout. Reverse the
+choice when state coordination and fallback complexity cost more than the calls they avoid.
+
+**Source boundary.** Public sources accessed 2026-10-31; documentation and engineering articles,
+not benchmarks or executed tests. Quotes are short excerpts. Markdown escapes, emphasis, curly
+quotes and link-extraction spacing are normalized; Tycho-labelled sentences are synthesis, not
+source claims. Read records:
+
+- Resilience4j, "CircuitBreaker" documentation, Markdown alternate, 326 lines and 2,481 words,
+  SHA-256 `cad62135427cfee85f2c80095c3b823854aa36d4314a0fd829fa956022036e94`; the existing
+  `read.batch4-r4j-circuit.2026-10-21` record has the same digest and is revalidated. The page is
+  rolling documentation with no published version; the digest pins the representation.
+- Microsoft Azure Architecture Center, "Circuit breaker pattern," `ms.date` 2025-02-05, recorded as
+  `read.microsoft-circuit-breaker.2026-10-31`, pinned to
+  `MicrosoftDocs/architecture-center` commit
+  `9fdb775034a2faf6b2dcf699fb870d49fe50c992`; Markdown 187 lines and 3,744 words, SHA-256
+  `29baeab9e19c54c9fdae01dfa4c431bae0c6811e0c5267a1d6c8c78267b8146e`; live raw HTML SHA-256
+  `5b83f1575092478594cf049c4c4a0a8505b9bdc851f6db4fbee3d9dd979c1655`; canonical text SHA-256
+  `29299b3b788328f0ec127c6f37b5f7bfb6ffc0d4a6bab37d4a0d81b5a4614274`; record
+  `read.microsoft-circuit-breaker.2026-10-31`.
+- AWS Builders' Library, "Timeouts, retries, and backoff with jitter," published 2019-12-05;
+  raw HTML SHA-256
+  `d289c95d849b6d082f8b9aac64f1df92d7383d9b49ff3326d4d181ba8140f636`; canonical text SHA-256
+  `c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94`; record
+  `read.aws-builders-timeouts-retries.2026-10-31`.
+- Google SRE, "Handling Overload," 2017, CC BY-NC-ND 4.0; raw HTML SHA-256
+  `945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e`; canonical text SHA-256
+  `8154963544456669d31fb2666db9f6a6a91ea0d4135d01d30e41922172a71bf2`; the existing
+  `read.sre-overload.2026-10-21` record is revalidated.
 
 ### Bulkhead
 

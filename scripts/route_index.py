@@ -6,6 +6,7 @@ edit prose, fetch public sites, run embeddings or alter source/graph histories.
 Explicit --allow-partial marks missing coverage; never reports complete falsely.
 """
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -17,6 +18,8 @@ SCHEMA = ROOT / "schemas/document-metadata.v1.schema.json"
 DEFAULT_INDEX = ROOT / "generated/route-index.v1.json"
 FENCE = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
 WORD = re.compile(r"[a-z0-9]+", re.I)
+_SCHEMA_CACHE = {}
+_SCAN_CACHE = {}
 
 
 def require(ok, message):
@@ -41,13 +44,24 @@ def canonical_scan(root, allow_partial=False):
     root = Path(root).resolve()
     book = root / "book"
     require(book.is_dir() and not book.is_symlink(), "book directory missing or symlink")
-    schema = json.loads((root / "schemas/document-metadata.v1.schema.json").read_text())
-    Draft.check_schema(schema)
-    check = Draft(schema, format_checker=Format())
+    files = sorted(book.rglob("*.md"))
+    cache_key = (str(root), len(files),
+                 max((p.stat().st_mtime_ns for p in files), default=0))
+    cached = _SCAN_CACHE.get(cache_key)
+    if cached is not None:
+        return copy.deepcopy(cached)
+    schema_path = root / "schemas/document-metadata.v1.schema.json"
+    schema_text = schema_path.read_text()
+    cache_key = (str(schema_path), schema_text)
+    check = _SCHEMA_CACHE.get(cache_key)
+    if check is None:
+        schema = json.loads(schema_text)
+        Draft.check_schema(schema)
+        check = Draft(schema, format_checker=Format())
+        _SCHEMA_CACHE[cache_key] = check
     docs, skipped, ids, paths = [], [], set(), set()
-    for file in sorted(book.rglob("*.md")):
-        require(not file.is_symlink() and file.resolve().is_relative_to(book.resolve()),
-                "unsafe book file/symlink")
+    for file in files:
+        require(not file.is_symlink(), "unsafe book file/symlink")
         text = file.read_text(encoding="utf-8")
         rel = file.relative_to(root).as_posix()
         header = FENCE.match(text)
@@ -105,7 +119,9 @@ def canonical_scan(root, allow_partial=False):
               "coverage": "partial" if skipped else "complete",
               "unannotated_paths": skipped, "documents": docs}
     stable_bytes = json.dumps(stable, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
-    return {**stable, "snapshot_sha256": hashlib.sha256(stable_bytes).hexdigest()}
+    result = {**stable, "snapshot_sha256": hashlib.sha256(stable_bytes).hexdigest()}
+    _SCAN_CACHE[cache_key] = copy.deepcopy(result)
+    return result
 
 
 V12_PREFIX = "book/volumes/v12-modeling-simulation-and-decision-validation/"

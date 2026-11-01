@@ -38,7 +38,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-21"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -206,15 +206,54 @@ silently becomes a retry can multiply load. The timeout value must be observable
 
 ### Deadline Propagation
 
-Deadline propagation carries the caller's remaining budget as a relative duration. Each hop
-subtracts its own elapsed time, so hosts need monotonic clocks rather than synchronized wall
-clocks; an absolute timestamp requires bounded skew instead.
+Deadline propagation carries the caller's remaining budget as a relative duration. gRPC
+converts the caller's absolute deadline to a timeout with the elapsed time already deducted
+before propagating it, so hosts do not need synchronized wall clocks. Google SRE describes
+the same request tree as sharing one absolute deadline, then gives each hop the remaining
+seconds after its own processing. The accounts agree only when the absolute deadline is
+fixed at ingress and every hop transmits the remainder; that reconciliation is a Tycho
+reading, not a source instruction.
 
-The ingress sets the budget and each hop checks expiry before starting work. A propagated value
-without an enforcement point is only a hint. Detached asynchronous work gets its own durable
-deadline rather than inheriting the request's remaining time.
+The relative duration is measured against a local elapsed-time source. Use monotonic clocks
+so wall-clock adjustments cannot move the boundary; the guides do not require this, so it
+is Tycho guidance. The ingress sets the budget and each hop checks expiry before starting
+work. Enforcement is split: a gRPC server automatically cancels a call once the client
+deadline passes, and the client fails with `DEADLINE_EXCEEDED`; the application must still
+stop any work it spawned and check cancellation. Google SRE says each stage should check the
+deadline before doing more work. A propagated value without such an enforcement point is
+only a hint.
 
-Clock skew, a lost header and a hop that ignores expiry are the common failures. On expiry,
-cancel the work and record the outcome; cleanup or reconciliation runs in an explicitly durable
-workflow, not an unbounded request task. Use propagation when the caller has a real end-to-end
-budget; independent per-hop timeouts fit only when the hops are genuinely independent.
+If a hop sends an absolute timestamp instead of a relative value, define a bounded skew and
+reject or clamp values outside it. The selected sources do not specify a tolerance, so the
+bound is Tycho guidance. Detached asynchronous work gets its own durable deadline rather
+than inheriting the request's remaining time.
+
+Clock skew, a lost timeout header and a hop that ignores expiry are the common failures.
+gRPC's conversion removes the clock-synchronization dependency, but the protocol defines
+an omitted `grpc-timeout` header as an infinite timeout, so a lost header silently removes
+the bound. A hop that ignores expiry keeps working for a caller that has already given up.
+On expiry, cancel the work and record the outcome; cleanup or reconciliation runs in an
+explicitly durable workflow. Requiring a deadline at ingress, rejecting a missing
+propagated deadline on bounded paths, and moving cleanup to durable work are Tycho
+guidance; cancellation itself is source-supported.
+
+Use propagation when the caller has a real end-to-end budget; independent per-hop timeouts
+fit only when the hops are genuinely independent.
+
+**Source boundary.**
+
+- gRPC, "Deadlines", `read.grpc-deadlines.2026-10-30`, source Markdown
+  `e310a0e5a4bdc8f353ef04a641336d9a51176ffaa0ba0ee8b8b1aad98263a900`:
+  "Deadline Propagation" (conversion to an elapsed-adjusted timeout), "Deadlines on the
+  Server" (automatic cancellation and application responsibility) and "Deadlines on the
+  Client" (`DEADLINE_EXCEEDED`).
+- Google SRE, "Addressing Cascading Failures", `read.batch4-sre-cascading.2026-10-21`,
+  revision `d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a`:
+  "Latency and Deadlines" (per-stage deadline checks, the absolute-deadline description
+  and the remaining-seconds example).
+- gRPC, "gRPC over HTTP2", `read.grpc-protocol.2026-10-30`, source Markdown
+  `b51ea1b8cee67ad3477e73152bb60ac3ebf6e164962b46ba79434e980739256f`:
+  "Requests" (`grpc-timeout` relative units; an omitted timeout means an infinite
+  timeout).
+- Limits: the sources specify protocol and operational guidance, not a tested
+  implementation or a numeric clock-skew bound.

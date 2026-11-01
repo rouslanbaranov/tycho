@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-21"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -164,17 +164,73 @@ The source material keeps its original published/inferred/synthetic/unverified d
 ### Quorum-Based Reads-Writes
 
 Let N be the replica count, W the acknowledgements required for a write and R the
-responses required for a read. The page's section 2 derives R + W > N. Overlap is necessary
-but not sufficient for freshness: choose the response with the highest version and repair
-replicas behind it. The arithmetic is a consistency contract; a latency budget does not make a
-stale response correct.
+responses required for a read. The page's section 2 derives R + W > N. Cassandra
+calls its consistency levels a version of Dynamo's R + W > N mechanism; Dynamo
+says that setting R and W so that R + W > N yields a quorum-like system; Riak
+defines `quorum` as "A majority of the replicas must respond, that is, half
+plus one." The arithmetic is a consistency contract: a latency budget does not
+make a stale response correct.
 
-During a membership change, require the old and new quorums to overlap and refuse authoritative
-commits from a minority. Keep the version selector and membership procedure in the runbook, and
-exercise both sides of a partition.
+**Invariant.** Overlap is necessary but not sufficient for freshness. Membership
+changes that move replicas can violate consistency. A strict system must require
+the old and new quorums to overlap. It must refuse authoritative commits from a
+minority and repair replicas that missed writes. The overlap rule and the
+refusal of authoritative commits from a minority are Tycho design guidance, not a claim made
+by the selected Cassandra, Dynamo or Riak pages. Cassandra warns
+that simultaneous range movements can "violate monotonic consistency and can even
+cause data loss." Dynamo transfers ranges on membership change after a
+confirmation round, and both Dynamo and Riak describe a sloppy-quorum mode that
+sends requests to fallback nodes instead of enforcing strict membership. The
+sources therefore bound the hazard and the availability trade-off, not a universal
+overlap guarantee.
 
-Use this when the chosen W/R latency fits and the membership service is trustworthy. A leader can
-simplify ordering, but it still needs a majority for election and commit.
+**Failure and recovery.** Overlap is necessary but not sufficient for freshness:
+choose the application's version selector and repair replicas behind it. A read that intersects a write quorum can still return a stale value when the write
+failed, membership was sloppy, or the selector ignores the newest replica. Cassandra's read repair makes the replicas involved in the read
+consistent and returns "the most up-to-date data"; Cassandra also calls read repair
+and hinted handoff "only best-effort" and relies on anti-entropy repair for
+eventual consistency. Dynamo returns causally unrelated versions to the client,
+then writes back a reconciled version; hinted handoff and Merkle-tree anti-entropy
+repair lagging replicas. Hinted handoff, Merkle-tree anti-entropy, `allow_mult` and
+sloppy quorum are summarized from the cited sections, not quoted verbatim. Riak resolves vector-clock conflicts and propagates the
+result "via read repair to the relevant vnodes", or returns siblings when
+`allow_mult` is true. A highest-version selector is Tycho policy: Cassandra's
+last-write-wins timestamps provide a total order, while Dynamo and Riak can expose
+concurrent versions, so the application must define the order before claiming that
+the highest version wins.
+
+**Alternative.** Use this when the chosen W/R latency fits and the membership
+service is trustworthy. A leader can simplify ordering, but it still needs a
+majority for election and commit. Choose sloppy quorum only when availability
+during failure matters more than the strict overlap guarantee; a system that
+accepts eventual consistency can use lower consistency levels for throughput and
+latency. The highest-version selector, old/new overlap, minority refusal and
+sloppy-quorum trade-off are Tycho guidance.
+
+**Limits and source boundary.** The sources are documentation and a 2007 paper,
+not an implementation test. Cassandra's pages are current documentation identified
+by digest; Dynamo's paper describes a historical design and explicitly relaxes
+strict quorum membership; Riak 2.2.3 documents sloppy quorum as its failover mode
+and strict quorum as an option. None of them specifies an old/new quorum-overlap
+protocol for membership changes, and none tests the Tycho selector.
+
+- Apache Cassandra, "Dynamo — multi-master replication and tunable consistency",
+  `read.batch3-cassandra-dynamo.2026-10-21`, raw HTML
+  `6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65`:
+  "Ring Membership and Failure Detection", "Data Versioning", "Replica
+  Synchronization" and "Tunable Consistency".
+- Apache Cassandra, "Read repair", `read.cassandra-read-repair.2026-10-30`, raw
+  HTML `104508d54a14dc5f6268504c295437ee72561733c57cc18239c2acd4712a3980`:
+  "Read repair" and "Expectation of Monotonic Quorum Reads".
+- Amazon, "Dynamo: Amazon's Highly Available Key-value Store" (SOSP 2007),
+  `read.dynamo-sosp2007.2026-10-30`, PDF
+  `5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4`:
+  sections 4.4-4.7 and 4.9.
+- Riak KV 2.2.3, "Replication Properties",
+  `read.riak-replication-properties.2026-10-30`, pinned Markdown
+  `b185c0be8be5d03ef51cd696ff375901edd84b707e8fad165845b7ae689f0f30`:
+  "Primary Reads and Writes with PR and PW", "Symbolic Consistency Names" and
+  "Illustrative Scenarios".
 
 ### Quorum Coordination
 

@@ -52,7 +52,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -178,18 +178,40 @@ decision to stop offering the alternate, recorded alongside its original approva
 ### Graceful Degradation
 
 Graceful degradation removes optional features or reduces quality to protect an essential outcome
-under overload. It must declare which outcomes stay mandatory, which become unavailable and how
-callers observe the reduced state.
+under overload. Google SRE describes degraded responses as "responses that are not as accurate as
+or that contain less data than normal responses, but that are easier to compute". It also warns
+that under extreme overload a service "might not even be able to compute and serve degraded
+responses" and "may have no immediate option but to serve errors". Declare which outcomes stay
+mandatory, which become unavailable and how callers observe the reduced state.
 
-Silent loss of correctness is worse than an explicit failure. Each mode
-needs an entry condition, a visible status, an owner and an audited override for emergency use.
-Recovery needs hysteresis: remain degraded
-until the trigger metric stays below threshold for a sustained window, then restore normal service
-and re-test the essential path. Without that window the mode flaps between normal and degraded.
+**Failure and recovery (Tycho synthesis).** A degraded mode is a rarely exercised path. Google
+SRE warns that "the code path you never use is the code path that (often) doesn’t work", that
+complex load shedding and degradation "can cause problems themselves", and that excessive
+complexity may cause a server to "trip into a degraded mode when it is not desired, or enter
+feedback cycles at undesired times". It asks operators to alert when "too many servers enter
+these modes", to exercise the path under load, and to keep "a way to quickly turn off complex
+graceful degradation or tune parameters if needed". AWS instruments rejected work and alarms
+on rejection volume, and treats a rejection as something that "reduces the availability of a
+service" rather than a silent success. **Tycho judgment.** Silent loss of correctness is worse
+than an explicit failure. Each mode needs an entry condition, a visible status, an owner and an
+audited override for emergency use. Recovery needs hysteresis: remain degraded until the trigger
+metric stays below threshold for a sustained window, then restore normal service and re-test the
+essential path. Kubernetes describes a stabilization window used "to restrict the flapping of
+replica count" and compares flapping to "the concept of hysteresis in cybernetics"; applying
+that window to a degraded mode is Tycho composition. Without it the mode can flap between normal
+and degraded.
 
-A complete, explicit outage or added capacity may be preferable when no safe mode exists.
-Degradation is a product decision, not only an infrastructure switch, and the essential path must
-be tested under the load that triggers the mode.
+**Alternative (Tycho comparison).** Google SRE says services "should produce reasonable but
+suboptimal results if overloaded", but when "even degraded responses are too expensive for all
+queries" it recommends graceful load shedding and "choosing a consistent subset of clients to
+receive errors". It also recommends adding tasks as "the most expedient way to recover" when
+capacity is degraded and resources are idle; AWS makes adding capacity the priority during a
+brownout. **Tycho choice rule.** A complete, explicit outage or added capacity may be
+preferable when no safe mode exists. Added capacity is not automatic recovery: AWS notes
+that misconfigured load shedding "can disable reactive automatic scaling", and Google SRE warns
+that adding resources "may not be sufficient" after a death spiral. Degradation is a product
+decision, not only an infrastructure switch, and the essential path must be tested under the load
+that triggers the mode.
 
 ### Load Shedding
 

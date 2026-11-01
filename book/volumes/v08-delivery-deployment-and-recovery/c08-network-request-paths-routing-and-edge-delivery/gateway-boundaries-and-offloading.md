@@ -45,12 +45,12 @@
   },
   "content_review": {
     "status": "self-checked",
-    "reviewed_at": "2026-10-22",
-    "reviewer": "Tycho agent; execution gates pending",
+    "reviewed_at": "2026-10-30",
+    "reviewer": "Automated authoring agent",
     "proof_uri": null
   },
   "authored_at": "2026-10-22",
-  "updated_at": "2026-10-22",
+  "updated_at": "2026-10-30",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -73,16 +73,58 @@ when the trust boundary is explicit and the backend still enforces the authority
 ## API Gateway
 
 A gateway can centralize routing, quotas and common policy. It is a trusted intermediary only
-for the functions it actually enforces. Keep resource authorization at the boundary owning
-the resource, with documented delegation if a central decision service is used. Removing
+for the functions it actually enforces. Tycho synthesis: the sidecar and direct-exposure
+alternatives and a separate gateway-to-backend mechanism are decision options, not source
+claims. Keep resource authorization at the boundary owning the resource, with documented
+delegation if a central decision service is used. Removing
 every backend check creates a privileged bypass path unless network and identity contracts
 actually exclude it.
 
-**Failure and alternative.** Gateway bypass, configuration drift, a stale route and an outage
-that blocks every backend are common. Keep backend authorization, test the network path that
-excludes the gateway and version gateway policy. A BFF, a service-mesh sidecar or direct
-backend exposure with an explicit identity contract may be preferable when the gateway adds a
-shared bottleneck without a required central policy.
+**Invariant and delegation.** Azure API Management documents three authorization
+scenarios. When the client authorizes directly to the backend, API Management acts as a
+"transparent" proxy and "passes the token through unchanged to the backend"; "the access
+token's scope is between the calling application and backend API". When the client
+authorizes to API Management, "the scope of the access token is between the calling
+application and the API Management gateway", and a separate mechanism secures the
+gateway-to-backend connection. With managed connections, "the user or client app delegates
+backend authentication and authorization to API Management". The microservices.io pattern
+page says a gateway "might also implement security, e.g. verify that the client is
+authorized to perform the request" and may "pass an Access Token containing information
+about the user to the services". These statements support scoped delegation and identity
+forwarding, not gateway ownership of object-level authorization. Tycho guidance: the
+resource-owning boundary still checks the authenticated principal, action, resource and
+tenant; a central decision is acceptable only when its audience, scope and delegation are
+documented and the backend can reject a request that does not match its own resource
+policy.
+
+**Failure and recovery.** Gateway bypass, configuration drift, a stale route, a rate-limit
+or quota failure and an outage that blocks every backend are common. AWS's REST API
+documentation describes a stage as "a named reference to a deployment, which is a snapshot
+of the API" and requires "Redeploy your API for the new settings to take effect". Azure's
+self-hosted gateway overview says that when connectivity to Azure is lost, the gateway "is
+unable to receive configuration updates"; running gateways "continue to function by using an
+in-memory copy of the configuration"; after reconnection each gateway "downloads all
+configuration updates that occurred while the gateway was offline". That supports configuration
+drift during a control-plane outage. Tycho analysis: a stale route can persist through that
+window.
+AWS's REST API throttling documentation says request submissions that exceed the limits can
+produce "429 Too Many Requests" responses and that throttles and quotas are "applied on a
+best-effort basis and should be thought of as targets rather than guaranteed request
+ceilings". Azure's rate-limit policy returns 429 and its quota policy returns 403 when the
+limit or quota is exceeded; the quota page also warns that when underlying compute resources restart in the service
+platform, API Management "might continue to handle requests for a short period after a quota
+is reached". The microservices.io pattern
+page defines the gateway as "the single entry point for all clients"; on that contract, a
+bypass or a gateway outage that blocks every backend is a Tycho failure consequence and must
+be tested explicitly. Keep backend authorization, test the network path that excludes the
+gateway and version gateway policy.
+
+**Alternative.** A BFF, a service-mesh sidecar or direct backend exposure with an explicit
+identity contract may be preferable when the gateway adds a shared bottleneck without a
+required central policy. The microservices.io page documents the BFF variation: "It defines
+a separate API gateway for each kind of client." Tycho synthesis: a reverse proxy with a
+narrow edge contract is a further alternative; reverse when gateway complexity and outage
+blast radius exceed the shared edge benefit.
 
 **Enforcement.** The gateway authenticates the caller or verifies a signed token from a
 trusted issuer, forwards an integrity-protected principal/context, and binds a central
@@ -97,6 +139,27 @@ behavior when the counter store is unavailable. A stale route remains a routing 
 not a quota decision. Keep gateway policy versioned, tested and observable, and treat a
 gateway outage as its own failure domain rather than assuming every backend remains
 reachable.
+
+**Source boundary.** Public vendor and reference documentation, accessed 2026-10-30; living
+pages, not a benchmark or executed test.
+
+- AWS API Gateway, "Throttle requests to your REST APIs for better throughput in API
+  Gateway", sections "Overview" and "Modify stage settings": canonical revision
+  `23e9755e061ae48b18e74d385adb1360d1d58782bdb0dd6dc745423dcc656ae1`.
+- AWS API Gateway, "Set up a stage for a REST API in API Gateway": canonical revision
+  `f3be77f63ce31d681ae6b8206e28ff6909822786c40dfd2183950223e4ced97b`.
+- Azure API Management, "Authentication and authorization to APIs in Azure API
+  Management", scenarios 1-3 incl. "Scenario 3: API Management authorizes to backend": canonical revision
+  `15f91d50adc65357c092f4d9ae874a9eea8ccdc74dc415a4d5d01e48e57805ad`.
+- Azure API Management, "Self-hosted gateway overview", section "Connectivity failures": canonical revision
+  `2fb2f8b28185086345b4813b433195cdaac8f93fc9cc22268781bcd1e0370d53`.
+- Azure API Management policy reference, "rate-limit", section "Limit call rate by subscription": canonical revision
+  `048897863df1f50803bf4f2e56491a2ed09489e2840123e88a34e3e1a86825f7`.
+- Azure API Management policy reference, "quota", section "Set usage quota by subscription": canonical revision
+  `f002b56b84263bb0b3b9dc99de6eac7560de290fa274878d388187a83bd394dc`.
+- microservices.io, "API Gateway / Backends for Frontends": record
+  `read.microservices-api-gateway.2026-10-21`, raw revision
+  `e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d`.
 
 ## Gateway Aggregation
 

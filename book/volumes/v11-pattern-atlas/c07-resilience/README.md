@@ -33,21 +33,31 @@ evidence_scope:
     - "src.resilience4j"
     - "src.sre-cascading"
     - "src.sre-overload"
+    - "src.grpc-deadlines"
+    - "src.grpc-protocol"
+    - "src.microsoft-cloud-patterns"
+    - "src.aws-sqs"
     - "src.rabbitmq"
     - "src.morning-paper-tail-at-scale"
     - "src.kubernetes"
-    - "src.postgresql"
   claim_ids: []
   status: "source-linked"
-  notes: "16 cards cite read units; owner links are bounded."
+  notes: >-
+    16 cards cite read units; owner links are bounded. Hedged Requests moved to a
+    dedicated page on 2026-10-31 with Google SRE, Tail at Scale, gRPC and AWS
+    units. Failover/Failback moved to a dedicated page on 2026-10-31 with AWS
+    Route 53, Azure Site Recovery, PostgreSQL 17 and Google SRE units. The
+    Priority Queue card moved to a dedicated page on 2026-10-31 with RabbitMQ
+    priority, the Azure Priority Queue pattern, Service Bus AMQP mapping and SQS
+    queue-type and fair-queue units.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-31"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # V11/C07 — Resilience and fault tolerance
@@ -65,9 +75,10 @@ deadline page may own the failure contract without owning every resilience mecha
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
-check its conditions and contraindications, then read the exact owner section.
+Page count is content-dependent. This chapter currently uses one landing page plus
+dedicated card pages for moved entries; a later split is an editorial change, not a plan
+failure. Start with the card, check its conditions and contraindications, then read the
+exact owner section.
 
 ## Entry inventory
 
@@ -76,34 +87,7 @@ none claims sufficient technical or decision coverage.
 
 ### Circuit Breaker
 
-**Identity.** Circuit Breaker; family Resilience and fault tolerance; kind
-resilience-pattern; priority core.
-
-**Decision question.** Should calls to a failing dependency be rejected early until it
-recovers?
-
-**Good-fit conditions.** Failures are observable; a half-open probe is bounded and safe;
-the fallback is defined; state is local or shared deliberately.
-
-**Hard contraindications.** Reject when failures are caller-specific, when a circuit would
-hide a required dependency, or when recovery probing would overload the dependency.
-
-**Competing alternative.** Retry with backoff or bulkhead isolation. Reverse the choice
-when circuit state and fallback complexity exceed failure containment benefit.
-
-**Failure and recovery.** Shared opens, false recovery and a breaker that hides a local
-resource problem are common; probe with a bounded budget and do not treat open as recovered.
-
-**Technical owner.** [Circuit Breaker](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#circuit-breaker) — dependency isolation is bounded, not a full circuit-breaker library guide.
-
-**Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-circuit.2026-10-21: all eleven served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Bulkhead; Retry with Exponential Backoff; Timeout; Fallback.
+See the [dedicated Circuit Breaker card](circuit-breaker.md).
 
 ### Bulkhead
 
@@ -236,37 +220,7 @@ Key.
 
 ### Deadline Propagation
 
-**Identity.** Deadline Propagation; family Resilience and fault tolerance; kind
-resilience-pattern; priority core.
-
-**Decision question.** Should the caller’s remaining time budget be passed through
-downstream calls?
-
-**Good-fit conditions.** The full request path can carry a deadline; each hop can shorten
-it; expiration is observable.
-
-**Hard contraindications.** Reject when downstream work must outlive the caller request,
-when only absolute wall-clock deadlines are available across hosts with unbounded skew,
-or when no hop enforces expiry.
-
-**Competing alternative.** Independent per-hop timeouts with a parent budget. Reverse the
-choice when propagation complexity exceeds the benefit of end-to-end bounds.
-
-**Failure and recovery.** Clock skew, lost deadlines and divergent per-hop timeouts are
-common; transmit remaining duration where possible, enforce expiry at each hop and keep an
-explicit cleanup path.
-
-**Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — deadline propagation and budget are bounded; clock-skew handling is platform-specific.
-
-**Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: all forty-four served
-headings read. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Timeout; Retry with Exponential Backoff; Request-Reply; Async
-Request-Reply.
+See the [dedicated Deadline Propagation card](deadline-propagation.md).
 
 ### Fallback
 
@@ -303,34 +257,7 @@ pattern/documentation unit, not a benchmark.
 
 ### Graceful Degradation
 
-**Identity.** Graceful Degradation; family Resilience and fault tolerance; kind
-resilience-pattern; priority core.
-
-**Decision question.** Should non-essential capabilities be reduced to protect essential
-work under stress?
-
-**Good-fit conditions.** Essential and optional work are distinguishable; the reduced
-outcomes and user-visible state are declared; recovery and hysteresis are defined.
-
-**Hard contraindications.** Reject when every capability is essential, when degradation
-cannot be communicated, or when it silently changes correctness.
-
-**Competing alternative.** Admission control or fail fast. Reverse the choice when partial
-service creates more confusion than value.
-
-**Failure and recovery.** Hidden degradation, sticky reduced modes and unclear recovery are
-common; expose the reduced state and define how normal service resumes.
-
-**Technical owner.** [Graceful Degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#graceful-degradation) — graceful degradation is bounded to the overload path, not a complete capacity plan.
-
-**Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: all forty-four served
-headings read. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Fallback; Load Shedding; Throttling; Rate Limiting.
+See the [dedicated Graceful Degradation card](graceful-degradation.md).
 
 ### Load Shedding
 
@@ -424,168 +351,23 @@ The source is a public pattern/documentation unit, not a benchmark.
 
 ### Queue-Based Load Leveling
 
-**Identity.** Queue-Based Load Leveling; family Resilience and fault tolerance; kind
-resilience-pattern; priority core.
-
-**Decision question.** Should work be buffered in a queue so producers and consumers can
-run at different rates?
-
-**Good-fit conditions.** Bursts exceed consumer capacity; queue durability, retention/age
-bounds and idempotent consumers are owned; latency is acceptable.
-
-**Hard contraindications.** Reject when the caller needs a synchronous result, when
-backlog would violate a deadline, or when the queue becomes an unbounded hiding place.
-
-**Competing alternative.** Direct synchronous calls or admission control. Reverse the
-choice when queue delay and backlog risk exceed smoothing benefit.
-
-**Failure and recovery.** Unbounded backlog, expired work and duplicate effects after ambiguous
-acknowledgment are possible; bound age, reject early and drain.
-
-**Technical owner.** [Queue-Based Load Leveling](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#queue-based-load-leveling) — admission and drain guidance is synthetic; the cited guide covers reliability mechanics only.
-
-**Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-rabbit-reliability.2026-10-21: sections "Acknowledgements and
-Confirms", "Data Safety on the Publisher Side", "Data Safety on the Consumer Side". The source
-supports reliability mechanics only;
-admission and drain guidance is synthetic. The source is a public pattern/documentation unit,
-not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Priority Queue; Load Shedding; Dead Letter Channel; Competing
-Consumers.
+See the [dedicated Queue-Based Load Leveling card](queue-based-load-leveling.md).
 
 ### Priority Queue
 
-**Identity.** Priority Queue; family Resilience and fault tolerance; kind
-resilience-pattern; priority core.
-
-**Decision question.** Should queued work be ordered by business priority rather than
-arrival?
-
-**Good-fit conditions.** Priorities are meaningful and bounded; starvation is handled; the
-broker supports priority.
-
-**Hard contraindications.** Reject when all work is equal, when priorities can starve
-low-priority work indefinitely, or when producers can self-assign priority unchecked.
-
-**Competing alternative.** FIFO with admission control. Reverse the choice when priority
-inversion or starvation exceeds latency benefit.
-
-**Failure and recovery.** Starvation, priority abuse and unauthenticated class claims are
-common; define max wait, tenant isolation and a starvation policy, and verify the class at
-each hop.
-
-**Technical owner.** [Priority Queue](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md#priority-queue) — admission/queue policy is bounded, not a universal priority scheme.
-
-**Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-rabbit-priority.2026-10-21: all twenty-two served headings
-read. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Queue-Based Load Leveling; Load Shedding; Rate Limiting; Bulkhead.
+See the [dedicated Priority Queue card](priority-queue.md).
 
 ### Hedged Requests
 
-**Identity.** Hedged Requests; family Resilience and fault tolerance; kind
-resilience-pattern; priority advanced.
-
-**Decision question.** Should a duplicate request be issued after a latency threshold to
-reduce tail latency?
-
-**Good-fit conditions.** Replicas have independent tails; duplicate work is safe/idempotent;
-the speculative budget is bounded; cancellation works; the first acceptable response wins.
-
-**Hard contraindications.** Reject when operations are non-idempotent, when extra load
-would overload the dependency, or when the threshold is below normal latency.
-
-**Competing alternative.** Single request with retries or deadline tuning. Reverse the
-choice when duplicate load and cancellation cost exceed tail benefit.
-
-**Failure and recovery.** Hedging doubles work under shared saturation and can duplicate
-effects; cap speculation, cancel losers and disable when tails are not independent.
-
-**Technical owner.** [Hedging, replication and selective degradation](../../v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/deadline-hedging.md#4-hedging-replication-and-selective-degradation) — hedging is bounded to the tail-latency discussion.
-
-**Sources.**
-[src.morning-paper-tail-at-scale](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-hedged.2026-10-21: sections "The Tail at Scale". The source is a
-public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Timeout; Retry with Exponential Backoff; Load Shedding;
-Scatter-Gather.
+See the [dedicated Hedged Requests card](hedged-requests.md).
 
 ### Health Endpoint Monitoring
 
-**Identity.** Health Endpoint Monitoring; family Resilience and fault tolerance; kind
-operations-pattern; priority core.
-
-**Decision question.** Should an external monitor distinguish liveness, readiness and
-startup health?
-
-**Good-fit conditions.** Startup, readiness and liveness are separate probes; probe
-semantics match the failure; restart and traffic removal are distinct; external journey
-monitoring exists.
-
-**Hard contraindications.** Reject when a liveness probe would restart a healthy process
-because a shared dependency is down, or when one probe is used for every failure.
-
-**Competing alternative.** Simple process check plus external journey monitoring. Reverse
-the choice when probe complexity causes false restarts.
-
-**Failure and recovery.** Shared-dependency failures can fail every probe and cause mass
-restart/ejection; cached or missing health can keep routing to a draining instance. Define
-no-response behavior, keep probes on an independent path, and bound frequency/exposure.
-
-**Technical owner.** [Request routing and health signals](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#health-endpoint-monitoring) — readiness/health is bounded, not a full monitoring product.
-
-**Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-k8s-probes.2026-10-21: all fifteen served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Health, Readiness and Liveness Checks; Failover/Failback; Synthetic
-Monitoring; Circuit Breaker.
+See the [dedicated Health Endpoint Monitoring card](health-endpoint-monitoring.md).
 
 ### Failover / Failback
 
-**Identity.** Failover / Failback; family Resilience and fault tolerance; kind
-resilience-pattern; priority core.
-
-**Decision question.** Should traffic move to a standby and later return to the original
-authority?
-
-**Good-fit conditions.** A standby exists; promotion is fenced; data reconciliation is
-owned; failback is planned as a new migration, not a DNS switch.
-
-**Hard contraindications.** Reject when no standby is maintained, when split brain cannot
-be fenced, or when failback would lose writes.
-
-**Competing alternative.** Restore from backup or stay on the promoted primary. Reverse
-the choice when failback risk exceeds locality benefit.
-
-**Failure and recovery.** Split brain and lost writes are common; quarantine the old
-authority, reconcile before failback, and hold writes when fencing evidence is missing.
-
-**Technical owner.** [Failover / Failback](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md#failover-failback) — failover/failback is bounded to recovery state machines.
-
-**Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-warm.2026-10-21: all twenty headings read; Failover
-is a separate page. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Leader-Follower Replication; Backup/PITR; Health Endpoint Monitoring;
-Recovery Objectives.
+See the [dedicated Failover / Failback card](failover-failback.md).
 
 ## Chapter result and counterexample
 

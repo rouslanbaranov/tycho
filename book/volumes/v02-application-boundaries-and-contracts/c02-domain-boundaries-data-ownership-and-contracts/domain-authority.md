@@ -28,14 +28,14 @@ evidence_scope:
   source_ids: []
   claim_ids: []
   status: "unknown"
-  notes: "Bounded question from tycho.page.4681b3ba9e234c46bdb4b5993634b0e3; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  notes: "Bounded question from tycho.page.4681b3ba9e234c46bdb4b5993634b0e3; the bounded-ownership section carries its own source boundary and Tycho labels. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-30"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -126,20 +126,48 @@ The source material keeps its original published/inferred/synthetic/unverified d
 ### Domain-Driven Design and Bounded Context
 
 A bounded context has one accountable model owner and one accepted vocabulary. A named domain
-expert co-owns that vocabulary and arbitrates disputed meanings. The model owner may reject a
-term carrying a conflicting invariant, even when another team introduced it.
+expert co-owns that vocabulary and arbitrates disputed meanings. Microsoft says the vocabulary is
+one that "developers and domain experts create together within each bounded context"; Evans says
+domain experts "should object to terms or structures that are awkward or inadequate to convey
+domain understanding." The model owner may reject a term carrying a conflicting invariant, even
+when another team introduced it. Treating the relationship as co-ownership, naming one expert as
+final arbiter and recording the resolution are Tycho operational guidance, not a quoted rule.
 
-These notes are synthetic design guidance, not measured evidence. The context map records each
-relationship, translation direction and mapping maintainer. Treat
-it as an ownership artifact that changes with the model, not a diagram produced once for review.
+These notes are synthetic design guidance, not measured evidence. Microsoft describes a context
+map as documenting "the relationships between bounded contexts" and highlighting "integration
+points" to help teams "clarify responsibilities." The context map records each relationship,
+translation direction and mapping maintainer. Treat it as an ownership artifact that changes with
+the model, not a diagram produced once for review.
 
 Keep deployment choices separate from model boundaries: one deployable can host several
 contexts, and one context can span services. What matters is a single decision authority for
-each invariant.
+each invariant. Do not read a bounded context as a synonym for a microservice; that
+mapping is one design choice, not a definition.
 
-Model behavior changes are reviewed with the domain expert before a boundary moves. Reopen the
-boundary when a shared term changes meaning, a translation gains a second owner or releases become
-unavoidably coupled. Translation has a maintenance cost: each mapping needs an owner and a
-review path. Merge models when that cost exceeds the value of keeping separate meanings; merging
-is honest when the vocabularies truly coincide. Record the rationale so a later team can
-distinguish a deliberate merger from an accidental one.
+Model behavior changes are reviewed with the domain expert before a boundary moves. Evans says,
+"Recognize that a change in the language is a change to the model." Microsoft says "DDD is an
+iterative, ongoing process, so service boundaries don't remain fixed." Fowler says "you need a
+different model when the language changes." The sequenced review by a named expert before a
+boundary move is Tycho governance, not a quoted rule. Reopen the boundary when a shared term
+changes meaning, a translation gains a second owner or releases become unavoidably coupled.
+Translation has a maintenance cost: each mapping needs an owner and a review path. Merge models
+when that cost exceeds the value of keeping separate meanings; merging is honest when the
+vocabularies truly coincide. Record the rationale so a later team can distinguish a deliberate
+merger from an accidental one.
+
+**Source boundary.**
+
+- Fowler `read.fowler-bounded-context.2026-10-21`, raw HTML
+  `5f6bbdd9567aeb45cb81d536a9e01a7636f2792ba41fa0abeff5603b74d46184`:
+  language change, context map and polysemy.
+- Microsoft `read.microsoft-ddd.2026-10-30`, canonical text
+  `62191a60e230bc6b1950ea8427f27d0c5a360c14d2e02353a38ab3d7d903cf60`:
+  co-created vocabulary, domain-expert participation, context maps and
+  iterative boundaries.
+- Evans `read.ddd-reference-bounded-context.2026-10-30`, raw PDF
+  `cf82dc7b4736bb24f4a1b69a3213c25cbd38aa98e37b99c2facfb94ff5cacb99`;
+  normalized text
+  `9f9830a4a088e44b0c8024db64570edfaccf9f5a41f258abbb6903f5cd6dd8e2`:
+  definitions, domain-expert objection and language-model change.
+- Limits: no page tests a boundary move, names a single arbiter or measures
+  translation cost.

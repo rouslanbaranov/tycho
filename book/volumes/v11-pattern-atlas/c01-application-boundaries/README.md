@@ -30,8 +30,11 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.monolith-first"
+    - "src.spring-modulith"
     - "src.aws-hexagonal"
     - "src.fowler-bounded-context"
+    - "src.ddd-reference"
+    - "src.microsoft-ddd"
     - "src.microsoft-cloud-patterns"
     - "src.fowler-layering"
     - "src.microservices"
@@ -42,12 +45,12 @@ evidence_scope:
   notes: "All 12 cards cite read units; eight use bounded owner sections and remain partial."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-30"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C01 — Application architecture and boundaries
@@ -60,14 +63,14 @@ This chapter is the atlas entry point for **Application architecture and boundar
 It owns the conditional decision route for 12 catalog entries, not the deep mechanism
 explanations. Read the candidate technical owner before applying a mechanism claim.
 
-All 12 entries have a Phase 3 decision card below. Four have a dedicated owner section;
+All 12 entries have a Phase 3 decision card in this chapter. Four have a dedicated owner section;
 eight use bounded sections that own part of the mechanism. A card is decision guidance,
 not a technical manuscript and not proof of fit.
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
+Page count is content-dependent. This chapter uses a landing page plus dedicated card
+pages; a later split is an editorial change, not a plan failure. Start with the card,
 check its conditions and contraindications, then read the exact technical owner section
 before choosing a mechanism.
 
@@ -118,81 +121,11 @@ Monolith; Microservices Architecture.
 
 ### Modular Monolith
 
-**Identity.** Modular Monolith; alias Modular monolith; family Application architecture
-and boundaries; kind architecture-style; priority core.
-
-**Decision question.** Should a bounded capability remain one deployable with enforced
-module boundaries, rather than split into independently deployed services?
-
-**Good-fit conditions.** The capability has one accountable owner or a small group with
-a shared release cadence; module contracts and data ownership can be enforced by build
-or review checks; local transactions are valuable; independent runtime scaling or
-failure isolation is not yet required.
-
-**Hard contraindications.** Reject the claim when modules need independent deployment,
-scaling or failure isolation; when no team can enforce boundary ownership; when a
-regulatory or trust boundary requires separate runtime isolation; or when "modular"
-is used to describe shared tables with no enforced contract.
-
-**Competing alternative.** Microservices or a decomposed service boundary. Reverse the
-choice when release cadence, independent scaling or blast-radius isolation becomes the
-binding constraint, or when module boundaries cannot be enforced.
-
-**Failure and recovery.** The common failure is a distributed monolith in disguise:
-shared data, synchronous call chains and one deployment blast radius. Recovery starts
-with explicit module ownership, contract tests and a rollback path; event durability
-and transaction semantics must be verified in the technical owner.
-
-**Technical owner.** [Modular Monolith](../../v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md#modular-monolith).
-
-**Sources.** [src.monolith-first](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.monolith-first.2026-10-21`: all five served headings read.
-The source is architectural
-guidance, not a benchmark.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Layered Architecture; Hexagonal Architecture; Microservices
-Architecture; Domain-Driven Design / Bounded Context.
+See the [dedicated Modular Monolith card](modular-monolith.md).
 
 ### Microservices Architecture
 
-**Identity.** Microservices Architecture; alias Microservices; family Application
-architecture and boundaries; kind architecture-style; priority core.
-
-**Decision question.** Should bounded business capabilities be independently deployable
-services with explicit distributed costs, rather than one deployable with module
-boundaries?
-
-**Good-fit conditions.** Multiple teams need independent release cadence; capabilities
-have separate scaling or failure isolation needs; automation, observability and
-contract testing exist; data ownership can be separated; the organization accepts
-network and consistency costs.
-
-**Hard contraindications.** Reject the claim when there is one small team with a shared
-release cadence, no operational platform, unavoidable cross-service transactions, or
-shared authoritative data. A service count is not evidence of autonomy.
-
-**Competing alternative.** Modular monolith with enforced modules. Reverse the choice
-when distribution cost outweighs the autonomy benefit, or when boundaries cannot be
-owned independently.
-
-**Failure and recovery.** Partial failure, retry amplification, latency and data
-consistency are normal; recovery requires timeouts, stable effect identity and
-observability. The cited article covers failure design; retry-identity specifics are
-synthetic owner guidance. The linked owner section states the remaining limits.
-
-**Technical owner.** [Microservices Architecture](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#microservices-architecture) — The section explicitly owns SOA and microservice boundary choices.
-
-**Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-article.2026-10-21: Microservices, all twenty-four
-headings read, including the SOA sidebar and the trade-offs card.
-This is an architectural article, not a benchmark.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Service-Oriented Architecture; Modular Monolith; Database per
-Service; Self-Contained Service.
+See the [dedicated Microservices Architecture card](microservices-architecture.md).
 
 ### Service-Oriented Architecture (SOA)
 
@@ -270,116 +203,15 @@ Layer; Modular Monolith.
 
 ### Clean / Onion Architecture
 
-**Identity.** Clean / Onion Architecture; aliases Clean Architecture, Onion
-Architecture; family Application architecture and boundaries; kind architecture-style;
-priority core.
-
-**Decision question.** Should dependencies point inward toward domain policies, with
-frameworks and delivery mechanisms at the outside?
-
-**Good-fit conditions.** Domain rules are the main asset; several delivery mechanisms or
-frameworks are plausible; dependency direction can be enforced; tests need to isolate
-policy from infrastructure.
-
-**Hard contraindications.** Reject the claim for a CRUD surface with little domain
-behavior, a framework-centric application, or a team that cannot maintain boundary
-mapping. Drawing circles as team boundaries is not sufficient.
-
-**Competing alternative.** Hexagonal ports and adapters or layered architecture. Reverse
-the choice when the dependency rule stops protecting changes or mapping layers dominate.
-
-**Failure and recovery.** Boundary erosion and DTO/mapping complexity are common.
-Recovery requires dependency checks and explicit use-case boundaries; the technical
-owner section states the remaining limits.
-
-**Technical owner.** [Layered, hexagonal and ports-and-adapters architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#clean-onion-architecture) — The section owns dependency direction and ports; Clean/Onion vocabulary is bounded to that mechanism.
-
-**Sources.** [src.clean-architecture](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.clean-architecture.2026-10-21: The Clean Architecture, sections
-"The Dependency Rule", "Entities", "Use Cases", "Interface Adapters", "Frameworks and
-Drivers", "Crossing boundaries". This is an author article, not a comparative study.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Hexagonal Architecture; Layered Architecture; Modular Monolith;
-Domain-Driven Design / Bounded Context.
+See the [dedicated Clean / Onion Architecture card](clean-onion-architecture.md).
 
 ### Domain-Driven Design / Bounded Context
 
-**Identity.** Domain-Driven Design / Bounded Context; aliases DDD, Bounded Context;
-family Application architecture and boundaries; kind architecture-style; priority core.
-
-**Decision question.** Should models and ownership be separated by bounded context
-rather than forced into one shared enterprise model?
-
-**Good-fit conditions.** Several business meanings or languages coexist; ownership and
-change cadence differ; translation between models can be owned; domain experts can
-validate boundaries; context maps clarify integration rather than mandate a graph.
-
-**Hard contraindications.** Reject the claim when one stable model has a single
-accountable owner; when no domain expertise is available to validate meaning; when DDD
-is used as a synonym for microservices; or when the proposed boundary cannot be enforced
-in code, data or team ownership.
-
-**Competing alternative.** One shared model or a modular monolith with explicit module
-contracts. Reverse the choice when translation cost exceeds the value of model
-separation, or when one owner can govern the shared model.
-
-**Failure and recovery.** Common failures are conflating authority with storage,
-turning a context map into a mandatory graph, and drawing boundaries around teams
-rather than business meaning. Recovery starts by revisiting model behavior, ownership
-and translation cost in the technical owner.
-
-**Technical owner.** [Domain-Driven Design / Bounded Context](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md#domain-driven-design-and-bounded-context).
-
-**Sources.**
-[src.fowler-bounded-context](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.fowler-bounded-context.2026-10-21`: Bounded Context, sections
-"Bounded Context", "Further Reading", "Notes". The article is a definition and
-boundary argument, not a full DDD reference.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Modular Monolith; Anti-Corruption Layer; Microservices
-Architecture; Database per Service.
+See the [dedicated Domain-Driven Design / Bounded Context card](bounded-context.md).
 
 ### Database per Service
 
-**Identity.** Database per Service; family Application architecture and boundaries; kind
-pattern; priority core.
-
-**Decision question.** Should each service own its authoritative data and expose only a
-contract, rather than share one database across services?
-
-**Good-fit conditions.** Service ownership is real; schemas must evolve independently;
-failure isolation matters; duplication and eventual consistency are acceptable; each
-service can own its queries and migrations.
-
-**Hard contraindications.** Reject the claim when strong cross-service transactions are
-unavoidable, when reporting requires one shared schema, when one team owns all services
-with a shared release cadence and a shared database is cheaper, or when "database per
-service" is implemented as one server with shared tables.
-
-**Competing alternative.** Shared database with a modular monolith, or a deliberately
-governed shared read model. Reverse the choice when cross-service consistency and
-reporting cost exceed the autonomy benefit.
-
-**Failure and recovery.** Dual writes, stale replicas and cross-service queries are
-common. Recovery requires outbox/idempotency and explicit data contracts; the technical
-owner section states the remaining limits.
-
-**Technical owner.** [Ownership, isolation and boundary validation](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/ownership-isolation.md#database-per-service) — The section owns state authority and shared-database selection, not a dedicated schema-per-service recipe.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-database-per-service.2026-10-21: Database per
-Service, sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting
-context", "Related patterns". This is a pattern page, not a comparative study.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Microservices Architecture; Domain-Driven Design / Bounded Context;
-Transactional Outbox; CQRS.
+See the [dedicated Database per Service card](database-per-service.md).
 
 ### Self-Contained Service
 

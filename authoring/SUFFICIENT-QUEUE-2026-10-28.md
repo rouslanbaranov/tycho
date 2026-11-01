@@ -1,3 +1,9 @@
+> **Historical working queue — superseded 2026-10-31.** The counts and accepted
+> rows below describe 2026-10-28 and are not current. Current state is **60
+> sufficient / 145**, **7 owner-accepted**, **85 remaining**; see
+> [the 2026-10-31 hand-off](HANDOFF-2026-10-31.md). Do not use the 17-accepted
+> or 19-sufficient numbers below for any decision.
+
 # Sufficient coverage queue — 2026-10-28
 
 Status: working queue, not acceptance. `sufficient` requires a saved external pass

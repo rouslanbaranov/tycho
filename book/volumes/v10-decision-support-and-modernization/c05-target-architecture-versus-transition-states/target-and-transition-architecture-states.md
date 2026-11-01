@@ -51,7 +51,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -144,13 +144,25 @@ Intercept requests at a façade or route and send one capability at a time to th
 while the old path remains available. The old system stays authoritative for the capabilities not
 yet migrated.
 
-Keep one authoritative writer for each invariant and define routing plus data compatibility during
+Tycho synthesis: keep one authoritative writer for each invariant and define routing plus data compatibility during
 coexistence. Interception may be impossible, internal callers may bypass the façade, and old/new
 state can diverge. Add a bypass detector, a routing inventory and a data reconciliation check before
 retiring the old path. Fund coexistence and name owners for both paths. Rollback remains
 possible until a recorded no-return point, where routing inventory and reconciliation
 evidence authorize retirement.
 
-Branch by abstraction, parallel run or a big-bang replacement may be preferable when interception is
+AWS Prescriptive Guidance states the failure and recovery conditions directly:
+
+> Cannot be used in systems where requests to the backend system cannot be intercepted and routed.
+> The proxy or facade layer can become a single point of failure or a performance bottleneck if it
+> isn't designed properly. Requires a rollback plan for each refactored service to revert to the old
+> way of doing things quickly and safely if things go wrong.
+
+The page supports interception as a prerequisite, the façade as a possible failure domain and a
+per-service rollback plan. Bypass detection, routing inventory, data reconciliation and the
+recorded no-return point remain Tycho guidance; the page does not define those checks or claim that
+a migration is safe.
+
+Tycho synthesis: branch by abstraction, parallel run or a big-bang replacement may be preferable when interception is
 impossible or the system is small enough to replace whole. Strangler fig is a fit when requests can
 be intercepted and the migration can proceed capability by capability.

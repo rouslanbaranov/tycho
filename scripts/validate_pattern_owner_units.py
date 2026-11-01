@@ -396,6 +396,21 @@ def validate_data(data, root=ROOT):
         require(support["status"] == "read", "owner-units-source-status: " + pattern_id)
         require(support["card_citation"] is True,
                 "owner-units-card-citation: " + pattern_id)
+        for auxiliary in support.get("auxiliary", []):
+            auxiliary_units = plan_units.get(pattern_id, {}).get(
+                auxiliary["source_id"], [])
+            require(any(plan_unit.get("read_record_id") == auxiliary["ledger_record"]
+                        for plan_unit in auxiliary_units),
+                    "owner-units-auxiliary-source: " + pattern_id)
+            auxiliary_record = records.get(auxiliary["ledger_record"])
+            require(auxiliary_record is not None,
+                    "owner-units-auxiliary-record: " + pattern_id)
+            require(auxiliary_record["status"] == "read",
+                    "owner-units-auxiliary-status: " + pattern_id)
+            require(auxiliary_record["source_id"] == auxiliary["source_id"],
+                    "owner-units-auxiliary-ledger-source: " + pattern_id)
+            require(auxiliary_record["content_sha256"] == auxiliary["revision"],
+                    "owner-units-auxiliary-revision: " + pattern_id)
 
         computed_decision = "sufficient" if promotion else "partial-bounded"
         require(item["decision_coverage"] == computed_decision,

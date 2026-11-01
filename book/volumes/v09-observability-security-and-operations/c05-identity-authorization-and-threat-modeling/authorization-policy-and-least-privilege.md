@@ -44,12 +44,12 @@
   },
   "content_review": {
     "status": "self-checked",
-    "reviewed_at": "2026-10-22",
+    "reviewed_at": "2026-10-29",
     "reviewer": "Tycho agent; execution gates pending",
     "proof_uri": null
   },
   "authored_at": "2026-10-22",
-  "updated_at": "2026-10-22",
+  "updated_at": "2026-10-29",
   "source_inspection_date": null,
   "content_verified_at": null
 }
@@ -96,9 +96,27 @@ scope, action and time. Every credential must have a bounded scope, an owner and
 path that does not depend on the compromised principal.
 
 Permission creep and long-lived credentials widen the blast radius without any visible
-incident; review grants on a schedule and prefer short-lived scoped credentials. Coarse roles
-are simpler to administer for small stable systems; narrow them once measured access reviews
-or incident impact justify the overhead.
+incident; review grants on a schedule and prefer short-lived scoped credentials.
+
+**Alternative: dual control.** When no narrow role can express the task, keep a task-capable
+identity and require independent approval by more than one principal before a high-value
+action executes, instead of splitting the entitlement. ASVS 5.0.0 requirement 2.3.5 states:
+"Verify that high‑value business logic flows require multi‑user approval to prevent
+unauthorized or accidental actions. This could include but is not limited to large monetary
+transfers, contract approvals, access to classified information, or safety overrides in
+manufacturing." The requirement names the approval control and its examples; it does not
+compare the control with least privilege, so the substitution is a Tycho decision inference,
+not an ASVS rule. Reverse the choice when approval latency or approver availability would
+block a time-critical or automated action, or when approvals become routine.
+
+**Source boundary.** The alternative is bound to `src.owasp-asvs`, ledger record
+`read.batch6-asvs.2026-10-21`, requirement 2.3.5 in "V2 Validation and Business Logic". The
+pinned PDF SHA-256 is
+`a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5`
+(reverified 2026-10-29). ASVS places the requirement at Level 3, so it is a high-assurance
+control rather than a baseline rule. The requirement covers multi-user approval for high-value
+flows; it does not define approver independence or approval evidence, and it does not compare
+approval with entitlement minimization. Those design details remain Tycho synthesis.
 
 **Limits.** Permission reviews, role granularity and revocation propagation are ongoing costs;
 least privilege without an owner becomes stale entitlement. Emergency access needs a time-boxed,

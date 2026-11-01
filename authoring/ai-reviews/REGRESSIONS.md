@@ -69,5 +69,22 @@ guard is not yet possible. The guard is part of closing the finding.
   Request-Reply's separated channel/invocation decision question, both-block statement, RPC
   synthesis label and partial alternative state.
 
+- **B9 Gatekeeper mechanism review 2026-10-29:**
+  `tests/test_tycho_b9_gatekeeper_review_remediation.py` rejects the
+  "authenticates the caller" and "coarse authorization" mechanism wording, requires
+  the `Solution` binding to name validation and authorization, requires the
+  `Workload design` supporting binding to name authentication initiation, checks
+  card/owner alignment, and pins `partial-bounded` coverage without promotion.
+
+- **B47 Consistent Hashing reviews 2026-10-31:** `tests/test_tycho_b47_consistent_hashing_review.py`
+  guards all four supported dimensions against read ledger records, the invariant quote and
+  its expectation qualification, the Tycho synthesis labels, the corrected Dynamo 4.2
+  supporting section, the 2026-10-31 register scopes, the historical 2026-10-23 page pin,
+  the page-changed-since-review packet, and the promotion hashes. Codex recorded one minor
+  formula note (B47-M1, join/leave denominator); a supplementary same-vendor review
+  recorded nine provenance minors. Both found no blocking or major finding. B47-M1 and the
+  content-level minors stay recorded, not silently closed; metadata minors were fixed
+  forward.
+
 A future finding without a guard is not closed. If the guard cannot be mechanical,
 record the exact manual check and the review that performed it.

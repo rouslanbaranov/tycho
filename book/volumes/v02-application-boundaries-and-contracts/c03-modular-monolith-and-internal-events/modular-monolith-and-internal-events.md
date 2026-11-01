@@ -37,14 +37,14 @@ evidence_scope:
   source_ids: []
   claim_ids: []
   status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  notes: "Body Source boundary records the 2026-10-30 inspection and exact revisions."
 content_review:
   status: "draft"
   reviewed_at: null
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -59,7 +59,7 @@ content_verified_at: null
 
 <!-- /tycho-question-source -->
 
-> **Pattern atlas:** [Modular Monolith](../../v11-pattern-atlas/c01-application-boundaries/README.md#modular-monolith) — decision conditions and contraindications.
+> **Pattern atlas:** [Modular Monolith](../../v11-pattern-atlas/c01-application-boundaries/modular-monolith.md#modular-monolith) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.a06fd146f96b4b17a754f4d3b608ebdf:0 -->
 ## Purpose and mission
 
@@ -123,13 +123,45 @@ The detailed pages separate the mechanisms that make this decision conditional:
 Modules own their rules, data and contracts. The deployable is one unit, but each module has a
 named owner, an allowed-call surface and a dependency test that fails a bypass.
 
+Spring Modulith 1.3.12 documents one enforcement model. It rejects "all references to types that
+reside in application module internal packages" and, when configured, rejects dependencies that
+are not declared through `@ApplicationModule(allowedDependencies = …)`. Its fundamentals page
+adds that code in internal packages "must not be referred to from other modules" and that "the
+Java compiler is not of much use to prevent these illegal references". The named owner and the
+single-deployable framing are Tycho definitions; the allowed-call surface and the dependency
+test are source-backed.
+
 Bypasses show up as shared tables, import cycles, or events that exist only to recreate a remote
 call. Internal events also need a durability decision: a local outbox or best-effort delivery, plus
 the owner who repairs a missed event. Test schema ownership as well as the public API.
 
 Synchronous call chains across modules and one deployment blast radius are the operational risk;
 keep a rollback path and verify event durability before treating the boundary as a contract.
+Spring Modulith's event page says that "event publication happens synchronously by default" and
+that more triggered functionality "will widen the transaction boundary and potentially cause the
+entire transaction to fail". It also warns that an asynchronous listener can lose the event
+"unless each listener actually implements its own safety net". The deployment blast radius is
+Tycho's inference from the one-deployable definition, not a measured result in these sources.
 
 Choose services or a layered structure only when module enforcement costs more than the
 coordination benefit. A modular monolith fits when the team wants one operational unit without
 surrendering internal ownership, with a documented interface and a named owner.
+
+**Source boundary.** Public documentation and reference material (`src.monolith-first`,
+`src.spring-modulith`). The Spring Modulith pages were accessed 2026-10-30; the Monolith First
+record is dated 2026-10-21. These are living pages, not a benchmark or an executed local test.
+
+- Martin Fowler, "Monolith First" (3 June 2015): record
+  `read.monolith-first.2026-10-21`, canonical revision
+  `722d8d78beddd9e0f6ff3e856eec94dfa2b9fa3bebcaaf4c9e80ccdd3c0e1446`; retained for the
+  mechanism and alternative bindings, not used for the new invariant or failure claims.
+- Spring Modulith 1.3.12, "Verifying Application Module Structure": canonical revision
+  `c1ee41282edd5866877a4d2a09d4585196a4a2ac05a672416624e4b9eb117cd4`; used for API-only
+  access, declared allowed dependencies and the verification that rejects violations.
+- Spring Modulith 1.3.12, "Fundamentals": canonical revision
+  `6f45529855cf017220ca400ab72e87fc805cd31e044db44f47705a4ac16f95bd`; sections
+  "Application Modules" and "Advanced Application Modules"; used for internal packages, the
+  compiler limit and the explicit API.
+- Spring Modulith 1.3.12, "Working with Application Events": canonical revision
+  `c15f574e8029e58e50346011402e03439590af4e3e6a3e15940fab2fa5472c6a`; used for synchronous
+  publication, the widened transaction and the lost-event risk.

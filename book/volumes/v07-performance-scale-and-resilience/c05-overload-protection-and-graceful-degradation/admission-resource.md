@@ -30,16 +30,24 @@ evidence_scope:
     - "src.aws-backoff"
     - "src.sre-overload"
     - "src.sre-cascading"
+    - "src.rabbitmq"
+    - "src.microsoft-cloud-patterns"
+    - "src.azure-service-bus-amqp"
+    - "src.aws-sqs"
   claim_ids: []
   status: "source-linked"
-  notes: "Bounded question from tycho.page.c5d20ae7ef6445e5b23dd5fbac625060; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  notes: >-
+    Bounded question from tycho.page.c5d20ae7ef6445e5b23dd5fbac625060;
+    the 2026-10-31 Priority Queue section binds four public units under
+    src.rabbitmq, src.microsoft-cloud-patterns and src.aws-sqs. Exact
+    inherited citation rows and limits remain in the chapter source ledger.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-31"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-21"
+updated_at: "2026-10-31"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -178,18 +186,107 @@ Proposed tests: route one tenant across all replicas, change replica count, part
 
 ### Priority Queue
 
-A priority queue is a broker-side ordering policy: ready messages carry a class and the queue
-dispatches higher classes first. It does not preempt a running handler, so a high-class message can
-still wait behind a slow low-class execution.
+**Synthetic design guidance, not measured evidence.** A priority queue is a
+broker-side ordering policy: ready messages carry a class and the queue
+dispatches higher classes first. The broker orders ready work; it does not
+preempt a handler already running, so a high-class message can still wait
+behind a slow low-class execution.
 
-The queue must define class levels, per-level capacity and the broker's actual priority support.
-Authenticate the class at each hop and cap each tenant's share, or one tenant can occupy the
-high-class lane. Add aging or a maximum-wait rule so low classes make progress; without a wait bound
-the policy is starvation.
+**Mechanism.** RabbitMQ's public guide states that "Classic and quorum queues
+in RabbitMQ support priorities" and that "Priority queues deliver messages in
+the order of message priorities." A priority is "a positive integer value set
+by publishers at publishing time"; larger numbers mean higher priority.
+Classic queues take the `x-max-priority` argument in the [1, 255] range, while
+quorum queues expose a fixed 0-31 range. **Tycho reading:** the queue supplies
+ordering, not admission; a producer can label work, but the queue declaration
+and consumer contract decide which classes exist and how much capacity each
+can occupy.
 
-An admission-controlled FIFO or separate lanes per class avoids starvation when priority is
-unverifiable. A priority queue is a fit when classes are authenticated, the broker supports
-priorities and a wait bound is enforced.
+**Invariant.** The queue must define class levels, per-level capacity and the
+broker's actual priority support. RabbitMQ states that "Priority queues can
+never change the number of priorities they support after queue declaration"
+and treats messages without a priority property as a default class (4 for
+quorum, 0 for classic). Service Bus does not map the AMQP `priority`
+header. Its AMQP guide explains "which properties from the standard AMQP
+message sections are used by Service Bus and how they map to the Service Bus
+API set"; the `priority` row has no usage entry or Service Bus API name, and
+"Any property that application needs to define should be mapped to AMQP's
+application-properties map." The official Priority Queue pattern then
+implements priority as such an application property: the sender "assigns a
+custom application property called Priority to each message", and "Service
+Bus uses SQL filters to route each message to the high-priority or
+low-priority subscription, based on its Priority value."
+**Tycho rule:** treat the class as authenticated application metadata, declare
+the full class set and default before admission, map each class to a bounded
+lane or subscription, and cap each tenant's share so one producer cannot
+occupy the high-class lane.
+
+**Failure and recovery.** Priority ordering can starve the work it defers.
+RabbitMQ states that "A common issue with priority-based message delivery is
+resource starvation" and that in a priority queue "only messages with higher
+priorities are delivered, and lower-priority messages are never delivered."
+Its quorum queue has strict priority: "a sustained stream of higher-priority
+messages will delay lower-priority ones indefinitely", while classic queues
+cycle through priority sub-queues. Prefetch can also invert the intent:
+"higher prioritised messages may in practice need to wait for lower priority
+messages to be processed first." Azure's pattern notes that a single
+consumer pool "can lead to lower-priority messages being continually delayed
+and potentially never processed", and recommends that teams "dynamically
+increase the priority of old messages to ensure that low-priority messages
+eventually get processed." SQS fair queues measure dwell time and expose
+"older message ages", but do not cap consumption per tenant.
+**Tycho runbook:** Add aging or a maximum-wait rule so low classes make
+progress; without a wait bound the policy is starvation. Define the bound and
+an aging/promotion rule, monitor per-class queue age, reserve capacity for
+lower classes where strict ordering is unsafe, and test the broker's strict
+mode, consumer prefetch and max-length/TTL behavior before relying on
+priority.
+
+**Alternative.** An admission-controlled FIFO or separate lanes per class
+avoids starvation when priority is unverifiable. SQS FIFO preserves order
+within a message group: "FIFO queues ensure that you receive messages in the
+order they are sent within each message group", and multiple groups can be
+processed in parallel. SQS standard queues offer only best-effort ordering.
+SQS fair queues instead rebalance a shared multi-tenant queue: when one tenant
+is a noisy neighbor, SQS "prioritizes message delivery for other tenants",
+and "does not limit the consumption rate per tenant." RabbitMQ recommends
+multiple queues as a simpler alternative, and Azure separates messages by
+priority across queues with either a shared or dedicated consumer pool.
+**Tycho choice rule:** use admission-controlled FIFO when strict per-group
+order dominates; use fair queues when tenant fairness dominates; use separate
+priority lanes when classes are stable and capacity can be partitioned.
+Reverse the priority choice when inversion, starvation or queue-management
+cost exceeds the latency benefit.
+
+**Bound source limits.** The 2026-10-31 units are public documentation pages,
+not benchmarks or production observations. RabbitMQ documents classic and
+quorum queue behavior in version 4.4. Azure documents a Priority Queue
+pattern with a Service Bus example, and its Service Bus AMQP guide maps no
+`priority` header; the pattern uses an application property. AWS documents
+SQS queue types and fair-queue behavior; neither selected unit defines a
+native SQS priority field. The max-wait/aging rule, per-level capacity and
+tenant cap are Tycho synthesis. No broker, queue or consumer was run.
+
+**Source units.** Each binding revision is the canonical-text SHA-256 of the
+2026-10-31 representation:
+
+- RabbitMQ, *Priority Support in Queues* (docs version 4.4);
+  4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45;
+  record read.rabbitmq-priority-queues.2026-10-31 under src.rabbitmq.
+- Microsoft Learn, *Priority Queue pattern* (Azure Architecture Center);
+  da8e65b90263acd29305315fdba36da3e6b4127e688532f1132ed681eb4c1fde;
+  record read.microsoft-priority-queue-pattern.2026-10-31 under
+  src.microsoft-cloud-patterns.
+- Microsoft Learn, *AMQP 1.0 in Azure Service Bus and Event Hubs*;
+  a1d6a361f205a21ff53f6323a87ad27dd9dd5efc15f136c8d829f896e16cbaab;
+  record read.azure-service-bus-amqp-message-mapping.2026-10-31 under
+  src.azure-service-bus-amqp.
+- AWS, *Amazon SQS queue types*;
+  c9ccf72844c5180d80502042f9abf7766b8af7e194f217065ddf50a43f540609;
+  record read.aws-sqs-queue-types.2026-10-31 under src.aws-sqs.
+- AWS, *Amazon SQS fair queues*;
+  9d0821490fbdd48ed28c195c3b5bdc466d800d34383b1caf36dd802ec0e7ca5f;
+  record read.aws-sqs-fair-queues.2026-10-31 under src.aws-sqs.
 
 ## Navigation, prerequisites and source scope
 

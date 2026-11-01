@@ -30,9 +30,10 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.enterprise-integration"
+    - "src.microservices-patterns"
   claim_ids: []
   status: "source-linked"
-  notes: "Moved card page; source binding remains in the owner unit."
+  notes: "Moved card page; owner-unit bindings carry both source records."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-29"
@@ -40,7 +41,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-28"
 updated_at: "2026-10-29"
-source_inspection_date: "2026-10-21"
+source_inspection_date: "2026-10-29"
 content_verified_at: null
 ---
 
@@ -52,12 +53,12 @@ Synchronous Block case, the request thread waits for the reply, which implies on
 request or a reply channel private to the requesting thread. In the Asynchronous Callback
 case, the source states: "This approach enables multiple outstanding requests to share a
 single reply channel, and a single reply thread to process replies for multiple request
-threads." Both the Synchronous Block messaging approach and a direct Remote Procedure
-Invocation block the caller's thread; the decision is indirect messaging versus direct
+threads." Tycho synthesis: treat both the Synchronous Block messaging approach and direct RPI as
+blocking the caller's thread; the decision is indirect messaging versus direct
 invocation. Tycho synthesis: carry a Correlation Identifier and match each reply to its
-request, because the bound page does not serve correlation mechanics. Tycho synthesis: prefer
-a direct synchronous Remote Procedure Invocation when the responder is reachable within the
-caller's request budget and blocking is acceptable.
+request, because the bound page does not serve correlation mechanics. Tycho synthesis: prefer a
+direct synchronous Remote Procedure Invocation only when both parties can be available for the
+request, the call fits the request budget, no broker is justified, and blocking is acceptable.
 
 **Identity.** Request-Reply Messaging; family Messaging and event-driven integration; kind
 integration-pattern; priority core.
@@ -75,20 +76,21 @@ channel and a single reply thread to process replies for multiple request thread
 correlation mechanics.
 
 **Hard contraindications.** Reject when a direct synchronous Remote Procedure Invocation meets
-the availability and latency target and the caller can block, or when no reply channel can be
-established. Both Synchronous Block messaging and a Remote Procedure Invocation block the
-caller, so a blocking caller thread alone is not a contraindication.
+the availability and latency target, no broker is justified, and the caller can block, or when
+no reply channel can be established. Tycho synthesis: both Synchronous Block messaging and a
+Remote Procedure Invocation are treated as blocking, so a blocking caller thread alone is not a
+contraindication.
 
-**Competing alternative.** Tycho synthesis: a direct synchronous Remote Procedure Invocation
-is the alternative when the responder is reachable within the request budget and blocking is
-acceptable. Both this direct call and the Synchronous Block messaging approach block the
-caller; the difference is direct versus indirect invocation. The bound source states only that
-an RPC caller's thread must block while it waits for the response, not that RPC is the decision
-alternative.
+**Competing alternative.** The bound Messaging page names the RPI pattern as an alternative and
+records messaging's loose runtime coupling and buffered availability against the added broker
+complexity and more complex request/reply communication. Tycho synthesis: prefer direct RPI
+only when both parties can be available for the request, the call fits the request budget,
+no broker is justified, and blocking is acceptable; prefer messaging request-reply when
+loose runtime coupling or buffered availability matters.
 
 **Failure and recovery.** A crashed requestor can restart the reply thread; the callback must
-re-establish the caller's context. Tycho guidance, not a served source claim: bound retries,
-time out unresolved requests, and treat duplicate replies as idempotent outcomes.
+re-establish the caller's context. Tycho guidance, not a served source claim: time out unresolved
+requests, suppress duplicate replies, and treat repeated delivery as an idempotent outcome.
 
 **Technical owner.** [Request-Reply Messaging](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md#request-reply-messaging) — separate request and reply channels, one-outstanding or private reply channel, callback recovery and limits are bounded; this is not a complete request-reply contract.
 
@@ -99,8 +101,14 @@ unheaded; the served page also has Synchronous Block and Asynchronous Callback
 approaches, including the callback statement that multiple outstanding requests
 can share a single reply channel and a single reply thread can process replies
 for multiple request threads; the page is publisher-abridged and has no Example
-section; correlation mechanics and timeout text are not served. The source is a
-public pattern/documentation unit, not a benchmark.
+section; correlation mechanics and timeout text are not served.
+[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microservices-communication-messaging.2026-10-29: Resulting
+context and Related patterns; the page names the RPI pattern as an alternative
+and records messaging's loose runtime coupling and buffered availability against
+the added broker complexity and more complex request/reply communication. The
+page is a public pattern/documentation unit, not a benchmark; examples were not
+executed, and no request-budget or blocking rule is stated.
 
 **Decision state.** applicable-under-conditions.
 

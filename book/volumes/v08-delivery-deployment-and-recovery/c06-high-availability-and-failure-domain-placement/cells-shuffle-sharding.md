@@ -57,7 +57,7 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-31",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -146,18 +146,52 @@ measured evidence, and they do not create a new source claim.
 
 ### Deployment Stamps
 
-A deployment stamp is an independently operated deployment unit used for scale, isolation
-or locality. It needs a routing key, a state authority, a deployment and upgrade process
-and a rule for shared global dependencies. Use it when stamps can fail or change
-independently and the duplication cost is justified. Do not use it when a single
-deployment meets the objective or when stamps still share an unowned global dependency.
+A deployment stamp is an independently operated deployment unit used for scale, isolation or
+locality. **Invariant (Tycho synthesis).** It needs a routing key, a state authority, a
+deployment and upgrade process and a rule for shared global dependencies. Use it when stamps can fail or change independently and
+the duplication cost is justified. Do not use it when a single deployment meets the objective
+or when stamps still share an unowned global dependency.
+
+**Routing key and state authority.** Azure describes stamps as independent copies that each
+serve a tenant subset: "Each stamp serves a subset of your customers." A routing service
+resolves "the mapping between tenants and stamps", and "The traffic routing system routes the
+request to the correct stamp." State follows the split: "Stamps run independently, so they
+implicitly shard your data." Moving a tenant therefore needs "custom logic to transmit a
+customer's information to a different stamp and then remove the tenant's information from the
+original stamp." Tycho's rule is that the routing key and the state authority are one
+ownership decision, not two.
+
+**Deployment and upgrade process.** Azure says "Stamps run independently of each other, and
+you can deploy and update them independently", and that operators should "automate and fully
+repeat your deployment processes". The Google SRE workbook defines canarying as "a partial and
+time-limited deployment of a change in a service and its evaluation". Tycho's rule is that
+each stamp needs a versioned definition, an ordered rollout and a tested rollback path.
+
+**Shared global dependency rule.** Azure lists "Shared components: You might have components
+that you can share across stamps." The Google SRE workbook warns that "the canary population
+and the control may share backends, frontends, networks, data stores, and other
+infrastructure" and that teams should be aware of "shared failure domains between our canary
+and control environments". Tycho's rule is to enumerate every shared global dependency, state
+which failures cross the stamp boundary, and reject the design when an unowned shared
+dependency dominates the isolation benefit.
 
 The failure path is configuration drift or split state across stamps; version the stamp
 definition, route by an explicit key and reconcile state at the authority. A cell-based
-deployment is the alternative when isolation is the main goal and scale is secondary.
+deployment is the alternative when isolation is the main goal and scale is secondary. AWS
+describes cells this way: "Each cell is independent, does not share state with other cells,
+and handles a subset of the overall workload requests." A cell routing layer "distributes
+requests to individual cells based on the partition key". AWS also says that "Building a
+cell-based architecture doesn't necessarily mean having to double, triple, or more your
+application's infrastructure", so cell-based design need not multiply infrastructure; Tycho
+reads that as making scale secondary in this comparison. The isolation-first comparison and
+the scale-secondary reading are Tycho's; the card carries the reversal condition.
 
 **Limits.** Stamp duplication, routing-key changes and global dependencies are costs; a stamp
 without a data authority or upgrade owner becomes a snowflake.
+
+Source pages: [Azure pattern][azure-stamp] and [Google SRE canarying][sre-canary];
+the AWS cell page is linked in the evidence paragraph above.
+
 ## Bounded pattern ownership notes
 
 ### Cell-Based Architecture
@@ -200,3 +234,6 @@ dedicating a cell to each one.
 - Parent chapter: [High availability and failure-domain placement](README.md).
 - [Integrated decision](availability-zones-placement-and-failure-domains.md).
 - Pattern atlas: [Shuffle Sharding](../../v11-pattern-atlas/c09-scalability/README.md).
+
+[azure-stamp]: https://learn.microsoft.com/en-us/azure/architecture/patterns/deployment-stamp
+[sre-canary]: https://sre.google/workbook/canarying-releases/

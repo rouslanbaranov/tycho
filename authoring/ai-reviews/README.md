@@ -103,6 +103,70 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-29 | DeepSeek Reviewer | #540 service-discovery split | pass | `2026-10-29-service-discovery-split-deepseek.md` | `736e1f51adead6bfd4867cafe0d2f1d564cce62b2251ea0381e139ace646093e` |
 | 2026-10-29 | DeepSeek Reviewer | #540 B8 final C/R/S | pass | `2026-10-29-b8-final-crs-deepseek.md` | `84b543a1e932d1369d1c38837f36bcca2ed6c75e8f704c09b20a331aa7917f91` |
 | 2026-10-29 | DeepSeek Reviewer | #540 TTL final | pass | `2026-10-29-ttl-final-deepseek.md` | `785a75a242517dad02c3d6c6c3d8c230f48a1485c451118009d42ccf2a7dee39` |
+| 2026-10-29 | DeepSeek Reviewer | #540 TTL final 2 | pass | `2026-10-29-ttl-final2-deepseek.md` | `a213ac608d39cf945c226cbee35426d644d29b613ac4811bd251f6ab893e1648` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Fencing final | pass | `2026-10-29-fencing-final-deepseek.md` | `9eb50d90c52438ad690c56810d30061ae683b761b355ccd9f593fa857d1597bc` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Gatekeeper delta | pass | `2026-10-29-gatekeeper-delta-deepseek.md` | `c33066f036d07a28bffad59c20c2beeff2350e7f0c79b14c41bfe166e32184f3` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Health delta | pass | `2026-10-29-health-delta-deepseek.md` | `e8489ade200902ced772d0db85a0e072fdf19b86d89c5844eba30a896666a397` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Multi-Leader delta | pass | `2026-10-29-multi-leader-delta-deepseek.md` | `fedcd351d6b5861f1c6017674dcd441ac57d39eebcb1bfea281150a2ebc537c3` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Message Filter | pass | `2026-10-29-message-filter-deepseek.md` | `ed6a8561cc8dbe564c4f8df562a04d9c0dab73d7de41fd43ff28dfe2e1273d92` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Least Privilege | pass | `2026-10-29-least-privilege-deepseek.md` | `0a7cbfe04fbc43c07ed7f0321cd1af5f453ac62a3fc5423a619a589d0e505ec9` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Microservices | pass | `2026-10-29-microservices-deepseek.md` | `b54b5373a9088375e436553ebd0901de29d687a1f2e0e9938a58195607d70b29` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Structured Logging | pass | `2026-10-29-structured-logging-deepseek.md` | `38ccf812536a4a60b8bad1e435df63103173457bf65c750f01228264f686f269` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Strangler Fig | pass | `2026-10-29-strangler-deepseek.md` | `dd4aaedfbc19dabd861e4a0699d56a07ec979ac5a90fe90af62c1571d1d2fcc3` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Request-Reply delta4 | pass | `2026-10-29-request-reply-delta4-deepseek.md` | `10552383b7a3a0c177f8003f009b63cd0c6fdaee21dd1958bb5c79e6c49b0803` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Clean/Onion | pass | `2026-10-30-clean-onion-deepseek.md` | `41e6b7ec247363fb1805c637a650203c71978f31018e44d1b8005b3e8850786c` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Server-Side Discovery | pass | `2026-10-30-server-side-deepseek.md` | `419fcc22717d975dc502d89b5ec9823b1417a07d646620031c9b15a7ff2a4544` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Vertical Scaling | pass | `2026-10-30-vertical-scaling-deepseek.md` | `3b6341395ca7d08b2d2237a9830adcca4242a82aa083d0c9a5489ba91e49a36c` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Saga | pass | `2026-10-30-saga-deepseek.md` | `b26cf6892f9aed04561c62d03749074e6516e8b83c1dfde8625cf36e54b306d5` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Idempotent Receiver | pass | `2026-10-30-idempotent-receiver-deepseek.md` | `ecb7801470f4c1eb6ebe64e8e12b005c2b64d4ce300cac79155d71c05d8fba96` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Dead Letter Channel | pass | `2026-10-30-dlq-deepseek.md` | `1a6e6585d121a9342c4ddfee0e44cc7007a7189db17556e78f09d22ae9f1e09a` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Two-Phase Commit | pass | `2026-10-30-two-phase-commit-deepseek.md` | `ae86a6455c3e46fe5d75005b5e840b20675e82e0a918355e14b9b8371af15563` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Scatter-Gather | pass | `2026-10-30-scatter-gather-deepseek.md` | `17d2e9f603eacb14b8659228b035126932303bb70a692f58ce957281e9947296` |
+| 2026-10-30 | DeepSeek Reviewer | #540 API Gateway | pass | `2026-10-30-api-gateway-deepseek.md` | `cac155011e9a0279ec119214b3b3303fb26466bdaeaed59f47c6ce9cc6f7c597` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Modular Monolith | pass | `2026-10-30-modular-monolith-deepseek.md` | `49a508fa536718c4657d3333d9e3915875056e36a310eb1bd210714dd457d0c9` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Database per Service | pass | `2026-10-30-database-per-service-deepseek.md` | `901b08cccecf28f53a78f0abec0824c81967a8444f03b074c4f002bb1c82b92c` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Backend for Frontend | pass | `2026-10-30-bff-deepseek.md` | `2c018df5aad3e833d71d9260188ed0ea1dd02a74169442005c5af888b0d789c2` |
+| 2026-10-30 | DeepSeek Reviewer | #540 CQRS | pass | `2026-10-30-cqrs-deepseek.md` | `5089c64576c7a5bda3be18c2a0648bfe95097d8660bcd981140aa7046401133c` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Bounded Context | pass | `2026-10-30-bounded-context-deepseek.md` | `d237d9170cd24ffdeff0ae1f5286fa447403abdef8cea01a767f92cad203b70c` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Canary Release | pass | `2026-10-30-canary-release-deepseek.md` | `8baffe196c89814db8835cd3e55c4105a867e32527e9a865331ecb04a56715ee` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Stale-While-Revalidate | pass | `2026-10-30-stale-while-revalidate-deepseek.md` | `ba9edb86010f3e3b7f3e3631252217c64f6bc385d214d80d181499664fcefa1d` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Deadline Propagation | pass | `2026-10-30-deadline-propagation-deepseek.md` | `3ef1fc82cc278cae40d0dff3a1a338cd735b0af78eae46381d763335f74070e3` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Quorum-Based Reads/Writes | pass | `2026-10-30-quorum-based-reads-writes-deepseek.md` | `61c31e7a0eb67de0f1556aeaa1062da6b907645a95738612b8e5922c6d665618` |
+| 2026-10-30 | DeepSeek Reviewer | #540 CDN-Edge Caching | pass | `2026-10-30-cdn-edge-caching-deepseek.md` | `364e8a8b95a9af6b14b408acd9ff9395db08ff309810a3593db77a7335f757cb` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Multi-Level Caching | pass | `2026-10-30-multi-level-caching-deepseek.md` | `ec6d9e2489ab3f3a642004f8d00cbcc2da6c6ace3ac8005b097d92a49184d48f` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Sharding | pass | `2026-10-30-sharding-deepseek.md` | `cb4ebd44d22011abbcd804bc196d2d53a9ab236027c1ece75debe0a17eb90341` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Health Endpoint Monitoring | pass | `2026-10-30-health-endpoint-monitoring-deepseek.md` | `da5de75ad1505350d5868a4cf32e8bba53941edfa787f781299bdbc1c483b47c` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Graceful Degradation | pass | `2026-10-30-graceful-degradation-deepseek.md` | `6b83a255625cfdbe537dbe6ce9f8bb0fadb2691b92fc3a5c9db18a29f9490b1b` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Immutable Infrastructure | pass | `2026-10-30-immutable-infrastructure-deepseek.md` | `3c7d0a134b9c063f3102c0780a278b35c44e5a3f8132d6d540e3a12cb72bf704` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Causal Ordering | pass | `2026-10-30-causal-ordering-deepseek.md` | `d29130e57c317798ddcd1bc3d3735cde084e120899e5d4b3d6d7b461c17547a4` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Deployment Stamps | pass | `2026-10-31-deployment-stamps-deepseek.md` | `1120fb60de445fe290d7f0ecefc16b80ff807effc992f084377346c6a7b5c8a1` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Polyglot Persistence | pass | `2026-10-31-polyglot-persistence-deepseek.md` | `93e553eec4c284195cb2efd8ce262a8dbd00257cedb6c0b72e77e52c549d91ab` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Queue-Based Load Leveling | pass | `2026-10-31-queue-based-load-leveling-deepseek.md` | `ea73e1b1f5de2564d0d928022f42d32e7a4de720e8b63c465b4b524d251150ae` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Idempotency Key | pass | `2026-10-31-idempotency-key-deepseek.md` | `81a8daaf0467558b6a7bb1297169bfe8fb68a0be39e9f9288d3ab7cb29dc4a2e` |
+| 2026-10-31 | Codex / OpenAI (gpt-5.6-sol) | #540 Consistent Hashing | pass-with-findings | `2026-10-31-consistent-hashing-codex.md` | `f50fc94a02638fa7bd60d2da9851a1d37bd0ad252d90972013c686c643514974` |
+| 2026-10-31 | DeepSeek Reviewer (same-vendor fallback; supplementary) | #540 Consistent Hashing | pass-with-findings | `2026-10-31-consistent-hashing-deepseek.md` | `3e5289deb8fb5cff4e8830f764a73a4eeb8a73b675ac86c7b9975384c6bd20a9` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Circuit Breaker | pass | `2026-10-31-circuit-breaker-deepseek.md` | `a227c3153af91c19347c17ae5be6fc1a6d047da222e55d727e24fdcc0398da60` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Expand-and-Contract | pass | `2026-10-31-expand-and-contract-deepseek.md` | `de6c491d59579fe6b3d3f1dc2343e8f15edadac752d2137b332ea620be7584d8` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Transactional Inbox | pass | `2026-10-31-transactional-inbox-deepseek.md` | `6e1a06386b8ccb5ce875f9da185cc43484d92e80dc4dc63e8f20ea0f0d64e665` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Feature Flags | pass | `2026-10-31-feature-flags-deepseek.md` | `d99204e90f7f1861b1de14eb558040f6fc42c884cc60437f30fa53d5caf22133` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Cache Stampede | pass | `2026-10-31-cache-stampede-deepseek.md` | `b44ce65abc348ff0a6881e6d3f87848d8e37ac46c1e1b3e814d33cb55aa911be` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Index Table | pass | `2026-10-31-index-table-deepseek.md` | `7f5a2db855699f813e7794ba50e1f51bf635e5c1afe2bb152a312e1e2e5bd002` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Priority Queue | pass | `2026-10-31-priority-queue-deepseek.md` | `575d495f1b2374fd8ba37887890fd420d24d1c3c65916e2a46f2b4995792c693` |
+| 2026-10-31 | DeepSeek Reviewer | #540 SLI/SLO | pass | `2026-10-31-sli-slo-deepseek.md` | `da0dee3a83db8eecc42f33e9fe200e778564b64275c74ba28d218f0cf7078f13` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Session Consistency | pass | `2026-10-31-session-consistency-deepseek.md` | `35c115e69915e0cf5f579c9d813aa0b3a032df5af358bd7f4ac05abe1623c425` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Synthetic Monitoring | pass | `2026-10-31-synthetic-monitoring-deepseek.md` | `2fecd75f8dd35c0b62cf31a11e0239220839d537dd80ce2741d6e22bdb401b39` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Distributed Tracing | pass | `2026-10-31-distributed-tracing-deepseek.md` | `f529745d2186ab517b80a7da7bf74aedc3a3706a76eada9c6865b380fa257497` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Backup/PITR | pass | `2026-10-31-backup-pitr-deepseek.md` | `3891568f982ee9579f3b6bc80da95bb3fc1a44dcf644f024015dc1f3496fca19` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Failover-Failback | pass | `2026-10-31-failover-failback-deepseek.md` | `fe7c17951322821d14e51d908ef7aa130ddc63f28ce8cc0e424709c421c2907d` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Hedged Requests | pass | `2026-10-31-hedged-requests-deepseek.md` | `cdb461aaa40a7e6111323b267bb74004e5b3cb3efa6be3caddf4df24cd4c3c41` |
+| 2026-10-31 | DeepSeek Reviewer | #540 CDC | pass | `2026-10-31-cdc-deepseek.md` | `26288cfff3b5dc7b5f3de03bdfca676dfc22e64905816008651bfa02ae67cbaf` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Online Data Migration | pass | `2026-10-31-online-data-migration-deepseek.md` | `58437d84ad5815377af2049cda885328d01dfc7f3f00733b1783a03814a8f39f` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Negative Caching | pass | `2026-10-31-negative-caching-deepseek.md` | `fbf40a427582dfcc34a797963499cc1f3640c788f3e58058734d1b3a96cc9e76` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Tenant Isolation | pass | `2026-10-31-tenant-isolation-deepseek.md` | `894aab9f83712403dba8fa09a41d2588dbbf80cf14a2ae73f2b542aab4003b07` |
+| 2026-10-31 | DeepSeek Reviewer | #540 GitOps | pass | `2026-10-31-gitops-deepseek.md` | `e762e9c9a9041cab3f58ec8801c87fff8d8404ae19a34dead2e316694e7d3c5c` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Workflow Orchestration | pass | `2026-10-31-workflow-orchestration-deepseek.md` | `6d3edeb343c1e367846df7e81aa9145771269f39c3cfd6049318d27c0b613031` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Branch by Abstraction | pass | `2026-10-31-branch-by-abstraction-deepseek.md` | `7056db6c50743b2cd0a7bca3eb9d946f4464d3c4214234bb6e7d6121b144a1e0` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Geode | pass | `2026-10-31-geode-deepseek.md` | `6ce40528859979e0e977cc98001165f249771885522ee2432ce68428d809c8fe` |
 
 ## V12 review records
 

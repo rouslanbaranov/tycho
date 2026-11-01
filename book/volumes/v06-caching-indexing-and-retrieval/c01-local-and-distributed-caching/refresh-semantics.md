@@ -56,7 +56,8 @@ This difference is architectural:
 - **expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit;
 - **expire-after-access:** frequently accessed values may remain resident longer (subject to other bounds);
 - **refresh-after-write:** an old value may remain visible while a new load runs, with configured failure/expiration behavior;
-- **size/weight eviction:** bounds memory and may remove useful hot entries, creating origin read bursts.
+- **size/weight eviction:** bounds memory by evicting entries not used recently or
+  often when the cache exceeds its configured size or weight.
 
 The installed Caffeine version and precise loader/executor policy must be checked before promising behavior. “Refreshes asynchronously” is not equal to “returns current authoritative state under every failure”.
 
@@ -130,14 +131,27 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### TTL-Based Expiration
 
-TTL-based expiration gives an entry a bounded valid lifetime. **expire-after-write:** after a defined
-lifetime, the entry can no longer be served as a normal valid hit. The cached copy is not refreshed
-merely because the clock passed; the next reader performs the load or waits for a refresh.
+TTL-based expiration gives an entry a bounded valid lifetime. **expire-after-write:** after a
+defined lifetime, the entry can no longer be served as a normal valid hit. The cached copy
+is not refreshed merely because the clock passed; the next reader performs the load or
+waits for a refresh.
 
-A TTL reduces the period during which data might be out of date. Size/weight eviction bounds
-memory and may remove useful hot entries, creating origin read bursts. A TTL shorter than the source's change rate reduces staleness but increases load; a longer TTL
-does the opposite. Jitter the expiry across keys to avoid synchronized bursts.
+A TTL reduces the period during which data might be out of date. Set the TTL from a
+duration: the maximum acceptable stale window. The source says, "When you design your
+caching strategy, decide how much staleness your application can tolerate and set
+time-to-live (TTL) values accordingly." A TTL longer than that window fails the condition.
 
-Explicit invalidation or versioned keys may be preferable when the source change must be visible
-immediately. TTL is a fit when bounded staleness is acceptable and the origin can absorb the refill
-rate.
+The source also warns about both ends of the range: "If you make it too short, objects
+expire too quickly and you reduce the benefits of using the cache. If you make the period
+too long, you risk the data becoming stale."
+
+The source also describes forced eviction: "If you allow data to remain in the cache for a
+long time, the cache might fill up. In this case, any requests to add new items to the
+cache might cause the cache to forcibly remove some items in a process known as eviction."
+It states no recovery action for eviction. Tycho guidance: monitor eviction and reload
+traffic, and size or partition the cache for the workload.
+
+For data that must be current, the source recommends an alternative: "For data that must
+be current, use shorter TTLs or bypass the cache entirely and read from the source data
+store." TTL is a fit when bounded staleness is acceptable. Tycho guidance: confirm the
+origin can absorb the reload after expiry.

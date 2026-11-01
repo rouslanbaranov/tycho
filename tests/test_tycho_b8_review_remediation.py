@@ -168,8 +168,8 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
     def test_request_reply_alternative_binding_and_quote(self):
         unit = self.units["tycho.pattern.request-reply-messaging"]
         alternative = unit["technical_evidence"]["alternative"]
-        self.assertEqual(alternative["binding"]["section"], "Request-Reply")
-        self.assertIn("does not present RPC", alternative["reason"])
+        self.assertEqual(alternative["binding"]["section"], "Related patterns")
+        self.assertIn("Related patterns", alternative["reason"])
         self.assertIn("Tycho synthesis", alternative["reason"])
         self.assertEqual(
             unit["decision_evidence"]["competing_alternative"],
@@ -367,9 +367,8 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
     def test_request_limits_state_source_supports_sharing(self):
         limits = field(self.request_owner, "Limits")
         self.assertIn(
-            "multiple outstanding requests to share a single reply channel",
-            limits)
-        self.assertIn("single reply thread", limits)
+            "matching across multiple outstanding requests", limits)
+        self.assertIn("Asynchronous Callback", limits)
         self.assertIn("matching across multiple outstanding requests", limits)
         self.assertIn("Tycho guidance", limits)
         invariant = self.units[
@@ -382,12 +381,12 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
         self.assertIn("private to the requesting thread", good)
         self.assertIn("single reply thread", good)
 
-    def test_request_reply_partial_and_other_entries_promoted(self):
-        self.assertEqual(len(self.promoted), 20)
+    def test_request_reply_and_other_entries_promoted(self):
+        self.assertEqual(len(self.promoted), 83)
         request = self.units["tycho.pattern.request-reply-messaging"]
-        self.assertNotIn("tycho.pattern.request-reply-messaging", self.promoted)
-        self.assertEqual(request["technical_coverage"], "partial-bounded")
-        self.assertEqual(request["decision_coverage"], "partial-bounded")
+        self.assertIn("tycho.pattern.request-reply-messaging", self.promoted)
+        self.assertEqual(request["technical_coverage"], "sufficient")
+        self.assertEqual(request["decision_coverage"], "sufficient")
         for pattern_id in ("tycho.pattern.claim-check", "tycho.pattern.splitter"):
             unit = self.units[pattern_id]
             self.assertIn(pattern_id, self.promoted)
@@ -513,28 +512,26 @@ class B8FinalClaimRequestSplitterReviewTests(unittest.TestCase):
             self.request_owner_raw)
         decision = field(self.request_card_raw, "Decision")
         self.assertIn(
-            "Both the Synchronous Block messaging approach and a direct Remote",
+            "Tycho synthesis: treat both the Synchronous Block messaging approach",
             decision)
-        self.assertIn("block the caller's thread", decision)
+        self.assertIn("blocking the caller's thread", decision)
         self.assertIn("Tycho synthesis: prefer a direct synchronous", decision)
 
     def test_request_alternative_state_is_partial_for_blocking_premise(self):
         unit = self.units["tycho.pattern.request-reply-messaging"]
         alternative = unit["technical_evidence"]["alternative"]
-        self.assertEqual(alternative["state"], "partial")
-        self.assertIn("Only the blocking premise is source-supported",
-                      alternative["reason"])
+        self.assertEqual(alternative["state"], "supported")
+        self.assertIn("Messaging page", alternative["reason"])
         self.assertIn("Tycho synthesis", alternative["reason"])
         card_alternative = field(
             self.request_card_raw, "Competing alternative")
         self.assertIn(
-            "Both this direct call and the Synchronous Block messaging approach",
-            card_alternative)
+            "bound Messaging page names the RPI pattern", card_alternative)
         self.assertEqual(
             unit["decision_evidence"]["competing_alternative"],
             card_alternative)
         limits = field(self.request_owner_raw, "Limits")
-        self.assertIn("Synchronous Block messaging and RPC block the caller", limits)
+        self.assertIn("does not present Block messaging and RPI", limits)
         self.assertIn("Tycho synthesis", limits)
 
 

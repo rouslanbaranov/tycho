@@ -32,17 +32,21 @@ evidence_scope:
     - "src.enterprise-integration"
     - "src.camel"
     - "src.aws-scatter-gather"
+    - "src.microsoft-cloud-patterns"
+    - "src.aws-sqs-dlq"
+    - "src.azure-service-bus-dlq"
+    - "src.hookdeck-dlq-alternatives"
   claim_ids: []
   status: "source-linked"
   notes: "All 20 cards cite read units; owner links are bounded sections, not dedicated EIP pages."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-30"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-29"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C03 — Messaging and event-driven integration
@@ -333,76 +337,11 @@ documentation, not benchmarks.
 
 ### Scatter-Gather
 
-**Identity.** Scatter-Gather; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should one request be broadcast to several recipients and their
-responses combined?
-
-**Good-fit conditions.** Recipients are known or discoverable; partial responses are
-acceptable; per-recipient deadlines exist; the aggregate is bounded. Tycho guidance, not
-a source claim: define a response contract and a quorum or completeness rule, and assign
-a straggler policy to an owner.
-
-**Hard contraindications.** Reject when one authoritative recipient suffices, when
-responses are not comparable, when the aggregate must be globally consistent, or when
-tail latency would exceed the caller's budget. Tycho guidance: fan-out that can exhaust
-the caller is also a contraindication.
-
-**Competing alternative.** Tycho synthesis: a standalone aggregator fits when responses
-already exist and no broadcast is needed. Reverse the choice when only already-produced
-responses must be combined.
-
-**Failure and recovery.** Slow or missing recipients dominate tail latency; verify
-deadlines and partial results in the owner section.
-
-**Technical owner.** [Scatter-Gather](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#scatter-gather) — fan-out/fan-in deadline is bounded; the source states incomplete-response and timeout-ignore behavior; partial-result, failure and cancellation policy is Tycho guidance.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-scatter.2026-10-21: three H2 examples; Problem and
-Solution are unheaded, and the page is publisher-abridged.
-[src.aws-scatter-gather](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.aws-scatter-gather.2026-10-28: the Intent section defines the
-broadcast-and-aggregate pattern and the scatter-by-auction section calls the aggregator
-another messaging pattern. The sources are public documentation, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Aggregator; Splitter; Hedged Requests; API Composition.
+See the [dedicated Scatter-Gather card](scatter-gather.md).
 
 ### Dead Letter Channel / DLQ
 
-**Identity.** Dead Letter Channel / DLQ; family Messaging and event-driven integration;
-kind messaging-pattern; priority core.
-
-**Decision question.** Should messages that cannot be processed be isolated in a
-dead-letter channel?
-
-**Good-fit conditions.** Failure is observable; poison messages have an owner and replay
-policy; retention and access are bounded; alerting is defined.
-
-**Hard contraindications.** Reject when failures are transient and immediate retry is
-safe, when no one owns the DLQ, or when dead-lettering hides a programming error.
-
-**Competing alternative.** Bounded retry with backoff, then alert and stop. Reverse the
-choice when replay is frequent and needs automated policy.
-
-**Failure and recovery.** DLQ growth and silent abandonment are common; verify poison-work
-policy in the owner section.
-
-**Technical owner.** [Dead Letter Channel / DLQ](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#dead-letter-channel-dlq) — poison-work policy is bounded, not a full DLQ operations manual.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-dlq.2026-10-21: served problem/solution; publisher-abridged. The
-source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Retry with Exponential Backoff; Idempotent Receiver; Workflow
-Failure; Audit Trail.
+See the [dedicated Dead Letter Channel / DLQ card](dead-letter-channel.md).
 
 ### Durable Subscriber
 
@@ -438,36 +377,7 @@ unit, not a benchmark.
 
 ### Idempotent Receiver
 
-**Identity.** Idempotent Receiver; family Messaging and event-driven integration; kind
-messaging-pattern; priority core.
-
-**Decision question.** Should the receiver detect duplicate deliveries and avoid duplicate
-effects?
-
-**Good-fit conditions.** Messages carry stable identity; effect and identity are recorded
-atomically; retention covers the redelivery window; concurrent duplicates are handled.
-
-**Hard contraindications.** Reject when the effect is naturally idempotent, when identity
-is unstable, or when deduplication state cannot be retained.
-
-**Competing alternative.** Natural idempotency or a transactional inbox. Reverse the
-choice when identity retention and lookup cost exceed duplicate risk.
-
-**Failure and recovery.** Identity collisions and retention expiry create duplicate
-effects; verify dedup authority in the owner section.
-
-**Technical owner.** [Idempotent Receiver](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md#idempotent-receiver) — deduplication authority is bounded, not a complete idempotent-receiver recipe.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-idempotent.2026-10-21: served problem/solution; publisher-abridged.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Point-to-Point Queue; Transactional Inbox; Idempotency Key; Retry
-with Exponential Backoff.
+See the [dedicated Idempotent Receiver card](idempotent-receiver.md).
 
 ### Resequencer
 

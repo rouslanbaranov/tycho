@@ -25,17 +25,21 @@ route_hints:
     - "invariants"
     - "isolation"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.postgresql"
+    - "src.oracle-distributed-transactions"
+    - "src.microservices-patterns"
+    - "src.microsoft-cloud-patterns"
   claim_ids: []
-  status: "unknown"
+  status: "source-linked"
   notes: "Bounded question from tycho.page.3c78e2b17ac74973b2ae658977843c2a; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-30"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -130,11 +134,39 @@ abort decision that the participants apply while holding prepared state. No part
 before the coordinator's durable decision, and the decision must survive coordinator failure for
 prepared participants to recover.
 
-A coordinator crash after prepare leaves participants holding locks with an unknown outcome;
-recovery depends on a durable decision log and an explicit resolution procedure. A saga with
-compensating actions avoids prepared locks at the cost of visible intermediate states and non-atomic
-business outcomes; prefer 2PC when participants can hold locks and atomic durability is required.
-A single local transaction is preferable when every resource shares one database.
+**Failure and recovery.** A failure during two-phase commit leaves the transaction in doubt.
+Oracle's documentation states that "A transaction becomes in-doubt if the two-phase commit
+mechanism fails." and that prepared nodes "wait until a COMMIT or ROLLBACK request is received from
+the global coordinator". Prepared state is recorded in redo logs "so that it can subsequently
+either commit or roll back the transaction, regardless of intervening failures"; at the commit
+point, "the commit point log contains a record of the commit". Until resolution, "the data is
+locked for both reads and writes". PostgreSQL likewise stores prepared state on disk, warns that
+the transaction "continues to hold whatever locks it held", and expects an external transaction
+manager to track prepared transactions and close them out. The coordinator-crash scenario is
+Tycho's reading of those documented roles; the pages describe product behavior, not a portable
+recovery algorithm.
 
-**Limits.** Prepared locks block resources, coordinator recovery is a single point and
-participant heterogeneity is costly; a saga avoids locks but not compensation complexity.
+**Alternative.** A saga sequences local transactions and compensates completed steps rather than
+coordinating prepared state. The public Saga pattern says "2PC is not an option" in its
+microservice context and defines a saga in which "the changes made by the completed steps are
+undone by compensating transactions". Its drawbacks are a "Lack of automatic rollback" and a
+"Lack of isolation"; its examples create an Order in a PENDING state, a visible intermediate
+state that a later step approves or rejects. Compensating transactions "might not always
+succeed, which can leave the system in an inconsistent state". That a saga avoids prepared locks
+and that a single local transaction is preferable when every resource shares one database are
+Tycho guidance, not statements in these pages.
+
+**Limits.** Prepared locks block resources, coordinator recovery is a single point and participant
+heterogeneity is costly; a saga avoids locks but not compensation complexity.
+
+**Source boundary.** Failure and recovery: Oracle, *Distributed Transactions Concepts*, Release 26,
+"Prepare Phase", "Commit Point Site" and "In-Doubt Transactions", canonical text SHA-256
+`509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25`; PostgreSQL 18,
+*PREPARE TRANSACTION*, Description and Notes, canonical text SHA-256
+`8cf69b9a6e4e0d7f2318a05bb054f6ca67e6a486e564d892db4f858835aa0bd5`. Alternative:
+microservices.io, *Saga*, Forces, Solution, Resulting context and choreography example, revision
+`54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047`; Microsoft Learn,
+*Saga distributed transactions pattern*, Problems and considerations, revision
+`84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca`. The pages describe
+product or vendor-specific behavior; no runtime test, benchmark or portable recovery algorithm is
+claimed.
