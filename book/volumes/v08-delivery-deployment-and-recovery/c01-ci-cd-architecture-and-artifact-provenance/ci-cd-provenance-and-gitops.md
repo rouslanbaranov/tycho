@@ -179,7 +179,7 @@ the pipeline already holds deployment authority, or when no reconciler owner exi
 rule is Tycho guidance, not a source claim. GitOps fits when the environment can be reconciled from
 a reviewable repository.
 
-**Sources and limits.** Proposed 2026-11-01 records bind OpenGitOps *GitOps Principles v1.0.0* (tag
+**Sources and limits.** The 2026-11-01 records bind OpenGitOps *GitOps Principles v1.0.0* (tag
 `v1.0.0`); Argo CD *Automated Sync Policy*, *Diffing Customization*, *Best Practices*, *Security*
 and *High Availability* read through the moving `stable` alias; and Flux *Core Concepts*,
 *Kustomization*, *GitRepository* and *Prometheus metrics*. Read records:

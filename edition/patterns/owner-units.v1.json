@@ -14395,56 +14395,293 @@
         "mechanism": {
           "state": "supported",
           "quote": "GitOps treats a versioned desired-state repository as reviewed intent.",
-          "reason": "Defines the mechanism.",
+          "reason": "OpenGitOps requires declarative, versioned and automatically pulled desired state; Argo CD compares manifests in Git with live state; Flux describes an automated process that matches the deployed environment to the repository.",
           "binding": {
             "source_id": "src.opengitops",
-            "ledger_record": "read.batch5-opengitops.2026-10-21",
+            "ledger_record": "read.opengitops-principles.2026-11-01",
             "section": "Pulled Automatically",
             "quote": "Software agents automatically pull the desired state declarations from the source.",
-            "revision": "61eb24afa22a5717ddbbc8941e2c10ec4cc2d3b5d7f6f59a407e1a337ed339fe"
-          }
+            "revision": "543c25108834b745be6805551e537b64a2a2606ef5e482fb70965ad415447ccb"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.opengitops",
+              "ledger_record": "read.opengitops-principles.2026-11-01",
+              "section": "Versioned and Immutable",
+              "quote": "Desired state is stored in a way that enforces immutability, versioning and retains a complete version history.",
+              "revision": "543c25108834b745be6805551e537b64a2a2606ef5e482fb70965ad415447ccb"
+            },
+            {
+              "source_id": "src.opengitops",
+              "ledger_record": "read.opengitops-principles.2026-11-01",
+              "section": "Declarative",
+              "quote": "A system managed by GitOps must have its desired state expressed declaratively.",
+              "revision": "543c25108834b745be6805551e537b64a2a2606ef5e482fb70965ad415447ccb"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-auto-sync.2026-11-01",
+              "section": "Automated Sync Policy",
+              "quote": "Argo CD has the ability to automatically sync an application when it detects differences between the desired manifests in Git, and the live state in the cluster.",
+              "revision": "a040e013515b199f0dd55d9a17eed3787c1caa0db350fcfd52742508ffde1311"
+            },
+            {
+              "source_id": "src.flux",
+              "ledger_record": "read.flux-concepts.2026-11-01",
+              "section": "GitOps",
+              "quote": "GitOps is a way of managing your infrastructure and applications so that whole system is described declaratively and version controlled, and having an automated process that ensures that the deployed environment matches the state specified in one or more Git repositories.",
+              "revision": "dafb61f8bdef5a405d332a184592fc90662acd2accb1904a613950d5f82d7a5b"
+            }
+          ]
         },
         "invariant": {
           "state": "supported",
           "quote": "Rollback is a revert commit, which needs a linear, reviewable history and an immutable artifact reference.",
-          "reason": "States the invariant.",
+          "reason": "OpenGitOps requires versioned and immutable desired state; Argo CD disables rollback under automated sync and recommends a Git tag or commit SHA; Flux can verify commit signatures against trusted keys.",
           "binding": {
             "source_id": "src.opengitops",
-            "ledger_record": "read.batch5-opengitops.2026-10-21",
+            "ledger_record": "read.opengitops-principles.2026-11-01",
             "section": "Versioned and Immutable",
             "quote": "Desired state is stored in a way that enforces immutability, versioning and retains a complete version history.",
-            "revision": "61eb24afa22a5717ddbbc8941e2c10ec4cc2d3b5d7f6f59a407e1a337ed339fe"
-          }
+            "revision": "543c25108834b745be6805551e537b64a2a2606ef5e482fb70965ad415447ccb"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-auto-sync.2026-11-01",
+              "section": "Automated Sync Semantics",
+              "quote": "Rollback cannot be performed against an application with automated sync enabled.",
+              "revision": "a040e013515b199f0dd55d9a17eed3787c1caa0db350fcfd52742508ffde1311"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-best-practices.2026-11-01",
+              "section": "Ensuring Manifests At Git Revisions Are Truly Immutable",
+              "quote": "A better version would be to use a Git tag or commit SHA.",
+              "revision": "f437ee2827494dc5da1bd1834ebb9479466234f2d52ffe4ea5d581b674653fed"
+            },
+            {
+              "source_id": "src.flux",
+              "ledger_record": "read.flux-gitrepository.2026-11-01",
+              "section": "Verification",
+              "quote": ".spec.verify is an optional field to enable the verification of Git commit signatures.",
+              "revision": "98680148d8d9f5ad57991ab20953187cb2ca90b0dbd34ea6fae0b583c12dc978"
+            },
+            {
+              "source_id": "src.flux",
+              "ledger_record": "read.flux-gitrepository.2026-11-01",
+              "section": "Verification",
+              "quote": "Containing the public keys of trusted Git authors.",
+              "revision": "98680148d8d9f5ad57991ab20953187cb2ca90b0dbd34ea6fae0b583c12dc978"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Controller outage, drift, repository compromise and stale artifact references are common",
-          "reason": "Local representation is landing plus four principles; no controller outage or drift recovery."
+          "state": "supported",
+          "quote": "Controller outage, drift, repository compromise and stale artifact references are the common failures: reconciliation is periodic and controller-driven, a green sync does not prove convergence, failed syncs are not retried against the same revision, and a trusted repository is a deployment path.",
+          "reason": "Argo CD can be OutOfSync immediately after a successful sync because a controller or webhook changes the object; automated sync does not reattempt the same failed revision and cannot roll back while enabled; the repo-server caches generated manifests and remote bases can change without a repo change; write access to a trusted repository lets an attacker deploy malicious images or prune live resources; Flux reverts direct cluster edits and pauses drift correction only when suspended. The controller-outage consequence and the runbook are Tycho guidance.",
+          "binding": {
+            "source_id": "src.argocd",
+            "ledger_record": "read.argocd-diffing.2026-11-01",
+            "section": "Diffing Customization",
+            "quote": "It is possible for an application to be OutOfSync even immediately after a successful Sync operation.",
+            "revision": "0bed4b0a57fc14884b69801d2509727941a01986e49c80407b50ba8e806c4d59"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-diffing.2026-11-01",
+              "section": "Diffing Customization",
+              "quote": "A controller or mutating webhook is altering the object after it was submitted to Kubernetes so it differs from the one in Git.",
+              "revision": "0bed4b0a57fc14884b69801d2509727941a01986e49c80407b50ba8e806c4d59"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-auto-sync.2026-11-01",
+              "section": "Automated Sync Semantics",
+              "quote": "Automatic sync will not reattempt a sync if the previous sync attempt against the same commit-SHA and parameters had failed.",
+              "revision": "a040e013515b199f0dd55d9a17eed3787c1caa0db350fcfd52742508ffde1311"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-auto-sync.2026-11-01",
+              "section": "Automated Sync Semantics",
+              "quote": "Rollback cannot be performed against an application with automated sync enabled.",
+              "revision": "a040e013515b199f0dd55d9a17eed3787c1caa0db350fcfd52742508ffde1311"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-auto-sync.2026-11-01",
+              "section": "Automatic Pruning",
+              "quote": "To prune the resources, a manual sync can always be performed (with pruning checked).",
+              "revision": "a040e013515b199f0dd55d9a17eed3787c1caa0db350fcfd52742508ffde1311"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-ha.2026-11-01",
+              "section": "argocd-repo-server",
+              "quote": "Argo CD assumes by default that manifests only change when the repo changes, so it caches the generated manifests (for 24h by default).",
+              "revision": "b7656c3fe3d19c8f9300d218059cde6fe04f31d4e71da8f9224a1bdce80e64ad"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-ha.2026-11-01",
+              "section": "argocd-repo-server",
+              "quote": "With Kustomize remote bases, or in case a Helm chart gets changed without bumping its version number, the expected manifests can change even though the repo has not changed.",
+              "revision": "b7656c3fe3d19c8f9300d218059cde6fe04f31d4e71da8f9224a1bdce80e64ad"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-ha.2026-11-01",
+              "section": "argocd-application-controller",
+              "quote": "The controller polls Git every 3m by default.",
+              "revision": "b7656c3fe3d19c8f9300d218059cde6fe04f31d4e71da8f9224a1bdce80e64ad"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-security.2026-11-01",
+              "section": "Git & Helm Repositories",
+              "quote": "gaining unauthorized write access to a git repository trusted by Argo CD will have serious security implications",
+              "revision": "fff8363f607b7968fb032a30660cd17c94bf9bfc9cfcbb22263f39653da88c3d"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-security.2026-11-01",
+              "section": "Unauthorized Deployments",
+              "quote": "an attacker with access to a trusted git repo would be able to affect the Kubernetes resources which are deployed.",
+              "revision": "fff8363f607b7968fb032a30660cd17c94bf9bfc9cfcbb22263f39653da88c3d"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-security.2026-11-01",
+              "section": "Unauthorized Deployments",
+              "quote": "an attacker could update the deployment manifest deploy malicious container images to the environment, or delete resources in git causing them to be pruned in the live environment.",
+              "revision": "fff8363f607b7968fb032a30660cd17c94bf9bfc9cfcbb22263f39653da88c3d"
+            },
+            {
+              "source_id": "src.flux",
+              "ledger_record": "read.flux-concepts.2026-11-01",
+              "section": "Kustomization",
+              "quote": "If you make any changes to the cluster using kubectl edit/patch/delete, they will be promptly reverted. You either suspend the reconciliation or push your changes to a Git repository.",
+              "revision": "dafb61f8bdef5a405d332a184592fc90662acd2accb1904a613950d5f82d7a5b"
+            },
+            {
+              "source_id": "src.flux",
+              "ledger_record": "read.flux-monitoring.2026-11-01",
+              "section": "Resource metrics",
+              "quote": "ready shows the readiness of the resource.",
+              "revision": "64f28e79497797a2088aed2a3a0cc2e1d00fea20dff408ddb4edd4eed6f30160"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A pipeline-driven deployment, manual release or imperative operator may be preferable when imperative one-off changes dominate or no reconciler owner exists.",
-          "reason": "Local representation has no pipeline-driven, manual or imperative alternative."
+          "state": "supported",
+          "quote": "A pipeline that applies directly remains a valid deployment model, a manual sync remains available for pruning, and an imperative change is sometimes deliberate:",
+          "reason": "Argo CD says automatic sync removes the pipeline need for direct API access and that the pipeline instead commits to Git; a manual sync remains available; Argo CD recommends leaving room for imperativeness; Flux documents a registry-backed Gitless model. The selection rule is Tycho guidance.",
+          "binding": {
+            "source_id": "src.argocd",
+            "ledger_record": "read.argocd-auto-sync.2026-11-01",
+            "section": "Automated Sync Policy",
+            "quote": "CI/CD pipelines no longer need direct access to the Argo CD API server to perform the deployment.",
+            "revision": "a040e013515b199f0dd55d9a17eed3787c1caa0db350fcfd52742508ffde1311"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-auto-sync.2026-11-01",
+              "section": "Automated Sync Policy",
+              "quote": "Instead, the pipeline makes a commit and push to the Git repository with the changes to the manifests in the tracking Git repo.",
+              "revision": "a040e013515b199f0dd55d9a17eed3787c1caa0db350fcfd52742508ffde1311"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-auto-sync.2026-11-01",
+              "section": "Automatic Pruning",
+              "quote": "To prune the resources, a manual sync can always be performed (with pruning checked).",
+              "revision": "a040e013515b199f0dd55d9a17eed3787c1caa0db350fcfd52742508ffde1311"
+            },
+            {
+              "source_id": "src.argocd",
+              "ledger_record": "read.argocd-best-practices.2026-11-01",
+              "section": "Leaving Room For Imperativeness",
+              "quote": "It may be desired to leave room for some imperativeness/automation, and not have everything defined in your Git manifests.",
+              "revision": "f437ee2827494dc5da1bd1834ebb9479466234f2d52ffe4ea5d581b674653fed"
+            },
+            {
+              "source_id": "src.flux",
+              "ledger_record": "read.flux-concepts.2026-11-01",
+              "section": "Gitless GitOps",
+              "quote": "In the Gitless GitOps model, the Flux controllers are fully decoupled from Git, relying solely on container registries as the source of truth for the desired state of Kubernetes clusters.",
+              "revision": "dafb61f8bdef5a405d332a184592fc90662acd2accb1904a613950d5f82d7a5b"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "gitops",
         "question": "Should desired state be versioned and reconciled automatically from a Git source?",
-        "competing_alternative": "Pipeline-driven deployment or manual release. Reverse the choice when reconciliation latency/ownership exceeds audit benefit.",
+        "competing_alternative": "Pipeline-driven deployment, a manual sync or imperative changes. Argo CD records that automatic sync removes the pipeline's need for direct API access, that a manual sync remains available, and that some imperativeness may stay outside Git; Flux documents a registry-backed Gitless model. Reverse the choice when imperative changes dominate, the pipeline already holds deployment authority, or no reconciler owner exists; that rule is Tycho synthesis.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch5-opengitops.2026-10-21",
+        "ledger_record": "read.opengitops-principles.2026-11-01",
         "source_id": "src.opengitops",
         "unit_type": "specification",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.argocd",
+            "ledger_record": "read.argocd-auto-sync.2026-11-01",
+            "revision": "a040e013515b199f0dd55d9a17eed3787c1caa0db350fcfd52742508ffde1311"
+          },
+          {
+            "source_id": "src.argocd",
+            "ledger_record": "read.argocd-diffing.2026-11-01",
+            "revision": "0bed4b0a57fc14884b69801d2509727941a01986e49c80407b50ba8e806c4d59"
+          },
+          {
+            "source_id": "src.argocd",
+            "ledger_record": "read.argocd-best-practices.2026-11-01",
+            "revision": "f437ee2827494dc5da1bd1834ebb9479466234f2d52ffe4ea5d581b674653fed"
+          },
+          {
+            "source_id": "src.argocd",
+            "ledger_record": "read.argocd-security.2026-11-01",
+            "revision": "fff8363f607b7968fb032a30660cd17c94bf9bfc9cfcbb22263f39653da88c3d"
+          },
+          {
+            "source_id": "src.argocd",
+            "ledger_record": "read.argocd-ha.2026-11-01",
+            "revision": "b7656c3fe3d19c8f9300d218059cde6fe04f31d4e71da8f9224a1bdce80e64ad"
+          },
+          {
+            "source_id": "src.flux",
+            "ledger_record": "read.flux-concepts.2026-11-01",
+            "revision": "dafb61f8bdef5a405d332a184592fc90662acd2accb1904a613950d5f82d7a5b"
+          },
+          {
+            "source_id": "src.flux",
+            "ledger_record": "read.flux-kustomization.2026-11-01",
+            "revision": "a9c5aa15a1306a073aca397e7211775077f135e1d291757447b2268bb760cd3d"
+          },
+          {
+            "source_id": "src.flux",
+            "ledger_record": "read.flux-gitrepository.2026-11-01",
+            "revision": "98680148d8d9f5ad57991ab20953187cb2ca90b0dbd34ea6fae0b583c12dc978"
+          },
+          {
+            "source_id": "src.flux",
+            "ledger_record": "read.flux-monitoring.2026-11-01",
+            "revision": "64f28e79497797a2088aed2a3a0cc2e1d00fea20dff408ddb4edd4eed6f30160"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Four dimensions bound 2026-11-01 to OpenGitOps principles v1.0.0, Argo CD auto-sync, diffing, best practices, security and high availability, and Flux concepts, Kustomization, GitRepository and Prometheus metrics; the controller-outage consequence and selection rule remain Tycho; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.immutable-infrastructure",
@@ -17555,8 +17792,8 @@
     "embedded_units": 0,
     "mechanism_supported": 124,
     "invariant_supported": 96,
-    "failure_recovery_supported": 91,
-    "alternative_supported": 95,
+    "failure_recovery_supported": 92,
+    "alternative_supported": 96,
     "technical_partial_bounded": 15,
     "technical_partial": 51,
     "technical_name_only": 0,

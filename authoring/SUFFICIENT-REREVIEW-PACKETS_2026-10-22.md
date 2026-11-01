@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 41 |
+| Reviewed by independent agent | 40 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 94, "reviewed-by-independent-agent": 41}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 95, "reviewed-by-independent-agent": 40}.
 
 ## Review procedure
 
@@ -283,7 +283,7 @@ blank verdict template in the machine-readable file.
 
 - **GitOps**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Graceful Degradation**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

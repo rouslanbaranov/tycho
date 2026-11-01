@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-31",
+  "updated": "2026-11-01",
   "scope": "Foundation reading batch for E17 Phase 2. Complete public units inspected; no child pages or independent review claimed.",
   "records": [
     {
@@ -4389,7 +4389,9 @@
       "content_sha256": "61eb24afa22a5717ddbbc8941e2c10ec4cc2d3b5d7f6f59a407e1a337ed339fe",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
-      "status": "read"
+      "status": "read",
+      "citation_status": "intentionally-unused",
+      "citation_note": "Retained landing-page context for the earlier OpenGitOps read; the current binding uses read.opengitops-principles.2026-11-01."
     },
     {
       "id": "read.batch5-geode.2026-10-21",
@@ -13486,6 +13488,424 @@
       "limitations": "A section overview; the single-tenant and multitenant stamp trade-offs are stated, but service-level implementation details were not read.",
       "content_sha256": "a9575f30cd494c541772bafbeee1bc025d65c7b7ef03f19f8f1f3fd193adc4be",
       "read_scope": "the article body, excluding linked service-specific pages and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.opengitops-principles.2026-11-01",
+      "source_id": "src.opengitops",
+      "unit_url": "https://raw.githubusercontent.com/open-gitops/documents/v1.0.0/PRINCIPLES.md",
+      "unit_label": "OpenGitOps — GitOps Principles v1.0.0",
+      "unit_type": "specification",
+      "access_method": "public HTTPS GET on 2026-11-01; raw Markdown inspected; two fetches byte-identical",
+      "sections_read": [
+        "Declarative",
+        "Versioned and Immutable",
+        "Pulled Automatically",
+        "Continuously Reconciled"
+      ],
+      "sections_not_read": [
+        "linked GLOSSARY and guidance pages"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Creative Commons Attribution 4.0 (LICENSE.md at tag v1.0.0); cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "desired state is expressed declaratively",
+        "desired state is stored with immutability, versioning and a complete version history",
+        "software agents automatically pull desired state declarations from the source",
+        "software agents continuously observe actual state and attempt to apply desired state"
+      ],
+      "claims_not_supported": [
+        "controller behavior",
+        "failure mode",
+        "recovery procedure",
+        "implementation guidance"
+      ],
+      "limitations": "Short principles document; it states no controller behavior, failure mode, recovery procedure or implementation guidance.",
+      "content_sha256": "543c25108834b745be6805551e537b64a2a2606ef5e482fb70965ad415447ccb",
+      "read_scope": "the full PRINCIPLES.md v1.0.0 document, excluding linked GLOSSARY and guidance pages",
+      "access_date": "2026-11-01",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.argocd-auto-sync.2026-11-01",
+      "source_id": "src.argocd",
+      "unit_url": "https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/",
+      "unit_label": "Automated Sync Policy — Argo CD",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-11-01; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "Automated Sync Policy",
+        "Automatic Pruning",
+        "Automatic Self-Healing",
+        "Automatic Retry with a limit",
+        "Automated Sync Semantics"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images",
+        "examples outside the page"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "automatic sync reconciles an application when desired manifests in Git differ from live cluster state",
+        "automatic sync removes the pipeline need for direct API-server access because the pipeline commits to Git",
+        "changes made directly to the live cluster do not trigger automated sync by default",
+        "automatic sync does not reattempt a sync for the same failed commit SHA and parameters",
+        "rollback cannot be performed against an application with automated sync enabled",
+        "the automatic sync interval is controlled by timeout.reconciliation and defaults to 120s with up to 60s jitter"
+      ],
+      "claims_not_supported": [
+        "controller outage behavior",
+        "drift frequency",
+        "implementation benchmark"
+      ],
+      "limitations": "Vendor documentation for one controller; it describes intended behavior, not an outage or failure drill. The stable alias is not a version pin; the ETag, Last-Modified and canonical hash pin this representation.",
+      "content_sha256": "a040e013515b199f0dd55d9a17eed3787c1caa0db350fcfd52742508ffde1311",
+      "read_scope": "the full served page, excluding linked pages and examples outside the page",
+      "access_date": "2026-11-01",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.argocd-diffing.2026-11-01",
+      "source_id": "src.argocd",
+      "unit_url": "https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/",
+      "unit_label": "Diffing Customization — Argo CD",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-11-01; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "Diffing Customization",
+        "Application Level Configuration",
+        "System-Level Configuration"
+      ],
+      "sections_not_read": [
+        "linked Kubernetes issues",
+        "source code",
+        "images"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "an application can be OutOfSync even immediately after a successful sync",
+        "a controller or mutating webhook can alter an object after submission so it differs from Git",
+        "diffing customization can ignore fields when comparing desired and live state"
+      ],
+      "claims_not_supported": [
+        "drift frequency",
+        "outage behavior",
+        "implementation benchmark"
+      ],
+      "limitations": "Explains why drift is observed and how to ignore fields; it does not measure drift frequency or an outage.",
+      "content_sha256": "0bed4b0a57fc14884b69801d2509727941a01986e49c80407b50ba8e806c4d59",
+      "read_scope": "the full served page, excluding linked issues, source code and images",
+      "access_date": "2026-11-01",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.argocd-best-practices.2026-11-01",
+      "source_id": "src.argocd",
+      "unit_url": "https://argo-cd.readthedocs.io/en/stable/user-guide/best_practices/",
+      "unit_label": "Best Practices — Argo CD",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-11-01; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "Best Practices",
+        "Separating Config Vs. Source Code Repositories",
+        "Leaving Room For Imperativeness",
+        "Ensuring Manifests At Git Revisions Are Truly Immutable"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "manifests can change meaning from one day to the next when a moving reference is used",
+        "a Git tag or commit SHA is a better pinned reference than a moving remote base",
+        "some imperativeness or automation may deliberately remain outside Git manifests"
+      ],
+      "claims_not_supported": [
+        "moving-base test",
+        "imperative-change experiment",
+        "implementation benchmark"
+      ],
+      "limitations": "Guidance, not a rule; it does not test a moving base or an imperative change.",
+      "content_sha256": "f437ee2827494dc5da1bd1834ebb9479466234f2d52ffe4ea5d581b674653fed",
+      "read_scope": "the full served page, excluding linked pages and images",
+      "access_date": "2026-11-01",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.argocd-security.2026-11-01",
+      "source_id": "src.argocd",
+      "unit_url": "https://argo-cd.readthedocs.io/en/stable/operator-manual/security/",
+      "unit_label": "Security — Argo CD",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-11-01; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "Security",
+        "Git & Helm Repositories",
+        "Unauthorized Deployments",
+        "Remote bases and helm chart dependencies",
+        "Secrets",
+        "External Cluster Credentials",
+        "Cluster RBAC"
+      ],
+      "sections_not_read": [
+        "linked hardening guides",
+        "source code",
+        "images"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "gaining unauthorized write access to a Git repository trusted by Argo CD has serious security implications",
+        "an attacker with access to a trusted Git repository can affect deployed Kubernetes resources",
+        "an attacker could deploy malicious container images or delete resources so they are pruned from the live environment"
+      ],
+      "claims_not_supported": [
+        "exercised compromise",
+        "detection measurement",
+        "recovery measurement"
+      ],
+      "limitations": "States trust implications, not an exercised compromise; the page does not measure detection or recovery.",
+      "content_sha256": "fff8363f607b7968fb032a30660cd17c94bf9bfc9cfcbb22263f39653da88c3d",
+      "read_scope": "the full served page, excluding linked hardening guides, source code and images",
+      "access_date": "2026-11-01",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.argocd-ha.2026-11-01",
+      "source_id": "src.argocd",
+      "unit_url": "https://argo-cd.readthedocs.io/en/stable/operator-manual/high_availability/",
+      "unit_label": "High Availability — Argo CD",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-11-01; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "High Availability",
+        "Scaling Up",
+        "argocd-repo-server",
+        "argocd-application-controller",
+        "Monorepo Scaling Considerations",
+        "Use Fully Qualified Git References"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "source code",
+        "images"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Argo CD is largely stateless",
+        "HA manifests are provided for users who wish to run Argo CD in a highly available manner",
+        "the repo-server caches generated manifests for 24h by default",
+        "remote bases or an unversioned Helm chart can change expected manifests without a repository change",
+        "the application controller polls Git every 3m by default"
+      ],
+      "claims_not_supported": [
+        "controller-outage drill",
+        "outage-halts-reconciliation statement",
+        "implementation benchmark"
+      ],
+      "limitations": "Describes availability and performance mechanics, not a controller-outage drill; it does not state that an outage halts reconciliation.",
+      "content_sha256": "b7656c3fe3d19c8f9300d218059cde6fe04f31d4e71da8f9224a1bdce80e64ad",
+      "read_scope": "the full served page, excluding linked pages, source code and images",
+      "access_date": "2026-11-01",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.flux-concepts.2026-11-01",
+      "source_id": "src.flux",
+      "unit_url": "https://fluxcd.io/flux/concepts/",
+      "unit_label": "Core Concepts — Flux",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-11-01; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "GitOps",
+        "Gitless GitOps",
+        "GitOps Toolkit (gotk)",
+        "Sources",
+        "Reconciliation",
+        "Kustomization",
+        "Bootstrap",
+        "Continuous Delivery",
+        "Continuous Deployment",
+        "Progressive Delivery"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "GitOps describes a system declaratively and version controlled with an automated process that matches the deployed environment to the repository",
+        "reconciliation ensures a given state matches a desired state declared somewhere",
+        "the reconciliation runs every five minutes by default and can be changed with .spec.interval",
+        "direct kubectl edits are promptly reverted unless reconciliation is suspended or the change is pushed to Git",
+        "the Gitless GitOps model decouples controllers from Git and uses container registries as the source of truth"
+      ],
+      "claims_not_supported": [
+        "controller-outage behavior",
+        "drift measurement",
+        "implementation benchmark"
+      ],
+      "limitations": "A concepts page; its five-minute default is illustrative and configurable, and it states no outage behavior.",
+      "content_sha256": "dafb61f8bdef5a405d332a184592fc90662acd2accb1904a613950d5f82d7a5b",
+      "read_scope": "the full served page, excluding linked pages and images",
+      "access_date": "2026-11-01",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.flux-kustomization.2026-11-01",
+      "source_id": "src.flux",
+      "unit_url": "https://fluxcd.io/flux/components/kustomize/kustomizations/",
+      "unit_label": "Kustomization — Flux",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-11-01; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "Kustomization",
+        "Example",
+        "Writing a Kustomization spec",
+        "Source reference",
+        "Prune",
+        "Interval",
+        "Retry interval",
+        "Path",
+        "Target namespace",
+        "Suspend",
+        "Health checks",
+        "Dependencies"
+      ],
+      "sections_not_read": [
+        "linked API reference pages",
+        "source code",
+        "images"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "every ten minutes the Kustomization runs a server-side apply dry-run to detect and correct drift",
+        "the reconciliation interval is configurable and corrects existing drift in the process",
+        "suspending a Kustomization pauses new revisions and drift detection/correction",
+        ".spec.retryInterval specifies the interval at which to retry a failed reconciliation"
+      ],
+      "claims_not_supported": [
+        "outage behavior",
+        "drift measurement",
+        "implementation benchmark"
+      ],
+      "limitations": "Documents controller behavior and configuration, not an outage or drift measurement; the page is large and only the named sections were used.",
+      "content_sha256": "a9c5aa15a1306a073aca397e7211775077f135e1d291757447b2268bb760cd3d",
+      "read_scope": "the full served page, excluding linked API references, source code and images",
+      "access_date": "2026-11-01",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.flux-gitrepository.2026-11-01",
+      "source_id": "src.flux",
+      "unit_url": "https://fluxcd.io/flux/components/source/gitrepositories/",
+      "unit_label": "Git Repositories — Flux",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-11-01; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "Git Repositories",
+        "Artifact",
+        "Secret reference",
+        "Verification",
+        "SSH verification"
+      ],
+      "sections_not_read": [
+        "linked API reference pages",
+        "source code",
+        "images"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        ".spec.verify is an optional field that enables verification of Git commit signatures",
+        "verification uses a Secret containing public keys of trusted Git authors",
+        "the GitRepository produces an artifact for a source revision"
+      ],
+      "claims_not_supported": [
+        "enforced signature default",
+        "key configuration",
+        "implementation benchmark"
+      ],
+      "limitations": "Signature verification is optional configuration, not an enforced default; no key or repository was configured.",
+      "content_sha256": "98680148d8d9f5ad57991ab20953187cb2ca90b0dbd34ea6fae0b583c12dc978",
+      "read_scope": "the full served page, excluding linked API references, source code and images",
+      "access_date": "2026-11-01",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.flux-monitoring.2026-11-01",
+      "source_id": "src.flux",
+      "unit_url": "https://fluxcd.io/flux/monitoring/metrics/",
+      "unit_label": "Flux Prometheus metrics — Flux",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-11-01; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "Flux Prometheus metrics",
+        "Controller metrics",
+        "Resource metrics",
+        "Monitoring setup",
+        "Flux Grafana dashboards"
+      ],
+      "sections_not_read": [
+        "linked example repository",
+        "dashboards",
+        "images"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Flux has native support for Prometheus metrics",
+        "these metrics can be used to monitor the Flux controllers",
+        "gotk_resource_info provides information about the current state of Flux resources",
+        "the ready label shows the readiness of the resource"
+      ],
+      "claims_not_supported": [
+        "alert thresholds",
+        "runbook",
+        "implementation benchmark"
+      ],
+      "limitations": "Lists metric names and labels; it does not prescribe alerts, thresholds or a runbook.",
+      "content_sha256": "64f28e79497797a2088aed2a3a0cc2e1d00fea20dff408ddb4edd4eed6f30160",
+      "read_scope": "the full served page, excluding the linked example repository, dashboards and images",
+      "access_date": "2026-11-01",
       "reviewer": "Automated authoring agent",
       "status": "read"
     }
