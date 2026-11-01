@@ -64,7 +64,7 @@ authority in the owner section.
 
 **Technical owner.**
  [CQRS and asynchronous projection
-freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#command-side-replica) —
+freshness](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md#command-side-replica) —
 command-side replication is bounded to the projection discussion.
 
 **Sources.**

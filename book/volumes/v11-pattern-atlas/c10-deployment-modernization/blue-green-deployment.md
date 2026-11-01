@@ -42,7 +42,7 @@ source_inspection_date: '2026-10-21'
 content_verified_at: null
 ---
 
-# Blue/Green Deployment
+# Blue-Green Deployment
 
 **Identity.** Blue/Green Deployment; family Deployment and legacy modernization; kind
 deployment-pattern; priority core.

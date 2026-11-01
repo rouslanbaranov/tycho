@@ -65,7 +65,7 @@ common; deduplicate by identity, preserve aggregate order and keep an unknown/re
 when publication is not atomic with the state change.
 
 **Technical owner.**
- [Domain Events](../../../distributed/cqrs-event-sourcing-and-projections.md#domain-events) — the
+ [Domain Events](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md#domain-events) — the
 distinction is bounded, not a domain-event catalogue.
 
 **Sources.**

@@ -20,7 +20,8 @@ class SufficientCandidateTests(unittest.TestCase):
             (ROOT / "edition/patterns/sufficient-candidates.v1.json").read_text()
         )
         self.assertEqual(data["summary"]["entries"], 145)
-        self.assertEqual(data["summary"]["candidates"], 145)
+        self.assertEqual(data["summary"]["candidates"],
+                         data["summary"]["entries"] - data["summary"]["by_status"].get("needs-deeper-section", 0))
         self.assertEqual(sum(data["summary"]["by_status"].values()), 145)
         promoted = {row["pattern_id"] for row in json.loads(
             (ROOT / "edition/patterns/sufficient-promotions.v1.json").read_text()

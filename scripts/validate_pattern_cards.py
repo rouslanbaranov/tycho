@@ -59,10 +59,12 @@ def check_card_text(text, slug):
 
 
 def check_owner_link(text, chapter_path, owner_path, owner_anchor, root=ROOT):
-    line = next((item for item in text.splitlines()
-                 if item.startswith("**Technical owner.**")), None)
-    require(line is not None, "card-owner-link-missing")
-    match = re.search(r"\]\(([^)]+)\)", line)
+    lines = text.splitlines()
+    start = next((i for i, item in enumerate(lines)
+                  if item.startswith("**Technical owner.**")), None)
+    require(start is not None, "card-owner-link-missing")
+    paragraph = "\n".join(lines[start:start + 4])
+    match = re.search(r"\]\(([^)]+)\)", paragraph)
     require(match is not None, "card-owner-link-missing")
     target = match.group(1)
     path, separator, anchor = target.partition("#")
