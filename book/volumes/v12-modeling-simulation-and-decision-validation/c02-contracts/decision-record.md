@@ -77,7 +77,9 @@ The contract contains:
 - constraints: hard, soft and non-quantitative;
 - candidates: identifier, scenario, runs, pattern identifiers and owner pages;
 - metrics: identifier, unit, direction and business-comparable flag;
-- evidence: model verification, calibration, simulation and source identifiers;
+- evidence: model verification, calibration, simulation and source identifiers. In the current
+  schema `evidence.simulation` carries the decision status by convention; it describes the
+  decision, not whether the simulation executed;
 - outcome: recommendation, rationale and non-quantitative constraints;
 - reversal triggers, limitations and pattern links.
 
