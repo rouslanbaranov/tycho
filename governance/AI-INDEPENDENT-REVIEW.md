@@ -2,14 +2,21 @@
 
 Status: mandatory for book-content and atlas-structure changes. Not required for
 tooling, tests, generated indexes, workflows, scripts or documentation. Effective:
-2026-10-26. Supersedes the human-review gate for applicable future reviews.
+2026-10-26. Clarified: 2026-11-01. Supersedes the human-review gate for applicable
+future reviews.
 
 ## Purpose
 
-When the gate applies, Tycho accepts an independent review performed by a different AI
-harness from a different vendor. A review by the authoring agent, the same harness, the
-same vendor or a subagent of the authoring session does not satisfy this rule. The gate
-applies to book content and atlas structure; tooling, tests, generated indexes, workflow
+When the gate applies, Tycho prefers an independent review by a different AI
+harness from a different vendor. If no different-vendor harness is available or
+the selected one is unavailable, a separate read-only same-vendor reviewer is
+accepted under the conditions below.
+
+The authoring agent, a self-review, a subagent that inherits or continues the
+authoring conversation, and a fork of that conversation never satisfy the gate. A
+fresh subagent with its own context is eligible only under the same-vendor
+fallback and the independence requirements below. The gate applies to book
+content and atlas structure; tooling, tests, generated indexes, workflow
 configuration, scripts and documentation do not require it.
 
 Permitted examples when the authoring session is DeepSeek Harness:
@@ -18,12 +25,15 @@ Permitted examples when the authoring session is DeepSeek Harness:
 - Claude Code (Anthropic) in a fresh checkout;
 - another external harness from a third vendor, used read-only.
 
-A fresh read-only DeepSeek Reviewer agent is an accepted external reviewer, with the same
-authority as a different-vendor harness, when no different-vendor harness is available or
-the selected one is unavailable. It must be a separate agent, not a fork of the authoring
-conversation, and must receive the same bounded prompt, schema, HEAD and artifact hashes.
-Its report is saved and indexed normally; a pass satisfies the independent review gate and
-may support promotion and owner acceptance.
+A fresh read-only same-vendor reviewer agent is an accepted external reviewer,
+with the same authority as a different-vendor harness, when no different-vendor
+harness is available or the selected one is unavailable. It must be a separate
+agent with its own context, not the authoring agent and not a fork or continuation
+of the authoring conversation. A same-vendor subagent is eligible only when it
+meets those conditions and does not see the author's conversation, conclusions or
+desired verdict. It must receive the same bounded prompt, schema, HEAD and
+artifact hashes. Its report is saved and indexed normally; a pass satisfies the
+independent review gate and may support promotion and owner acceptance.
 
 ## Reviewer discovery and selection
 
@@ -40,10 +50,12 @@ The authoring agent must locate a qualifying local CLI before preparing a hand-o
    user has selected a CLI and/or model, remember the choice for the current session and
    reuse it for later reviews; ask again only if it becomes unavailable, fails, or the
    user requests a change.
-4. If no qualifying CLI is available, use a manual hand-off through the user: provide the
-   exact self-contained prompt and receive the reviewer's raw report. If the user cannot
-   supply a qualifying review, mark the gate blocked; never substitute a same-vendor
-   model, a subagent or a self-review.
+4. If no different-vendor CLI is available, use the separate read-only same-vendor
+   fallback above. If that is unavailable, use a manual hand-off through the user:
+   provide the exact self-contained prompt and receive the reviewer's raw report. If
+   the user cannot supply a qualifying review, mark the gate blocked; never
+   substitute the authoring agent, a context-sharing subagent, a fork of the
+   conversation or a self-review.
 5. Record the discovered CLI, selection source (the user), vendor, model, version,
    session and read-only invocation in the review record.
 
@@ -117,10 +129,11 @@ separate decisions unless the owner explicitly records otherwise.
 
 ## Failure and unavailability
 
-For an applicable change, if no qualifying external reviewer is available, the gate is
-`blocked`. It is never waived, replaced by self-review or satisfied by the authoring
-agent's own harness. Do not claim a review that did not run. For a non-applicable change,
-record `ai_review: not-required`; do not call that a review.
+For an applicable change, if neither a different-vendor reviewer nor an accepted
+separate same-vendor reviewer is available, the gate is `blocked`. It is never
+waived or satisfied by the authoring agent, a context-sharing subagent, a fork of
+the conversation or self-review. Do not claim a review that did not run. For a
+non-applicable change, record `ai_review: not-required`; do not call that a review.
 
 ## Historical records
 
