@@ -1,0 +1,601 @@
+{
+  "task_id": "Q274",
+  "answer": "# Q274 — Discovery, patch generation, testing and merge as separate acceptance states; the mandatory stop on ambiguous mappings; and what a transformation contract and a cohort gate must carry\n\n## Verdict\n\nThe program described in the question is wrong in three separable ways, and the errors reinforce one another.\n\n1. **It reports discovery as migration.** Lineage answers \"which pipelines could be affected\"; it does not answer \"which pipelines compute the same business result after the change\". Tycho's case evidence is explicit that the cited population of about 1,800 direct pipelines is an impact estimate for two datasets and \"must not be reported as the set successfully changed\".\n2. **It collapses four evidentially different states into one label.** The source distinguishes discovering affected repositories, generating patches, testing their semantic correctness, and merging/rolling out, and calls them \"different acceptance states\". The decision playbook refuses PR volume as an acceptance metric, and the long-tail case requires merged, built, deployed and verified to be tracked separately.\n3. **It lets the agent resolve an ambiguous field meaning by frequency.** Choosing \"the most common mapping\" is inference from other consumers' behavior, not evidence about this field. The prescribed output for that situation is not a mapping at all: \"Stop; request human decision\". The documented failure in the case was inferred field mappings; the documented fix was explicit mapping tables plus an instruction to leave ambiguous business-meaning transformations unchanged for a human owner.\n\nA program that makes all three moves can report monotone progress while the dataset's business meaning has silently changed, and it removes exactly the evidence that would let anyone discover this: the excluded cohort, the held/ambiguous backlog, and the distinction between a proposed patch and a verified migration.\n\n## Facet matrix\n\nFacets were chosen to separate the question's independent parts: the counting error, the state-separation error, the ambiguity/stop rule, the contract contents, the cohort gate contents, and the reporting/falsification discipline.\n\n| Facet | Query formulations used | Evidence (section_key) |\n|---|---|---|\n| F1 — what a lineage count measures, and why it is not a migration count | \"migration program deprecated dataset downstream consumers\"; \"deprecation consumer census migrated pipelines\"; \"lineage consumer migration deprecate dataset\" | tycho.page.acfab58bfa6b470ca28010ac561dfeef#original-migration-and-constraints<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#quantitative-claims-and-why-they-cannot-be-mixed<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#applicability-and-counterindications |\n| F2 — why discovery, patch generation, testing and merge are separate acceptance states | \"transformation contract cohort gate acceptance\"; \"data migration acceptance states discovery\"; \"checkpoint gate migration cohort\" | tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly<br>tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet<br>tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#6-a-correct-migration-must-test-failure-and-recovery |\n| F3 — why an ambiguous mapping must stop instead of being inferred | \"field mapping ambiguous business meaning human decision\"; \"cohort gate\"; \"migration falsification cohort\" | tycho.page.acfab58bfa6b470ca28010ac561dfeef#iteration-three-failure-boundaries<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#counterevidence-and-decision-transfer<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract<br>tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions |\n| F4 — what each transformation contract must carry | \"transformation contract cohort gate acceptance\"; \"expand migrate contract parallel change consumer\" (atlas) | tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#modernization-plan |\n| F5 — what each cohort gate must carry | \"cohort gate\"; \"migration falsification cohort\"; \"deprecated dataset consumer migration cohort exclusion\" (atlas) | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#counterevidence-and-decision-transfer<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program<br>tycho.page.301477f3c7324fe8932d3a2608516a20#overview<br>tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates |\n| F6 — how progress must be reported, measured and falsified | \"deprecation consumer census migrated pipelines\"; \"data migration acceptance states discovery\"; \"migration falsification cohort\" | tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#applicability-and-counterindications<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#overview<br>tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet |\n\nTwo consecutive search rounds on the same formulations returned no new evidence after the case page, the decision playbook, the V05 gated-lifecycle page, the long-tail page, the V10 failure tests and the atlas expand-and-contract card had been read; the remaining hits were duplicates of these or unrelated uses of \"cohort\" (canary cohorts, GC cohorts, tenant cohorts).\n\n## 1. Why discovery, patch generation, testing and merge are distinct acceptance states\n\n### 1.1 Each state answers a different question with a different artifact\n\nThe four states are not phases of one activity; they are four claims, and each claim needs its own evidence object. Collapsing them means asserting the later claim without its evidence, which is precisely how \"compiled\", \"PR opened\", \"PR merged\" and \"migrated\" get confused.\n\n| Acceptance state | Question it answers | Required artifact | What it cannot establish |\n|---|---|---|---|\n| Discovery | Which consumers could depend on the deprecated dataset or field? | Pinned lineage snapshot, repository/source revisions, owner map, consumer list | That a consumer actually needs a change, or that it is eligible for automation |\n| Patch generation | What exact diff implements the agreed mapping? | A PR per repository at a pinned revision, holding status \"proposed\" | That the diff preserves business meaning |\n| Semantic testing | Does the transformed consumer compute the same business result? | An independent oracle: field-level equivalence, representative input/output comparisons, owner-run data tests where build tests are missing | That the owner accepted the change, or that it is live |\n| Merge and rollout | What is actually live, under whose authority, and can it be reverted? | Merge record, deployment record, per-cohort status, rollback record | That values kept their business meaning; a merged wrong mapping is still wrong |\n\nThe evidence supports this table point by point: the 1,800-pipeline lineage figure is scope for two datasets; the 240 rolled-out PRs are \"not proof every PR merged, every affected pipeline migrated or every data value preserved business meaning\"; the correct status for a generated PR awaiting owner action is \"proposed\", not \"migrated\"; a compile-success label is not correctness; and a runtime deploy rollback is not a data-correctness rollback. The case also prescribes recording every excluded or ambiguous mapping and every generated, reviewed, merged, deployed or rolled-back PR as a separate status, and the long-tail case requires merged, built, deployed and verified versions to be tracked separately by cohort and elapsed time.\n\n### 1.2 The four states fail independently and asymmetrically\n\n- Discovery can be over-broad or stale: lineage includes indirect dependencies and repositories that no longer build or no longer consume the field. A stale lineage snapshot is one of the declared negative-path drills.\n- Patch generation can be syntactically valid and semantically wrong: the first attempt at this migration produced wrong inferred mappings from a plausible guide.\n- Testing can be absent rather than failed: many repositories had little or no build-time unit testing, so the agent could not run its usual correction loop and owners had to test manually before merging.\n- Merge/rollout can happen and still be wrong, and can be reverted for reasons unrelated to semantics.\n\nBecause the failure modes differ, a pass at one state carries no evidential weight at another. That is why the states are \"different acceptance states\" rather than a progress bar: a later state may only be asserted when its own artifact exists, and an earlier artifact cannot be substituted for it. PR volume is not an acceptance metric; neither is a compile success; neither is a rollout count.\n\n### 1.3 The denominators differ, so a single number is not definable\n\nEach state counts a different population:\n\n- discovered consumers (potential scope, including indirect dependencies);\n- eligible consumers after framework and semantic exclusions (the excluded Scio set is explicitly not migrated);\n- generated patches (proposed PRs);\n- semantically verified changes (owner-accepted equivalence);\n- merged changes;\n- deployed changes;\n- rolled-back changes;\n- held or ambiguous items awaiting an owner decision.\n\nA percentage is only meaningful per stage and per cohort. Summing or substituting them produces the exact error in the question: reporting the discovered population as migrated makes the headline metric unfalsifiable, because no consumer ever has to compute a correct result for the number to rise. The playbook's judgement on the published numbers is blunt: the 1,800 direct pipelines were scope, 240 PRs were rolled out and not necessarily merged, Scio was excluded, and an agent producing 1,500 PRs is not in itself an acceptance metric.\n\n\n### 1.3.1 The unit of counting is itself part of the claim\n\nDiscovery is performed at lineage and repository granularity: the team used Backstage endpoint lineage/Codesearch to identify affected repositories. But migration acceptance is per field mapping per consumer, and a repository can contain several pipelines while a pipeline can consume several deprecated fields. Without an explicit crosswalk between the units (consumer, repository, pipeline, field mapping), no ratio between the discovered number and a migrated number is defined. Discovery must also distinguish the repository default branch from the production artifact: an inventory of deployed versions is a different population from an inventory of repositories, and a merged PR is not a deployed one.\n\n### 1.4 Each state has a different authority and a different reversibility\n\nDiscovery is a platform/lineage responsibility; patch generation is an agent-plus-reviewer artifact; semantic acceptance belongs to the data owner or pipeline owner; merge and rollout belong to the change-management authority for that repository. Merging is also not the same kind of event as deploying, and neither undoes data already written: the evidence separates runtime deploy rollback from data-correctness rollback, and the V05 lifecycle separates a guarded authority transfer from the later contract/retirement step. A single \"migrated\" label hides who accepted what and whether the change can still be undone.\n\n### 1.5 Consequence: the states must be preserved as a ledger, not summarized\n\nEvery excluded or ambiguous mapping and every PR state is a first-class result. A failed mapping, a deferred framework and a PR still awaiting merge are results, not omissions. That is what allows the program to compute honest failure rates, to route work to the right owner, and to decide whether the dataset can be retired at all.\n\n## 2. Why an ambiguous mapping must stop instead of being inferred\n\n### 2.1 Business meaning is owned, not observed\n\nThe agent can read column names, SQL, documentation and other repositories' code. It cannot read the business definition of a field. The V05 worked example makes the gap concrete: the same stored token can refer to a model in one business area and to a specific physical unit in another, so a mapping that preserves row counts and compiles can still corrupt meaning. The identity question is not decidable from the corpus; it is decidable by the owner who defined the field.\n\n### 2.2 Inference is the documented failure, not a safe default\n\nThe first attempt at this migration derived instructions from a human-oriented guide, and the agent inferred wrong field mappings. The correction was not a better prompt for inference; it was explicit mapping tables plus an instruction to leave ambiguous business-meaning transformations unchanged, with comments for a human owner. The case calls that \"an important positive use of refusal in code migration\". A program that now asks the agent to pick the most common mapping has reinstated the exact behavior the case removed.\n\n### 2.3 \"Most common\" is a popularity statistic, not an oracle\n\nA modal mapping answers \"what did other consumers do\", not \"what does this field mean here\". It has no named owner, no invariant, no pinned revision and no executable check, so it cannot be reviewed or falsified. It is also biased by which consumers happen to be in the sample: if the minority consumer is the one that treats the code as a physical unit, the majority is exactly wrong for that consumer, and cross-consumer frequency cannot resolve per-consumer semantics. In the case evidence, the input being \"structured\" did not make the agent safe; missing field semantics produced wrong assumptions until explicit mapping tables were written.\n\n### 2.4 The cost is asymmetric and the error is silent\n\nA wrong mapping looks successful: it compiles, it returns rows, it preserves counts. The damage surfaces later as corrupted business data, reports or downstream decisions, often after the old dataset has been contracted. One owner decision at the point of ambiguity is cheap; a fleet-wide guessed mapping is a data-correctness incident that the program's own metric cannot see.\n\n### 2.5 Governance requires a declared equivalence, and its absence is a result\n\nThe case's decision matrix requires a named data-owner interpretation, an explicit mapping and examples, and its safe outcome is to stop and request a human decision. The playbook adds the stronger rule: if data governance cannot define equivalence, the correct agent output is declared insufficient evidence, not a speculative mapping. The decision playbook also says the choice is conditional on system evidence, not on the coding agent's confidence or its vendor's reputation, and that if no reliable test oracle exists or the migration touches hidden business meaning, autopilot is not justified.\n\n### 2.6 A stop is a successful outcome and must be measured as one\n\nA safe stop is a successful outcome at an automation boundary, and it must not be scored as throughput failure. The correct response preserves the existing consumer until a correct migration is specified, and V05 states that a migration may legitimately stop on an unresolvable identity or unknown source meaning: such a hold is a correct outcome, not failure to finish a technical change. Refusals are therefore part of the measurement plan (unsupported-case refusal rate), not a gap in it. If a transformation cannot be expressed as a deterministic contract, the agent is paused at analysis-only mode until a human defines a valid oracle.\n\n### 2.7 What \"stop\" means operationally\n\nStop means: emit no replacement mapping for that field; keep the existing consumer unchanged; record the ambiguity with the consumer, field, evidence read, the missing owner decision and the questions the owner must answer; mark the unit as held; and block cohort expansion and dataset contraction until the owner supplies an interpretation, examples and an approved invariant. The stop is not a queue for a later guess; it is a state that only an authorized human can close.\n\n## 3. What each transformation contract must carry\n\nThe case specifies a versioned contract for **each eligible transformation** (not one contract for the program), containing eight elements. Each element exists to close a specific failure mode:\n\n| Contract element | Failure it prevents |\n|---|---|\n| Original dataset fields and types | A mapping written against an assumed or stale source schema; silent type coercion |\n| Replacement field mappings | Repository-level or framework-level hand-waving instead of a per-field semantic decision |\n| Acceptable null/default transformations | The \"optional becomes mandatory\" class of failure, where parsing succeeds but behavior changes |\n| Affected query engine | Applying one engine's mapping semantics to another engine, which the case shows is not portable (dbt and BigQuery Runner standardized; Scio not) |\n| Data-owner-approved invariants | Agent self-assessment standing in for the owner's definition of correctness |\n| Executable verification procedure | A claim of correctness with no command, fixture or observable result |\n| Repository/source revision | A contract tested against a moving target, making the result unreproducible |\n| Refusal policy | Silent guessing when the contract is incomplete or the semantics are ambiguous |\n\nBeyond the eight elements, the contract must be versioned (the case says \"versioned contract\"), machine-readable enough to constrain a coding agent, and human-readable enough that a downstream owner can challenge the mapping. The agent's report is part of the contract's evidence: modified files, repository revision, transformation specification, source/evidence links, executed checks with exact commands and observable results, skipped checks, uncertain mappings and a proposed rollback.\n\nBefore write access, the decision playbook requires, for a dataset/SQL consumer rewrite, a field-level source-to-target mapping, a lineage snapshot, an owner and semantic invariants; the required independent oracle is representative input/output equivalence and owner-approved transformations; the refusal triggers are ambiguous semantics, an unsupported framework without tests, and uncertain ownership. Where data authority moves, the contract must also name the single writer and the recovery action if the gate fails.\n\n## 4. What each cohort gate must carry\n\nA cohort gate is the admission and progression test for a set of consumers migrated together. The evidence does not publish a single canonical gate schema, so the following is a synthesis of the case's exclusions and controls, the V05 gate template and the decision playbook; it is labelled as Tycho synthesis, not as a company artifact.\n\n1. **Cohort identity and boundary.** The cohort must be named by framework/engine class, pinned dataset schema version, pinned lineage snapshot revision and the exact consumer set. The case requires pinning dataset schema versions and the source-lineage snapshot before expansion.\n2. **Exclusion ledger.** Consumers that are unsupported or semantically ambiguous are excluded explicitly and reported as an excluded cohort, not dropped and not counted as migrated. In the case, the variable Scio pipelines were excluded from automation for that wave.\n3. **Eligibility preconditions.** Documented mapping exists, the transformation contract is at a pinned revision, an owner exists, and a verification procedure exists; otherwise the unit does not enter the cohort.\n4. **Named owner and acceptance authority.** The gate must name who can declare semantic equivalence. Where build-time tests are missing, that owner runs data tests before merge; human review is required for semantics or ownership changes.\n5. **An independent oracle and its procedure.** Representative input/output equivalence, field-level checks, and the negative paths (same-name-different-meaning fields, null changes, cardinality-changing joins, missing unit tests, stale lineage, target schema changes after patch generation). Compilation and a plausible diff are not the oracle.\n6. **A single-writer or authority rule.** When the change moves data authority, the gate must state which writer is authoritative at that step; two writers are not atomic merely because both exist.\n7. **A falsifiable pass/fail criterion.** Each gate row must be checkable and must specify the threshold or invariant that fails the cohort; \"reviewed\" or \"looks right\" is not a gate.\n8. **A recovery action when the gate fails.** The V05 gate template has three columns — single-writer rule, falsifiable gate, recovery when the gate fails — and that structure is the minimum. Recovery is not optional: it is the difference between a gate and a checkpoint label.\n9. **A status ledger per unit.** Proposed, reviewed, semantically verified, merged, deployed, rolled back and held, recorded per unit and per cohort with elapsed time; plus the register of accepted exceptions and deprecation prerequisites.\n10. **A measurement plan.** Tested-repository denominator, semantic defects per evaluated change, unsupported-case refusal rate, reviewer minutes, escaped defects and rollbacks in the observation window, cost per accepted change and source-provenance completeness — recorded, not invented.\n11. **A progression and stop-expansion rule.** A small representative cohort first; expansion only after the oracle passes and missing coverage is detected; stop expanding when human correction repeatedly changes the business semantics of an automated mapping, because that falsifies the transformation contract.\n12. **A retirement precondition.** Contracting the old dataset is safe only after recording active and historical readers/writers, migration completeness with an approved residual-unknown policy, verified restoration and replay, and authorized acceptance of the irreversible change.\n\nThe general pattern layer adds the same shape for any migration: a compatibility window and reader inventory that are owned, and an explicit backfill, validation and cutover gate. Completion claims must be refused when stale services are exempted without recorded policy, known deployables remain on old binaries, generated PRs have no semantic tests, or the owner map omits unsupported but critical consumers; accepted cohort exceptions must stay visible rather than being concealed in a rounded percentage.\n\n## 5. What the program should report instead\n\nReplace the single \"discovered = migrated\" number with a stage-by-cohort ledger. A minimal honest report has, for each cohort and for the program as a whole:\n\n| Stage | Counted population | What the count means |\n|---|---|---|\n| Discovered | Consumers in the pinned lineage snapshot | Potential impact; not eligibility and not change |\n| Eligible | Discovered minus explicit exclusions | The automation scope, with the exclusion ledger published |\n| Patch proposed | PRs at pinned revisions | Proposals only; status stays proposed |\n| Semantically verified | Changes with an independent oracle and owner sign-off | The only stage that can carry a correctness claim |\n| Merged | Verified changes with a merge record | Social/technical acceptance, not semantic proof |\n| Deployed | Merged changes with a deployment record | Exposure, not preserved meaning |\n| Rolled back | Any stage reverted, with cause | A first-class outcome, not a smoothed-away tail |\n| Held / ambiguous | Units stopped for an owner decision, with named owner | A correct outcome and a measured rate |\n\nNo row may substitute for another, and no percentage may be computed across rows. If a single headline is required, it can only be \"verified and deployed changes in eligible cohorts\", with the exclusions, holds and rollbacks published alongside it.\n\n## Boundaries, confidence and what the evidence does not establish\n\n- **Source status.** The Honk case is a first-party, time-scoped draft with an independent reviewer pending. It reports publisher numbers; it does not publish a controlled escaped-defect benchmark or a complete migration rate across all consumers. The 1,800 (scope for two datasets), 240 (rolled-out PRs) and the earlier >1,500 (cross-fleet merged PRs, a different report and period) are distinct populations and must not be combined.\n- **Synthesis vs source.** The eight-element contract list is stated in the case page, but the five-row decision matrix around it is stated there as an \"original Tycho test design\" that must not be presented as the company's mandatory tool schema. The V05 single-writer/falsifiable/recovery gate table and the DRILL-A example are a synthetic, unexecuted protocol for a fictional catalogue; the cited public sources do not establish its safety. The decision playbook is a proposed ADR for a synthetic system; no real-run measurements exist for it.\n- **Terminology.** The case source uses a framework/semantic gate and an excluded cohort; the long-tail case uses cohort exceptions and per-cohort tracking; the Java-fleet case uses the phrase \"explicit cohort gates\" for a different problem. \"Cohort gate\" here is therefore a synthesis of these, not a quoted schema.\n- **Unknowns.** How many of the 240 rolled-out PRs were actually merged; the true escaped-defect rate; how many fields in the two datasets had ambiguous business meaning; whether any modal mapping would have coincided with the owner's intent in a specific corpus (this is precisely why frequency cannot decide it); whether every affected consumer had a recorded owner; and the program's own tooling and review depth. None of these can be filled from the evidence, and none should be estimated in the answer.\n\n## Evidence map\n\nEvery core claim below is backed by a verbatim fragment read through the session CLI. Full section keys and quotes are in the claims ledger of the answer JSON.\n\n| Claim | Statement (abbreviated) | Section keys |\n|---|---|---|\n| C1 | Discovery is a scoping step: the lineage population is the potential affected scope for tw… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#original-migration-and-constraints<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort |\n| C2 | The case evidence treats discovering affected repositories, generating patches, testing se… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort |\n| C3 | A generated or rolled-out patch proves neither a merge, nor a migrated pipeline, nor prese… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort |\n| C4 | The published rolled-out PR count is a rollout metric that explicitly does not establish m… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#quantitative-claims-and-why-they-cannot-be-mixed |\n| C5 | Compilation and a plausible diff cannot establish semantic correctness; testing is a separ… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly<br>tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#6-a-correct-migration-must-test-failure-and-recovery |\n| C6 | A deploy rollback and a data-correctness rollback are distinct, so a merge or rollout stat… | tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#6-a-correct-migration-must-test-failure-and-recovery |\n| C7 | Statuses must be recorded separately per unit: excluded or ambiguous mappings and every ge… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly<br>tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet |\n| C8 | Mixing the populations (scope, rolled out, merged) produces a false completion claim, and … | tycho.decision.73ab83b8148a4061a1effab218d47b0b#applicability-and-counterindications |\n| C9 | The discovered set is not the eligible set: unsupported or highly variable pipelines are e… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#iteration-three-failure-boundaries<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort |\n| C10 | The documented failure mode was inference itself: deriving migration instructions from a h… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#iteration-three-failure-boundaries |\n| C11 | The correction was explicit mapping tables plus an instruction to leave ambiguous business… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#iteration-three-failure-boundaries |\n| C12 | The prescribed outcome for a field change with ambiguous business meaning is to stop and r… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract |\n| C13 | A safe stop is a successful outcome at an automation boundary, not a throughput failure. | tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract |\n| C14 | Business meaning is context-dependent: the same stored token can denote different business… | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle |\n| C15 | When governance cannot define equivalence, the correct agent output is declared insufficie… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#counterevidence-and-decision-transfer |\n| C16 | Agent confidence, structured input or vendor reputation is not a basis for proceeding; an … | tycho.decision.73ab83b8148a4061a1effab218d47b0b#applicability-and-counterindications<br>tycho.decision.73ab83b8148a4061a1effab218d47b0b#when-not-to-select-autonomous-modernization |\n| C17 | If a transformation cannot be expressed as a deterministic contract, the agent is paused a… | tycho.decision.73ab83b8148a4061a1effab218d47b0b#modernization-plan |\n| C18 | Preserving the existing consumer on an unresolved mapping is a correct migration outcome, … | tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly<br>tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions |\n| C19 | Each eligible transformation must carry a versioned contract with original fields and type… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort |\n| C20 | The contract must be machine-readable enough to constrain a coding agent and human-readabl… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort |\n| C21 | The agent's own report must carry files and revision, the transformation specification, ev… | tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract |\n| C22 | Before write access, a dataset or SQL consumer rewrite needs a field-level source-to-targe… | tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program |\n| C23 | Each gate must state a single-writer or authority rule, a falsifiable check and a recovery… | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle |\n| C24 | A cohort starts small and representative with a separately declared excluded set, pinned s… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#counterevidence-and-decision-transfer |\n| C25 | Cohort expansion must stop when human correction repeatedly changes the business semantics… | tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification |\n| C26 | The program must record, not invent, denominators and outcomes: tested-repository denomina… | tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification |\n| C27 | Completion must be refused when exclusions are unrecorded, deployables remain on old binar… | tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates |\n| C28 | Contracting or retiring the old dataset is safe only after recording active and historical… | tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point |\n| C29 | The general migration pattern requires an owned compatibility window and reader inventory … | tycho.page.301477f3c7324fe8932d3a2608516a20#overview |\n| C30 | The decision playbook limits unattended changes to machine-checkable transformations, requ… | tycho.decision.73ab83b8148a4061a1effab218d47b0b#decision-tree-and-chosen-adr |\n| C31 | The Honk case is a first-party, time-scoped draft pending independent review, and its cont… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#overview<br>tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort |\n| C32 | A failed mapping, a deferred framework and a PR awaiting merge are first-class recorded re… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#counterevidence-and-decision-transfer |\n| C33 | Discovery runs at lineage and repository granularity, while migration acceptance is per fi… | tycho.page.acfab58bfa6b470ca28010ac561dfeef#original-migration-and-constraints |\n| C34 | Discovery must distinguish the repository default branch from the production artifact: a m… | tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet |\n\n## Unknowns and abstention\n\nNo unknown here forces abstention: the mechanism is well evidenced and the three errors in the question are each contradicted by named evidence. The unknowns listed above are scope limits on numbers, not gaps in the mechanism. The answer does not claim that Spotify used a \"cohort gate\" artifact, that the eight-element contract is a company schema, or that any measured defect rate exists.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Discovery is a scoping step: the lineage population is the potential affected scope for two datasets, not a count of completed migrations.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#original-migration-and-constraints",
+          "quote": "Its lineage graph indicated approximately **1,800 direct downstream data pipelines**",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "The cited lineage population of about **1,800 direct pipelines** is an impact estimate for two datasets; it must not be reported as the set successfully changed.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The case evidence treats discovering affected repositories, generating patches, testing semantic correctness and merging/rolling out as four different acceptance states, not one.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "The src.m9-sp03 article distinguishes **discovering affected repositories**, **generating patches**, **testing their semantic correctness**, and **merging/rolling out**. These are different acceptance states.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A generated or rolled-out patch proves neither a merge, nor a migrated pipeline, nor preserved business meaning; its correct status is proposed, not migrated.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "The **240 rolled-out PRs** are a narrower migration cohort, not proof every PR merged, every affected pipeline migrated or every data value preserved business meaning.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "Keep status **proposed**, not “migrated”",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The published rolled-out PR count is a rollout metric that explicitly does not establish merges or completed migrations.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#quantitative-claims-and-why-they-cannot-be-mixed",
+          "quote": "Rollout metric; **not** proof of 240 merges or of 1,800 migrations complete",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Compilation and a plausible diff cannot establish semantic correctness; testing is a separate state that needs its own oracle, because wire parsing can succeed while behavior fails.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly",
+          "quote": "A compile-success label and a visually plausible SQL diff are not correctness evidence.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#6-a-correct-migration-must-test-failure-and-recovery",
+          "quote": "**Wire parsing succeeds but behavioral compatibility fails.**",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A deploy rollback and a data-correctness rollback are distinct, so a merge or rollout state cannot stand in for correctness of transformed data.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#6-a-correct-migration-must-test-failure-and-recovery",
+          "quote": "A runtime deploy rollback and a data correctness rollback are distinct.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Statuses must be recorded separately per unit: excluded or ambiguous mappings and every generated, reviewed, merged, deployed or rolled-back PR each get their own status.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly",
+          "quote": "Record every excluded/ambiguous mapping and every generated, reviewed, merged, deployed or rolled-back PR **as separate status**.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet",
+          "quote": "Track *merged, built, deployed, verified* versions separately, by cohort and elapsed time",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Mixing the populations (scope, rolled out, merged) produces a false completion claim, and PR volume is not an acceptance metric.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#applicability-and-counterindications",
+          "quote": "Spotify's ~1,800 direct pipelines were scope, not proof of completion; 240 PRs were rolled out, not necessarily merged, and Scio was excluded.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#applicability-and-counterindications",
+          "quote": "an agent producing 1,500 PRs is not in itself an acceptance metric.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The discovered set is not the eligible set: unsupported or highly variable pipelines are excluded from automation and reported as an excluded cohort rather than silently counted.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#iteration-three-failure-boundaries",
+          "quote": "the team **stopped attempting to automate that framework's migration in this wave**",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "Leave unchanged, report as excluded cohort",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The documented failure mode was inference itself: deriving migration instructions from a human-oriented guide let the agent infer wrong field mappings.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#iteration-three-failure-boundaries",
+          "quote": "The first attempt to derive migration instructions from a human-oriented guide let the agent infer wrong field mappings.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The correction was explicit mapping tables plus an instruction to leave ambiguous business-meaning transformations unchanged for a human owner, a deliberate and positive use of refusal.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#iteration-three-failure-boundaries",
+          "quote": "leave ambiguous business-meaning transformations unchanged",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#iteration-three-failure-boundaries",
+          "quote": "That is an important *positive use of refusal* in code migration.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The prescribed outcome for a field change with ambiguous business meaning is to stop and request a human decision rather than guess.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "**Stop; request human decision** instead of guessing",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract",
+          "quote": "when field semantics are ambiguous, generate **a review request rather than replacement code**. Do not score this as throughput failure.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A safe stop is a successful outcome at an automation boundary, not a throughput failure.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract",
+          "quote": "A safe stop state is a successful outcome for an automation boundary",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract",
+          "quote": "Do not score this as throughput failure.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Business meaning is context-dependent: the same stored token can denote different business entities, so a syntactically plausible mapping can preserve row counts while corrupting meaning.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "refers to a **model** in one business area but to **a specific physical unit** in another.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "field-level semantic equivalence and unknown mappings",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "When governance cannot define equivalence, the correct agent output is declared insufficient evidence, not a speculative mapping.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#counterevidence-and-decision-transfer",
+          "quote": "if data governance cannot define equivalence, the correct agent output is *insufficient evidence*, not a speculative mapping.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Agent confidence, structured input or vendor reputation is not a basis for proceeding; an independent oracle and system evidence are.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#applicability-and-counterindications",
+          "quote": "If no reliable test oracle exists or the migration touches hidden business meaning, autopilot is not justified.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#when-not-to-select-autonomous-modernization",
+          "quote": "The choice is conditional on system evidence, not the coding agent's confidence or the reputation of its vendor.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "If a transformation cannot be expressed as a deterministic contract, the agent is paused at analysis-only mode until a human defines a valid oracle.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#modernization-plan",
+          "quote": "If the transformation cannot be expressed as deterministic contracts, pause agents at analysis-only mode until a human defines a valid oracle.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Preserving the existing consumer on an unresolved mapping is a correct migration outcome, not a failure to finish a technical change.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly",
+          "quote": "If the oracle fails or an owner cannot verify semantics, preserve the existing consumer until a correct migration is specified.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions",
+          "quote": "A migration may legitimately stop on an **unresolvable identity** or unknown source meaning. Such a hold is a correct outcome, not failure to finish a technical change.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Each eligible transformation must carry a versioned contract with original fields and types, replacement mappings, null/default rules, affected query engine, owner-approved invariants, an executable verification procedure, a pinned repository/source revision and a refusal policy.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "For a different platform, each eligible transformation should have a versioned contract containing: original dataset fields and types; replacement field mappings; acceptable null/default transformations; affected query engine; data-owner-approved invariants; executable verification procedure; a repository/source revision; and a refusal policy.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The contract must be machine-readable enough to constrain a coding agent and human-readable enough that a downstream owner can challenge the mapping.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "This should be **machine-readable enough to constrain a coding agent** and human-readable enough that a downstream owner can challenge the mapping.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "The agent's own report must carry files and revision, the transformation specification, evidence links, executed checks with commands and results, skipped checks, uncertain mappings and a proposed rollback.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract",
+          "quote": "The agent must report modified files, repository revision, transformation specification, source/evidence links, executed checks with exact commands and observable results, skipped checks, uncertain mappings, and a proposed rollback.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Before write access, a dataset or SQL consumer rewrite needs a field-level source-to-target mapping, lineage snapshot, owner and semantic invariants, an independent oracle of representative input/output equivalence with owner-approved transformations, and must refuse when semantics are ambiguous, the framework lacks tests or ownership is uncertain.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program",
+          "quote": "Dataset/SQL consumer rewrite | Field-level source-to-target schema mapping, lineage snapshot, owner, semantic invariants",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program",
+          "quote": "Representative input/output equivalence and owner-approved transformations",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program",
+          "quote": "Semantics are ambiguous; an unsupported framework lacks tests; ownership is uncertain",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Each gate must state a single-writer or authority rule, a falsifiable check and a recovery action when the gate fails; ambiguous records are quarantined rather than assigned an invented identity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "| Transition | Single-writer rule | Falsifiable gate | Recovery when the gate fails |",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "No two authoritative physical identities map to one unit without an approved merge rule",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "Quarantine ambiguous records; never invent an ID",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "A cohort starts small and representative with a separately declared excluded set, pinned schema and lineage revisions, independent semantic review, owner-run tests where build tests are missing, and coverage-gap detection before expansion.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly",
+          "quote": "A synthetic experiment should begin with a small representative cohort of BigQuery Runner/dbt consumers and a separate *excluded* Scio set.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly",
+          "quote": "compare query semantics with an independent reviewer",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#counterevidence-and-decision-transfer",
+          "quote": "pin dataset schema versions and source-lineage snapshot, require a field-level oracle and detect missing test coverage before expansion",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "Cohort expansion must stop when human correction repeatedly changes the business semantics of an automated mapping, because that falsifies the transformation contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification",
+          "quote": "If human correction repeatedly changes the business semantics of an automated mapping, the transformation contract has failed; stop expanding the cohort.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "The program must record, not invent, denominators and outcomes: tested-repository denominator, semantic defects per change, unsupported-case refusal rate and the other declared measures.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification",
+          "quote": "**Measures to record, not invent:** tested-repository denominator; semantic defects per evaluated change; unsupported-case refusal rate",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "Completion must be refused when exclusions are unrecorded, deployables remain on old binaries, generated PRs lack semantic tests or the owner map omits critical consumers, and accepted cohort exceptions must stay visible.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates",
+          "quote": "**Refuse 100% completion** when stale services are simply exempted without recorded policy, known production deployables remain on old binaries, generated PRs have no semantic tests, or the owner map omits unsupported but critical consumers.",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates",
+          "quote": "Targeted cohort exceptions may be accepted with evidence, but they must be visible and managed rather than concealed in a rounded percentage.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "Contracting or retiring the old dataset is safe only after recording active and historical readers, migration completeness with an approved residual-unknown policy, and authorized acceptance of the irreversible change.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "Contract is safe only after recording:",
+          "supports": "C28",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "all active and required historical readers/writers",
+          "supports": "C28",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "migration completeness and an approved residual-unknown policy",
+          "supports": "C28",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "authorized acceptance of an irreversible change",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "The general migration pattern requires an owned compatibility window and reader inventory plus an explicit backfill, validation and cutover gate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+          "quote": "contract is gated by reader absence",
+          "supports": "C29",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+          "quote": "reader inventory are owned",
+          "supports": "C29",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+          "quote": "backfill, validation and cutover gate are explicit",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C30",
+      "text": "The decision playbook limits unattended changes to machine-checkable transformations, requires human review for semantics or ownership, and stages PR cohorts with deterministic validation before merge.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#decision-tree-and-chosen-adr",
+          "quote": "Limit unattended agent changes to transformations with a machine-checkable contract (API, tests, schema, static analysis), and require human review for semantics or ownership changes.",
+          "supports": "C30",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#decision-tree-and-chosen-adr",
+          "quote": "Stage PR cohorts and replay deterministic validation before merge; use online shadow comparisons for data migrations.",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C31",
+      "text": "The Honk case is a first-party, time-scoped draft pending independent review, and its contract table is an original Tycho test design that must not be presented as the company's mandatory schema.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#overview",
+          "quote": "first-party evidence-backed draft; independent reviewer pending",
+          "supports": "C31",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "The matrix is an **original Tycho test design** and must not be presented as Spotify's unpublished mandatory tool schema.",
+          "supports": "C31",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C32",
+      "text": "A failed mapping, a deferred framework and a PR awaiting merge are first-class recorded results, not omissions from the migration record.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#counterevidence-and-decision-transfer",
+          "quote": "A failed mapping, deferred framework or PR still awaiting merge is a first-class result.",
+          "supports": "C32",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C33",
+      "text": "Discovery runs at lineage and repository granularity, while migration acceptance is per field mapping per consumer; without an explicit crosswalk between repositories, pipelines and field mappings, no ratio between discovered and migrated is defined.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#original-migration-and-constraints",
+          "quote": "used Backstage endpoint lineage/Codesearch to identify affected repositories",
+          "supports": "C33",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C34",
+      "text": "Discovery must distinguish the repository default branch from the production artifact: a merged change is not a deployed one.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet",
+          "quote": "distinguish repository default branch from production artifact",
+          "supports": "C34",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet",
+          "quote": "Inventory true *deployed* versions, consumer owners, unsupported dependencies, health/recovery obligations and change lead time",
+          "supports": "C34",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#applicability-and-counterindications",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#decision-tree-and-chosen-adr",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#modernization-plan",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#when-not-to-select-autonomous-modernization",
+    "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions",
+    "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+    "tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly",
+    "tycho.page.acfab58bfa6b470ca28010ac561dfeef#counterevidence-and-decision-transfer",
+    "tycho.page.acfab58bfa6b470ca28010ac561dfeef#iteration-three-failure-boundaries",
+    "tycho.page.acfab58bfa6b470ca28010ac561dfeef#original-migration-and-constraints",
+    "tycho.page.acfab58bfa6b470ca28010ac561dfeef#overview",
+    "tycho.page.acfab58bfa6b470ca28010ac561dfeef#quantitative-claims-and-why-they-cannot-be-mixed",
+    "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates",
+    "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet",
+    "tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#6-a-correct-migration-must-test-failure-and-recovery"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
