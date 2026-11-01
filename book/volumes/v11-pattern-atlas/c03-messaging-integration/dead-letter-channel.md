@@ -39,11 +39,10 @@ content_review:
   reviewed_at: "2026-11-01"
   reviewer: "DeepSeek Reviewer"
   proof_uri: "authoring/rebinds/dlq-2026-11-01.md"
-  content_verified_at: "2026-11-01"
 authored_at: "2026-10-30"
 updated_at: "2026-11-01"
 source_inspection_date: "2026-10-30"
-content_verified_at: null
+content_verified_at: "2026-11-01"
 ---
 
 # Dead Letter Channel / DLQ
