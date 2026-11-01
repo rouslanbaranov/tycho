@@ -1,0 +1,501 @@
+{
+  "task_id": "Q250",
+  "answer": "# Q250 — Why a caller quota in the query tier failed, and what storage-local admission must separate\n\n## Scope, layers and method\n\n**Layers needed: book only.** The question asks for causal and design reasoning about a documented storage-overload case. It does not ask for pattern-registry identity (atlas) or for a model, run or decision artifact (modeling-and-simulation), so those layers are not used as evidence here.\n\nThe primary evidence is the case page on the move from static query-layer quotas to storage-local overload control and tenant fairness, plus the book's general admission and controller pages. Every quotation in the evidence ledger was read from the section it names. The case page is a source-backed draft with independent review pending; its measurements are company-reported and were not independently reproduced.\n\n**Search breadth.** I decomposed the question into six facets and used three formulations per facet, then followed up on shared accounting, hysteresis, retry amplification and rollout. The formulations converged on the case page; the last searches added only supporting pages (general admission, controller stability, overload recovery) and no new core evidence. The retrieval scope is best-section-per-document, so a query may return one section per page even when several sections are relevant; I then read the named sections directly rather than treating a snippet as a section.\n\n## Facet matrix\n\n| Facet | Query formulations (exact, synonym and conceptual) | Evidence section keys |\n|---|---|---|\n| F1. Cost model: what a request costs | \"returned bytes request cost proxy consumed work\"; \"full scan priced like point lookup quota\"; \"static quota workload skew hotspot evolves\" | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable; tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation |\n| F2. Placement: where pressure is observed and admission acts | \"stateless query tier quota Redis shared counters\"; \"admission control storage node local signals\"; \"per-partition health signal overload\" | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#revised-boundary-storage-local-and-multi-signal |\n| F3. Separation: global shedding, tenant fairness, hot-resource protection | \"systemwide overload shedding tenant fairness resource regulator\"; \"noisy tenant monopolizes slots fairness\"; \"hot key large write memory goroutine protection\" | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable; tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission |\n| F4. Objective: useful completed work and critical-class success | \"goodput completed useful operations critical class\"; \"deadline shorter than queue wait early rejection\"; \"priority aware admission reject low priority\" | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests; tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome |\n| F5. Delayed, stale or missing feedback | \"delayed stale telemetry feedback controller oscillation\"; \"follower lag stale signal over-admission\"; \"bounded output rate of change control loop\" | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#the-actual-feedback-loop-and-non-equivalent-performance-figures; tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate |\n| F6. Controller failure, priority trust and rollout | \"kill switch shadow mode canary admission controller\"; \"controller failure safe low-confidence behavior rollback\"; \"priority spoofing trusted ingress boundary\" | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#applicability-migration-and-rollback-adr-for-another-organization |\n\n## 1. Why the old cost model failed\n\nThe old quota used the *returned-byte count* of a response as its cost signal. That is an output-size proxy, not a measure of consumed work. A scan can read many pages, hold locks, consume buffer-pool and I/O capacity, and produce replica traffic while returning a single row. A point lookup can return a large row while doing little work. The case states the result directly: \"A full scan returning a single row cost the same as a point lookup; quotas remained static while workload skew and hotspots evolved.\" The case restates it as \"output bytes were a bad proxy for consumed work\": \"a table scan returning one row looked as cheap as a one-row point lookup.\"\n\nThree consequences follow.\n\n1. **Mispricing.** The quota over-admits expensive scans that return little and under-admits cheap lookups that return a lot. The caller's entitlement is measured in a unit that does not track the constrained resource: CPU, I/O, locks, queue slots, disk, memory or replica capacity. The general admission page makes the same point in a different form: \"operations with unequal costs cannot be controlled solely by requests per second.\" A byte count is another unequal-cost proxy, with the same defect.\n2. **Non-stationarity.** The cost distribution and the hotspot location change. A static limit assumes a stable mapping from caller to cost. When skew moves, a limit that was safe yesterday is too loose for the new hot partition or too tight for a cold one. The case's later review says the storage queue thresholds were \"static and priority-agnostic\"; expired work piled up and high-priority requests were dropped.\n3. **No feedback.** A static quota is open-loop. It contains no queue age, service time, replica lag or local saturation signal, so it cannot tell whether admitted work is completing usefully. It can be \"within quota\" while the storage nodes are collapsing, or \"over quota\" while the cluster is idle.\n\nA cost model also needs a scope and a failure contract, not just a number. The general page on local and global quotas notes that a global quota needs atomic shared accounting, coordinated budget leases or a deliberately documented approximation. With independent replicas each granting the same bucket, the aggregate allowance can approach the number of replicas times the intended scope. The old design chose a shared counter, which addresses scope but adds the dependency and latency discussed next.\n\n## 2. Why the placement failed\n\nThe quota lived in the **stateless query tier**, which plans and routes work but does not execute it. The actual pressure appears at the stateful storage nodes: shard leadership, Raft replication, per-partition queues, write-byte volume, hot keys, memory and goroutine pressure, and follower commit lag. A query node does not possess current health signals for all storage partitions. It sees a request and its plan; it does not see whether the target partition is already saturated, whether a follower is lagging, or whether a large write is about to exhaust local disk or memory.\n\nTwo costs follow.\n\n- **A per-request shared-counter round trip.** Redis-based shared accounting adds a network dependency to every request. The general page is explicit: \"A shared limiter adds a dependency; its timeout must not become permission to spend an unlimited budget.\" A timeout cannot be treated as permission to admit, yet fail-closed makes the quota store an availability dependency. That is a real trade-off, not an implementation detail.\n- **A sensor far from the resource.** The query tier can enforce a contractual request ceiling, but it cannot infer stateful disk or replica health from the response's bytes. If it wants current partition health, it must fetch it, adding RPCs and staleness. The case's conclusion is that the failure was about \"placement and measurability of resource pressure,\" not a universal indictment of rate limiting.\n\nMoving admission into the stateful storage executor changes both the sensor and the actuator. The executor sees local queue sojourn time, write-byte volume, hot-partition keys, memory and goroutine pressure, and, with remote signals, follower commit lag. It can reject before the expensive operation consumes the scarce resource. The case states: \"Moving the admission decision closer to the stateful storage executor exposed more relevant load signals, while avoiding Redis network dependency on every request.\" That is the architectural reason for the move.\n\nStorage-local placement is not a complete solution by itself. It is myopic: one node sees one partition. It needs system-wide and tenant-level views, and it needs a priority policy. That is why the replacement is a composition of controls, not a single local limiter. The query tier still has legitimate work: cheap authentication, authorization, input validation, deadline checks, identity and priority propagation, and contractual API quotas. The case explicitly warns that the historical decision is \"not an instruction to remove all edge/API contractual rate limits.\"\n\n## 3. Why the replacement must separate three jobs\n\nThe case separates three jobs that are easy to conflate.\n\n- **System-wide overload shedding.** Protects the whole storage process from aggregate overload. It uses aggregate signals (queueing, latency, CPU, concurrency) and a global budget. Its blind spot is distribution: \"A system-wide PID shedder can preserve the total storage process yet allow a single tenant to monopolize admitted slots.\" It can also shed the wrong work if priority is not part of the decision.\n- **Per-tenant fairness.** Protects other tenants from one noisy tenant. A per-tenant concurrency control \"enforces concurrency limits even when aggregate capacity is healthy.\" Its blind spots are cost and locality: \"A low-QPS, high-byte write or hot partition can still overload local resources\" even when every tenant is within its fair share. Fairness by request count can also be unfair by resource cost; the general page notes that weights alone do not cap the cost of one operation or prevent starvation unless scheduling and admission rules do so.\n- **Specific hot-resource protection.** Protects a particular resource: a hot key or partition, write-byte volume, memory, goroutines or a lagging replica. Regulators \"detect high write bytes, one hot partition, low process memory or excessive goroutine count that aggregate QPS may not reveal.\" Their blind spot is policy: \"Without priority policy it may drop a critical request as early as an optional job.\" They also need a scope: local per-partition protection does not by itself protect the global process.\n\nTwo further boundaries matter. A feedback-based admission controller regulates current workload delay, error and replica lag against priority. Its blind spot is dynamics: \"Feedback may oscillate, be delayed, or reflect conditions different from the request cohort.\" The client retry/deadline boundary sits outside the store: \"Admission alone cannot stop irresponsible client retry storms.\"\n\nWhy can one controller not replace the others? They protect different invariants with different scopes, signals and failure modes.\n\n| Control | What it protects | Blind spot if used alone |\n|---|---|---|\n| System-wide shedding | The process and aggregate capacity | A single tenant can monopolize slots; priority may be ignored |\n| Tenant fairness | Per-tenant progress and no starvation | A hot key, large write or hot partition can still exhaust a local resource |\n| Hot-resource regulator | A specific disk, memory, goroutine, key or replica resource | Without priority policy it can drop critical work as early as optional work |\n| Feedback admission | Current delay, error and lag against priority | Oscillation, delay, cohort mismatch |\n| Client retry and deadline | Useful time and retry amplification | Cannot replace server-side admission |\n\nThe composition must be explicit. One decision path can evaluate several constraints, but it needs an arbitration rule: protect critical classes and the specific constrained resource first, keep a bounded wait and starvation policy for ordinary work, and expose which constraint fired. A single scalar \"load\" or \"QPS\" cannot represent all three. The table's explanatory contraindications are Tycho reasoning about why the controls are not interchangeable; the underlying source describes the mechanisms and some historic missteps, not an externally standardized load-management specification.\n\n## 4. What the controller must optimize\n\nThe objective is not \"accept as many requests as possible,\" nor \"minimize rejections.\" It is useful completed work and successful critical classes. The case gives the sharpest example: \"A retryable request with a deadline shorter than predicted queue wait can create harm if accepted: its caller has already abandoned it by the time the store consumes CPU, memory and locks.\" Accepting it raises admitted-request counts and can lower the rejection rate while producing no useful result and consuming capacity that other work could use.\n\nThe measurement set should therefore include:\n\n- successful results by class, especially critical classes;\n- p95/p99 latency, queue age, and the fraction of work already past its client deadline;\n- retries and retry amplification;\n- admission, rejection, completion and failure counts, tracked as separate populations;\n- heap and goroutines, replica lag, disk and local resource pressure;\n- per-tenant share and starvation.\n\nThe case's evaluation design is a replay of equivalent offered load with read, write, scan, long-lived background and hot-key traffic; priority classes with immutable metadata; injected follower replication lag and a burst of large writes; and an independent run of the old limiter against the candidate. The comparison includes \"successful results by class, p95/p99, queue age, retries, admission rate, heap/goroutines, replica lag and fairness (per-tenant share and starvation).\" The decisive test is not total throughput: \"A controller that increases total throughput while starving an essential tenant fails the requirement.\" Measuring lower rejected-request counts is not enough; the feedback page adds goodput by priority, queue wait, the fraction already past the client deadline, leader/follower lag, retries, memory and per-tenant fairness.\n\nThe reported numbers — about 3,000 to 5,400 QPS and upsert p99 from about 3.1 s to about 1.0 s — are publisher-scoped observations from a specific comparison. They are not a guarantee for another store. The case also flags that the publisher's heap percentage and its spike/max figures use different aggregations and cannot be mathematically normalized from the public post alone; the correct treatment is to preserve both without silently recalculating. Static request limits can still complement the controller for API contract policing, billing or caller entitlement; they cannot replace workload capacity measurement.\n\n## 5. When feedback is delayed, stale or missing\n\nA feedback controller is only as good as its observations, sampling rate and bounded output. The case names the concrete hazards:\n\n- a delayed follower-lag signal can cause over-admission into a replica that cannot commit;\n- stale error telemetry can drive oscillation;\n- a PID controller with stale metrics, delayed actions, badly chosen gains or priority override can oscillate and shed the wrong cohort;\n- the feedback may reflect conditions different from the request cohort;\n- a telemetry outage must not produce unlimited admission.\n\nThe design response has five parts.\n\n1. **Make freshness explicit.** Timestamp observations, define a maximum useful age per signal, and treat \"missing\" as \"unknown,\" not \"zero load\" or \"unlimited capacity.\" A stale signal should reduce the controller's authority, not silently increase admission.\n2. **Bound the output.** Cap the rate of change of admission or concurrency, keep minimum and maximum bounds, and avoid integral windup. The rollout section requires \"a rate-of-change cap on control output.\" Bounded output limits the damage from a bad observation or a bad gain.\n3. **Choose a safe low-confidence behavior.** When remote signals fail, fall back to a known-safe fixed baseline or conservative local limit, protect critical work, shed optional work first, and surface degraded mode. The case requires \"a safe low-confidence behavior when remote signals fail\"; a telemetry outage producing unlimited admission is an explicit stop condition. Fail-open is not a neutral default.\n4. **Use multiple signals and cohort checks.** Local queue and resource signals can cross-check a remote lag signal. A controller should not act on one delayed signal when the local executor is already saturated. The case's architecture combines local and remote signals in one decision path, with priority.\n5. **Measure the loop, not just the outcome.** Record when a threshold was observed, when the decision was emitted, when capacity became usefully ready, and what happened to queue age, deadline-expired work, retries, lag and fairness. The controller-stability test plan is a useful template: the same replayable demand, observation/decision/readiness times, p95/p99, queue age, retry amplification, backend pressure and resource-seconds.\n\nRecovery also needs hysteresis. When load drops or a dependency becomes healthy, prematurely reopening traffic can cause a second collapse; admission thresholds may need stability windows and progressive recovery. But excessive cooldown can strand healthy capacity, so the window must be justified by the measured recovery curve, not a generic constant.\n\n## 6. When the controller itself fails\n\nThe controller can fail through bad gains, stale or missing telemetry, priority override, oscillation, or an inability to restore the old mode. The safe pattern is reversible and observable.\n\n- **Shadow first.** Run decision-only at the storage executor, logging which requests would be rejected under each independently checked constraint. Compare hypothetical decisions with the baseline before enforcing anything.\n- **Canary small.** Enable actual admission on a small tenant or partition cohort while fixed baseline protection remains available. Expand only after priority fairness, hot-key isolation, replication safety and recovery from overload have been observed.\n- **Keep a kill switch and a rollback path.** Retain the old limiter until fairness and recovery tests pass. The rollback itself must not create unbounded retry pressure; retry guidance and backoff are part of the contract.\n- **Protect priority at a trusted ingress.** Criticality must be authenticated and propagated; reject untrusted caller claims of tier-zero importance. \"Protect the policy at a trusted ingress boundary, not by trusting a user-supplied header.\" A false-priority producer is a controller-failure mode, not just a security footnote.\n- **Make reasons visible.** Operator-readable reason codes are required so a rejection can be attributed to the global, tenant, resource or priority constraint. Without them, operators cannot distinguish a correct shed from a bug.\n- **Define stop conditions in advance.** The case lists: repeated swings between rejection and flooding; critical requests shed while optional work survives; a lagging follower becoming an invisible bottleneck; telemetry outage producing unlimited admission; or an emergency fallback requiring unauthorized priority override. The rollout page adds priority spoofing or unknown tenant identity, healthy traffic starved by stale external signals, rising p99 despite fewer admitted tasks, follower lag beyond a safety threshold, PID oscillation or prolonged shed state, and inability to restore the old mode without unbounded retry pressure.\n\nThe migration sequence is: instrument first; add observation-only shadow decisions; verify tenant and priority identity propagation; bring tenant fairness online with conservative limits; canary priority-aware queues by partition and cohort; then add the PID loop behind a reversible switch with guardrails on minimum critical capacity and maximum retry burst. Test a hot partition, a slow follower, an oversized write from a low-QPS caller, a retry storm and a dropped telemetry feed before expanding.\n\n## 7. Boundaries and applicability\n\n- **This is not an argument that rate limiting is always wrong.** The case says the failure was placement and measurability, \"not a universal indictment of rate limiting.\" Static request limits can complement a feedback controller for API contract policing; they cannot replace workload capacity measurement. A small stateless API may already be well served by a fixed bounded concurrency limit and a per-caller quota.\n- **Storage-local admission has prerequisites.** It needs per-partition load and commit-lag signals. If storage is fully managed and cannot expose them, a storage-local controller may be impossible; an edge quota may remain useful for billing or contract but is not a substitute for overload-aware downstream limits. No request should be accepted merely because it fits an API quota.\n- **Fairness needs a protected objective.** Request-count fairness and resource-cost fairness produce different outcomes. A tenant can fill a shared queue even when average capacity is sufficient; weights alone do not cap the cost of one operation or prevent starvation. Define per-tenant outstanding work, maximum age, borrowing policy and a starvation bound.\n- **Shared accounting needs a failure contract.** A global quota requires atomic shared accounting, coordinated leases or a documented approximation. A shared limiter adds a dependency; its timeout must not become unlimited spend. The fail-open/fail-closed label does not answer the design question; the permitted overshoot and recovery reconciliation do.\n- **The evidence has limits.** The case page is a source-backed draft with independent review pending. Its measurements are company-reported and not independently reproduced. The exact operator thresholds, PID gains, sampling rates and queue limits are not public. The \"three kinds\" table's explanatory contraindications are Tycho reasoning, not an external standard. Cross-company transfer is unknown; a controller that worked in one workload is not a universal policy.\n- **Insufficient evidence is a valid result.** Without a measured workload mix, protected operation priorities and per-partition signals, the correct recommendation is to instrument and test, not to copy a sophisticated controller.\n\n## Evidence map\n\nThe full section keys are used here; the same keys appear in the claim ledger.\n\n| Claim | Section key(s) | What the evidence establishes |\n|---|---|---|\n| C1 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production; tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation | Returned bytes are a bad proxy; a full scan is priced like a point lookup; unequal costs cannot be controlled by request rate alone |\n| C2 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#the-load-manager-iterations-and-actual-negative-outcomes; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#revised-boundary-storage-local-and-multi-signal | Static limits could not follow skew and hotspots; static thresholds were priority-agnostic |\n| C3 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#revised-boundary-storage-local-and-multi-signal | Redis round trip and dependency; no partition health; storage-local admission exposes relevant signals |\n| C4 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#applicability-migration-and-rollback-adr-for-another-organization | Failure was placement and measurability; edge quotas can remain useful but do not replace downstream limits |\n| C5 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately; tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission | Three jobs are distinct; aggregate shedding can let one tenant monopolize slots |\n| C6 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately | Each control's blind spot: quota cannot infer disk/replica health; fairness misses hot key and large write; regulator needs priority; feedback oscillates; client retry is outside |\n| C7 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests; tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome | Count completed useful work; a deadline shorter than queue wait is harmful; track populations |\n| C8 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#the-actual-feedback-loop-and-non-equivalent-performance-figures; tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop | Throughput versus starvation; goodput by priority; observation, decision and readiness timing |\n| C9 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#the-actual-feedback-loop-and-non-equivalent-performance-figures | Delayed/stale/missing feedback; bounded output; safe low-confidence behavior |\n| C10 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract | Shadow, canary, kill switch, rate cap, reason codes, stop conditions |\n| C11 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract | Priority must be trusted at ingress, not from a header |\n| C12 | tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission | Shared accounting dependency; timeout not unlimited budget; fail-open/closed labels insufficient; bounded overshoot |\n| C13 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#negative-and-positive-results-with-denominators | Reported numbers are publisher-scoped; static limits complement contract policing but do not replace capacity measurement |\n| C14 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#alternative-architectures-and-applicability; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#applicability-migration-and-rollback-adr-for-another-organization | Small stateless API may suffice; managed storage may preclude local control; insufficient evidence |\n| C15 | tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract; tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#applicability-migration-and-rollback-adr-for-another-organization | Instrument, shadow, canary, test hot partition, slow follower, oversized write, retry storm, dropped telemetry; retain old limiter |\n| C16 | tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate | Premature reopen can cause a second collapse; stability windows; excessive cooldown strands capacity |\n\n## Unknowns, contradictions and non-claims\n\n- Exact production thresholds, gains, sampling intervals and queue limits are not public. I do not infer them.\n- The reported QPS, latency, goroutine and heap figures are publisher-scoped and not independently reproduced. The heap percentage and the spike/max figures use unlike denominators, so I preserve them without recomputation.\n- The \"three kinds\" table's contraindications are Tycho analysis; the source describes mechanisms and historic missteps, not a standardized load-management specification.\n- The case does not prove that a storage-local controller transfers to another workload. This is a design argument, not a production guarantee.\n- I do not claim that static quotas are always wrong, that one controller can never be composed, or that priority classes are always safe. The answer requires authenticated priority, bounded starvation and measurable signals.\n- No V12 model/run/decision artifact and no atlas pattern entry is cited; the question is a book-layer design question.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The old quota's cost signal was the response's returned-byte count, which is not proportional to the work a query consumes: a full scan that returns one row was priced like a one-row point lookup.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production",
+          "quote": "A proposed per-caller quota layer in the **stateless query tier** assigned cost to queries from their return-byte count and relied on Redis to share quotas.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable",
+          "quote": "The first quota experiment failed partly because **output bytes were a bad proxy for consumed work**: a table scan returning one row looked as cheap as a one-row point lookup.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production",
+          "quote": "A full scan returning a single row cost the same as a point lookup; quotas remained static while workload skew and hotspots evolved.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+          "quote": "operations with unequal costs cannot be controlled solely by requests per second",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Because the limits were static while workload skew and hotspots moved, the quota could not track the changing cost distribution; later static queue thresholds were priority-agnostic, so expired work accumulated and high-priority requests were dropped.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production",
+          "quote": "A full scan returning a single row cost the same as a point lookup; quotas remained static while workload skew and hotspots evolved.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#the-load-manager-iterations-and-actual-negative-outcomes",
+          "quote": "Queue thresholds were **static and priority-agnostic**; expired work piled up; clients retried together and high-priority requests were dropped",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#revised-boundary-storage-local-and-multi-signal",
+          "quote": "Static delay and simple queue policies still caused inappropriate rejection of high-priority traffic or required manual tuning.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Placing the quota in the stateless query tier added a Redis round trip and a shared-accounting dependency to every request, while query nodes lacked current health signals for all storage partitions; moving admission to the stateful executor exposed more relevant load signals and removed the per-request Redis dependency.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production",
+          "quote": "The Redis round trip added a reliability dependency, and query nodes did not possess current health signals for all storage partitions.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable",
+          "quote": "Moving the admission decision closer to the stateful storage executor exposed more relevant load signals, while avoiding Redis network dependency on every request.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#revised-boundary-storage-local-and-multi-signal",
+          "quote": "The team moved protection into the stateful engine with three complementary mechanisms.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production",
+          "quote": "A proposed per-caller quota layer in the **stateless query tier** assigned cost to queries from their return-byte count and relied on Redis to share quotas.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The failure was about placement and measurability of resource pressure, not a universal indictment of rate limiting; static edge or API quotas can still serve contractual purposes but cannot replace resource-aware admission.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production",
+          "quote": "Its failure was about **placement and measurability of resource pressure**, not a universal indictment of rate limiting.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable",
+          "quote": "This placement is the historical architectural decision, not an instruction to remove all edge/API contractual rate limits.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#applicability-migration-and-rollback-adr-for-another-organization",
+          "quote": "An API-edge quota protecting billing or contractual usage may remain useful but does not replace overload-aware downstream limits.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "System-wide shedding, per-tenant fairness and hot-resource protection are separate jobs: aggregate shedding can preserve the process while one tenant monopolizes admitted slots, and a low-QPS high-byte write or hot partition can still overload local resources even when aggregate capacity is healthy.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable",
+          "quote": "A system-wide PID shedder can preserve the total storage process yet allow a single tenant to monopolize admitted slots",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately",
+          "quote": "**systemwide overload shedding**, **per-tenant fairness in healthy periods**, and **specific resource protection** for hot keys, large writes, memory or goroutine budgets.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately",
+          "quote": "A low-QPS, high-byte write or hot partition can still overload local resources",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+          "quote": "A single tenant can fill a shared queue even when average capacity is sufficient.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Each control has a blind spot another cannot cover: a request quota cannot infer disk or replica health from response bytes, a per-tenant concurrency limit does not detect every hot key or large write, a resource regulator without priority policy can drop critical work as early as optional work, feedback admission may oscillate or reflect a different cohort, and admission alone cannot stop client retry storms.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately",
+          "quote": "It cannot infer stateful disk/replica health from byte-size of the response",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately",
+          "quote": "A low-QPS, high-byte write or hot partition can still overload local resources",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately",
+          "quote": "Without priority policy it may drop a critical request as early as an optional job",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately",
+          "quote": "Feedback may oscillate, be delayed, or reflect conditions different from the request cohort",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately",
+          "quote": "Admission alone cannot stop irresponsible client retry storms",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Admission must optimize useful completed work and critical-class success rather than ingress QPS or aggregate reject rate; a request whose deadline is shorter than predicted queue wait is already abandoned when it consumes resources, and offered, admitted, rejected, completed and failed populations must be tracked separately.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests",
+          "quote": "A retryable request with a deadline shorter than predicted queue wait can create harm if accepted: its caller has already abandoned it by the time the store consumes CPU, memory and locks.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests",
+          "quote": "A controller should count **completed useful operations** and successful critical classes, not just ingress QPS or aggregate reject rate.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+          "quote": "Protect the resource that actually limits **useful completed operations**.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+          "quote": "Track offered, admitted, rejected, completed and failed populations separately.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A controller that raises total throughput while starving an essential tenant fails; evaluation must compare successful results by class, p95/p99, queue age, retries, admission rate, heap/goroutines, replica lag and per-tenant fairness/starvation, and must time observation, decision and useful readiness.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests",
+          "quote": "A controller that increases total throughput while starving an essential tenant **fails** the requirement.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests",
+          "quote": "Compare successful results by class, p95/p99, queue age, retries, admission rate, heap/goroutines, replica lag and fairness (per-tenant share and starvation).",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop",
+          "quote": "When the autoscaler **observed** a threshold, emitted a decision, requested units, and when those units became *usefully ready*.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#the-actual-feedback-loop-and-non-equivalent-performance-figures",
+          "quote": "measuring lower rejected-request counts is not enough: simultaneously record successful **goodput by priority**, queue wait, fraction already past client deadline, leader/follower lag, retries, memory and per-tenant fairness.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Delayed, stale or missing observations require bounded control output and a safe low-confidence behavior: a delayed follower-lag signal can over-admit into a replica that cannot commit, stale error telemetry or bad gains can drive oscillation, feedback may reflect a different cohort, and a telemetry outage must not produce unlimited admission.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "quote": "PID regulation is only as good as its observations, sampling rate and bounded output.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "quote": "A delayed follower-lag signal could cause over-admission into a replica that cannot commit; stale error telemetry can drive oscillation.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#the-actual-feedback-loop-and-non-equivalent-performance-figures",
+          "quote": "a PID controller with stale metrics, delayed actions, badly chosen gains or priority override can oscillate and shed the wrong cohort.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "quote": "controller swings repeatedly between rejection and flooding; critical requests are shed while optional work survives; a lagging follower becomes an invisible bottleneck; telemetry outage produces unlimited admission; or an emergency fallback requires unauthorized priority override.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "quote": "Keep a kill switch, rate-of-change cap on control output, a safe low-confidence behavior when remote signals fail, and operator-readable reason codes.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A failing controller needs a reversible rollout with decision-only shadow mode, a small canary, retained fixed baseline protection, a kill switch, a rate-of-change cap, operator-readable reason codes and explicit stop conditions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "quote": "**decision-only shadow mode**, recording hypothetical shed reasons",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "quote": "Canary actual admission on a small tenant/partition cohort while leaving fixed baseline protection available.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "quote": "Keep a kill switch, rate-of-change cap on control output, a safe low-confidence behavior when remote signals fail, and operator-readable reason codes.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "quote": "controller swings repeatedly between rejection and flooding; critical requests are shed while optional work survives; a lagging follower becomes an invisible bottleneck; telemetry outage produces unlimited admission; or an emergency fallback requires unauthorized priority override.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract",
+          "quote": "priority spoofing or unknown tenant identity; healthy traffic starved by stale external signals; rising p99 despite fewer admitted tasks; follower lag propagating beyond safety threshold; PID oscillation or prolonged shed state; or an inability to restore the old control mode without unbounded retry pressure.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Priority must be authenticated and enforced at a trusted ingress boundary, not trusted from a user-supplied header, because a false-priority producer can mark noncritical work as critical.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "quote": "Another test is a false-priority producer attempting to mark noncritical work as critical.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "quote": "Protect the policy at a trusted ingress boundary, not by trusting a user-supplied header.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract",
+          "quote": "Verify tenant and priority identity propagation from the query tier; reject untrusted caller claims of tier-zero importance.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Shared accounting has its own failure contract: a global quota needs atomic shared accounting, coordinated budget leases or a documented approximation; the shared store adds a dependency; its timeout must not become unlimited spend; and fail-open/fail-closed labels do not specify the permitted overshoot.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+          "quote": "A global quota needs atomic shared accounting, coordinated budget leases or a deliberately documented approximation.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+          "quote": "A shared limiter adds a dependency; its timeout must not become permission to spend an unlimited budget.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+          "quote": "State the permitted overshoot and recovery reconciliation; the labels fail-open/fail-closed do not answer this design question.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+          "quote": "With four replicas each independently granting the same bucket, the aggregate allowance can approach four times the intended scope.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "The reported gains of about 3,000 to 5,400 QPS and upsert p99 from about 3.1 s to about 1.0 s are publisher-scoped observations, not guarantees for another store; static request limits can complement a feedback controller for API contract policing but cannot replace capacity measurement.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests",
+          "quote": "The publisher reports **5,400 vs 3,000 QPS** and **1.0s vs 3.1s upsert p99** in its overload comparison",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests",
+          "quote": "These are **reported test observations**, not guarantees for another store.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#negative-and-positive-results-with-denominators",
+          "quote": "**Do not infer** that static rate limits are always wrong: they can complement the dynamic controller for API contract policing, and cannot replace workload capacity measurements.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Storage-local admission is not universally applicable: a small stateless API may already suffice with a fixed bounded concurrency limit and per-caller quota; if storage is fully managed and exposes no per-partition load or commit-lag signals, a storage-local controller may be impossible; without those measurements and ownership the correct recommendation is insufficient evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#alternative-architectures-and-applicability",
+          "quote": "For a small stateless API, a fixed bounded concurrency limit and per-caller quota may already suffice.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#applicability-migration-and-rollback-adr-for-another-organization",
+          "quote": "if storage is fully managed and cannot expose per-partition load/commit lag, a storage-local controller may be impossible.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#alternative-architectures-and-applicability",
+          "quote": "Without those measurements and ownership, the correct recommendation is **insufficient evidence**, not immediate adoption of a sophisticated feedback controller.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "A safe migration instruments first, runs observation-only shadow decisions at the storage executor, verifies tenant and priority identity propagation, canaries priority-aware queues by partition and traffic cohort, tests a hot partition, a slow follower, an oversized low-QPS write, a retry storm and a dropped telemetry feed, and retains the old limiter until fairness and recovery tests pass.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#applicability-migration-and-rollback-adr-for-another-organization",
+          "quote": "instrument per-key hotness, concurrency, queue wait, follower lag and request priority before building a pluggable controller",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract",
+          "quote": "Start with **observation only** at the storage executor, logging which requests would be rejected under each independently checked constraint.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract",
+          "quote": "Verify tenant and priority identity propagation from the query tier; reject untrusted caller claims of tier-zero importance.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract",
+          "quote": "Canary priority-aware queues by partition and traffic cohort, then add the PID control loop behind a reversible switch with guardrails on minimum critical-service capacity and maximum retry burst.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract",
+          "quote": "Test a hot partition, a slow follower, an oversized write from low-QPS caller, a retry storm and a dropped telemetry feed.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#applicability-migration-and-rollback-adr-for-another-organization",
+          "quote": "retain reversible old limiter until fairness and recovery tests pass.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Recovery needs deliberate hysteresis: prematurely reopening after load drops can cause a second collapse, stability windows and progressive recovery help, but excessive cooldown can strand healthy capacity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+          "quote": "When load drops or a dependency becomes healthy, prematurely reopening traffic can cause a second collapse.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+          "quote": "admission thresholds may need stability windows and progressive recovery.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+          "quote": "an excessive cooldown can strand healthy capacity.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#the-load-manager-iterations-and-actual-negative-outcomes",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#revised-boundary-storage-local-and-multi-signal",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#applicability-migration-and-rollback-adr-for-another-organization",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#model-the-protection-boundaries-separately",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+    "tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#the-actual-feedback-loop-and-non-equivalent-performance-figures",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#synthetic-reversible-rollout-and-refusal-contract",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#negative-and-positive-results-with-denominators",
+    "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#alternative-architectures-and-applicability",
+    "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
