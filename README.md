@@ -1,4 +1,4 @@
-# Tycho
+# Tycho<br><sub>From architecture question to cited decision.</sub>
 
 <p align="center">
   <a href="assets/tycho-station/tycho-station.jpg">
