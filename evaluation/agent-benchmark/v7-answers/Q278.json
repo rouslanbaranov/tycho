@@ -1,0 +1,682 @@
+{
+  "task_id": "Q278",
+  "answer": "# Q278 — Interception is not a migration census: authority, routing and retirement evidence\n\n## Layers used\n\n- **book** — canonical prose for the transition, compatibility, reconciliation and retirement mechanism.\n- **atlas** — pattern decision cards (Strangler Fig, Expand-and-Contract, Online Data Migration, Controlled Cutover, Parallel Run, Branch by Abstraction), because the question is a pattern-shaped decision about a routing seam and a legacy retirement.\n\nAtlas was queried with its own volume as required. The atlas layer contributes decision conditions and contraindications, not proof of behaviour.\n\n## Facet matrix\n\n| Facet | Query formulations used (volume) | Primary evidence |\n|---|---|---|\n| F1. What interception can and cannot establish | \"routing facade migration legacy callers\" (atlas); \"strangler fig routing seam\" (book); \"interception is not proof caller migrated\" (book, zero hits); \"facade only path external clients bypass batch job\" (book) | tycho.page.cf0ce38c73e44950aec5a9c2869bee63#purpose-and-mission; tycho.page.5778597986df46439eee0aa162de2729#5-change-and-eventual-retirement-are-part-of-the-pattern |\n| F2. Hidden and out-of-band writers (batch, direct database, queues, views, restores) | \"batch job direct database access legacy writer\" (book); \"shared database coupling batch integration bypass\" (book); \"capability inventory callers decommissioning evidence\" (book) | tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary; tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes |\n| F3. Authority during coexistence | \"coexistence authority read write during migration\" (atlas); \"coexistence source of truth during migration\" (book); \"one authoritative writer each invariant\" (book); \"dual write two stores not atomic\" (book) | tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts; tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle; tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe |\n| F4. Routing rules and read-versus-write cutover | \"read cutover write cutover separate\" (book); \"read routing cutover not write authority\" (book); \"traffic percentage is not proof of adoption\" (book) | tycho.page.cf0ce38c73e44950aec5a9c2869bee63#purpose-and-mission; tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta; tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows; tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes |\n| F5. Compatibility and the no-return point | \"mixed version database compatibility new binary old reader\" (book); \"retire legacy path delete old code\" (book); \"dual write inconsistent divergence between stores\" (book) | tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary; tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission; tycho.page.96a702434b714ed4906b1301bc6e0248#1-check-the-real-combinations-including-old-readers; tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair |\n| F6. Evidence required to retire the old path | \"retire legacy path evidence\" (atlas); \"decommission old callers zero callers\" (book); \"expand and contract schema\" (atlas); \"controlled cutover\" (atlas) | tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract; tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point; tycho.page.31c8e450f78c451d90cb6090df330c5a#engineering-walkthrough-lossy-translation-behind-a-seemingly-compatible-api; tycho.page.301477f3c7324fe8932d3a2608516a20#overview; tycho.page.4a302aa608d645288756076e9fcdd6b0#overview |\n\n## Short answer\n\n**Interception is a routing observation, not a migration proof.** A facade proves only that the requests which reached it were routed. It does not enumerate callers, and it cannot see a caller that never traverses the seam. The book states the failure mode directly: \"Interception may be impossible, internal callers may bypass the façade, and old/new state can diverge\". A nightly batch that keeps writing the legacy tables is exactly that bypass: it is not an unrouted client of the facade, it is an independent writer with credentials to the old store. Because the source material also notes that a translator cannot make two independently accepted writes atomic, the batch keeps two live authorities no matter how complete the facade's read routing looks. The atlas card says the same at pattern level: reject when \"dual-running data cannot be reconciled\", and the facade card itself concedes that \"internal callers may bypass the façade\".\n\n**Coexistence must define authority first and routing second, for every intermediate state.** Authority means: for each invariant, which store is written and validated; that there is exactly one authoritative writer per invariant; how overlapping or double writes are prevented or explicitly coordinated; which source is current when both exist; and what reconciliation rule repairs divergence. Routing means: which capability, operation and client/version goes where, that reads and writes are separate transitions with separate switches, what the fallback is and when routing back is still legal, who may flip the switch, and which route is authoritative for each gate. A facade that sends all reads to the new service has migrated one axis of one capability. It has not defined write authority, and it has not listed the writers.\n\n**The evidence required before retirement is an observed, time-bounded census plus reconciliation plus a recovery argument, not a routing percentage.** At minimum: a complete inventory of readers and writers (online, batch, CDC, queues, views, analytics, restore/backup paths) with decommission evidence for each; proof that the legacy tables receive no direct writes across a full batch and replay cycle; one-writer or fenced-cutover evidence with an authority ledger that timestamps the read and write switches separately; mixed-version compatibility evidence that every still-supported binary can read every committed row, including already-written new-only rows; semantic source-to-target reconciliation with residual unknowns explicitly approved; a tested recovery path (reverse transformation or approved-loss restore) or an explicit accepted no-return; a stop/hold mechanism and on-call owner; and a recorded irreversible-change approval covering retention, backups and decoders. In this scenario the new-only rows have already ended simple reversibility, so the plan's trigger (\"reads are moved\") is both too early and the wrong kind of signal.\n\n## 1. Why interception is not proof that every caller was migrated\n\n### 1.1 The seam observes traffic, not the population of callers\n\nA strangler facade is a routing and compatibility layer that sends \"one capability at a time to the new implementation while the old path remains available\". Anything that does not present a request to that layer is outside its observation. That is why the book can say without qualification that internal callers may bypass the façade and that old and new state can diverge. A routing log is therefore evidence about requests that arrived, not about all effects that were produced. Reading it as a caller census inverts the sampling direction: the expensive, legacy-shaped callers are precisely the ones least likely to be routed through a new seam.\n\nThe same limit appears in the pattern sources. The independently published Strangler Fig guidance is cited as treating interception as a prerequisite, and the book's own caveat is explicit: the pattern \"does not prove that every small or inaccessible system can be migrated by request interception\". The atlas card narrows fit in the same way: \"Reject when the legacy has no seam, when dual-running data cannot be reconciled, or when the team cannot own two paths.\"\n\n### 1.2 \"The only path for external clients\" is a scoped claim\n\nThe premise already contains the counterexample. The facade is the only path for **external** clients. That says nothing about internal services, schedulers, operators with database access, batch jobs, analytics extractors or restore tooling. The compatibility chapter is blunt: \"Mobile/partner clients, queues, batch jobs, database views and backups can retain older semantics\", and a real capability inventory is required rather than a belief that every deployed process has the new image. The retention contract in the schema chapter lists the same population: a contract check must cover \"online services, batch jobs, replay, CDC and analytics consumers\". A migration that inspects only the external edge has not even looked at the batch path that the question says is still writing.\n\n### 1.3 A direct writer is a second authority, not a routed caller\n\nThis is the decisive distinction. A caller that bypasses the facade but still writes through a service interface is a routing gap. A nightly job that writes the legacy tables directly is an **authority** gap: it commits state the new service may never learn about, and the new service commits state the legacy binary cannot read. The book's coexistence page says the quiet part: \"An ACL does not solve a distributed transaction. If both old and new systems accept independent writes, a translator alone cannot make those writes atomic.\" The schema page adds that \"Two independent writers are not automatically atomic just because the schema includes both fields\", and the outbox chapter shows the general shape of the failure: without an independently established cross-system atomic transaction, a failure between two effects leaves a committed record without its counterpart.\n\nSo even a facade that intercepts 100 percent of external reads and writes is compatible with an unbounded number of legacy effects written by the batch. The batch does not need to be a client of the facade to defeat the migration; it only needs a connection string.\n\n### 1.4 Moving reads does not move write authority\n\nThe plan treats \"all reads go to the new service\" as the retirement trigger. But read routing and write authority are distinct transitions. In the documented migration ordering, reads move first and writes are removed later, only after callers are migrated: the playbook describes routing all reads to the new representation and then removing obsolete writes \"after callers are migrated\". Its decision record demands \"an explicit authority ledger with timestamped old-read/new-read and old-write/new-write cutovers\" — four switches, not one. A team that has flipped the read switches and none of the write switches has completed at most half of the authority transfer, while the batch keeps the old write switch closed in the legacy position.\n\n### 1.5 A complete traffic share can be a false completion signal\n\nEven a genuine 100 percent read share is not completion. The simulation page lists \"False cutover signal. A 100% traffic share is treated as success while divergence is still growing.\" The adoption case makes the organisational version of the same point: the risk is \"celebrating a high average coverage while stragglers continue to determine the platform's upgrade burden\". Coverage percentages hide the tail, and the tail here is the nightly batch.\n\n### 1.6 Shadow and parallel comparison cannot close the gap either\n\nIt is tempting to answer the missing-caller problem with shadow reads. The book bounds that too: shadow comparisons are allowed \"without treating shadow outcomes as authoritative writes\", parallel run \"must not execute both implementations when the operation has side effects\", and \"a comparison that ignores nondeterminism or side effects produces false confidence\". A shadow of the read path cannot prove that the batch's writes are represented, because the batch is precisely the effect that was never in the comparison.\n\n## 2. What coexistence must define about authority\n\nCoexistence is a state, not a date, and each state has to name its authority. The transition chapter's five-contract table is the checklist: functional ownership, state authority, API/event semantics, security/operations, and failure/recovery. For state authority, every transition state must state \"Where each authoritative entity is written and validated\" and \"How double-writing is prevented, which source is current, and how to reconcile\". Concretely, coexistence must define:\n\n1. **The invariant and its owner.** Authority is per invariant and per entity, not a global property of a system. The migration protocol table encodes this as a single-writer rule per transition, with S4 described as: \"A fenced cutover authorizes precisely one writer; old writes are rejected or routed to it\". The strangler card's good-fit synthesis reduces to \"one authoritative writer per invariant\".\n2. **How overlapping writers are prevented.** The migration protocol requires \"One-writer authority during each transition step; prohibition or explicit coordination of overlapping writes\". The go/no-go gate repeats it as \"no overlapping uncoordinated writers\". If a nightly batch must keep writing during coexistence, the design has to fence it, route it through the new authority, or convert its write into an idempotent reconciled projection — not merely observe it.\n3. **Which copy is current.** When both stores hold data, the design needs a rule for the current source, a mapping revision and a checkpoint, plus the replay window and reconciliation rule. The online-migration card requires that \"one authoritative writer or a reconciled second write is owned\" and says to \"record the mapping revision, checkpoint, replay window and reconciliation rule\".\n4. **How divergence is detected and repaired.** Reconciliation must be semantic: \"checks membership, per-key normalized values, relationship constraints and selected business outcomes\", and repair must be authorized and idempotent, keyed by the original logical effect and guarded by a version or epoch. Row counts are not a reconciliation: \"A million indexed rows and a million source rows can still disagree on critical values or expose stale access decisions.\"\n5. **The no-return point and the last safe phase.** The transition must record where rollback stops. \"Rollback remains possible until a recorded no-return point, where routing inventory and reconciliation evidence authorize retirement.\" After that point, recovery is forward repair: a failure \"must use an approved forward-repair path rather than fictional rollback\".\n6. **Ownership and authority to switch.** The five-contract table asks \"Which principal/role may switch routing or write, and whose on-call can recover\", and the strangler guidance says to \"Fund coexistence and name owners for both paths.\" Authority that nobody owns is not defined; it is merely documented.\n\n## 3. What coexistence must define about routing\n\nRouting is the second half of the contract, and it must be more specific than \"reads to the new service\":\n\n| Routing question | What must be written down | Why it matters here |\n|---|---|---|\n| What is the routing unit? | Capability, operation identity, and client/version — not a global read/write flag | The facade routes capabilities one at a time; the old system stays authoritative for capabilities not yet migrated |\n| Which requests go where? | Explicit per-client and per-version rules, including old binaries and asynchronous consumers | The transition table asks \"Whether old or new implementation receives each client/version\"; the compatibility matrix must include asynchronous readers |\n| Are reads and writes separate switches? | Two independent decisions with separate timestamps and owners | Moving reads leaves the batch's write path untouched; the authority ledger records old-read/new-read and old-write/new-write separately |\n| What is the fallback? | The route back, its preconditions, and whether it is still legal | Routing back is safe only while old behaviour and data assumptions still hold; after new-only writes they may not |\n| How is bypass detected? | A bypass detector plus a routing inventory, not only a request counter | Both are named as prerequisites to retiring the old path, and both are flagged as unproven operational checks |\n| What gates each step? | Entry and exit evidence for each state, with an observation window and a stop mechanism | A cutover is supported only inside declared limits and with a rollback that completes in the window; a transition must end with an observed gate, not a calendar milestone |\n| Who operates it? | The principal allowed to switch routing or write, and the on-call that recovers | The facade can itself become a single point of failure; someone must be able to hold and reverse it |\n\nTwo further routing facts follow from the sources. First, the facade is a temporary routing and compatibility layer, \"not a permanent second architecture\", so the routing table is a decommissioning plan as much as a traffic plan. Second, routing must be paired with a **data** compatibility statement; the atlas expansion card rejects a change when \"neither a rollback nor a viable forward-repair path exists, or when no one owns the reader inventory.\"\n\nBranch by abstraction is the internal-interface variant of the same idea. Its fit conditions require that a reversible switch and a removal owner and date are defined, and its recovery story assumes the team can \"use an easily flipped switch so the team can return to the old functionality if problems appear.\" New-only persisted rows break that assumption for the legacy reader: the switch may still exist physically, but flipping it is no longer semantically safe, so the removal owner and date become a no-return decision rather than a convenience.\n\n## 4. What the premise has already settled\n\nThe scenario contains three facts that change the retirement calculus. The three numbered consequences below are inferences from the cited mechanism applied to those facts, not observations of this team's system:\n\n1. **The batch still writes legacy tables directly.** This is an uncoordinated second writer, so the transition is in a dual-authority state regardless of the facade. Monitoring read traffic cannot disprove it; only an inventory plus direct-write detection can.\n2. **New-only writes already exist.** The old binary cannot read them. The schema page states the consequence: \"Once N+1 commits a genuinely new-only state, restoring N containers may reproduce errors or violate business invariants.\" The playbook is even more specific: \"Once a new-only feature is accepted, the ability to toggle readers back to old rows may cease.\" The reversible point has already ended: \"The reversible point ends when new-only writes or deletion break old-reader expectations.\"\n3. **The intended trigger is read routing.** That is a routing milestone, not an observed gate. It says nothing about writes, nothing about the batch, and nothing about whether an old reader still needs the legacy rows.\n\nSo the plan is not merely under-instrumented; its ordering is wrong for this data. Deleting the legacy code as soon as reads move would remove the only program that knows how to interpret the legacy tables while a nightly job still depends on them, and while rows already exist that the old binary cannot read. That is a one-way door taken on a routing statistic.\n\n## 5. The evidence required before the old path is retired\n\nThe gate should be assembled as an evidence package, each item tied to an owner and an observation window. The following is derived from the go/no-go contract, the retirement section, and the migration protocol:\n\n### A. A caller and writer census, not a traffic graph\n\n- Inventory every reader, writer and subscriber: online services, internal callers, batch jobs, schedulers, CDC/replication, views, analytics extractors, exports, caches and projections, restore and backup tooling, and retained event decoders. The retention gate requires \"all active and required historical readers/writers\"; the go/no-go gate requires \"decommissioning evidence for all old callers/subscriptions\".\n- For each entry, record either migration evidence or a decommission record. \"Decommission old only after proven zero callers\" is the playbook's summary, and the anti-corruption retirement sequence is: \"inventory both client populations; add measurement for use of legacy operations; introduce versioned translation and a trusted mapping; reconcile unknown outcomes; wait through replay/retention horizon; only then disable legacy writes and finally the adapter.\"\n\n### B. Direct-write and bypass evidence across a full cycle\n\n- A bypass detector and a routing inventory are the named prerequisites; the atlas synthesis calls them \"a bypass detector, a routing inventory and a data reconciliation check before retiring the old path\".\n- The evidence must cover at least one complete batch period and the replay/retention horizon, with zero unexplained direct writes to the legacy tables, and an alerting path for a reappearance. A quiet dashboard during daytime is not coverage of a nightly job.\n- Honesty note: the book classifies bypass detection, routing inventory and reconciliation as Tycho guidance and \"unproven operational checks\". They are still the right checks; their effectiveness is not established by the cited sources.\n\n### C. One-writer and fencing evidence\n\n- An authority ledger with separate, timestamped read and write switches: old-read/new-read and old-write/new-write. Until the old-write entry exists, the legacy path is still an authority.\n- Evidence that no overlapping uncoordinated writers exist at any gate, as the go/no-go list requires, plus the fenced-cutover rule that exactly one writer is authorized and old writes are rejected or routed.\n\n### D. Mixed-version compatibility evidence, including the already-written rows\n\n- A compatibility matrix of every still-supported reader and writer against every persisted state, including new-only rows: \"old/new client × API × data compatibility matrix, including asynchronous readers\".\n- The specific question to answer is not \"does the schema accept the row\" but \"does each binary interpret it correctly\". An additive field can still be semantically incompatible: \"old code might deserialize a fixed projection, treat unknown enum values as errors, or misclassify absence as an allowed action.\" Compatibility is \"a relation between deployed reader/writer versions and persisted information\", not a green flag.\n- If the answer is \"the old binary cannot read these rows\", the honest options are to keep a compatible decoder for the replay horizon or to declare the old reader unsupported and accept the no-return. Deleting the decoder is itself irreversible: \"Deleting a column, archived identifier or legacy event decoder may destroy an old client's ability to read history or replay effects.\"\n\n### E. Semantic reconciliation with approved residual unknowns\n\n- Reconciliation must compare meaning: membership, per-key values, relationship constraints, representative user journeys, and the observation boundary of the comparison.\n- Residual unknowns need an approved policy, not a footnote: the retention gate requires \"migration completeness and an approved residual-unknown policy\".\n- The signal must be divergence under a declared threshold over a sustained period. A 100 percent traffic share while divergence grows is a failure, not a pass.\n\n### F. A recovery argument that survives the new-only rows\n\n- Rollback is only real if \"Older binaries still correctly interpret persisted state produced by newer binaries\" and \"The old route is still operational and authorized\", along with client acceptance and effect reconciliation. In this scenario the first condition is already false.\n- Therefore the gate must show either (a) a tested reverse transformation plus restore that can represent newly accepted writes, or (b) an explicit, named, authorized no-return decision. The playbook's test is conditional for exactly this reason: \"test recovery after removing the old data only if backups and reverse transformations can restore any newly accepted writes\".\n- The retention gate also records \"supported old/new binary plans and deprecation period\" and \"data retention and deletion obligations, including backups and projections\", ending in \"authorized acceptance of an irreversible change\".\n\n### G. Operational control during the window\n\n- A stop/hold mechanism: the go/no-go list requires an \"explicit stop/hold mechanism if monitoring misses a fault\".\n- A rehearsed rollback that completes inside the observation window; a cutover is supported only when the modelled states stay inside declared limits and that rollback completes.\n- Tested retry identity and late-acknowledgment handling, representative user-level integrity and authorization tests, and a recovery point with the maximum permissible loss stated.\n\n### H. Keep the awkward cases live until they pass\n\n- Keep a deliberately outdated consumer active during the read cutover \"to expose stale aliases, field interpretation or unexpected fallback paths\". For this scenario, the batch job is the outdated consumer that must be exercised, not assumed.\n- Do not use the facade's own view as the oracle. Shadow outcomes are not authoritative writes, and parallel execution must not double side effects.\n\n## 6. Decision boundary and unknowns\n\n- The material cited here is design reasoning, not production observation. The chapters state that no migration, restore drill, load test or compatibility test was executed; the numbers in the simulation are modelled, not measured.\n- The claim that bypass detection, a routing inventory, reconciliation and a recorded no-return gate are sufficient is not established by the cited public sources. The book says so itself: those remain Tycho guidance, and the AWS guidance \"does not define those checks or a no-return gate\".\n- The correct ordering is not universal. The playbook contrasts a mutable online store where reads move before write authority with an ingestion job that keeps the old job as a shadow **after** the new job writes production. Which order applies here depends on whether the batch is a peer writer (this scenario) or a legacy consumer being drained.\n- Unknowns that the evidence cannot settle: whether the facade truly sees every external caller; whether any other hidden writer exists; the batch's business criticality and whether it can be paused; the retention/legal horizon for legacy rows; the reconciliation thresholds; and whether a reverse transformation for new-only rows is feasible. Each is a gate input, not an assumption.\n- What would change the answer: proof that the batch has been migrated and fenced, an inventory showing zero remaining legacy readers/writers, and either full old-binary compatibility with new-only rows or an approved no-return with a tested forward repair. Absent those, retirement is not supported.\n\n## 7. Bottom line\n\nInterception is evidence about a route, not about a population. A facade can be the only external path and still coexist with a direct batch writer, a second authority, and rows the old binary cannot read. Coexistence therefore has to define, in writing and per state, who owns each invariant, how double writes are prevented and reconciled, which source is current, which capability and client version is routed where, and where the no-return point is. Retirement then needs an observed gate: a census with decommission evidence, direct-write and bypass proof across a full cycle, a single-writer/authority ledger, mixed-version compatibility that covers the existing new-only rows, semantic reconciliation with approved residual unknowns, and a recovery or explicitly accepted irreversible path. Read routing alone meets none of these; in this scenario the new-only rows mean the old path is already only conditionally available.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A routing facade proves only that the requests which reached it were routed; it is not a census of callers and cannot show that every writer migrated.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#purpose-and-mission",
+          "quote": "Interception may be impossible, internal callers may bypass the façade, and old/new state can diverge.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5778597986df46439eee0aa162de2729#5-change-and-eventual-retirement-are-part-of-the-pattern",
+          "quote": "It does not prove that every small or inaccessible system can be migrated by request interception.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The facade is a temporary routing and compatibility layer, and the legacy system remains authoritative for capabilities that have not been migrated.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#purpose-and-mission",
+          "quote": "The façade is a temporary routing and compatibility layer, not a permanent second architecture.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#bounded-pattern-ownership-notes",
+          "quote": "The old system stays authoritative for the capabilities not yet migrated.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The seam observes only traffic that traverses it; out-of-band consumers and writers, including batch jobs, queues, views and backups, can retain older semantics.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+          "quote": "Mobile/partner clients, queues, batch jobs, database views and backups can retain older semantics.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes",
+          "quote": "a contract check covers online services, batch jobs, replay, CDC and analytics consumers.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A batch job writing the legacy tables directly is an independent writer; a facade or translator cannot make its writes atomic with the new service's writes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5778597986df46439eee0aa162de2729#3-synchronous-and-asynchronous-mediation-are-different-choices",
+          "quote": "An ACL does not solve a distributed transaction. If both old and new systems accept independent writes, a translator alone cannot make those writes atomic.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "Two independent writers are not automatically atomic just because the schema includes both fields.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+          "quote": "Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A high or complete traffic share is not completion evidence; it can be a false cutover signal while divergence grows.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "A 100% traffic share is treated as success while divergence is still growing.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-explicit-incompleteness-trap-the-last-few-percent",
+          "quote": "celebrating a high average coverage while stragglers continue to determine the platform's upgrade burden",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Coexistence must state, for every intermediate state, where each authoritative entity is written and validated and how double writing is prevented, sourced and reconciled.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Where each authoritative entity is written and validated",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "How double-writing is prevented, which source is current, and how to reconcile",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Authority is per invariant, with exactly one authoritative writer at a fenced cutover and explicit coordination of any overlapping writes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview",
+          "quote": "one authoritative writer per invariant",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "A fenced cutover authorizes precisely one writer; old writes are rejected or routed to it",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5778597986df46439eee0aa162de2729#5-change-and-eventual-retirement-are-part-of-the-pattern",
+          "quote": "One-writer authority during each transition step; prohibition or explicit coordination of overlapping writes.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Routing must be defined per capability and per client or version, not as a single read/write flag.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#purpose-and-mission",
+          "quote": "send one capability at a time to the new implementation while the old path remains available",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Whether old or new implementation receives each client/version",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Read routing and write authority are separate transitions recorded as separate cutovers.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+          "quote": "with timestamped old-read/new-read and old-write/new-write cutovers",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+          "quote": "then remove obsolete writes and data after callers are migrated.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "old/new client × API × data compatibility matrix, including asynchronous readers",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A read cutover that leaves the batch writing the legacy store leaves the transition in a dual-authority state, so the new read path cannot be assumed complete. (Inference: this follows from the cited mechanism applied to the stated facts, not from an observation of this team's system.)",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#purpose-and-mission",
+          "quote": "Detect bypass and divergence, hold the cutover, and route back to the compatible path until the new capability is proven.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "Two independent writers are not automatically atomic just because the schema includes both fields.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Once new-only durable state exists, routing readers back to the old representation may no longer be possible; the reversible point has ended.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+          "quote": "Once a new-only feature is accepted, the ability to toggle readers back to old rows may cease.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "The reversible point ends when new-only writes or deletion break old-reader expectations.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The legacy binary may be unable to read new-only rows, so reverting the image is not a business rollback; recovery requires forward repair or a restore with approved loss.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+          "quote": "Once N+1 commits a genuinely new-only state, restoring N containers may reproduce errors or violate business invariants.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+          "quote": "New persisted state old binary cannot understand",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+          "quote": "stop further incompatible writes and forward-repair or restore with approved loss/reconciliation",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Compatibility is a relation between deployed reader and writer versions and persisted data; an additive change can still be semantically incompatible.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission",
+          "quote": "Compatibility is a relation between deployed reader/writer versions and persisted information",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#1-check-the-real-combinations-including-old-readers",
+          "quote": "old code might deserialize a fixed projection, treat unknown enum values as errors, or misclassify absence as an allowed action.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Retirement requires a compatibility matrix that covers asynchronous readers and decommission evidence for every old caller and subscription.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "old/new client × API × data compatibility matrix, including asynchronous readers",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "decommissioning evidence for all old callers/subscriptions",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "The retirement gate must show no overlapping uncoordinated writers, source-to-target reconciliation with residual unknowns, and a working stop mechanism.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "no overlapping uncoordinated writers;",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "source-to-target reconciliation and residual unknowns;",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "explicit stop/hold mechanism if monitoring misses a fault;",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "migration completeness and an approved residual-unknown policy",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Retiring data or code requires recording all historical readers and writers, restore and replay validity, retention obligations, and explicit acceptance of irreversibility.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "all active and required historical readers/writers",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "supported old/new binary plans and deprecation period",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "data retention and deletion obligations, including backups and projections",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "Deleting a column, archived identifier or legacy event decoder may destroy an old client's ability to read history or replay effects.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "authorized acceptance of an irreversible change",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Reconciliation proves meaning, not counts: membership, per-key values, relationships and representative outcomes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+          "quote": "A million indexed rows and a million source rows can still disagree on critical values or expose stale access decisions.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+          "quote": "checks membership, per-key normalized values, relationship constraints and selected business outcomes",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Shadow comparisons are not authoritative writes, and repair must be idempotent and guarded by current ownership or version.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5778597986df46439eee0aa162de2729#5-change-and-eventual-retirement-are-part-of-the-pattern",
+          "quote": "Shadow comparisons where permitted, without treating shadow outcomes as authoritative writes.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+          "quote": "Prefer idempotent repair keyed by the original logical effect and guarded by current version/epoch.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+          "quote": "Parallel run must not execute both implementations when the operation has side effects",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The retirement sequence is: inventory clients, measure legacy use, translate and reconcile unknown outcomes, wait out the replay horizon, then disable legacy writes and only then the adapter.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.31c8e450f78c451d90cb6090df330c5a#engineering-walkthrough-lossy-translation-behind-a-seemingly-compatible-api",
+          "quote": "inventory both client populations; add measurement for use of legacy operations; introduce versioned translation and a trusted mapping; reconcile unknown outcomes; wait through replay/retention horizon; only then disable legacy writes and finally the adapter.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+          "quote": "decommission old only after proven zero callers.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Rollback is valid only while older binaries interpret newer persisted state, clients accept the older contract, and the old route remains operational and authorized.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+          "quote": "Older binaries still correctly interpret persisted state produced by newer binaries.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+          "quote": "The old route is still operational and authorized.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+          "quote": "a rehearsed rollback that completes inside the observation window",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "A cutover is supported only inside declared limits over an observation window, with a rollback that completes in that window.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#overview",
+          "quote": "A cutover is supported only when those states stay inside declared limits and the rollback completes within the observation window.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "tested retry identity and late acknowledgment handling;",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "representative user-level integrity/authorization tests;",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Coexistence must name who may switch routing or write and who recovers, and must be funded with owners for both paths.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Which principal/role may switch routing or write, and whose on-call can recover",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#bounded-pattern-ownership-notes",
+          "quote": "Fund coexistence and name owners for both paths.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Router inventory, bypass detection and reconciliation evidence are what authorize retirement at a recorded no-return point.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#bounded-pattern-ownership-notes",
+          "quote": "Rollback remains possible until a recorded no-return point, where routing inventory and reconciliation evidence authorize retirement.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#bounded-pattern-ownership-notes",
+          "quote": "Add a bypass detector, a routing inventory and a data reconciliation check before retiring the old path.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "After the no-return point a failure must take an approved forward-repair path; a fictional rollback is not recovery.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "A failure after the no-return point must use an approved forward-repair path rather than fictional rollback.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+          "quote": "authorized acceptance of an irreversible change",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "Pattern fit depends on a real seam, reconcilable dual running, owned coexistence, and either rollback or a viable forward-repair path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview",
+          "quote": "Reject when the legacy has no seam, when dual-running data cannot be reconciled, or when the team cannot own two paths.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+          "quote": "when neither a rollback nor a viable forward-repair path exists, or when no one owns the reader inventory.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+          "quote": "contract is gated by reader absence",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "Bypass detection, routing inventory, reconciliation and the no-return gate are Tycho guidance and unproven operational checks, not source-established guarantees.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview",
+          "quote": "a bypass detector, routing inventory and data reconciliation remain unproven operational checks",
+          "supports": "C26",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#bounded-pattern-ownership-notes",
+          "quote": "Bypass detection, routing inventory, data reconciliation and the recorded no-return point remain Tycho guidance",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "Comparisons that ignore side effects or nondeterminism create false confidence, so a shadow cannot validate the batch's write path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+          "quote": "a comparison that ignores nondeterminism or side effects produces false confidence",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "A 100% traffic share is treated as success while divergence is still growing.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "An outdated consumer should be kept live through the read cutover, and old data should be removed only if backups and reverse transformations can restore newly accepted writes.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+          "quote": "keep a deliberately outdated consumer active during the read cutover to expose stale aliases, field interpretation or unexpected fallback paths.",
+          "supports": "C28",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+          "quote": "test recovery after removing the old data only if backups and reverse transformations can restore any newly accepted writes",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "In this scenario the batch's direct writes keep the legacy store an active authority, so the new service's read path cannot be assumed complete even at 100 percent read routing. (Inference: this follows from the cited mechanism applied to the stated facts, not from an observation of this team's system.)",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#purpose-and-mission",
+          "quote": "Interception may be impossible, internal callers may bypass the façade, and old/new state can diverge.",
+          "supports": "C29",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5778597986df46439eee0aa162de2729#3-synchronous-and-asynchronous-mediation-are-different-choices",
+          "quote": "single authoritative writer, controlled command routing, reconciliation and explicit no-return gates",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C30",
+      "text": "Deleting the legacy code on the read-routing milestone would remove the only reader of legacy rows while a batch writer and unreadable new-only rows still exist; that is an unapproved one-way door. (Inference: this follows from the cited mechanism applied to the stated facts, not from an observation of this team's system.)",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "quote": "The reversible point ends when new-only writes or deletion break old-reader expectations.",
+          "supports": "C30",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+          "quote": "Once N+1 commits a genuinely new-only state, restoring N containers may reproduce errors or violate business invariants.",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C31",
+      "text": "Branch by abstraction requires a reversible switch plus a named removal owner and date, and its switch-back recovery assumes the old implementation still works; new-only persisted rows can invalidate that assumption.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+          "quote": "a reversible switch and removal owner/date are defined",
+          "supports": "C31",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+          "quote": "use an easily flipped switch so the team can return to the old functionality if problems appear.",
+          "supports": "C31",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+          "quote": "A named removal owner and date remain Tycho review conditions, not source claims.",
+          "supports": "C31",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview",
+    "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+    "tycho.page.31c8e450f78c451d90cb6090df330c5a#engineering-walkthrough-lossy-translation-behind-a-seemingly-compatible-api",
+    "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+    "tycho.page.5778597986df46439eee0aa162de2729#3-synchronous-and-asynchronous-mediation-are-different-choices",
+    "tycho.page.5778597986df46439eee0aa162de2729#5-change-and-eventual-retirement-are-part-of-the-pattern",
+    "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#bounded-pattern-ownership-notes",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#1-check-the-real-combinations-including-old-readers",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+    "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-explicit-incompleteness-trap-the-last-few-percent",
+    "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#bounded-pattern-ownership-notes",
+    "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+    "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#purpose-and-mission",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#overview",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
