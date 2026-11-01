@@ -1,0 +1,588 @@
+{
+  "task_id": "Q289",
+  "answer": "## Q289 — A green shadow phase and an untested write path\n\n**Layers.** `book` for V10 transition/authority/reconciliation, V08 rollout, V09 SLI and the V12 decision pages; `modeling-and-simulation` for the V12 coexistence model, staged experiment and insufficient-evidence record. Atlas cards supplied the dark-launching, parallel-run and controlled-cutover decision conditions. Snapshot 4445fa06…, citation scheme tycho.section-key.v2.\n\n### Facet matrix\n\nFull section keys and verbatim quotes are in the claims ledger; anchors are abbreviated here for readability.\n\n| Facet | Query formulations | Evidence (section keys) |\n|---|---|---|\n| F1. What shadow actually routes and who owns the response | shadow traffic mirroring; target receives traffic not authority; S1 shadow index; S2 projection | tycho.page.ea00bb67…#coexistence-is-a-state-not-a-date; tycho.page.78d0f89a…#3-a-versioned-sequence-of-safe-intermediate-states; tycho.page.cf0ce38c…#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair |\n| F2. Why green / zero errors is non-probative | success rate 1.0; read shadow exception; green dashboard; shadow row-count comparison | tycho.decision.c089ea2…#synthetic-dual-authority-failure-tests; tycho.page.7732cad0…#what-the-experiment-establishes; tycho.chapter.16f93a5e…#decision-and-worked-result; tycho.page.ea00bb67…#the-staged-result |\n| F3. Which coexistence states must be exposed | legacy/dual write/shadow/cutover/rollback; S0–S4 authority sequence; five contracts | tycho.page.ea00bb67…#coexistence-is-a-state-not-a-date; tycho.page.78d0f89a…#1-keep-five-distinct-contracts; tycho.page.78d0f89a…#3-a-versioned-sequence-of-safe-intermediate-states; tycho.decision.c089ea2…#contrasting-historical-evidence |\n| F4. Which stocks and flows must be exposed | dual_write_backlog; divergence; traffic shares; rollback timer; backlog drain | tycho.page.ea00bb67…#coexistence-is-a-state-not-a-date; tycho.page.ea00bb67…#the-accounting; tycho.page.ea00bb67…#rollback |\n| F5. What evidence would support a cutover | measured lag UCL; measured reconciliation capacity; rehearsed rollback; sustained divergence; runbook; go/no-go list | tycho.page.ea00bb67…#what-would-support-a-cutover; tycho.page.ea1c3ca3…#7-go-no-go-and-the-no-return-contract; tycho.page.47b67ebf…#5-data-movement-is-not-a-row-count-exercise; tycho.page.ea9adae8…#the-modernization-example |\n| F6. Decision outcome, boundaries and unknowns | insufficient evidence; measurement agenda; fluid-model limits; shadow limits | tycho.page.ea9adae8…#the-modernization-example; tycho.page.7732cad0…#why-the-decision-is-insufficient-evidence; tycho.page.ea00bb67…#coexistence-is-a-state-not-a-date; tycho.page.b1318da5…#overview |\n\n### Short answer\n\nA shadow phase can look healthy because it is designed to prove isolation, not write correctness. Traffic is copied to the target, responses are discarded, and the legacy path remains authoritative. The target therefore never takes the authoritative write, never owns the mutation contract and never produces the reconciliation backlog or divergence that a cutover would expose. Zero errors in that configuration is an expected property of the isolation boundary, not a measurement of the target's write path. Two weeks is a duration, not an observed gate.\n\nThe model must expose the five coexistence states separately — legacy only, dual write, shadow, cutover and rollback — and must carry four stocks: dual-write backlog (records awaiting reconciliation), divergence, legacy and target traffic shares, and a rollback timer. A supported cutover then needs measured dual-write lag with a bounded upper confidence limit, measured reconciliation capacity in the target environment, a rehearsed rollback that completes inside the observation window, measured divergence below the business threshold across a sustained period, and a confirmed continuity and reconciliation runbook. Those are observations and operational evidence; they cannot be supplied by model parameters, row counts or dashboard colour.\n\n### 1. Why the shadow phase can be green while the write path is untested\n\n**1.1 Shadow is an authority state, not a traffic level.** In the V12 model, shadow means the target receives traffic but does not own the authoritative response. In the V10 read-migration sequence, S1 keeps writes authoritative on the old writer and the target only ingests copied updates; at S2 the target is a projection and the old writer still accepts mutations. A dashboard that counts requests served by the target is therefore measuring the copied read path, not the write path.\n\n**1.2 The isolation is deliberate.** Mirrored requests are fire-and-forget: their responses are discarded and do not affect the primary response. The old path answers users. The new path still needs a side-effect boundary and a load budget, and the dark-launching pattern lists shadow requests that cause writes as a hard contraindication. A shadow that actually executes writes is not a stronger test; it is an unsafe test that can mutate authoritative state.\n\n**1.3 What read comparison can prove is bounded.** For the Stripe example, shadow Scientist reads match for inspected requests and cases, while every mutation race, unobserved client and rollback after old data deletion remain unproved. V10 states the same limit more sharply: even a previously successful shadow row-count comparison does not prove old-client semantic compatibility or reversibility. The write-path classes that remain untested are mutation races, partial dual-write failures, retry identity and late acknowledgments, event ordering, schema interpretation of new fields, duplicate external effects, and new-only durable effects that make an image rollback a forward repair.\n\n**1.4 Zero errors is structurally unsurprising.** A read-shadow exception test deliberately forces experimental code to throw without impacting the production-served response. If the target fails, the user response does not fail; if the target is slow, the old path still answers. Success rate 1.0 in the V12 run means the modeled traffic is served, not that records reconcile: the same run reports maximum divergence 8,925.5 records and rollback completion in only 10% of replications. A success-only denominator can hide rejected user operations, so a green dashboard may not describe the promised experience.\n\n**1.5 A calendar window is not a gate.** V10 says a transition state should end with an observed gate, not a calendar milestone, and that merely reaching a green index state is insufficient evidence. Two weeks of green read comparisons is therefore a statement about duration and read-path stability, not about write readiness.\n\n**1.6 What the green dashboard actually establishes.** It establishes that copied reads can be served without disturbing the primary response, that the mirroring path is isolated, and that no observed shadow exception propagated to users. Those are real but narrow results. They do not establish that the target can accept a write, preserve a client's expected semantics, resolve a conflict, acknowledge a retry, reconcile a divergence, or drain a backlog after a rollback trigger.\n\n### 2. Which coexistence states the model must expose\n\n**V12 operational states.** The model lists legacy only; dual write (both paths receive writes, with a reconciliation process); shadow (target receives traffic but does not own the authoritative response); cutover (target owns the authoritative response); and rollback (traffic returns to legacy while the target drains). Each state has different failure modes: dual write can diverge silently, shadow can look healthy with an untested write path, and cutover can expose a reconciliation backlog hidden by legacy ownership. The state diagram orders Legacy → DualWrite → Shadow → Cutover → Rollback → Legacy.\n\n**V10 read-migration authority sequence.** S0 baseline (old query and write paths, one authoritative store); S1 shadow index (writes remain authoritative, copied updates, clients on the old path); S2 compatibility reads (bounded authorised queries, exact lookup authoritative, freshness guard); S3 bounded promotion (measured lag and result-quality SLO, equivalence samples, error budget); S4 stabilized (retire only after the client/query inventory proves safe and a recovery drill is approved). Each state has an entry gate and an exit or recovery gate. The index is derived state; the sequence is explicitly not proof of safe writer migration.\n\n**V10 write-authority walkthrough.** S0 baseline; S1 expand (old writer authoritative, new decoder reads old representation); S2 shadow projection (versioned mappings and checkpoints, old writer still accepts mutations); S3 fenced cutover (exactly one authorised writer, mixed-version readers covered by tests); S4 new-only writes (new persisted state the old binary cannot understand, so image-only rollback is gone); S5 retire (explicit irreversible approval, audit and restore records). This is the state set that exposes the real cutover boundary: authority changes between S2 and S3, and the no-return line is S4.\n\n**Five contracts per state.** Functional ownership (which capability accepts each user-visible operation, and whether old or new receives each client/version); state authority (where each authoritative entity is written and validated, how double-writing is prevented, which source is current, how to reconcile); API/event semantics (public identity, schema, ordering, errors, simultaneous old/new versions, unknown outcomes, replay horizon); security/operations (trust boundaries, access control, dependency budget, which principal may switch routing or write, whose on-call can recover); failure and recovery (RPO/RTO, availability, exact cutover rollback window, irreversible effects, restore and forward-repair path).\n\n**The order is conditional, not universal.** V12 places dual write before shadow; the V10 read migration places shadow before compatibility reads; the data-migration playbook describes reverse shadow, where the new job writes production while the old job runs shadow. The sources explicitly warn that these are different data shapes and observation windows and that one row-count or sample-match gate should not be generalised across mutable OLTP authority, immutable batch output, historical ranges and streaming CDC. A model that hard-codes a single order will mislabel the authority state of a different migration.\n\n### 3. Which stocks and flows the model must expose\n\nThe four stocks named by the V12 model are:\n\n- `dual_write_backlog`: records awaiting reconciliation;\n- `divergence`: accumulated observed difference between the paths;\n- `legacy_share` and `target_share`: traffic allocation;\n- `rollback timer`: time since the rollback trigger.\n\nThe accounting that makes them decision-relevant is:\n\n- `target_served = min(arrival * target_share * dt, target_capacity * dt)`;\n- `legacy_served = min(arrival * (1 - target_share) * dt, legacy_capacity * dt)`;\n- `rejected = offered - target_served - legacy_served`;\n- `backlog += target_served * dual_write_lag`;\n- `backlog -= min(backlog, reconciliation_capacity * dt)`.\n\nDivergence accumulates when the backlog exceeds the drain capacity, and it is a synthetic proxy, not a measured data-quality metric. A rollback trigger sets the target share to zero; the legacy path must absorb the traffic and the target must drain its backlog and divergence. The model records whether the rollback completed within the horizon, the time from trigger to drain or a censored value at the horizon, and the maximum divergence observed before the trigger.\n\nThese stocks are the right ones because they encode the three hazards a shadow dashboard cannot see: unreconciled writes (backlog), semantic drift (divergence), and shrinking reversibility (rollback timer and drain). In a read-shadow phase the target does not take the authoritative write, so the write-side backlog and divergence are not populated by that phase; a green comparison therefore cannot bound them. That last step is an inference from the state definitions, not a direct source claim, and the model should label it as such by showing, per phase, which stocks are actually exercised and which are carried at an assumed value.\n\n### 4. What evidence would support a cutover instead\n\n**Measurement floor (V12).** A cutover record can be decision-supported only with: a measured dual-write lag with a bounded upper confidence limit; a measured reconciliation capacity in the target environment; a rehearsed rollback that completes inside the observation window; a measured divergence below the business threshold across a sustained period; and a confirmed continuity and reconciliation runbook. The source is explicit that these are measurements and operational evidence, not model parameters: the model can show what to measure and how the decision depends on it, but it cannot create the measurement.\n\n**No-return gate (V10).** Before authoritative state changes or retirement becomes irreversible, the record needs a named change owner and approved versions/assets; an old/new client × API × data compatibility matrix including asynchronous readers; no overlapping uncoordinated writers; tested retry identity and late acknowledgment handling; representative user-level integrity and authorization tests; source-to-target reconciliation with residual unknowns; a recovery point with restored-data validity, maximum permissible loss and time; an explicit stop/hold mechanism if monitoring misses a fault; and decommissioning evidence for all old callers and subscriptions. A transition ends at an observed gate, not a calendar milestone, and a failure after the no-return point needs an approved forward-repair path rather than a fictional rollback.\n\n**Reconciliation quality.** Data movement is not a row-count exercise. The comparison must cover stable identity and per-object access filters, deletions and revocations, updates that cross transaction boundaries, repeated events, source revision and index-generation checkpoints, replay order and deduplication, late arrivals and incomplete snapshots, normal and degraded freshness, query modes and pagination/ordering, old/new client visibility, and re-index cost. A million indexed rows and a million source rows can still disagree on critical values or expose stale access decisions. During a shadow run, measure source-to-target semantic differences and model their business significance.\n\n**Observation boundary.** Compare at a pinned watermark and snapshot identity. Comparing a live source at revision 120 with a lagging target at 110 produces expected differences; do not repair them by overwriting newer target data from an older snapshot, and record ownership of each writable field. If the source snapshot and its change stream cannot be joined without a gap, the cutover lacks a completeness argument.\n\n**Repair discipline.** Classify discrepancies before changing state: missing target record, stale projection, transformed value, duplicate external effect, deleted source entity or unresolved ownership. Prefer idempotent repair keyed by the original logical effect and guarded by current version/epoch, recheck authorization and retirement records, and do not let a generic replayer reissue irreversible effects merely because target state is incomplete.\n\n**Decision-record behaviour.** When the measurements are missing, the correct output is insufficient evidence with recommendation none and a list of what would change it: the measurement, the range that would support or reject the decision, the owner, the consequence of staying in the current state, and the next review trigger. The V12 modernization record does exactly this, and the checklist names an unexercised rollback or recovery path as an insufficient-evidence condition. A cutover that is scheduled before those measurements exist is a forced recommendation, not a supported one.\n\n**Promotion and pattern conditions.** Promotion is a conditional authorisation to expose an approved artifact at a named workload and data-compatibility boundary; it requires candidate identity, rollback/forward-repair availability, data/read compatibility, representative readiness, downstream capacity, security policy and measured SLIs, and a too-small canary cannot prove the absence of rare corruption. Controlled cutover rejects when writes cannot be paused or replication completeness cannot be verified. Parallel run rejects side-effecting operations. A read-shadow gate cannot simply be inherited by a write-authority transfer (an inference from the two contraindications).\n\n### 5. What the team should do before scheduling the cutover\n\n1. Re-label the result: not ready, but read-shadow healthy and write path unmeasured. State which authority state the target is actually in, and whether the migration is a read projection or a writer transfer.\n2. Instrument the write side in a disposable, side-effect-suppressed environment: count mutation races, partial dual-write failures, conflict resolutions, retries and late acknowledgments, and record the exact retry identity.\n3. Measure dual-write lag with a bounded upper confidence limit, and measure reconciliation throughput under target load in the target environment.\n4. Rehearse a rollback and record its duration, censoring and maximum divergence before the trigger; treat non-completion as a finding about declared capacity, not as a failed model.\n5. Measure divergence over a sustained shadow period against a declared business threshold, and pin the observation boundary for every comparison.\n6. Re-run the staged scenario with the measured inputs; if the measurements are absent, record insufficient evidence and the measurement agenda rather than converting two weeks of green reads into a cutover decision.\n7. Only after those observations exist, write the go/no-go record with owner, compatibility matrix, single-writer proof, reconciliation results, recovery point, stop/hold mechanism and decommissioning evidence.\n\n### 6. Boundaries, contradictions and unknowns\n\n- The V12 model is a fluid approximation. It does not represent individual records, schema compatibility or deployment orchestration; those omissions are part of its validity limit, and the chapter does not model record-level reconciliation, deployment orchestration or business-continuity ownership.\n- V12 models are uncalibrated. A passing local check is not independent review, CI, owner acceptance or production validity; no production measurement or owner acceptance is asserted here.\n- Shadow traffic is not a user-behavior sample; comparison coverage and data sensitivity bound what it can prove. A shadow phase can be green because the sample and the comparison were narrow, not because the target is correct.\n- The two-week duration has no evidential weight in the sources. A gate is an observed condition; a calendar window is not.\n- Apparent contradiction: V12 orders dual write before shadow, while the V10 read migration orders shadow before compatibility reads, and reverse-shadow lifecycles put the new writer into production while the old runs shadow. This is a conditional difference, not a refutation: the correct state order depends on which authority is moving and which invariant is under test.\n- Unknowns for this team: what the dashboard denominator actually counts; whether the mirror executes any writes; whether the target has new-only durable effects; the real dual-write lag and reconciliation capacity; the business divergence threshold; whether a rollback has ever been rehearsed; who owns the continuity and reconciliation runbook; and whether the two weeks represent the mutation mix, long-tail clients and seasonality that the cutover will meet.\n- Inference boundary: the claim that a read shadow leaves write-side stocks unpopulated is an inference from the authority definitions, not a measured observation. The sources establish the definitions and the failure modes; they do not contain this team's production data.\n\n### Evidence map\n\n| Claim | What it supports | Primary evidence anchors |\n|---|---|---|\n| C1 | Shadow is defined by authority, not traffic volume | ea00…#coexistence-is-a-state-not-a-date; 78d0…#3-a-versioned-sequence…; cf0ce…#engineering-walkthrough… |\n| C2 | Shadow is fire-and-forget and side-effect-bounded | b1318…#overview; 81584…#overview |\n| C3 | The write path is not exercised by a read shadow | ea00…#coexistence…; c089e…#four-different-meanings…; cf0ce…#engineering-walkthrough…; c089e…#synthetic-dual-authority-failure-tests |\n| C4 | Zero errors is structurally non-probative | c089e…#synthetic-dual-authority-failure-tests; 7732c…#what-the-experiment-establishes; 16f93…#decision-and-worked-result |\n| C5 | Success 1.0 coexists with large divergence and poor rollback | ea00…#the-staged-result; ea00…#failure-modes |\n| C6 | Coexistence is a sequence of distinct states | ea00…#coexistence…; 78d0…#3-a-versioned-sequence… |\n| C7 | Five contracts are required per state | 78d0…#1-keep-five-distinct-contracts |\n| C8 | Read shadow is not proof of writer migration; gates are observed | 78d0…#3-a-versioned-sequence…; ea1c3…#7-go-no-go… |\n| C9 | Four stocks plus three flows | ea00…#coexistence…; ea00…#the-accounting |\n| C10 | Stock dynamics and rollback accounting | ea00…#the-accounting; ea00…#rollback |\n| C11 | Named hazards: divergence, starvation, non-draining rollback | ea00…#coexistence…; ea00…#failure-modes |\n| C11b | Inference: write-side stocks are not populated by a read shadow | ea00…#coexistence…; b1318…#overview |\n| C12 | Cutover evidence is measurement and operational evidence | ea00…#what-would-support-a-cutover |\n| C13 | No-return gate evidence list | ea1c3…#7-go-no-go… |\n| C14 | Reconciliation must compare semantics, not counts | 47b67…#5-data-movement… |\n| C15 | Observation boundary, completeness and guarded repair | 47b67…#reconciliation-repair… |\n| C16 | Insufficient evidence plus measurement agenda | ea9ad…#the-modernization-example; 7732c…#why-the-decision…; ea9ad…#a-checklist… |\n| C17 | State order is conditional, not universal | c089e…#contrasting-historical-evidence; c089e…#four-different-meanings…; c089e…#selection-matrix… |\n| C18 | Write-authority transfer needs its own gate | 4a302…#overview; 066e7…#overview; 6d05e…#5-progressive-promotion… |\n| C19 | Model, shadow and evidence boundaries | ea00…#coexistence…; 26ddd…#boundaries-and-evidence; b1318…#overview; 6fd0d…#overview; 6fd0d…#v12-d-calibration |\n| C20 | Hidden failure modes and irreversible effects | ea00…#failure-modes; 47b67…#4-when-rollback…; cf0ce…#engineering-walkthrough…; c089e…#synthetic-dual-authority-failure-tests |\n\nNo cited source contains production measurements for this team, a real rollback drill, or an owner acceptance of a cutover. The answer therefore treats the green shadow as an evidence gap, not as proof of readiness.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A shadow phase is defined by authority, not by the volume of mirrored traffic: the target receives traffic but does not own the authoritative response, and in a read-derived migration the old writer stays authoritative while the target ingests copied updates.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+          "quote": "A modernization path usually has several states:\n\n- legacy only;\n- dual write: both paths receive writes, with a reconciliation process;\n- shadow: the target receives traffic but does not own the authoritative response;\n- cutover: the target owns the authoritative response;\n- rollback: traffic returns to the legacy path while the target drains.",
+          "status": "observed",
+          "supports": "C1"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+          "quote": "| S1 — Shadow index | Writes remain authoritative; separate index ingests copied updates; clients still read old path | Snapshot/CDC identity, event ordering and safe isolation | Compare source/index records; repair gaps without user exposure |",
+          "status": "observed",
+          "supports": "C1"
+        },
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+          "quote": "| S2 shadow | New model is a projection with versioned mappings/checkpoints | Rebuild projection; old writer still accepts mutations |",
+          "status": "observed",
+          "supports": "C1"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Shadow execution is fire-and-forget and side-effect-bounded: mirrored responses are discarded, the old path answers users, the new path needs a side-effect boundary and load budget, and shadow requests that cause writes are a hard contraindication.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+          "quote": "Shadow traffic\ncopies live requests to a mirrored service while the old path remains authoritative.",
+          "status": "observed",
+          "supports": "C2"
+        },
+        {
+          "section_key": "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+          "quote": "Mirrored requests are fire-and-forget: their responses are discarded, so they do not affect the\nprimary response.",
+          "status": "observed",
+          "supports": "C2"
+        },
+        {
+          "section_key": "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+          "quote": "The new path still\nneeds a side-effect boundary and a load budget; these are synthetic design conditions.",
+          "status": "observed",
+          "supports": "C2"
+        },
+        {
+          "section_key": "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+          "quote": "**Hard contraindications.** Reject when shadow requests cause writes, when traffic cannot\nbe mirrored safely, or when load cost is prohibitive.",
+          "status": "observed",
+          "supports": "C2"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+          "quote": "| Shadow reads | Side-effect-free comparisons are possible without user exposure | Shadow requests accidentally mutate authoritative state |",
+          "status": "observed",
+          "supports": "C2"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A read shadow therefore does not exercise the write path: mutation races, unobserved clients, partial dual-write failures and rollback after new-only effects remain unproved, and even a successful shadow row-count comparison does not prove old-client semantic compatibility or reversibility.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+          "quote": "A shadow\nstate can look healthy while the target's write path is untested.",
+          "status": "observed",
+          "supports": "C3"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "Every mutation race, unobserved client, rollback after old data deletion",
+          "status": "observed",
+          "supports": "C3"
+        },
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+          "quote": "Even a previously successful shadow row-count comparison does not prove old-client semantic compatibility or reversibility.",
+          "status": "observed",
+          "supports": "C3"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+          "quote": "3. **Partial dual-write failure:** simulate old-write succeeds/new-write fails, and the reverse. Detect the divergence; define repair ownership, idempotent reconciliation and limits on acknowledgement before both copies converge.",
+          "status": "observed",
+          "supports": "C3"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "**Schema incompatibility.** A record cannot be represented on one path. The fluid model\n  does not see it.",
+          "status": "observed",
+          "supports": "C3"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Zero errors and a green dashboard are structurally non-probative in shadow: experimental shadow exceptions are designed not to affect the production-served response, success metrics count served traffic rather than correctness, and a success-only denominator can hide rejected operations.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+          "quote": "**Read shadow exception:** force experimental code to throw without impacting the production-served response; alert with a normalized result-identity and temporal window.",
+          "status": "observed",
+          "supports": "C4"
+        },
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#what-the-experiment-establishes",
+          "quote": "It does not establish that the target path is correct, that records reconcile, that the\nrollback is operationally executable or that the real divergence is inside the modeled range.",
+          "status": "observed",
+          "supports": "C4"
+        },
+        {
+          "section_key": "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#decision-and-worked-result",
+          "quote": "A success-only denominator can hide rejected user operations, so a green dashboard may not describe the promised experience.",
+          "status": "observed",
+          "supports": "C4"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The V12 staged run makes the gap concrete: it reports success rate 1.0 because modeled traffic is served, while maximum divergence is 8,925.5 records and rollback completes in only 10% of replications; a 100% traffic share is a false cutover signal while divergence grows.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+          "quote": "- success rate 1.0 (the modeled traffic is served);\n- maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3);\n- rollback completed 0.1: it finishes in only 10% of replications;",
+          "status": "observed",
+          "supports": "C5"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "**False cutover signal.** A 100% traffic share is treated as success while divergence is\n  still growing.",
+          "status": "observed",
+          "supports": "C5"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Coexistence must be modeled as a sequence of distinct states — legacy only, dual write, shadow, cutover and rollback — each with different failure modes, because a cutover can expose a reconciliation backlog hidden by legacy ownership.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+          "quote": "Each state has different failure modes. A dual-write state can diverge silently. A shadow\nstate can look healthy while the target's write path is untested. A cutover state can expose\na reconciliation backlog that was hidden by legacy ownership.",
+          "status": "observed",
+          "supports": "C6"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+          "quote": "| S2 — Compatibility reads | A bounded subset of authorized queries uses new index; exact lookup remains authoritative | Old/new client contract, scoped access checks and freshness guard | Failed query can route back **only if** behavior/data assumptions still hold |",
+          "status": "observed",
+          "supports": "C6"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Every state must declare five contracts: functional ownership, state authority (who writes and validates, how double-writing is prevented, which source is current and how to reconcile), API/event semantics, security/operations, and failure/recovery.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "| Functional ownership | Which capability accepts each user-visible operation | Whether old or new implementation receives each client/version |",
+          "status": "observed",
+          "supports": "C7"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "| State authority | Where each authoritative entity is written and validated | How double-writing is prevented, which source is current, and how to reconcile |",
+          "status": "observed",
+          "supports": "C7"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "| API/event semantics | Public operation identity, schema, ordering and errors | Old/new versions simultaneously supported, unknown outcomes and replay horizon |",
+          "status": "observed",
+          "supports": "C7"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "| Security/operations | Trust boundaries, access control, dependency/service budget | Which principal/role may switch routing or write, and whose on-call can recover |",
+          "status": "observed",
+          "supports": "C7"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "| Failure and recovery | Long-term RPO/RTO and availability model | Exact cutover rollback window, irreversible effects, restore and forward-repair path |",
+          "status": "observed",
+          "supports": "C7"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A read-derived shadow sequence is explicitly not proof of a writer migration: if authoritative writes move, the state machine and consistency requirements must be redesigned, and a transition ends at an observed gate rather than a calendar milestone.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+          "quote": "The index is **derived state**. Rebuilding it from the current authoritative store and a compatible event sequence may be safe; deleting that store is not authorized by an index migration. If the project later moves *authoritative writes*, the state machine and consistency requirements must be redesigned; the index example is not proof of safe writer migration.",
+          "status": "observed",
+          "supports": "C8"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "A transition state should end with **an observed gate**, not a calendar milestone.",
+          "status": "observed",
+          "supports": "C8"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "Merely reaching a “green” index state is insufficient evidence.",
+          "status": "observed",
+          "supports": "C8"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The model must expose four stocks — dual_write_backlog, divergence, legacy_share/target_share and a rollback timer — plus the accounting flows target_served, legacy_served and rejected.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+          "quote": "The V12 modernization model represents the states as a stage schedule and a set of stocks:\n\n- dual_write_backlog: records awaiting reconciliation;\n- divergence: accumulated observed difference between paths;\n- legacy_share and target_share: traffic allocation;\n- rollback timer: time since the rollback trigger.",
+          "status": "observed",
+          "supports": "C9"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+          "quote": "target_served = min(arrival * target_share * dt, target_capacity * dt)\n    legacy_served = min(arrival * (1 - target_share) * dt, legacy_capacity * dt)\n    rejected = offered - target_served - legacy_served",
+          "status": "observed",
+          "supports": "C9"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The stock dynamics make cutover risk explicit: backlog grows with target throughput times dual-write lag and drains at reconciliation capacity, divergence accumulates only when backlog exceeds drain capacity, and rollback sets target share to zero, forcing legacy to absorb traffic and the target to drain.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+          "quote": "The dual-write backlog grows with target throughput times the declared lag and drains at the\nreconciliation capacity:\n\n    backlog += target_served * dual_write_lag\n    backlog -= min(backlog, reconciliation_capacity * dt)",
+          "status": "observed",
+          "supports": "C10"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+          "quote": "Divergence accumulates when the backlog exceeds the drain capacity. It is a synthetic proxy,\nnot a measured data-quality metric.",
+          "status": "observed",
+          "supports": "C10"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+          "quote": "A rollback trigger sets the target share to zero. The legacy path must absorb the traffic,\nand the target must drain its backlog and divergence.",
+          "status": "observed",
+          "supports": "C10"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+          "quote": "The model records:\n\n- whether the rollback completed within the horizon;\n- the time from trigger to drain, or a censored value at the horizon;\n- the maximum divergence observed before the trigger.",
+          "status": "observed",
+          "supports": "C10"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+          "quote": "A rollback that does not complete is not a failed model. It is a finding: the declared\nreconciliation capacity is insufficient for the declared lag and observation window.",
+          "status": "observed",
+          "supports": "C10"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A cutover can expose a reconciliation backlog hidden by legacy ownership; the named hazards are silent dual-write divergence, reconciliation starvation and a rollback that cannot drain.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+          "quote": "A cutover state can expose\na reconciliation backlog that was hidden by legacy ownership.",
+          "status": "observed",
+          "supports": "C11"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "**Dual-write divergence.** The two paths accept writes that cannot be reconciled. The\n  backlog grows faster than the reconciliation capacity.",
+          "status": "observed",
+          "supports": "C11"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "**Reconciliation starvation.** The reconciliation process competes with the target for the\n  same resources and slows down under load.",
+          "status": "observed",
+          "supports": "C11"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "**Rollback that cannot drain.** The target keeps receiving work after the trigger, or the\n  backlog is too large to drain in the window.",
+          "status": "observed",
+          "supports": "C11"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11b",
+      "text": "Inference: because a read shadow does not execute target writes, write-side stocks (backlog, divergence, rollback timer) are not populated by that phase, so a green read comparison cannot bound them; the model must label which stocks each phase actually exercises.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+          "quote": "A shadow\nstate can look healthy while the target's write path is untested.",
+          "status": "observed",
+          "supports": "C11b"
+        },
+        {
+          "section_key": "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+          "quote": "Mirrored requests are fire-and-forget: their responses are discarded, so they do not affect the\nprimary response.",
+          "status": "observed",
+          "supports": "C11b"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A supported cutover requires measurements and operational evidence, not model parameters: measured dual-write lag with a bounded upper confidence limit, measured reconciliation capacity in the target environment, a rehearsed rollback completing inside the observation window, measured divergence below the business threshold over a sustained period, and a confirmed continuity/reconciliation runbook.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+          "quote": "A cutover record could be decision-supported only with:\n\n- a measured dual-write lag with a bounded upper confidence limit;\n- a measured reconciliation capacity in the target environment;\n- a rehearsed rollback that completes inside the observation window;\n- a measured divergence below the business threshold across a sustained period;\n- a confirmed continuity and reconciliation runbook.",
+          "status": "observed",
+          "supports": "C12"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+          "quote": "Those are measurements and operational evidence, not model parameters. The model can show\nwhat to measure and how the decision depends on it; it cannot create the measurement.",
+          "status": "observed",
+          "supports": "C12"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "The no-return gate additionally requires a named owner and approved assets, a client × API × data compatibility matrix including asynchronous readers, no overlapping uncoordinated writers, tested retry identity and late acknowledgments, representative integrity/authorization tests, source-to-target reconciliation with residual unknowns, a recovery point with restored-data validity and permissible loss/time, a stop/hold mechanism, and decommissioning evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "Before a transition changes authoritative state or retirements become irreversible, require evidence for:\n\n- named change owner and approved versions/assets;\n- old/new client × API × data compatibility matrix, including asynchronous readers;\n- no overlapping uncoordinated writers;\n- tested retry identity and late acknowledgment handling;\n- representative user-level integrity/authorization tests;\n- source-to-target reconciliation and residual unknowns;\n- recovery point, actual restored data validity, maximum permissible loss and time;\n- explicit stop/hold mechanism if monitoring misses a fault;\n- decommissioning evidence for all old callers/subscriptions.",
+          "status": "observed",
+          "supports": "C13"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Reconciliation must compare semantics rather than row counts: identity and access filters, deletions/revocations, transaction-crossing updates, checkpoints, replay order and deduplication, freshness, query modes, old/new client visibility and re-index cost; matching counts can hide missing and duplicate records.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+          "quote": "Even an apparently harmless read-index migration needs to compare *semantics*, not only row totals:\n\n- stable entity/tenant identity and per-object access filters;\n- deletions, revocations, updates that cross transaction boundaries and repeated events;\n- source revision and index-generation checkpoint;\n- replay order, deduplication, late arrivals and incomplete snapshot coverage;\n- normal and degraded freshness; clocks and unknown timestamps;\n- query modes (identifier, exact match, prefix, full-text) and pagination/ordering guarantees;\n- matching visible results under old/new client versions;\n- measured cost and operations required to re-index after failure.",
+          "status": "observed",
+          "supports": "C14"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+          "quote": "A million indexed rows and a million source rows can still disagree on critical values or expose stale access decisions.",
+          "status": "observed",
+          "supports": "C14"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+          "quote": "During a shadow run, measure **source-to-target semantic differences** and model their business significance.",
+          "status": "observed",
+          "supports": "C14"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "A comparison is valid only at a pinned observation boundary; if source snapshot and change stream cannot be joined without a gap the cutover lacks a completeness argument, and repair is an authorized, guarded mutation rather than a generic replay.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+          "quote": "If a source snapshot and its subsequent change stream cannot be joined without a gap, the cutover lacks a completeness argument.",
+          "status": "observed",
+          "supports": "C15"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+          "quote": "Comparing a live source at revision 120 with a lagging target at 110 produces expected differences. Do not repair those by overwriting newer target data from an older snapshot. Record watermark/snapshot identity and ownership of each writable field.",
+          "status": "observed",
+          "supports": "C15"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+          "quote": "Classify discrepancies before changing state: missing target record, stale projection, transformed value, duplicate external effect, deleted source entity or unresolved ownership. Prefer idempotent repair keyed by the original logical effect and guarded by current version/epoch. Recheck authorization and retirement records. Do not let a generic replayer reissue irreversible effects merely because target state is incomplete.",
+          "status": "observed",
+          "supports": "C15"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "When the required measurements are absent, the correct outcome is an insufficient-evidence decision with a measurement agenda and reversal triggers, not a scheduled cutover; the V12 modernization record returns recommendation none and names measured lag, capacity, a rehearsed rollback and measured divergence as what would change it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+          "quote": "The decision record returns insufficient evidence, recommendation none. It lists the\nmeasurements that would change the outcome: measured dual-write lag, measured reconciliation\ncapacity, a rehearsed rollback and a measured divergence below the threshold.",
+          "status": "observed",
+          "supports": "C16"
+        },
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+          "quote": "The correct next step is measurement:\n\n1. Instrument dual-write lag in a bounded environment.\n2. Measure reconciliation throughput under target load.\n3. Rehearse a rollback and record its duration.\n4. Measure divergence over a sustained shadow period.\n5. Re-run the scenario with measured inputs.",
+          "status": "observed",
+          "supports": "C16"
+        },
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#overview",
+          "quote": "The comparison establishes a measurement agenda, not a\ncutover decision.",
+          "status": "observed",
+          "supports": "C16"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "- the rollback or recovery path has not been exercised;",
+          "status": "observed",
+          "supports": "C16"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The state order is conditional, not universal: read-migration sequences move from shadow projection to compatibility reads and bounded promotion, while write-authority and reverse-shadow lifecycles put the new writer into production and keep the old one as shadow; the sources warn against generalizing one sequence across data shapes.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#contrasting-historical-evidence",
+          "quote": "Meta's warehouse ingestion instead preserves the **old job running as shadow *after* the new job starts writing production**, then retires it only after renewed quality/resource checks.",
+          "status": "observed",
+          "supports": "C17"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "These reports represent **different data shapes and observation windows**. It is incorrect to generalize one row-count or sample-match gate across mutable OLTP authority, immutable batch output, historical migration ranges and streaming CDC feeds. For a new design, first identify whether the business invariant is *identity*, *value equality*, *operation order*, *referential consistency*, *side-effect exactly-once*, or *bounded freshness*.",
+          "status": "observed",
+          "supports": "C17"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+          "quote": "| Streaming ingestion with independent job versions | Shadow comparison, reverse-shadow production job, checkpointed CDC repair, resource/quality gates | Old/new readers do not capture delta-partition contamination once new output writes are authoritative | Offset/partition identity, target-write guard, snapshot regeneration, rollback |",
+          "status": "observed",
+          "supports": "C17"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Write-authority transfers need their own gate: controlled cutover rejects when writes cannot be paused or replication completeness cannot be verified, and parallel run rejects side-effecting operations, so a read-shadow gate cannot be inherited.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+          "quote": "**Hard contraindications.** Reject when writes cannot be paused or replication completeness cannot\nbe verified.",
+          "status": "observed",
+          "supports": "C18"
+        },
+        {
+          "section_key": "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+          "quote": "**Hard contraindications.** Reject for side-effecting operations, when comparison is\nmeaningless, or when cost is prohibitive.",
+          "status": "observed",
+          "supports": "C18"
+        },
+        {
+          "section_key": "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#5-progressive-promotion-and-stop-conditions",
+          "quote": "Promotion is a conditional authorization to expose an approved artifact at a **named workload and data-compatibility boundary**, not just a command to scale replicas.",
+          "status": "observed",
+          "supports": "C18"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The model is a fluid approximation that omits individual records, schema compatibility and deployment orchestration; V12 models are uncalibrated, shadow is not a user-behavior sample, and modeled evidence is not production evidence or owner acceptance.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+          "quote": "The model is a fluid approximation. It does not represent individual records, schema\ncompatibility or deployment orchestration. Those omissions are part of the validity limit.",
+          "status": "observed",
+          "supports": "C19"
+        },
+        {
+          "section_key": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+          "quote": "The chapter does not model record-level reconciliation, schema compatibility, deployment\norchestration or business continuity ownership.",
+          "status": "observed",
+          "supports": "C19"
+        },
+        {
+          "section_key": "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+          "quote": "**Limits.** Shadow traffic is not a user-behavior sample; comparison coverage and data\nsensitivity bound what it can prove.",
+          "status": "observed",
+          "supports": "C19"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#overview",
+          "quote": "A passing local check is not independent\nreview, CI, owner acceptance or production validity.",
+          "status": "observed",
+          "supports": "C19"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+          "quote": "Every model is uncalibrated. The model contracts list each parameter's evidence status and\nthe missing measurement. The decision records repeat the status. No production claim is made.",
+          "status": "observed",
+          "supports": "C19"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Failure modes a green shadow can hide include schema incompatibility the fluid model cannot see, a rollback that is technically possible but not operable, and new-only durable effects that turn image rollback into forward repair.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "**Schema incompatibility.** A record cannot be represented on one path. The fluid model\n  does not see it.",
+          "status": "observed",
+          "supports": "C20"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "**Business continuity gap.** The rollback is technically possible but the operating team\n  cannot execute it.",
+          "status": "observed",
+          "supports": "C20"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+          "quote": "Distinguish **reversible before write exposure**, **conditionally reversible during coexistence**, and **forward repair or restore required after irreversible effects**.",
+          "status": "observed",
+          "supports": "C20"
+        },
+        {
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+          "quote": "**Failure:** one S4 write reaches durable storage, then a canary alarm fires. Rolling pods back to the S0 image makes some records unreadable.",
+          "status": "observed",
+          "supports": "C20"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+          "quote": "6. **Irreversible cleanup:** test recovery after removing the old data only if backups and reverse transformations can restore any newly accepted writes; otherwise **refuse cleanup**.",
+          "status": "observed",
+          "supports": "C20"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+    "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+    "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+    "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#what-the-experiment-establishes",
+    "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#decision-and-worked-result",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#overview",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#contrasting-historical-evidence",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+    "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+    "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+    "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#5-progressive-promotion-and-stop-conditions",
+    "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#overview",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
