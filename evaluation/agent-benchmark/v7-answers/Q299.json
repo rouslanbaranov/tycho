@@ -1,0 +1,554 @@
+{
+  "task_id": "Q299",
+  "answer": "# Q299 - A converged FIFO p95 is not evidence for a priority-sensitive design\n\n## Bottom line\n\nA converged run is evidence about the model that was run, not about a system whose mechanism the model does not contain. V12's queue resource is a fixed server pool with a capacity-bounded FIFO queue; priority and preemption are not implemented (C1). The scenario contract lists servers, service time, queue capacity, timeout, attempts, backoff, bulkhead and cost, but no priority class or scheduling-discipline field, and the schema requires every field (C2). The V12 scope statement explicitly resolves the checkout model to \"one request class; no priorities\" (C3). Folding two priority classes into that one FIFO queue with an averaged service time is therefore not an encoding of priority; it is a different model with a different structure and a different input distribution (C4-C7). A validity limit is a condition on the result's use, not a disclaimer: if the decision needs the omitted mechanism, the model is outside its domain (C10). Convergence says only that the sampling error of the reported metric is small under the declared model (C11); it does not validate the structure, the inputs or the inference. The folded run can produce a legitimate p95 for the one-class FIFO approximation, but that number is outside the validity domain of a priority-sensitive claim. Before it is cited, the claim must be restated to the FIFO approximation (or withdrawn), and any priority claim must be re-specified, re-implemented, re-calibrated, re-estimated and re-bound to a new run and decision record (C19-C23).\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| Implemented mechanism | \"priority class FIFO queue averaged service time\"; \"queue discipline priority preemption\"; \"engine does not implement priority\" | C1, C5: resource-semantics; what-is-not-verified |\n| Contract and schema | \"scenario contract fields priority scheduling\"; \"required structure scenario\"; \"strict schema rejects unexpected\" | C2, C14: scenario required-structure; model-spec why-a-contract |\n| Scope and validity | \"validity domain model boundary\"; \"validity limits\"; \"one request class no priorities\" | C3, C4, C10: model-scope a-scope-statement/from-decision-to-boundary/overview; calibration validity-limits |\n| Convergence versus validity | \"what convergence does not mean\"; \"standard error\"; \"convergence without calibration\" | C11-C13: convergence what-convergence-does-not-mean/failure-modes; verification-versus-validation |\n| p95 semantics and averaging | \"percentile p95 population\"; \"service mean tail\"; \"heavy-tailed latency\" | C6-C9: calibration input table; tails percentiles; convergence standard-error; queue basic quantities |\n| Re-verification path | \"new contract and new tests\"; \"priority starvation aging\"; \"provenance replay\"; \"decision record evidence\" | C14-C23: resource-semantics; admission priority contracts; run provenance; decision-record required structure |\n\n## 1. Why a converged result from the unmodeled rule is outside the validity domain\n\nThe validity domain is fixed by the model's purpose, boundary, resolution, mechanisms and declared conditions, not by how many replications were run. The V12 model contract requires scope, abstraction, dynamics, parameters, invariants, verification, calibration and validity_limits; it also requires a statement of what is explicitly excluded. The scope statement for this model says \"one request class; no priorities\" (C3). That is the declared resolution: the model is built to answer a one-class FIFO question.\n\nThree different questions are being conflated in the report:\n\n1. **Structure.** Does the model contain the mechanism that the decision depends on? No. The queue is FIFO, and priority and preemption are not implemented (C1). A priority class is not a scalar parameter like a mean service time; it is a rule that changes which request is served next and therefore changes each class's waiting-time distribution (C5). A single-class FIFO queue has no state with which to represent that rule.\n2. **Data.** Does the model preserve the inputs the mechanism needs? No. The service mean and service CV are separately assumed, and what is missing is a measured service-time sample including the tail and a measured distribution, not a chosen shape (C6). Replacing two class-specific distributions with one averaged service time drops the mixture's variance and tail; a p95 depends on the distribution, not only on its mean (C7).\n3. **Sampling.** Is the estimate stable? The run is converged, so the sampling error of the reported metric is small under the declared model (C11). That is the only question convergence answers.\n\nConvergence is conditional on the model and its inputs. It cannot repair a structural omission or an input substitution, because the sampling distribution is generated by the model that was run. A stable estimate of a biased or misspecified model is still biased (C11, C13). The sources put the same point in several ways: \"A model can be verified and still be invalid for a decision because its structure or data are wrong\" (C13); a model can be verified, converged and executable and still fail to support a decision (C12); and \"Convergence without calibration. A stable estimate of a biased model is still biased\" (C11).\n\nThe scope failure modes make the same point: a boundary mismatch can reverse the result, and an omitted mechanism can hide the failure that motivates the decision (C4). Sargent separates conceptual-model validity from operational validity; a model can be conceptually reasonable and operationally unvalidated, and the record must say which condition holds (C12). The omission is also not neutral. A model boundary is acceptable only if the omitted parts cannot change the comparison under the declared conditions (C4). Priority can change the comparison: it changes the order of service, so the high-priority and low-priority classes can have very different p95s even when the aggregate workload is similar. The team has not shown that the omitted rule cannot change the p95 comparison; it has assumed it away by folding the classes. Under the model-scope rule, that is an explicit omission that is not acceptable for the decision at hand.\n\nThe named failure modes apply directly. Reusing a model after its boundary or mechanism changes is \"Validity drift\"; applying a model calibrated for one workload to a different workload is \"Extrapolation\" (C18). Here both the mechanism (FIFO vs priority) and the workload (one class vs two classes) changed while the old number was retained. The run is not \"wrong\" as a FIFO estimate; the citation is wrong because it transports the estimate outside the domain in which it was produced.\n\n## 2. Why one FIFO queue with an averaged service time is a different model\n\n**The discipline is structural.** FIFO and priority are different service orders, not different values of one parameter. Under FIFO, a request's wait is determined by the work ahead of it in arrival order. Under priority, a high-priority request may overtake earlier low-priority work; the low-priority class can wait behind later high-priority arrivals, and a preemptive rule can interrupt service. The per-class waiting-time distributions therefore differ by discipline even if the arrival process and service-time distributions are identical (C5). A single-class FIFO run has one waiting-time distribution for the merged population; it cannot produce the two class-specific distributions that a priority-sensitive design is judged on.\n\n**The average is a new input assumption, not an aggregation of evidence.** V12's utilization identity is stated for one server class and uses a single mean service time; the engine's service specification also carries a distribution and a coefficient of variation (C6, C7). If the two classes have different arrival rates, the aggregate mean is the arrival-weighted mean, not an arbitrary average; an unweighted average can make the utilization arithmetic wrong as well as the tail. Even a correctly weighted mean leaves the mixture's variance and tail unspecified. The p95 of a mixture is not the average of the class p95s, and it need not equal either class's p95. A single CV chosen for the mixture is an assumed shape, not a measured distribution; the input table says exactly that the missing evidence is \"a measured distribution, not a chosen shape\" (C6).\n\n**There is no general bound.** It is tempting to argue that the FIFO aggregate p95 is conservative for a priority design. That is not generally true. Priority protects one class at the expense of another: the high-priority class's p95 can be better than the FIFO aggregate, while the low-priority class's p95 can be worse. The aggregate number can therefore be optimistic for the class that matters and pessimistic for the other. A bound would require a proof under stated assumptions (for example, identical service requirements and a work-conserving discipline with a proved invariance), and no such proof is part of the run. The special case in which aggregate workload is invariant to a work-conserving discipline does not give class-specific p95s and does not cover class-dependent service times or preemption.\n\n**Class-specific deadlines and retries add another collapse.** If the two classes also have different deadlines, retry budgets or admission treatment, the folded model collapses those mechanisms too. V12's engine has one timeout per attempt and one retry budget; the scenario configuration has one timeout, attempts and backoff field (C2). A priority-sensitive design often pairs priority with different deadlines; the model cannot represent that combination without new fields and tests.\n\n## 3. Why p95 makes the error visible\n\nA p95 is a value of a distribution, not a property of a single request. Its definition must name the observation window, whether timed-out requests are included, how sampling works, and whether successful, rejected and failed requests share the population (C8). The folded run's p95 is a quantile of the merged population. A priority-sensitive claim is normally about a class-specific population, such as the high-priority class's end-to-end p95 or the low-priority class's queue-wait p95. The aggregate quantile is not that number, and it is not a weighted average of the class quantiles (C9).\n\nThe statistical treatment is also weaker than the word \"converged\" suggests. V12's convergence rule compares the standard error of a metric with its mean and marks a run converged at a relative error of at most 0.02. That is a mean-based rule, and the normal approximation can understate heavy-tailed latency uncertainty (C11). A converged success rate does not imply a converged p95; the run record's convergence field names a metric, and the report must show that the cited p95 itself has an adequate replication count, standard error or interval, and a convergence check. Thirty replications may be reasonable for a bounded success rate, but a tail quantile needs its own sample-size and uncertainty argument. This is an additional reason the number cannot be cited merely because the run says \"converged.\"\n\n## 4. What must be restated before the number is cited\n\n1. **Restate the claim to the model actually run.** The defensible statement is: \"Under model version X and scenario hash Y, with one FIFO request class, an averaged service time Z, the declared synthetic workload and metric population P, the estimated p95 is Q with uncertainty U and convergence status S.\" The statement must say that it is not a two-class priority estimate and not a production estimate (C19, C23).\n2. **Restate the metric population.** Say whether the p95 is over all offered requests, completed requests, successful requests, queue wait or end-to-end latency, and whether timeouts, rejections and failures are included. A class-specific claim needs a class-specific population (C8, C9, C19).\n3. **Restate the evidence status.** The run is simulation evidence under a synthetic, uncalibrated model. The service mean, service CV and arrival process are assumed; the model is verified only for the mechanisms it implements; the FIFO mechanism is verified, the priority mechanism is absent (C6, C12, C13). Do not label the result \"model-verified\" in a way that implies the priority design is verified.\n4. **Restate the decision status.** For a priority-sensitive decision, the correct status is insufficient evidence, not decision-supported, until a priority model and class-specific data exist. The decision record's checklist explicitly returns insufficient evidence when the model's validity limits exclude the operating condition under test (C12, C17). If the FIFO number is retained as a baseline, mark it conditional and give the reversal triggers.\n5. **State or drop the equivalence hypothesis.** If the team wants to treat the folded model as an approximation to the priority design, it must state the conditions under which the approximation is claimed to hold and test them: identical or near-identical class service distributions, a class mix for which the aggregate quantile is close to the class quantiles, a work-conserving discipline with a proved invariance, or a proved bound. Without such a statement, the average is an unvalidated substitution, not an approximation.\n\n## 5. What must be re-verified\n\n**A. Contract and schema.** Add the priority class, scheduling discipline, preemption/aging rule and class-specific parameters to a new model version and a new scenario version. The model contract must record the new scope, abstraction, state variables, parameters, dynamics, invariants, verification, calibration and validity limits; the scenario contract must record the new fields. The existing strict schema requires every field and rejects missing or unexpected fields, so this is a versioned contract change, not an undocumented flag (C14, C20). The class definition itself must be authenticated and propagated; otherwise the class mix in the scenario is not well defined (C20).\n\n**B. Engine and tests.** Implement the chosen rule (non-preemptive priority, preemptive priority, aging, or separate lanes) and add tests for class ordering, tie-breaking, starvation and aging, class-level conservation, timeout/retry interaction and deterministic replay. The existing event-order test schedules equal-time events with different event priorities; it is not a class-priority queue test, and the page says the tests do not prove that the chosen priority order matches a production scheduler (C15). A passing FIFO test matrix cannot be extended by assertion to an unimplemented mechanism.\n\n**C. Inputs and calibration.** Collect class-specific arrival traces, class-specific service-time samples including the tail, the class mix, and class-specific deadlines/retry policies if they differ. Record each as measured, assumed or unknown; do not replace a measured class distribution with a mean and call it measured. The current input table says the missing evidence for the service mean is \"a measured service-time sample and tail\" and for the service CV \"a measured distribution, not a chosen shape\" (C6).\n\n**D. Statistical estimation.** Re-run with the priority model and estimate the p95 for each class and for the aggregate population, with the replication count, standard error or interval, and a convergence check for the cited metric. Treat the tail explicitly: a normal approximation can understate heavy-tailed latency uncertainty, and a mean-based relative-error rule is not automatically a p95 rule (C11). Predeclare the stopping rule; do not stop when the interval looks favorable.\n\n**E. Model-to-model comparison and sensitivity.** Compare the folded FIFO approximation with the priority model on the same workload and seeds, and quantify the difference in class p95s. Test sensitivity to the class mix, service-time variability and tail, priority weights and the starvation/aging policy. If a bound or invariance is claimed, prove it under stated assumptions; the existing sensitivity screen is a quadratic approximation, not a proof (C21). The admission policy page makes the same point in design terms: define which classes may overtake, maximum wait, starvation policy and tenant isolation, and reverse the priority choice when inversion and starvation exceed the latency benefit (C20).\n\n**F. Provenance and decision record.** A changed model or scenario changes the hashes; the run record binds both, and replay fails before a new number is produced (C16). Regenerate the run and result hash, then update the decision record's evidence block, status and reversal triggers. The old p95 is stale for the new model and cannot be carried over by relabeling it. The decision record requires evidence for model verification, calibration, simulation and sources, and a status from proposed, decision-supported, insufficient-evidence or rejected (C17).\n\n## 6. What can still be cited\n\nThe existing number can still be cited only in the narrow form in Section 4: as a conditional p95 of the one-class FIFO approximation, with the model and scenario hashes, the metric population, the replication count and uncertainty, and an explicit statement that it is not evidence for a priority design. It cannot be cited as:\n\n- the high-priority or low-priority class's p95;\n- evidence that a priority policy meets or misses a class SLO;\n- a comparison of priority policies or of priority versus FIFO;\n- an upper or lower bound for the priority design;\n- a production claim, a validated-system claim or a decision-supported claim for the priority decision.\n\nIf the decision cannot wait for the priority model, the honest output is a conditional baseline plus insufficient evidence for the priority-sensitive part, not a priority recommendation derived from the folded number (C12, C23).\n\n## 7. Unknowns and limits\n\n- The actual priority rule is unknown: strict priority, non-preemptive priority, preemptive-resume, weighted fair queueing, aging, or separate lanes all produce different class waiting-time distributions.\n- The class mix, class-specific arrival rates and class-specific service-time distributions (including tails) are unknown. If the classes have identical service distributions, the averaging issue is smaller, but the discipline issue remains; if they differ, both issues apply.\n- It is unknown whether the averaged service time is an unweighted mean or an arrival-weighted mean. Only the latter can match the aggregate mean, and neither preserves the mixture's tail.\n- It is unknown which metric the run's convergence status refers to. A converged success rate is not a converged p95; the run record must name the metric.\n- It is unknown whether any equivalence or bound argument exists for using the FIFO p95 for the priority design. None is supplied in the question or the cited evidence.\n- The target SLO, the decision threshold and the production data are unknown. Even a correct priority model would remain synthetic and uncalibrated until those measurements exist.\n- The existing event-order test's \"priorities\" are event priorities, not request-class queue priorities; the test matrix should not be read as priority support. This is a likely source of the report's overconfidence.\n\n## 8. Evidence map\n\n| Claim | Section keys | What the evidence establishes |\n|---|---|---|\n| C1 | resource-semantics; what-is-not-verified | FIFO only; priority and preemption are not implemented; a new contract and tests are required. |\n| C2 | scenario required-structure | The scenario configuration has no priority/class/scheduling field; the schema requires every field. |\n| C3 | model-scope a-scope-statement; model-scope overview | The declared resolution is one request class and no priorities; outside the domain is an explicit omission. |\n| C4 | model-scope from-decision-to-boundary; model-scope failure-modes-of-scope; admission priority contracts | An omitted part is acceptable only if it cannot change the comparison; priority can change class outcomes. |\n| C5 | resource-semantics; model-scope abstraction; admission priority contracts | A scheduling rule is a structural policy with class, wait and starvation semantics, not a scalar. |\n| C6 | calibration input table | Service mean and service CV are assumed; missing evidence is the measured sample, tail and distribution. |\n| C7 | calibration input table; convergence standard-error; queue basic quantities | A mean does not carry the mixture's distribution or tail; utilization is stated for one server class. |\n| C8 | tails percentiles | A percentile is a distribution statistic; the population, window and timeout treatment must be defined. |\n| C9 | tails percentiles; resource-semantics; admission priority contracts | An aggregate quantile is not a class quantile and does not generally bound the class quantiles. |\n| C10 | calibration validity-limits | A validity limit is a condition on use; an omitted mechanism puts the decision outside the domain. |\n| C11 | convergence what-convergence-does-not-mean; convergence failure-modes | Convergence is narrow sampling stability; it does not fix bias or validate inputs. |\n| C12 | insufficient-evidence is-not-a-model-failure; checklist; model-scope failure-modes-of-scope | Verified, converged and executable can still be insufficient; validity exclusion requires insufficient evidence. |\n| C13 | model-verification verification-versus-validation | A verified engine is not a validated system; structure or data can invalidate it. |\n| C14 | resource-semantics; scenario required-structure; model-spec overview; model-spec why-a-contract | Priority requires a new contract and tests; schemas require named fields and reject undocumented additions. |\n| C15 | model-verification event-ordering | The event-order test is event priority, not class queue priority; it does not prove a production scheduler. |\n| C16 | run-provenance example-candidate-b-run | Model and scenario hashes bind the run; a change makes replay fail before a new number. |\n| C17 | decision-record required-structure | The record requires verification, calibration, simulation and source evidence, a status and reversal triggers. |\n| C18 | calibration failure-modes; model-scope failure-modes-of-scope | Validity drift and extrapolation are named failure modes for this reuse. |\n| C19 | validity-limits; insufficient-evidence checklist; tails percentiles | Restate the claim to the FIFO model and metric population; the priority part is insufficient evidence. |\n| C20 | resource-semantics; admission priority contracts; event-ordering; scenario required-structure; model-spec required-structure | Re-specify the contract, implement the rule, authenticate classes, and test it; the old tests are insufficient. |\n| C21 | calibration input table; convergence standard-error; scenario identical-workload rule; sensitivity screen | Recalibrate class-specific inputs and estimate per-class p95 uncertainty under an identical workload; the screen is not proof. |\n| C22 | run-provenance example-candidate-b-run; decision-record required-structure | Rebind hashes and replay; update the decision record; the old number is stale. |\n| C23 | validity-limits; convergence what-convergence-does-not-mean; tails percentiles | The only defensible citation is the narrow conditional FIFO estimate. |\n\n## 9. Decision\n\nFor the priority-sensitive design, the current evidence is insufficient, not decision-supported. Keep the FIFO p95, if at all, as a conditional baseline with the caveats in Section 4; do not use it to choose, rank or justify a priority policy. Commission the priority model and the class-specific measurements in Section 5, then cite the new per-class p95 with its uncertainty, convergence metric and provenance. The old number is not made valid by convergence, by more replications, or by relabeling the scenario.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "V12's queue resource is a fixed server pool with a capacity-bounded FIFO queue; priority and preemption are not implemented, so a model that needs them requires a new contract and new tests.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+          "quote": "The engine does not implement priority or preemption. A model that needs them requires a new contract and new tests, not an undocumented flag.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "The queue discipline is FIFO only; priority and preemption are not implemented.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The scenario contract enumerates servers, service time, queue capacity, timeout, attempts, backoff, bulkhead and cost, but no priority, class or scheduling-discipline field; the schema requires every field.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "configuration: servers, service time, queue capacity, timeout, attempts, backoff, bulkhead and cost;",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "The schema requires every field.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The V12 scope statement explicitly resolves the checkout model to one request class and no priorities, and treats anything outside the declared validity domain as an explicit omission.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+          "quote": "Resolution: event-level for individual latency; one request class; no priorities.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#overview",
+          "quote": "Everything outside that domain is an explicit omission, not an unstated assumption.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Inference: a model may omit a mechanism only if the omission cannot change the comparison; because priority changes which class waits, the omitted priority rule can change the p95 comparison and is not an acceptable omission for a priority decision.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+          "quote": "That is acceptable only if the omitted parts cannot change the comparison under the declared conditions.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+          "quote": "reserving some capacity for critical operations can preserve essential user journeys, but naive priority queues can starve ordinary work forever.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+          "quote": "The engine does not implement priority or preemption.",
+          "supports": "C4",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+          "quote": "Boundary mismatch. The decision is about a caller-visible outcome, but the model boundary starts after admission. The missing admission behavior can reverse the result.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Inference: a priority class and its scheduling rule are structural policies, not scalar parameters; a single-class FIFO queue has no state or event semantics that can produce class-specific service order or class-specific waiting-time distributions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+          "quote": "a fixed number of servers;",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+          "quote": "It costs more to verify and can hide numerical detail behind a plausible average.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+          "quote": "Define which classes may overtake, maximum wait, starvation policy and tenant isolation.",
+          "supports": "C5",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "V12 records service mean and service CV as separate assumed inputs and states that the missing evidence is a measured service-time sample including the tail and a measured distribution, not a chosen shape.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Service mean | assumed | A measured service-time sample and tail |",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Service CV | assumed | A measured distribution, not a chosen shape |",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Inference: an averaged service time is not a sufficient substitute for class-specific service distributions; the mean does not carry the mixture's variance or tail, a p95 depends on the distribution, and an unweighted average can also make the one-class utilization arithmetic wrong.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Service mean | assumed | A measured service-time sample and tail |",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "Utilization (rho): offered load divided by capacity, rho = lambda / mu for one server class, or lambda / (c * mu) for c identical servers.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+          "quote": "For a heavy-tailed latency, it can understate the tail uncertainty.",
+          "supports": "C7",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A p95 is a value of a distribution, not a single request's maximum; its definition must name the observation window, whether timed-out requests are included, how sampling works, and whether successful, rejected and failed requests share the population.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+          "quote": "A percentile is a value of a **distribution**, not a single request's maximum. Define the observation window, whether timed-out requests are included, how sampling works, and whether successful, rejected and failed requests share the same population.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Inference: an aggregate p95 over a merged class population is not a class-specific p95 and need not bound either class's p95; priority can improve one class while starving another, so the aggregate can be optimistic for one class and pessimistic for the other.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+          "quote": "A percentile is a value of a **distribution**, not a single request's maximum.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+          "quote": "reserving some capacity for critical operations can preserve essential user journeys, but naive priority queues can starve ordinary work forever.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+          "quote": "a FIFO queue with a capacity;",
+          "supports": "C9",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A validity limit is not a disclaimer appended to a result; it is a condition on the result's use, and if a decision needs the omitted mechanism, the model is outside its domain.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+          "quote": "A validity limit is not a disclaimer appended to a result. It is a condition on the result's use. If a decision needs the omitted mechanism, the model is outside its domain.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Convergence means only that the sampling error of the reported metric is small under the declared model; it does not mean the model is valid, the inputs are measured, the decision is correct, or the interval contains the production value, and more replications will not fix a biased model.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+          "quote": "Convergence does not mean: - the model is valid; - the inputs are measured; - the decision is correct; - the confidence interval contains the production value; - more replications will fix a biased model.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+          "quote": "It means the sampling error of the reported metric is small under the declared model. That is a narrow but useful statement.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+          "quote": "Convergence without calibration. A stable estimate of a biased model is still biased.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A model can be verified, converged and executable and still fail to support a decision; when the model's validity limits exclude the operating condition under test, the correct outcome is insufficient evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+          "quote": "A model can be: - verified: the engine preserves its invariants; - converged: the sampling error is small; - executable: the run replays; and still fail to support a decision.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "the model's validity limits exclude the operating condition under test;",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+          "quote": "A model can be conceptually reasonable and operationally unvalidated; the record must say which condition holds.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A verified engine is not a validated system; a model can be verified and still be invalid for a decision because its structure or data are wrong.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "quote": "A model can be verified and still be invalid for a decision because its structure or data are wrong.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "quote": "A verified engine is not a validated system.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Priority cannot be added as an undocumented scenario flag: a model that needs it requires a new contract and new tests, the scenario schema requires every field, and the model contract forces choices into named fields that a validator can check.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+          "quote": "A model that needs them requires a new contract and new tests, not an undocumented flag.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "The schema requires every field.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+          "quote": "A contract forces those choices into named fields that a validator can check and a reader can challenge.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview",
+          "quote": "The strict schema rejects missing or unexpected fields.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "The event-order test schedules equal-time events with different event priorities; it is not a request-class queue-priority test, and the page states that the tests do not prove the chosen priority order matches a production scheduler.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+          "quote": "The event-order test schedules three events at the same time with different priorities and checks the processing order.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+          "quote": "The tests do not prove that the chosen priority order matches a production scheduler. They prove that the implemented order is deterministic and that the timeout state machine is self-consistent.",
+          "supports": "C15",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "A changed model or scenario invalidates the stored run: the run record binds model and scenario hashes, and replay fails before producing a new number.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+          "quote": "The run's model hash is the SHA-256 of checkout-des.json; the scenario hash is the SHA-256 of checkout-b-queue.json. If either file changes, replay fails before producing a new number.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A decision record must carry evidence for model verification, calibration, simulation and source identifiers, plus a status from proposed, decision-supported, insufficient-evidence or rejected and reversal triggers.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "evidence: model verification, calibration, simulation and source identifiers;",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "The status is one of proposed, decision-supported, insufficient-evidence or rejected.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "reversal triggers, limitations and pattern links.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Reusing a one-class model after the mechanism changes is validity drift, and applying a model calibrated for one workload to the two-class workload is extrapolation; both are named failure modes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+          "quote": "Validity drift. A model is reused after its boundary or mechanism changes.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+          "quote": "Extrapolation. A model calibrated for one workload is used for a different one.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+          "quote": "Validity drift. The model is calibrated for one workload and reused for another without restating the domain.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Inference: before any citation, the claim must be restated to the one-class FIFO approximation and a named metric population, with its model and scenario provenance, and the priority-sensitive part must be marked unverified or insufficient evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+          "quote": "If a decision needs the omitted mechanism, the model is outside its domain.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "the model's validity limits exclude the operating condition under test;",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+          "quote": "Define the observation window, whether timed-out requests are included, how sampling works, and whether successful, rejected and failed requests share the same population.",
+          "supports": "C19",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Inference: the structural re-verification requires a versioned model and scenario contract with class and scheduling fields, engine support for the chosen rule, authenticated class definitions, and new tests for class ordering, starvation/aging, conservation, timeout/retry interaction and replay; the existing event-order test is not sufficient.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+          "quote": "A model that needs them requires a new contract and new tests, not an undocumented flag.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+          "quote": "Define which classes may overtake, maximum wait, starvation policy and tenant isolation.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+          "quote": "The tests do not prove that the chosen priority order matches a production scheduler.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "The schema requires every field.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "scope: what is included and what is explicitly excluded.",
+          "supports": "C20",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Inference: the empirical re-verification requires class-specific arrival traces and service-time samples including tails, per-class p95 with its own replication count, standard error or interval and convergence check, and a FIFO-versus-priority comparison under the identical-workload rule with sensitivity to class mix, service variability and scheduling; an averaged mean and a converged run are not substitutes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Arrival rate | assumed | A measured arrival trace for the target workload |",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Service mean | assumed | A measured service-time sample and tail |",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+          "quote": "For a heavy-tailed latency, it can understate the tail uncertainty.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+          "quote": "A comparison is not a comparison if each candidate receives a different arrival pattern, duration or warmup.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+          "quote": "The screen is an approximation.",
+          "supports": "C21",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Inference: a priority claim must rebound provenance and decision evidence: new model and scenario hashes, a new run and result hash, replay, and a decision record with the new evidence status, status and reversal triggers; the old p95 is stale for the changed model.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+          "quote": "If either file changes, replay fails before producing a new number.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "The status is one of proposed, decision-supported, insufficient-evidence or rejected.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "reversal triggers, limitations and pattern links.",
+          "supports": "C22",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Inference: the only defensible citation of the existing number is the narrow conditional one: under the declared one-class FIFO model and scenario, for a named metric population, the estimated p95 is X with its uncertainty and convergence status; it is not a class p95, a priority-policy comparison, a bound, or a production claim.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+          "quote": "A validity limit is not a disclaimer appended to a result. It is a condition on the result's use.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+          "quote": "It means the sampling error of the reported metric is small under the declared model. That is a narrow but useful statement.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+          "quote": "A percentile is a value of a **distribution**, not a single request's maximum.",
+          "supports": "C23",
+          "status": "inference"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+    "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#overview",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
