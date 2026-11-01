@@ -151,14 +151,16 @@ partial result needs a versioned schema and a caller-visible completeness marker
 
 **Source boundary.** Enterprise Integration Patterns,
 [Aggregator](https://www.enterpriseintegrationpatterns.com/patterns/messaging/Aggregator.html),
-section "Aggregator", read 2026-10-21; raw HTML revision
-`15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58`. microservices.io,
+section "Aggregator", read 2026-11-01; canonical text SHA-256
+`e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494` (raw HTML
+`15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58`). microservices.io,
 [API Composition](https://microservices.io/patterns/data/api-composition.html), sections
-"Solution" and "Resulting context", read 2026-10-21; raw HTML revision
-`7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b`. The pages are living
-documents; no benchmark or execution was performed. The partial-result and cancellation
-rules, the API-composition comparison and the reversal are Tycho synthesis, not source
-statements.
+"Solution" and "Resulting context", read 2026-11-01; canonical text SHA-256
+`75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7` (raw HTML
+`7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b`). The pages are
+living documents; no benchmark or execution was performed. The partial-result and
+cancellation rules, the API-composition comparison and the reversal are Tycho synthesis,
+not source statements.
 
 ### Splitter
 

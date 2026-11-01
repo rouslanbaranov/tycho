@@ -328,14 +328,16 @@ declared partial result or fail as a whole, and cancel remaining work.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-aggregator.2026-10-21: sections "Aggregator" and both
-loan-broker examples; raw HTML revision
-`15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58`. The page is
+read record read.enterprise-integration-aggregator.2026-11-01: sections "Aggregator"
+and both loan-broker examples; canonical text SHA-256
+`e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494` (raw HTML
+`15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58`). The page is
 publisher-abridged, not a benchmark.
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-api-composition.2026-10-21: sections "Solution" and
-"Resulting context"; raw HTML revision
-`7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b`. The page is a
+read record read.microservices-api-composition.2026-11-01: sections "Solution" and
+"Resulting context"; canonical text SHA-256
+`75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7` (raw HTML
+`7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b`). The page is a
 public pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

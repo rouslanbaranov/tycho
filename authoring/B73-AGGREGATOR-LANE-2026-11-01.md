@@ -57,10 +57,10 @@ is invalidated by this sibling edit and needs a separate decision.
 
 - Enterprise Integration Patterns, "Aggregator":
   `https://www.enterpriseintegrationpatterns.com/patterns/messaging/`
-  `Aggregator.html` (concatenate the two lines). Reused from
-  `src.enterprise-integration` and
-  `read.batch2-aggregator.2026-10-21`. It states that a single missing or
-  delayed message prevents further processing of the whole aggregate, that the
+  `Aggregator.html` (concatenate the two lines). The source is
+  `src.enterprise-integration`; this lane adds
+  `read.enterprise-integration-aggregator.2026-11-01`. It states that a single
+  missing or delayed message prevents further processing of the whole aggregate, that the
   Wait-for-All strategy raises an error condition after a time-out period,
   that detecting a missing message is hard in loosely coupled asynchronous
   flows, that a missing message can be re-requested, and that the Time Out
@@ -68,9 +68,9 @@ is invalidated by this sibling edit and needs a separate decision.
   partial-result rule or cancellation; those remain Tycho guidance. It names
   Scatter-Gather only as a related pattern, not as an alternative.
 - microservices.io, "API Composition":
-  `https://microservices.io/patterns/data/api-composition.html`. Reused from
-  `src.microservices-patterns` and
-  `read.microservices-api-composition.2026-10-21`. It defines a query
+  `https://microservices.io/patterns/data/api-composition.html`. The source is
+  `src.microservices-patterns`; this lane adds
+  `read.microservices-api-composition.2026-11-01`. It defines a query
   implementation in which an API Composer invokes the data-owning services and
   performs an in-memory join, and it notes that some queries would produce
   inefficient large in-memory joins. It does not compare API Composition with
@@ -90,23 +90,25 @@ is invalidated by this sibling edit and needs a separate decision.
 ### Enterprise Integration Patterns, Aggregator
 
 - Source id: `src.enterprise-integration` (existing).
-- Record: `read.batch2-aggregator.2026-10-21`; access date 2026-10-21.
+- Record: `read.enterprise-integration-aggregator.2026-11-01`; access date
+  2026-11-01.
 - URL:
   `https://www.enterpriseintegrationpatterns.com/patterns/messaging/`
   `Aggregator.html` (concatenate the two lines).
-- Unit label: `Aggregator — pattern page`.
+- Unit label: `Aggregator — pattern page (2026-11-01 re-read)`.
 - Unit type: `pattern-page`.
 - Sections read as evidence: `Aggregator`; the record also read both
   loan-broker examples.
-- Raw HTML revision:
+- Canonical text revision:
+  `e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494`.
+- Raw HTML fetch check: one public HTTPS GET on 2026-11-01 served a
+  31,645-byte page with SHA-256
   `15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58`.
-- Fetch check: one public HTTPS GET on 2026-11-01 served a 31,645-byte page
-  whose raw HTML SHA-256 equalled the recorded revision. The committed
-  canonical-text extractor yields
-  `e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494`,
-  so the ledger's `content_sha256` is a raw-representation hash, not the
-  canonical-text digest. This lane reuses the recorded revision and reports
-  the distinction; no new ledger record is proposed.
+  The raw hash is a fetch check, not the binding revision.
+- Representation and extraction: the canonical digest is computed by the
+  committed `scripts/source_content_hash.py` over the served visible text,
+  with script/style/noscript/svg/nav/footer elements skipped. The page is a
+  living document; the revision pins the 2026-11-01 representation.
 - Exact quotes used:
 
       A single missing or delayed message will prevent further processing of
@@ -130,20 +132,21 @@ is invalidated by this sibling edit and needs a separate decision.
 ### microservices.io, API Composition
 
 - Source id: `src.microservices-patterns` (existing).
-- Record: `read.microservices-api-composition.2026-10-21`; access date
-  2026-10-21.
+- Record: `read.microservices-api-composition.2026-11-01`; access date
+  2026-11-01.
 - URL: `https://microservices.io/patterns/data/api-composition.html`.
-- Unit label: `API Composition — pattern page`.
+- Unit label: `API Composition — pattern page (2026-11-01 re-read)`.
 - Unit type: `pattern-page`.
 - Sections read as evidence: `Solution` and `Resulting context`; the record
   read all nine served headings.
-- Raw HTML revision:
+- Canonical text revision:
+  `75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7`.
+- Raw HTML fetch check: one public HTTPS GET on 2026-11-01 served a
+  21,585-byte page with SHA-256
   `7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b`.
-- Fetch check: one public HTTPS GET on 2026-11-01 served a 21,585-byte page
-  whose raw HTML SHA-256 equalled the recorded revision. The committed
-  canonical-text extractor yields
-  `75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7`,
-  so the same raw-versus-canonical distinction applies.
+  The raw hash is a fetch check, not the binding revision.
+- Representation and extraction: the canonical digest uses the same committed
+  extractor and visible-text scope as the EIP record.
 - Exact quotes used:
 
       Implement a query by defining an API Composer, which invoking the
@@ -181,13 +184,13 @@ is invalidated by this sibling edit and needs a separate decision.
     records Scatter-Gather as a related composite and Azure Gateway Aggregation
     as related naming only;
   - a **Limits** paragraph retained from the prior note;
-  - a **Source boundary** paragraph with both URLs, sections and raw HTML
-    revisions, and the Tycho-synthesis labels.
-- `### Aggregator` is now lines 119-162, 2,994 bytes, SHA-256
-  `7e2a5b28a0f310dc463bdbf71b4fb64fdcc230c4e57d97e973154b14b14c492b`.
-- The owner page is now 207 lines, SHA-256
-  `11e049dd7203d592070f043161b583055b38244727b0166b81863e2ee124bb56`.
-- `### Scatter-Gather` now starts at line 167 (was 144) because the
+  - a **Source boundary** paragraph with both URLs, sections, canonical
+    revisions and raw HTML fetch checks, and the Tycho-synthesis labels.
+- `### Aggregator` is now lines 119-164, 3,160 bytes, SHA-256
+  `4dfbce03c5f05bfba7bb91c51bde5d2da5b737158099888dcf0f1c53f7fb3199`.
+- The owner page is now 209 lines, SHA-256
+  `5370ac0ac4e8dff687c162e77cab44df4bc30139ff8eeab6260280843294bc1f`.
+- `### Scatter-Gather` now starts at line 169 (was 144) because the
   Aggregator section grew. Its bytes are unchanged: 2,867 bytes and SHA-256
   `ea18949ac86f863bd2e3a19cb6a0560aa4a7594650901da5fd71ce8d52677ab9`
   before and after. The heading line shift is the only Scatter-Gather change.
@@ -205,20 +208,47 @@ is invalidated by this sibling edit and needs a separate decision.
   re-request path and the Time Out retry/exception choice, then labels the
   partial-result and cancellation rules as Tycho guidance.
 - **Hard contraindications** is explicitly labelled Tycho guidance.
-- **Sources** now cites the EIP and microservices.io records with their raw
-  HTML revisions; the AWS scatter-gather citation is removed because this card
-  no longer uses it.
+- **Sources** now cites the EIP and microservices.io records with their
+  canonical text revisions and raw HTML fetch checks; the AWS scatter-gather
+  citation is removed because this card no longer uses it.
 - **Related entries** adds API Composition and Gateway Aggregation.
-- `### Aggregator` card is now lines 298-345, 2,692 bytes, SHA-256
-  `2d89c239988d3c423822eae5d9da500a80de029fab6659880307a7a113e2897b`.
-- The chapter page is now 526 lines, SHA-256
-  `607d84ec3d48c4b323743da830ddd94cc5607c39f1a196ea73039669493fbf02`.
+- `### Aggregator` card is now lines 298-347, 2,874 bytes, SHA-256
+  `d65c71f0f24da024130a6f5e0edaafe981f4a35ce976b71c4c8fee6fb44d8a01`.
+- The chapter page is now 528 lines, SHA-256
+  `ab791a854ece115348ace17126ed146b725dd7a2170b9b232dbb295168048e24`.
 - No other card is edited.
 
 ## Metadata needs (integrator)
 
 The following patch was exercised in a detached scratch copy of this worktree,
 not in the lane commit. It produced the validation results in the next section.
+
+### Reading ledger `edition/patterns/reading-ledger.v1.json`
+
+Add two records; keep the 2026-10-21 records as historical evidence.
+
+- `read.enterprise-integration-aggregator.2026-11-01`: source_id
+  `src.enterprise-integration`; unit label
+  `Aggregator — pattern page (2026-11-01 re-read)`; unit type
+  `pattern-page`; access date 2026-11-01; sections `Aggregator` and both
+  loan-broker examples; canonical `content_sha256`
+  `e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494`;
+  status `read`; limitations as in the source binding above.
+- `read.microservices-api-composition.2026-11-01`: source_id
+  `src.microservices-patterns`; unit label
+  `API Composition — pattern page (2026-11-01 re-read)`; unit type
+  `pattern-page`; access date 2026-11-01; sections `Solution`,
+  `Resulting context` and the other seven served headings; canonical
+  `content_sha256`
+  `75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7`;
+  status `read`.
+- Use the existing 2026-10-21 records as the field template; update the
+  record id, unit label, access date, access method, limitations and
+  `content_sha256`. Set `access_method` to "public HTTPS GET; canonical text
+  extracted with scripts/source_content_hash.py" and `read_scope` to the
+  served visible text with script/style/noscript/svg/nav/footer skipped.
+  The raw HTML hashes are fetch checks, not revisions.
+- `ledger_records` 354 -> 356.
 
 ### Owner units `edition/patterns/owner-units.v1.json`
 
@@ -228,13 +258,25 @@ Entry `tycho.pattern.aggregator`:
 - Replace `owner.unit_terms` with:
   `["fans in related results", "per-participant timeout",
   "partial-failure policy", "API composition is the alternative"]`.
+- For `technical_evidence.mechanism` and `technical_evidence.invariant`,
+  change `binding.ledger_record` to
+  `read.enterprise-integration-aggregator.2026-11-01` and
+  `binding.revision` to
+  `e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494`;
+  keep the existing quote and section. This moves all four dimensions onto
+  the canonical revision.
+- Set `source_support.ledger_record` to
+  `read.enterprise-integration-aggregator.2026-11-01`; keep `source_id`
+  `src.enterprise-integration`, `unit_type` `pattern-page`, `status` `read`
+  and `card_citation` true.
 - Set `technical_evidence.failure_recovery.state` to `supported`.
   - `quote`: "The source states: \"A single missing or delayed message will
     prevent further processing of the whole aggregate.\""
-  - `binding`: EIP, record `read.batch2-aggregator.2026-10-21`, section
-    `Aggregator`, quote "A single missing or delayed message will prevent
-    further processing of the whole aggregate.", revision
-    `15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58`.
+  - `binding`: EIP, record
+    `read.enterprise-integration-aggregator.2026-11-01`, section `Aggregator`,
+    quote "A single missing or delayed message will prevent further processing
+    of the whole aggregate.", revision
+    `e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494`.
   - `supporting_bindings`, all EIP, same record, section `Aggregator`, same
     revision:
     - "An incomplete order may not be meaningful. So if not all items are
@@ -251,11 +293,11 @@ Entry `tycho.pattern.aggregator`:
     caller can invoke the data-owning services and join their responses at
     query time."
   - `binding`: microservices.io, record
-    `read.microservices-api-composition.2026-10-21`, section `Solution`,
+    `read.microservices-api-composition.2026-11-01`, section `Solution`,
     quote "Implement a query by defining an API Composer, which invoking the
     services that own the data and performs an in-memory join of the results.",
     revision
-    `7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b`.
+    `75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7`.
   - `supporting_bindings`: microservices.io, same record, section
     `Resulting context`, quote "Some queries would result in inefficient,
     in-memory joins of large datasets.", same revision.
@@ -264,8 +306,8 @@ Entry `tycho.pattern.aggregator`:
     comparison and reversal are Tycho synthesis.
 - Add `source_support.auxiliary`:
   `{"source_id": "src.microservices-patterns",
-  "ledger_record": "read.microservices-api-composition.2026-10-21",
-  "revision": "7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b"}`.
+  "ledger_record": "read.microservices-api-composition.2026-11-01",
+  "revision": "75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7"}`.
 - Set `decision_evidence.competing_alternative` to the exact squashed card
   text:
 
@@ -289,7 +331,7 @@ Entry `tycho.pattern.aggregator`:
 
 Entry `tycho.pattern.scatter-gather`:
 
-- Set `owner.line` to 167 (was 144) because the Aggregator section grew. The
+- Set `owner.line` to 169 (was 144) because the Aggregator section grew. The
   section text and its SHA-256 are unchanged.
 - Do not change its technical evidence, coverage or promotion record as part
   of this lane.
@@ -298,34 +340,58 @@ Entry `tycho.pattern.scatter-gather`:
 
 Entry `tycho.pattern.aggregator`:
 
+- Keep the historical EIP source unit `Aggregator — pattern page`.
+- Add a second EIP source unit `Aggregator — pattern page (2026-11-01
+  re-read)`.
 - Add source unit `{"source_id": "src.microservices-patterns",
-  "unit": "API Composition — pattern page", "status": "read"}`.
+  "unit": "API Composition — pattern page (2026-11-01 re-read)",
+  "status": "read"}`.
+- Remove the AWS scatter-gather source unit from Aggregator because the
+  alternative no longer binds it; the Scatter-Gather entry keeps its AWS unit.
 - Replace `notes` with the same text proposed for the owner-unit `notes`.
 - Keep `technical_owner.state`, `atlas_owner.state` and all three coverage
   values at `partial-bounded`; no promotion is claimed.
+
+### Source register `sources/register.json`
+
+- No new source IDs. If verification scope is refreshed, mention the Aggregator
+  page re-read under `src.enterprise-integration` and the API Composition page
+  re-read under `src.microservices-patterns`. Both sources are already
+  admitted; this is bookkeeping, not a new admission.
 
 ### Source plan `edition/patterns/source-plan.v1.json`
 
 Entry `tycho.pattern.aggregator`:
 
+- Keep the historical EIP unit `Aggregator — pattern page` with
+  `read.batch2-aggregator.2026-10-21` so that ledger record remains cited.
+- Add a second EIP unit `Aggregator — pattern page (2026-11-01 re-read)`
+  with read record `read.enterprise-integration-aggregator.2026-11-01`.
 - Add one required unit for `src.microservices-patterns`: unit
-  `API Composition — pattern page`, type `pattern-page`, URL
+  `API Composition — pattern page (2026-11-01 re-read)`, type
+  `pattern-page`, URL
   `https://microservices.io/patterns/data/api-composition.html`, sections
   `Pattern: API Composition`, `Context`, `Problem`, `Solution`,
   `Example`, `Resulting context`, `Related patterns`, `See also`,
   `Learn more`, status `read`, read record
-  `read.microservices-api-composition.2026-10-21`, no blocked reason.
-- Summary: `required_units` 390 -> 391 and `read_units` 389 -> 390. The
-  `ledger_records` count does not change; no new reading record is added.
+  `read.microservices-api-composition.2026-11-01`, no blocked reason.
+- Remove the AWS scatter-gather unit from Aggregator's required units because
+  the alternative no longer binds it; the Scatter-Gather entry keeps its AWS
+  unit.
+- Summary: `required_units` 390 -> 391, `read_units` 389 -> 390 and
+  `ledger_records` 354 -> 356.
 - After the registry edit, recompute `source-plan.registry_sha256` as the
   SHA-256 of `edition/patterns/registry.v1.json`; the scratch value is
-  `ac0132ec34535904469dcfb44a2e1ab989143d5fc238483e1227312cc5ce096a`.
+  `aae63a58700fc3c098bdda40725dbb71b2d876974fa40c3cfb954148cf14ee15`.
   Keep `route_index_snapshot` unless the route index changes.
 
 ### Card batch `edition/patterns/card-batches.v1.json`
 
 Entry `tycho.pattern.aggregator`:
 
+- Set the entry's `ledger_record` to
+  `read.enterprise-integration-aggregator.2026-11-01` so it matches the owner
+  unit's primary `source_support` record.
 - The card is still inline, so it has no `card_path`. Register the inline
   host explicitly, `book/volumes/v11-pattern-atlas/c03-messaging-integration/
   README.md`, or split the card in a later reviewed change. Preflight fails
@@ -376,6 +442,8 @@ After the two book edits only, in the lane worktree:
 - `python3 scripts/validate_pattern_owner_units.py` - FAIL
   `owner-units-term-missing: tycho.pattern.aggregator: Scatter-gather is the
   alternative` because the proposed `unit_terms` change is not applied.
+- `python3 scripts/validate_pattern_sources.py` - PASS; 389 read units and
+  354 ledger records at the lane HEAD.
 - `python3 scripts/validate_pattern_cards.py` - PASS.
 - `python3 scripts/validate_pattern_registry.py` - PASS.
 - `python3 scripts/validate_sources.py` - PASS; 357 source records.
@@ -390,6 +458,7 @@ Scatter-Gather promotion-hash substitution:
     1/1 entries preflight clean
 
     PASS: owner units 145 entries, 145 units, 30 shared pages
+    PASS: source plan 145 entries; 390 read; 356 ledger records
     PASS: pattern cards 11 batch(es), 145 entries
     PASS: pattern registry 145 entries, 11 families
     PASS: 357 source records, mandatory IDs, cross-references and catalogue
@@ -405,11 +474,11 @@ fails `owner-units-promotion-owner-hash: tycho.pattern.scatter-gather`.
 
 - Section bytes and SHA-256 are identical before and after:
   `ea18949ac86f863bd2e3a19cb6a0560aa4a7594650901da5fd71ce8d52677ab9`,
-  2,867 bytes. The heading moved from line 144 to line 167.
+  2,867 bytes. The heading moved from line 144 to line 169.
 - The page-level SHA-256 moved from
   `1397ad303520df66900ae5046495473eb543a1d2ff64b29332506c3788938950`
   to
-  `11e049dd7203d592070f043161b583055b38244727b0166b81863e2ee124bb56`.
+  `5370ac0ac4e8dff687c162e77cab44df4bc30139ff8eeab6260280843294bc1f`.
 - `edition/patterns/sufficient-promotions.v1.json` records the
   Scatter-Gather `owner_page_sha256` as the old page hash
   `1397ad30...`; it is now stale.
@@ -435,11 +504,10 @@ fails `owner-units-promotion-owner-hash: tycho.pattern.scatter-gather`.
   binding.
 - The entry remains `partial-bounded` with no promotion, independent review,
   owner acceptance, CI result or merge permission.
-- The 2026-10-21 records store raw HTML SHA-256 values in the
-  `content_sha256` field. The 2026-11-01 re-fetch matched both raw hashes; the
-  committed canonical-text extractor produced different digests for both
-  pages. This lane reuses the recorded revisions and does not add ledger
-  records.
+- The 2026-10-21 records store raw HTML SHA-256 values. This lane proposes
+  new 2026-11-01 records with canonical text revisions and keeps the raw
+  hashes as fetch checks. The raw hashes matched on re-fetch; the canonical
+  hashes are the binding revisions.
 
 ## Review needs
 
