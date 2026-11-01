@@ -1,0 +1,321 @@
+{
+  "task_id": "Q296",
+  "answer": "# Q296 — Verification evidence: a moving oracle and a 19/20 coverage check are not reference cases\n\n## Direct answer\n\nNeither practice is a reference case, because each fails a different leg of the book's definition. A reference case should have (1) an analytic answer, (2) a clear tolerance, and (3) a failure mode that the test can detect [C1]. The copied expected value supplies no analytic answer: it is taken from the same run, so the oracle moves with the implementation and the test can never fail [C4][C14]. The 20-sample coverage check supplies no detectable failure mode: 20 samples cannot detect the coverage error the check claims to detect, and 19/20 is compatible with true coverage well below 95% [C5][C15]. Even a powered empirical coverage check over many samples would test the interval procedure under the model's assumptions, not validate the model or the production value [C6][C11][C12].\n\nA case record must carry an identifier, a description, the expected result, the observed result, a pass/fail/not-run status and the test path [C7]. A case without a test path is not a verification case, and a pass without an observed result is a claim, not evidence [C8][C9]. The fields are necessary but not sufficient: the expected result must be an independently known or analytic value with a declared tolerance, the observed result must be recorded from the run, and the test path must resolve to the test that exercised the case [C1][C7][C13]. A schema-complete record with an output-derived expected value can still be verification theater, because the schema rejects missing fields but cannot detect a false claim [C10][C16].\n\n## Layer and method\n\nThe question needs the modeling-and-simulation layer (v12): its reference-case, convergence, model-verification and model-contract pages carry the definition, the failure modes and the record schema. The atlas layer is not needed; no pattern identity or coverage claim is part of the answer. Searches used --volume modeling-and-simulation; a book-layer search confirmed that the same v12 sections own the verification-case record. Snapshot: 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a (555 documents, 3,132 sections, coverage complete).\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. What a reference case is and what it must contain | \"reference case expected value analytic known answer tolerance\"; outline \"model verification\"; direct page read | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview |\n| F2. Why a copied expected value is not a reference | \"expected value copied from current output test can never fail\"; \"verification theater green suite\" | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes; tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes |\n| F3. Why 19/20 over 20 samples is not coverage evidence | \"coverage check too few samples power confidence interval\"; \"how many samples statistical power detect coverage error\"; \"success rate 19 of 20 samples synthetic\" | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes; tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions; tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified |\n| F4. What a case record must contain | \"verification case record observed result test path\"; \"verification case record test path schema\"; direct reads | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record; tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure |\n| F5. Verification evidence, theater and stale test paths | \"verification theater green suite\"; \"independent oracle golden value tolerance\"; direct page | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes; tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix; tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation |\n| F6. What stronger known-answer verification would be | \"analytic formula M/M/1 empirical coverage many samples\"; \"independent expected value pre-registered oracle verification case\"; direct page | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented; tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#evidence-ledger |\n\n## Mechanism\n\n### 1. What a reference case is\n\nA reference case is not \"a test that passes.\" It is a check with an analytic answer, a declared tolerance, and a failure mode the test can detect [C1]. The analytic answer is what makes the case a reference: it is known independently of the code's output, so a wrong implementation produces a mismatch rather than a new \"expected\" value. The tolerance turns the analytic value into a decidable assertion; floating-point and stochastic estimators need a band, not exact equality. The detectable failure mode makes the case informative: the test must be capable of failing for the reason it claims to cover.\n\nV12's current cases are conservation (stock-flow identity and non-negativity), deterministic replay (same model, scenario and seed produce the same result hash), boundary cases (zero arrivals, zero servers, zero queue capacity, full bulkhead, one attempt, maximum attempts), and a sensitivity-screen sanity check (first-order indices in [0,1], total-order index at least the corresponding first-order index) [C2]. The page says V12 \"does not claim that these cases validate a real model\" [C2], and Case 5 says the cases exercise implemented accounting, event order and sensitivity sanity, \"not the statistical calibration of the sampler\" [C3]. Those are legitimate invariant and regression checks. They are not the stronger known-answer checks the page lists as future work. The distinction matters: a conservation identity can pass while the estimator is biased; replay can pass while the model is wrong; a sensitivity sanity condition can pass while the indices are imprecise.\n\n### 2. The moving oracle: why a copied expected value is not a reference case\n\nThe book names the exact anti-pattern: \"Reference to a moving target. The expected value is copied from the current output, so the test can never fail\" [C4]. If the implementation is wrong on the run that produces the expectation, the wrong value becomes the oracle. On the next run, any change that reproduces that wrong value passes; a change that fixes it fails. The test therefore measures output stability, not correctness. It cannot distinguish a correct implementation from a broken one [C14]. It is a characterization or regression pin, not a reference case.\n\nThis is why the first practice is not a reference case in the book's sense: it fails the analytic-answer leg of the definition [C1]. The expected result is not independent; it is a function of the same run. It also fails the detectable-failure leg, because the test can never fail [C4]. A green row in the test matrix produced this way is not evidence that the case is correct; it is evidence that the implementation still does what it did when the expectation was captured.\n\nThe schema does not rescue this. The model contract requires a verification block with status, cases, observed result and test path [C7], and the strict schema rejects missing fields, but \"it cannot detect a false claim\" [C10]. A record can have all six fields, a live test path and an observed result, and still be verification theater if the expected value was copied from the output [C16]. The contract is \"a guardrail, not a reviewer\" [C10]. The record's content, not just its shape, is what carries evidentiary weight.\n\n### 3. The 20-sample coverage check: why 19/20 is not evidence of 95% coverage\n\nA 95% confidence interval has a repeated-sampling property: it covers the true mean about 95% of the time under the model's assumptions [C6]. That property is a property of the procedure, not a guarantee for one sample or for the production value. The book is explicit: the interval \"does not cover a single future request,\" and it does not cover the true production value if the model is biased or the inputs are mis-specified [C6].\n\nA check over 20 synthetic samples is a Bernoulli experiment with n = 20. If the true coverage is exactly 95%, the probability of observing at least 19 covering intervals is about 0.736 (exactly 19 is about 0.377). So a rule that demands 19/20 will fail about 26% of the time even when the procedure is exactly calibrated. Conversely, a 19/20 pass is not tight evidence for 95%: the one-sided 95% lower confidence bound for 19/20 is about 0.784, so the result is compatible with true coverage as low as about 78%. The observed pass rate would occur about 39% of the time if true coverage were 90%, about 18% if 85%, and about 7% if 80% [C15, derived]. In other words, 20 samples cannot detect the coverage error the check claims to detect. This is the book's \"Coverage without power\" failure mode: \"A confidence-interval check uses too few samples to detect a real coverage error\" [C5]. V12 itself records that \"The confidence-interval coverage is not tested over many synthetic samples\" and that such checks are limits, not completed evidence [C5][C11].\n\nThe \"95%\" in 19/20 is a point estimate, not a coverage guarantee. At n = 20 the binomial standard error at p = 0.95 is about 0.049, so a naive 95% interval on the observed proportion spans roughly 0.76 to 0.99 (Wilson); the estimate is too noisy to certify a 95% target. A check that is supposed to detect a real coverage error needs enough samples for the alternative it cares about. As a rough calculation (not a book claim), distinguishing 95% from 90% at 80% power needs on the order of 150 samples; distinguishing 95% from 94% needs about 3,100. The book does not prescribe a number; it prescribes \"many synthetic samples\" for the future check [C11]. The point is that 20 is not \"many\" for this purpose.\n\nThere is a second, independent problem: the 20 samples are synthetic samples generated under the model. If they are generated from the model's own assumptions, they test the interval arithmetic under those assumptions; they cannot reveal that the model is biased or that the inputs are mis-specified. The coverage section says the interval does not cover the production value under bias or mis-specification [C6], and the reference-case page does not claim that the current cases validate a real model [C2]. So even a powered empirical coverage check over synthetic samples would be a check of the interval procedure, not a validation of the model for the decision. That is still useful, but it is not the same claim.\n\nA coverage check is also not a reference case in the strict sense: it does not have one analytic expected value for one case; it has a target rate for a procedure. It could be made into a reference case only if the target coverage is analytically known, the tolerance or decision rule is declared in advance, and the sample size gives the test power to detect the departure it claims to detect. The 20-sample version has no such power, so it fails the detectable-failure leg [C1][C5].\n\n| True coverage p | P(at least 19 of 20 cover) |\n|---|---|\n| 0.95 | 0.736 |\n| 0.90 | 0.392 |\n| 0.85 | 0.176 |\n| 0.80 | 0.069 |\n| 0.78 | 0.046 |\n\nThe table is my binomial calculation from the stated n = 20, not a table in the book. It shows the key point: observing 19/20 does not separate a 95% procedure from a materially worse one.\n\n### 4. What a case record must contain before it counts as verification evidence\n\nThe book's record schema is explicit. Each verification case in the model contract has:\n\n- an identifier;\n- a description;\n- the expected result;\n- the observed result;\n- a pass, fail or not-run status;\n- the test path [C7].\n\nThe model contract's verification block likewise requires \"status, cases, observed result and test path\" [C7], and \"A verification case must name the test that exercised it\" [C9]. Two hard rules follow: \"A case without a test path is not a verification case\" and \"A case marked pass without an observed result is a claim, not evidence\" [C8].\n\nSo the minimum record is six fields. But the six fields are necessary, not sufficient. Before the record counts as verification evidence, it must also satisfy the substance:\n\n1. Expected result: an analytic or independently known value, or a declared reference derived from an external source, not the current output [C1][C4]. The expected value should be fixed before the run (pre-registered) so it cannot move with the implementation.\n2. Tolerance: a declared band that makes the comparison decidable and states what size of error matters [C1].\n3. Failure mode: a statement of what wrong behavior the case would detect, and evidence that the test can fail for that reason [C1]. A test that can never fail is not a case.\n4. Observed result: the actual value from the run, recorded [C7][C8]. A pass status alone is a claim.\n5. Status: pass, fail or not-run [C7]. Not-run is a legitimate status; it is not a pass.\n6. Test path: the live path to the test that exercised the case [C7][C9]. A renamed test must update the model contract's verification case path [C13]; a stale path breaks the record even while the suite is green [C17].\n\nA schema-valid record with a copied expected value still fails points 1, 3 and the substantive meaning of point 4: it has an observed result, but the comparison is vacuous. That is the sense in which the team's green suite is \"verification theater\": the named failure is a case marked pass without a test path or an observed result [C10], and the moving-oracle case is a stronger variant in which the fields are present but the expected value is not independent [C16]. The contract's own warning is that the schema \"cannot detect a false claim\" [C10].\n\nThe test matrix adds a maintenance rule: the table names the intended tests and the actual file is tests/test_tycho_v12_engine.py; a renamed test must update the model contract's verification case path [C13]. A green suite with a stale path is not evidence for that case, because the case no longer names the test that exercised it [C17]. The matrix's \"pass\" column is a summary; it is not a substitute for the per-case record with an observed result [C8].\n\n### 5. What would count as the stronger verification\n\nThe book's Case 5 lists the stronger reference suite it does not yet claim: estimating pi from uniform samples with a known standard error; estimating the mean of an exponential distribution with a known variance; comparing an M/M/1 queue's mean wait with the analytic formula for a stable system; and checking empirical coverage of a confidence interval over many synthetic samples [C11]. Those are the shape of a real known-answer suite: an analytic value, a known error or tolerance, and a failure mode the test can detect. V12 records them as \"future verification work, not as completed evidence\" [C11]. The repair for the team's suite is therefore: replace the copied expectation with an external analytic known answer and a declared tolerance; record the observed result, status and live test path; and replace the 20-sample coverage gate with a check that has enough samples to detect the coverage error it claims to detect [C18]. Even then, the claim is about the implementation or interval procedure, not about production validity [C12][C6].\n\n## Boundaries and scope\n\n- Verification is not validation. The book distinguishes \"ensuring that the computer program of the model is correct\" from asking whether the model is adequate for its intended purpose; a model can be verified and still be invalid, and \"A verified engine is not a validated system\" [C12]. A known-answer suite can show the estimator is implemented correctly; it cannot show the model is the right model for the decision.\n- Coverage is a repeated-sampling property under assumptions. A 95% interval covers the true mean about 95% of the time under the model's assumptions; it does not cover the production value under bias or mis-specification, and it does not cover a single future request [C6]. Synthetic samples do not change that.\n- Synthetic or modeled evidence is not production evidence. The book's evidence ledger says the cited Owen chapters do not establish that the V12 reference cases are sufficient [C19]. Source linkage is not sufficiency, and a passing suite is not an independent review or an owner acceptance.\n- The contract is a guardrail, not a reviewer [C10]. A schema-complete record is not automatically true; a false expected value survives the schema.\n- The book does not claim the stronger checks [C11]. Absence of a claim is not proof that the team's suite is adequate, and it is not proof that a 20-sample check is harmless; it is simply outside the claimed evidence.\n\n## Evidence map\n\n| Claim | Section key(s) |\n|---|---|\n| C1 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview |\n| C2 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview |\n| C3 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented |\n| C4 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes |\n| C5 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes; tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified |\n| C6 | tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions |\n| C7 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record; tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure |\n| C8 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record |\n| C9 | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure |\n| C10 | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes |\n| C11 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented |\n| C12 | tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation |\n| C13 | tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix |\n| C14 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes; tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview (inference) |\n| C15 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes; tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions (inference) |\n| C16 | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes; tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview (inference) |\n| C17 | tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix; tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure (inference) |\n| C18 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview; tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes; tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented (inference) |\n| C19 | tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#evidence-ledger |\n\n## Unknowns and limits\n\n- The exact form of the team's \"95% coverage check\" is not specified. I treat it as 20 Bernoulli coverage events (or 20 sample-level passes) with a rule that passes at 19 or more. If it is a different statistic, the arithmetic changes, but a 95% target with n = 20 remains too noisy to certify.\n- The alternative coverage error the check is supposed to detect is not stated. Power depends on that alternative; 20 samples cannot reliably detect a 5-point drop, and a 1-point drop needs thousands.\n- The provenance of the \"current run output\" is not given beyond the question. If an independent oracle exists outside the description, the moving-oracle conclusion would not apply. As described, the expected value is set from the current output.\n- The actual model-contract JSON and test suite for the team's case are not inspected; the answer applies the book's requirements, not a code audit.\n- The book's own evidence ledger limits the claim: the cited Owen chapters do not establish that the V12 reference cases are sufficient [C19]. This answer does not assert production measurement, independent review or owner acceptance.\n\nNo contradiction was found among the required sections: the reference-case page, the coverage section and the test-matrix page agree that a copied expected value is a moving target, that too few samples cannot detect a coverage error, and that a case needs an observed result and a test path.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A reference case should have an analytic answer, a clear tolerance and a failure mode that the test can detect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview",
+          "quote": "A reference case should have an analytic answer, a clear tolerance and a\nfailure mode that the test can detect.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "V12's current reference cases cover conservation, boundary cases, deterministic replay and a sensitivity-screen sanity check, and V12 does not claim that these cases validate a real model.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview",
+          "quote": "V12 uses conservation, boundary cases, deterministic\nreplay and a sensitivity-screen sanity check. It does not claim that these cases validate a\nreal model.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The current reference cases exercise accounting, event order and sensitivity sanity, not the statistical calibration of the sampler.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+          "quote": "The current reference cases exercise the implemented accounting, event\norder and sensitivity sanity, not the statistical calibration of the sampler.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Setting each expected value from the current run output makes the reference a moving target, so the test can never fail.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+          "quote": "The expected value is copied from the current output, so\n  the test can never fail.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A confidence-interval coverage check with too few samples is coverage without power: it cannot detect a real coverage error, and V12 records that confidence-interval coverage is not tested over many synthetic samples.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+          "quote": "A confidence-interval check uses too few samples to detect a\n  real coverage error.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "The confidence-interval coverage is not tested over many synthetic samples.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A 95% confidence interval covers the true mean in repeated sampling about 95% of the time under the model's assumptions, but it does not cover the true production value when the model is biased or inputs are mis-specified, nor a single future request.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+          "quote": "A 95% confidence interval covers the true mean in repeated sampling about 95% of the time\nunder the model's assumptions.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+          "quote": "It does not cover the true production value if the model is\nbiased or the inputs are mis-specified. It does not cover a single future request.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Each verification case record carries an identifier, a description, the expected result, the observed result, a pass/fail/not-run status and the test path; the model contract's verification block requires status, cases, observed result and test path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+          "quote": "- an identifier;\n- a description;\n- the expected result;\n- the observed result;\n- a pass, fail or not-run status;\n- the test path.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "- verification: status, cases, observed result and test path.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A case without a test path is not a verification case, and a case marked pass without an observed result is a claim, not evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+          "quote": "A case without a test path is not a verification case. A case marked pass without an observed\nresult is a claim, not evidence.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A verification case must name the test that exercised it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "A verification case must\nname the test that exercised it.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The named failure 'verification theater' is a case marked pass without a test path or an observed result; the strict schema rejects missing fields but cannot detect a false claim, and the contract is a guardrail, not a reviewer.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+          "quote": "A case is marked pass without a test path or an observed result.\n  The strict schema rejects the missing fields; it cannot detect a false claim.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+          "quote": "The contract is a guardrail, not a reviewer.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "V12 does not claim the stronger known-answer checks (pi from uniform samples with known standard error, exponential mean with known variance, M/M/1 mean wait against the analytic formula, empirical interval coverage over many synthetic samples) and records them as future verification work, not completed evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+          "quote": "- estimating pi from uniform samples with a known standard error;\n- estimating the mean of an exponential distribution with a known variance;\n- comparing an M/M/1 queue's mean wait with the analytic formula for a stable system;\n- checking empirical coverage of a confidence interval over many synthetic samples.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+          "quote": "V12 does not claim these checks. They are recorded as future verification work, not as\ncompleted evidence.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Verification shows that the computer program implements the model as specified; it does not establish that the model is valid for a decision, and a verified engine is not a validated system.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "quote": "A model can\nbe verified and still be invalid for a decision because its structure or data are wrong.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "quote": "A verified\nengine is not a validated system.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "The test matrix names the intended tests and points to tests/test_tycho_v12_engine.py; a renamed test must update the model contract's verification case path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+          "quote": "The table names the intended tests; the actual test file is tests/test_tycho_v12_engine.py.\nA test that is renamed must update the model contract's verification case path.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A test whose expected value is copied from its own output cannot distinguish a correct implementation from a broken one; it pins the current output instead of checking an analytic answer.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+          "quote": "The expected value is copied from the current output, so\n  the test can never fail.",
+          "supports": "C14",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview",
+          "quote": "A reference case should have an analytic answer, a clear tolerance and a\nfailure mode that the test can detect.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "With 20 synthetic samples, 19/20 is not evidence of 95% coverage: at true coverage 0.95, P(at least 19 of 20 cover) is about 0.736; the one-sided 95% lower bound for 19/20 is about 0.784; and the same result occurs about 39% of the time at true coverage 0.90, so true coverage as low as about 78% is compatible with the pass.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+          "quote": "A confidence-interval check uses too few samples to detect a\n  real coverage error.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+          "quote": "A 95% confidence interval covers the true mean in repeated sampling about 95% of the time\nunder the model's assumptions.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "A moving-oracle case can satisfy the six-field schema and still be verification theater, because the schema cannot detect a false claim and the expected value is not an analytic answer.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+          "quote": "A case is marked pass without a test path or an observed result.\n  The strict schema rejects the missing fields; it cannot detect a false claim.",
+          "supports": "C16",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview",
+          "quote": "A reference case should have an analytic answer, a clear tolerance and a\nfailure mode that the test can detect.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A stale verification case path breaks the case record even while the suite is green, because the case must name the test that exercised it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+          "quote": "A test that is renamed must update the model contract's verification case path.",
+          "supports": "C17",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "A verification case must\nname the test that exercised it.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The repair is an external analytic known answer with a declared tolerance, plus a coverage check with enough samples to detect the error it claims to detect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview",
+          "quote": "A reference case should have an analytic answer, a clear tolerance and a\nfailure mode that the test can detect.",
+          "supports": "C18",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+          "quote": "A confidence-interval check uses too few samples to detect a\n  real coverage error.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+          "quote": "checking empirical coverage of a confidence interval over many synthetic samples.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The page's evidence ledger states that the cited Owen chapters do not establish that the V12 reference cases are sufficient.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#evidence-ledger",
+          "quote": "It does not establish that the V12 reference cases are sufficient.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#evidence-ledger",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
