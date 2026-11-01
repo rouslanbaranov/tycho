@@ -13453,7 +13453,7 @@
         "line": 111,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "identical regional nodes",
+          "regional node",
           "global routing layer",
           "data-freshness signal",
           "Active-passive recovery"
@@ -13462,7 +13462,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Geode places identical regional nodes behind a global routing layer so clients can use a nearby healthy region.",
+          "quote": "Geode places a regional node in each geography behind a global routing layer so clients can use a nearby healthy region.",
           "reason": "Explains the regional nodes behind a global routing layer and the shared replication backplane.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
@@ -13474,7 +13474,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "It needs a data replication and consistency contract, a regional health signal, a routing rule and an explicit failover authority.",
+          "quote": "**Tycho synthesis:** it needs a data replication and consistency contract, a regional health signal, a routing rule and an explicit failover authority.",
           "reason": "Lists the replication, health, routing and authority preconditions.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
@@ -13655,7 +13655,7 @@
       },
       "decision_evidence": {
         "atlas_section": "geode",
-        "question": "Should identical nodes be deployed across regions behind a global routing layer?",
+        "question": "Should regional nodes be deployed across regions behind a global routing layer?",
         "competing_alternative": "Active-passive recovery when strict write-region requirements, hard-to-replicate state, cost constraints or RTO tolerance make active-active routing unjustified; a single-region cell when locality is not needed. Active-active is justified when both regions can serve any request and the lowest RTO is required, accepting bidirectional replication and conflict resolution. Active-passive lowers cost but its passive path can drift; test failover and failback. Reverse when consistency and routing complexity exceed locality benefit; this selection rule is Tycho guidance.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10

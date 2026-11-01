@@ -65,16 +65,18 @@ content_verified_at: null
 **Identity.** Geode; family Scalability and load distribution; kind scalability-pattern;
 priority advanced.
 
-**Decision question.** Should identical nodes be deployed across regions behind a global
-routing layer?
+**Decision question.** Should regional nodes be deployed across regions behind a global routing
+layer?
 
-**Good-fit conditions.** Both regions can serve any request; locality or regional survival
-matters; replication, conflict handling and failover authority are owned; a health signal and
-a separate freshness gate exist; global routing can send clients to a healthy region.
+**Good-fit conditions.** These are Tycho selection criteria. Both regions can serve any request;
+locality or regional survival matters; replication, conflict handling and failover authority
+are owned; a health signal and a separate freshness gate exist; global routing can send
+clients to a healthy region.
 
-**Hard contraindications.** Reject when one region meets latency/availability, when state
-cannot be replicated or writes must stay in one region, when conflicts cannot be resolved, or
-when a stale DNS route or isolated region would defeat the design.
+**Hard contraindications.** These are Tycho selection criteria. Reject when one region meets
+latency/availability, when state cannot be replicated or writes must stay in one region,
+when conflicts cannot be resolved, or when a stale DNS route or isolated region would
+defeat the design.
 
 **Competing alternative.** Active-passive recovery when strict write-region requirements,
 hard-to-replicate state, cost constraints or RTO tolerance make active-active routing
@@ -85,17 +87,17 @@ drift; test failover and failback. Reverse when consistency and routing complexi
 locality benefit; this selection rule is Tycho guidance.
 
 **Failure and recovery.** Stale DNS, long-lived connections, an isolated region, a successful
-but non-authoritative health probe, replication lag and an old writer are common. Traffic
+but non-authoritative health probe, replication lag and an old writer are possible. Traffic
 Manager clients keep a cached endpoint "until the DNS cache expires"; geographic routing
 "returns a response whether the endpoint is healthy or not"; when all eligible endpoints are
 degraded it makes a "best effort" attempt and answers as if they were online. Probe the serving
 path, including database availability where possible; treat the probe as authoritative for
-reachability, not freshness, and monitor replication lag. Fence the old writer before failover;
-the sources delegate quorum to the replication backplane and require conflict handling for
-bidirectional writes, but do not prescribe fencing, so that rule is Tycho guidance. The router
-is a critical dependency, but Azure Traffic Manager is "a single, global service" designed to
-be "resilient to a complete failure of any Azure region"; residual risk is stale routing and
-freshness, not a proven regional single point of failure.
+reachability, not freshness, and monitor replication lag. Fence the old writer before
+failover; the sources require a consistency service and conflict handling for bidirectional
+writes, but do not prescribe quorum delegation or fencing, so both are Tycho guidance.
+The router is a critical dependency, but Azure Traffic Manager is "a single, global service"
+designed to be "resilient to a complete failure of any Azure region"; residual risk is stale
+routing and freshness, not a proven regional single point of failure.
 
 **Technical owner.** [Disaster recovery: measured RTO/RPO, fencing and state reconciliation](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md#geode) — geode is bounded to regional recovery; not a product template.
 

@@ -110,15 +110,14 @@ measured evidence, and they do not create a new source claim.
 
 ### Geode
 
-Geode places identical regional nodes behind a global routing layer so clients can use a
-nearby healthy region. Each geode is a self-contained regional deployment; Azure's page calls this
+Geode places a regional node in each geography behind a global routing layer so clients can
+use a nearby healthy region. Each geode is a self-contained regional deployment; Azure's page calls this
 an active-active approach that "distributes request processing around the globe to improve
 latency and increase availability" and says each geode uses a geo-replicated read-write service
 to keep cross-geode data consistent
 ([Geode pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/geodes)).
-Geodes "never exist in isolation", and any geode can take over after a regional outage. It
-needs a data replication and consistency contract, a regional health signal, a routing rule
-and an explicit failover authority.
+Geodes do not exist in isolation, and any geode can take over after a regional outage. **Tycho synthesis:** it needs a data replication and consistency contract, a regional health
+signal, a routing rule and an explicit failover authority.
 
 **Failure and recovery (Tycho synthesis).** A route can remain stale or point at an isolated
 region; use a reachability probe and a separate freshness gate, and fence the old writer before
@@ -134,12 +133,13 @@ data-freshness signal. Add dependency checks such as database availability where
 200 response does not prove the region's writes are current. Replication is asynchronous across
 distant regions, so monitor lag and include it in the recovery design
 ([multi-region App Service guidance](https://learn.microsoft.com/en-us/azure/architecture/web-apps/guides/multi-region-app-service/multi-region-app-service)).
-Before failover, fence the old writer; the sources delegate quorum to the replication backplane
-and require conflict handling for bidirectional writes, but they do not prescribe fencing, so
-that rule is Tycho guidance
+Before failover, fence the old writer; the sources require a consistency service and conflict
+handling for bidirectional writes, but do not prescribe quorum delegation or fencing, so both
+are Tycho guidance
 ([Geode pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/geodes);
 [multiregion network design](https://learn.microsoft.com/en-us/azure/networking/design-guide/multi-region)).
-The global router is a critical dependency, but not a proven single point of failure: Azure
+The global router is a critical dependency, but not a proven regional single point of failure;
+global-service failure remains unproven: Azure
 Traffic Manager is "a single, global service" designed to be "resilient to a complete failure of
 any Azure region" ([Traffic Manager FAQ](https://learn.microsoft.com/en-us/azure/traffic-manager/traffic-manager-faqs)).
 The residual risks are stale DNS, long-lived connections and a health signal that does not
