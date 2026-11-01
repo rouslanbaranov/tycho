@@ -22,7 +22,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.9825cb82eb2142754c638aea1ba8d845"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "gateway routing"
@@ -53,14 +53,14 @@ pattern; priority core.
 **Decision question.** Should a gateway route requests to the responsible backend using
 an explicit contract rather than exposing every backend address to clients?
 
-**Good-fit conditions.** Multiple backends or versions exist; routing rules are stable
-enough to own; route selection, service membership and backend endpoints are separable;
-discovery and health signals are available; the gateway can resolve version and tenant
-routing without guessing.
+**Good-fit conditions.** Tycho selection criteria: multiple backends or versions exist;
+routing rules are stable enough to own; route selection, service membership and backend
+endpoints are separable; discovery and health signals are available; the gateway can
+resolve version and tenant routing without guessing.
 
-**Hard contraindications.** Reject the claim when clients can resolve one stable
-backend; when routes are ad hoc and unversioned; when routing depends on unchecked
-client-supplied identifiers; when a route change cannot be rolled back.
+**Hard contraindications.** Tycho selection criteria: reject the claim when clients can
+resolve one stable backend; when routes are ad hoc and unversioned; when routing depends on
+unchecked client-supplied identifiers; when a route change cannot be rolled back.
 
 **Competing alternative.** Direct client-to-backend calls, a simpler reverse proxy,
 client-side discovery or a BFF. Azure's pattern says gateway routing may not suit a simple
@@ -69,8 +69,9 @@ describes edge reverse-proxy handling and a service-to-service mesh. Reverse the
 when routing logic becomes domain logic or the gateway cannot observe backend health. The
 choice rule is Tycho guidance.
 
-**Failure and recovery.** Stale routes, ambiguous matches, wrong-version selection, no-match
-behavior and bypass around the gateway are common. Recovery requires route versioning,
+**Failure and recovery.** Azure warns that the gateway can become a single point of failure and
+a bottleneck. **Tycho guidance:** stale routes, ambiguous matches, wrong-version selection,
+no-match behavior and gateway bypass are possible; recovery requires route versioning,
 precedence tests and observability.
 
 **Technical owner.** [Gateway Routing](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#gateway-routing) — routing and backend selection; not a dedicated gateway routing product guide.
