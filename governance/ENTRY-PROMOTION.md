@@ -194,6 +194,24 @@ delta review. Save the report and index its SHA-256 like any other review.
 A reviewer may conclude that the promotion has no semantic V12 impact, but that
 conclusion must be explicit in the report. Absence of a finding is not a skip.
 
+### 4.7.3 Deferred analysis of issue #943
+
+Do not start issue #943 while any entry remains unpromoted. Only after all 145
+entries are promoted may work move to
+[#943](https://github.com/rouslanbaranov/tycho/issues/943).
+
+At that point the deliverable is analysis and a proposal only:
+
+- re-derive the architecture-style, CQRS-placement and cardless-entry gaps from
+  current artifacts;
+- compare options, risks and sequencing;
+- propose bounded sub-issues and acceptance criteria;
+- record the proposal on #943 and wait for owner approval.
+
+Do not implement, move or rename book pages, create or split cards, change
+shared metadata, or open implementation sub-issues during this step. Analysis is
+not permission to start the work.
+
 ## 5. Rebind rules
 
 A neighbour promotion may be rebound only when all are true:
