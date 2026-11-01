@@ -1,0 +1,661 @@
+{
+  "task_id": "Q273",
+  "answer": "# Q273 — Queue-backed object migration: why \"every key enqueued\" is not an integrity claim\n\n**Layers and snapshot.** The book layer is primary: the queue-backed object-copy case page plus the mechanism chapters on object transfer, publication, deduplication, idempotency, queueing and migration completeness. The atlas layer supplies pattern ownership and contraindications (Idempotent Receiver, Queue-Based Load Leveling, Idempotency Key, Dead Letter Channel). The modeling-and-simulation layer contributes only the V12 modernization-path failure-mode vocabulary, which is synthetic. Book snapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a; the atlas registry metadata reports a draft registry. Nothing cited here is production evidence, an independent benchmark or a completed independent review; the case itself is a publisher report in draft [C37].\n\n## Verdict\n\nThe completion claim is a dispatch-coverage statement presented as a correctness verdict. \"Every object key has been enqueued\" says that the controller handed each key to a queue. It does not say the queue durably accepted it, that a consumer received it, that a copy was attempted, that the exact source version was written, that bytes and metadata match, that the destination commit is visible, or that the accounting which counted it was correct. At-least-once delivery quantifies over delivery attempts, not over successful verified outcomes, and it deliberately admits duplicates. The claim can therefore be true while objects are missing, partial, stale, overwritten or metadata-wrong — and it can be false in the other direction when an object was copied but the acknowledgment or the bookkeeping lagged.\n\nThe reported duplicate defenses protect duplicate work: repeated listing, concurrent transfer of one key, double-counted completion, and re-copy after a late acknowledgment. They are waste-control and bookkeeping mechanisms, not integrity evidence. The queue pays only where its fixed orchestration cost buys concurrency and restartability at a scale where those matter; for a small, fixed or bandwidth-bound transfer, a local copier plus an end-to-end comparison is cheaper and can be stronger evidence.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence (section keys) |\n|---|---|---|\n| F1 What does \"complete\" assert? | all queued / all acknowledged / all verified; job terminal status; four meanings of migration complete; false cutover signal | tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses; tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries; tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete; tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes |\n| F2 What is the delivery-contract scope? | at least once; late acknowledgement; duplicate causes; durable acceptance | tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses; tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928#decision-and-worked-result; tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery |\n| F3 What does intact arrival require? | matching key insufficient; ETag is not MD5; checksum scope; version census | tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again; tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities; tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant; tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain |\n| F4 What do the duplicate defenses cover? | four defenses; dedup authority; idempotency-key conditions; idempotent receiver | tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes; tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route; tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview; tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview |\n| F5 When does the queued design not pay? | local batch copier; hundreds of objects; no added capacity; contraindications | tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice; tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case; tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#outcomes-and-negative-lessons; tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#legacy-modernization-decision-transfer; tycho.page.6a5f799a46729ab3e2fcdf168692b50a#overview; tycho.page.a648fc495dab474489d17d01e2c5dd92#alternatives-and-applicability-boundaries; tycho.page.ace968ab1de8409383c6a9b22a00d006#5-options-and-when-the-extra-components-are-unwarranted |\n| F6 What evidence would settle it? | acceptance contract; inject duplicates; DLQ and resume; latency and cost by population | tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice; tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses; tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case |\n## 1. Mechanism: what \"enqueued\" actually asserts\n\n### 1.1 Enqueue is the first of six stages\n\nA queue-backed migration replaces one local loop with a pipeline: list, enqueue, deliver, copy, commit, verify, account. Each stage has its own durable state and its own failure mode, and \"enqueued\" is fixed at stage one. The case's phase table makes the separation explicit: enumeration must preserve continuation position and listing state; scheduling must preserve per-object key and transfer task; copying must preserve in-progress lock and multipart status; and completion must preserve pending, failed and completed counts plus job terminal status [C3][C8].\n\n| Stage | What success at that stage means | What an enqueue counter records |\n|---|---|---|\n| Producer enqueue | the key was handed to the queue client | one key |\n| Durable acceptance | the broker persisted the message and may tell the caller \"accepted\" | nothing |\n| Delivery | at least one consumer attempt (at-least-once) | nothing |\n| Copy execution | a handler ran; a lock was held; multipart finished or not | nothing |\n| Destination commit | the exact object version and metadata became visible | nothing |\n| Verification | declared checksum and metadata matched the pinned source | nothing |\n\nAn enqueue count can be complete while any later row fails. The book's general statement is blunt: acknowledging receipt can precede a durable application effect, and delivery vocabulary cannot substitute for the consumer's commit contract [C1].\n\n### 1.2 At-least-once quantifies attempts, not outcomes\n\nAt-least-once is a delivery contract: the broker may deliver a message more than once and promises at least one delivery attempt. It does not promise that the handler succeeded, that the destination committed, or that the bytes are right. The case names the contract as one of two duplicate causes and adds the second: failures or late acknowledgments to Durable Objects after an object was already transferred [C4]. Duplicates are therefore expected by design, which is exactly why the system needs duplicate defenses; their presence is evidence that at-least-once is not an exactly-once outcome guarantee.\n\nThe contract is also broker-scoped. It presupposes durable acceptance at the point the caller is told \"accepted\" [C25], and a broker that does not persist accepted messages is an explicit contraindication for queue-based leveling [C23]. A controller that counts producer-side enqueues has not even established durable acceptance, let alone delivery.\n\n### 1.3 The case already separates four completion states\n\nThe strongest internal evidence against the team's claim is the case's own rule: a job controller must distinguish all queued, all acknowledged, all verified and all failed/review-needed before declaring completion [C3]. \"All queued\" is one of four states, and it is the weakest. The same phase table lists premature completion despite delayed transfer or dead-letter work as the terminal-status risk [C3], and the case states that the publisher does not publish full per-object hash verification or an independently reproduced loss bound [C30]. So the published record does not contain the evidence that the team's completion claim would need; the page explicitly declines to attribute per-object verification to the described service.\n\n### 1.4 Intactness is a destination-state property\n\n\"Arrived intact\" is a claim about the destination: the exact source version exists with the same bytes and the same metadata under the intended key and authorization. Key presence does not establish it. A matching key is insufficient because another writer may have replaced the object [C5], object existence alone does not authorize exposure, and committing a metadata row does not atomically commit a remote object write [C5]. Conditional writes protect only the scoped object operation, not the separate metadata row [C17].\n\nNor is \"some bytes exist\" enough. A completed multipart object's ETag is not necessarily the MD5 of its bytes, so an opaque validator is not a portable checksum [C6]; a checksum verifies bytes against a trusted expected value but not permission, safe content or manifest authenticity [C6]. The verification object is a pinned manifest with expected object identity and a size/checksum contract plus completed part receipts [C7], and a lost completion response must be resolved as an explicit unknown by querying the exact intended object/version and checking metadata and checksum [C7] — not by trusting the queue's state.\n\n### 1.5 A queue is not a ledger of arrivals\n\nQueue state and destination state diverge by construction. Messages can expire at retention, be quarantined in a dead-letter queue, be redelivered, or be acknowledged after the effect. A dead-letter queue is a holding mechanism, not successful delivery or an automatically safe replayer [C2]; a queue acknowledgement or workflow-completion flag is not proof that the external effect occurred once [C2]. A controller that treats \"enqueued\" as the terminal state has no term for dead-lettered, expired or lost work.\n\nIt also has no term for a wider object population. An object inventory includes current and noncurrent versions, previews, transcodes, temporary parts, replication targets, edge caches, search references and backups [C27]; a key-level census can be complete for the current names and still miss versions or derived objects that the migration was supposed to preserve.\n\n### 1.6 The counter can be wrong in both directions\n\nThe same failure the case names — a late acknowledgment after a transfer — makes the count a lower bound on work: the object exists but the completion was not recorded [C4]. Conversely, a lost completion response creates an explicit unknown [C7], and retries after an ambiguous acknowledgment can duplicate effects while an unbounded queue turns overload into memory growth and expired work [C36]. So \"all keys enqueued\" is compatible with both over- and under-counting of completed work. The correct summary is that it is a dispatch metric, not an outcome metric [C32].\n\n### 1.7 \"Every key\" is relative to a listing that may itself be incomplete\n\nThe claim quantifies over the enumerated key set, not over the source population. The listing is a stateful phase with its own durable state: continuation position, object identifiers and listing state must be preserved, and replayed list pages, reordering and overlapping workers are listed risks [C8]. A pagination defect, a permission that hides prefixes, or a source that mutates during enumeration yields a key set that is internally consistent and externally incomplete. \"Every key enqueued\" is then vacuously true for a subset.\n\n### 1.8 \"Complete\" has at least four meanings\n\nThe migration playbook separates four meanings of \"complete\" with different unproved residue, and warns that a row-count or sample-match gate cannot be generalized across mutable OLTP authority, immutable batch output, historical ranges and streaming feeds [C18]. The V12 modernization model names the same failure as a false cutover signal: a 100 percent traffic share treated as success while divergence is still growing [C19]. A queue enqueue count is the analogue: a 100 percent enqueue share treated as arrival while verification and reconciliation are still outstanding.\n\n## 2. What the reported duplicate defenses cover\n\n### 2.1 Defense by defense\n\n| Reported defense | What it covers | What it does not cover |\n|---|---|---|\n| Listing sequence identifiers | competing duplicate enumerations of one listing; redundant retry short-circuiting | completeness of the listing; source changes during enumeration |\n| Per-key transfer lock | concurrent or redelivered transfer work on the same key inside the coordinator's tracking database | whether the earlier attempt wrote correct bytes; lock loss through coordinator state or sharding is not documented |\n| Transactional accounting | the completed-object total is not advanced by a failed commit | correspondence between counted transitions and verified destination state |\n| Destination existence check | the re-copy after a late acknowledgment, within a publish-time heuristic | byte equality, metadata correctness, same-version identity, authorization, overwrite policy |\n\nThe four defenses are a coherent idempotency design for duplicate work, and the case is explicit that they address duplicate work, not an end-to-end atomic transfer [C11]. Listing sequence identifiers cover repeated enumeration [C8]. The per-key lock and key removal cover concurrent or redelivered transfer of the same key inside the coordinator's tracking database [C9]. Transactional accounting covers bookkeeping: a failed commit cannot advance the completed-object total [C9]. The destination existence check covers the re-copy after a late acknowledgment, within a publish-time heuristic [C10].\n\n### 2.2 Limits that apply to any duplicate defense\n\n- **Authority boundary.** In-memory deduplication fails across replicas, restarts and retained events [C13]; the dedup record must commit atomically with the effect [C15]; and when the effect is an external object write that cannot join the local transaction, the local database cannot make the remote effect atomic — external idempotency or durable reconciliation is required [C14].\n- **Retention.** Deduplication works only while the record is retained; after expiry historical deduplication is no longer guaranteed [C16], and retention must cover the redelivery window [C15].\n- **Scope and conflict.** A reused key with changed intent is a conflict, not idempotency [C16], so the key must bind one logical intent and one scope.\n- **Order.** Deduplication does not guarantee order [C13], so a later redelivery cannot be assumed harmless.\n- **Replacement.** Duplicate defenses do not prevent a different writer from replacing bytes between verification and use [C17], and the case's design is company-specific and should not be generalized to mutating sources or arbitrary overwrite semantics [C12].\n- **Fit conditions from the atlas card.** Reject an idempotency-key design when the operation is naturally idempotent, keys can collide across tenants, retention cannot cover the retry window, or the key store has no expiry and cleanup owner [C38].\n\n### 2.3 The dangerous direction: a duplicate defense can hide a defect\n\nIf an earlier attempt wrote a partial object (multipart not finished) or a wrong version, and the acknowledgment was lost, then the object at the destination exists with a fresh publish time. The destination-existence defense skips it as \"already done\" [C10], the per-key lock sees no key and treats it as processed [C9], and the enqueue count is complete. The duplicate defense has converted a duplicate into a silent omission. The case's own limits say existence and timestamp checks cannot prove byte equality, metadata correctness, same-version identity or authorization [C11], which is exactly the gap this scenario exploits [C34, inference].\n\nA second version of the same risk is retention arithmetic: if the dedup record's time-to-live is shorter than the queue's redelivery window, at-least-once can redeliver after the marker expired [C13][C16]. The defenses are then absent precisely when they are needed, without any visible change in the completion count [inference].\n\n## 3. When the queued design does not pay\n\n### 3.1 The cost ledger\n\nThe case's own list of what a durable queued architecture adds is the cost side: partitioned coordinator state, asynchronous acknowledgments, poison messages, idempotency rules, recovery operations and versioned historical job data [C20]. Add per-object queue and state-transition cost, duplicate work (by design), DLQ triage and replay, reconciliation, monitoring and on-call. Note what is not on either side: byte-transfer cost. A queue does not create capacity; if offered work exceeds the drain rate, backlog and age grow while every worker is busy [C24]. So the queue cannot pay by moving bytes faster in aggregate; it can pay only by using available capacity in parallel and by making failures restartable [C33].\n\n### 3.2 Conditions under which it does not pay\n\n1. **Small, fixed or one-off set.** A local batch copier can be safer and cheaper for a limited fixed transfer set [C21], and the case advises against adding the queue to a tiny one-off copy script without operational justification [C21]. The same source's negative result is direct: the first Worker/Queue proof of concept was slower for hundreds of objects [C22].\n2. **Bandwidth- or egress-bound transfer.** If the link is saturated, parallelism shares the same link; the queue adds per-object overhead without adding capacity [C24].\n3. **Synchronous result or short deadline.** Queue-based leveling is contraindicated when the caller needs a synchronous result or when backlog would violate a deadline [C23], and the choice reverses when queue delay and backlog risk exceed the smoothing benefit [C23].\n4. **No durable acceptance or no operational owner.** A broker that does not persist accepted messages, or a queue that becomes an unbounded hiding place, makes the queue a way to lose work quietly [C23]; a DLQ without an owner is a holding area, not recovery [C2].\n5. **No correctness oracle.** If the team will not verify bytes, metadata and version identity, the queue's extra cost buys throughput without evidence; the acceptance contract requires exactly that verification and DLQ/resume confirmation [C28].\n6. **Mutable or unauditable source.** The case warns against generalizing to mutating sources or arbitrary overwrite semantics [C12] and says to return insufficient evidence when source mutability, versioning, overwrite policy or authorization cannot be audited [C35].\n7. **A simpler design already fits.** Adding a broker is not an automatic step up [C26], and an outbox or queue should not be adopted only because events are fashionable [C26].\n\n### 3.3 What it does pay for, and where the break-even sits\n\nIt pays when its extra operational cost buys useful concurrency and restartability at scale [C20] — many objects, rate-limited or unreliable sources, long transfers that must resume rather than restart, multiple concurrent jobs that need isolation and backpressure, and retry storms that must not multiply load. The case's one positive data point is a 75,000-object S3-to-R2 test reported at 15m30s before and 3m25s after, roughly 4.5x for that sample and described as up to 5x, but the same page warns that the ratio must not be presented as a p99 speedup for every migration and that no cost baseline, histogram or independent benchmark is supplied [C30]. With hundreds of objects the same design was slower [C22]. The break-even is therefore a measured, workload-specific threshold, not an object count that can be imported from the case [C33, inference].\n\nThe comparison to run is: direct copy plus verification versus queued copy plus verification plus orchestration, measured on wall-clock, cost and verified-object coverage at the team's actual population size and failure rate. Because verification is required in both designs, it cannot be counted as a benefit of the queue; because the bytes are the same, the queue's only honest benefits are wall-clock and re-copy avoidance.\n\n## 4. Boundaries: what would support the claim instead\n\nA completion claim becomes supportable when it is restated as a verified-arrival claim and backed by per-object evidence: a pinned manifest with source version and expected checksum; per-object receipts showing destination version, size, checksum and metadata; a reconciled DLQ and expired-message census; reconciliation that covers failures during copy and completion after copy but before acknowledgment [C29]; injected duplicates and lost acknowledgments; and a comparison of latency and cost across small, medium and large populations [C28]. The case's acceptance contract is exactly this list [C28].\n\nTwo boundaries remain even then. First, the case does not specify a universal two-way rollback protocol or prove a per-object recovery time [C31], so no recovery bound may be imported into the completion claim. Second, if source mutability, versioning, overwrite policy or authorization cannot be audited, the case's rule is to return insufficient evidence rather than claim a safe migration [C35].\n\n## 5. Unknowns\n\n- The team's controller state is unknown: if it counts producer enqueues rather than durable accepts or acknowledged copies, the gap is larger than the case's own queued/acknowledged/verified distinction [C3]. The question states \"enqueued\", so this answer treats the claim as dispatch-level.\n- Queue product semantics are unknown: retention, maximum receives, DLQ redrive policy and any dedup window are not established here. The case names the at-least-once contract but not these parameters [C4].\n- Destination semantics are unknown: overwrite policy, versioning, object-lock, the clock source for \"publish time\", and whether a partial multipart object is visible all affect the destination-existence defense [C10][C11].\n- Whether any per-object verification exists in the team's pipeline is unknown; the publisher in the case does not publish full per-object hash verification or a loss bound [C30].\n- The break-even object count and cost baseline are unknown and not published [C30]; the 75,000-object result is one publisher-run test, not a benchmark.\n- The atlas registry is a draft and its coverage is not independent review; the V12 modernization model is synthetic and was not measured.\n- No statement here is production evidence: the case is a company engineering report with independent review pending [C37], and this answer is a documentary analysis.\n\n## Evidence map\n\n| Anchor | Claims |\n|---|---|\n| tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928#decision-and-worked-result | C1, C32 |\n| tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete | C18 |\n| tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery | C2 |\n| tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication | C17 |\n| tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant | C5, C34 |\n| tycho.page.60ae29b6b2a422214c18be04cf012b6e#original-worked-transfer-budget | C7, C34 |\n| tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again | C5, C6, C7 |\n| tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities | C6 |\n| tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary | C13 |\n| tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects | C14 |\n| tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes | C13 |\n| tycho.page.6a5f799a46729ab3e2fcdf168692b50a#overview | C23 |\n| tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview | C15 |\n| tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route | C16 |\n| tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses | C3, C4, C8, C9, C10, C11, C12, C30, C32, C34 |\n| tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#legacy-modernization-decision-transfer | C21 |\n| tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries | C3, C8 |\n| tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#outcomes-and-negative-lessons | C22 |\n| tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#overview | C37 |\n| tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case | C22, C30, C33 |\n| tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice | C20, C21, C28, C29, C31, C33, C35 |\n| tycho.page.a648fc495dab474489d17d01e2c5dd92#alternatives-and-applicability-boundaries | C26 |\n| tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery | C24, C25, C36 |\n| tycho.page.ace968ab1de8409383c6a9b22a00d006#5-options-and-when-the-extra-components-are-unwarranted | C26 |\n| tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview | C38 |\n| tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain | C27 |\n| tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes | C19 |\n\nAll four anchors named as required evidence for this question are cited above: the case's orchestration-state section, its at-least-once duplicate-defense section, its performance/negative-case section and its why-not section. No anchor is cited without a claim, and every claim carries at least one read fragment; statements that go beyond the sources are marked inference in the ledger.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Delivery terminology describes receipt and attempts, not the consumer's durable commit: acknowledging receipt can precede a durable application effect, and delivery vocabulary cannot substitute for the commit contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928#decision-and-worked-result",
+          "quote": "Acknowledging receipt can precede a durable application effect; delivery terminology cannot substitute for the consumer's commit contract.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "A queue acknowledgement or a workflow completion flag is not proof that the external effect occurred once, and a dead-letter queue is a holding mechanism rather than successful delivery or a safe replayer.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "A queue acknowledgement or workflow completion flag is not proof that an external effect occurred once.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+          "quote": "A dead-letter queue is a holding mechanism, not successful delivery or an automatically safe replayer.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The case requires a job controller to distinguish all queued, all acknowledged, all verified and all failed/review-needed before declaring completion, and its phase table names premature completion despite delayed transfer or dead-letter work as the terminal-status risk.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "A job controller must distinguish *all queued*, *all acknowledged*, *all verified* and *all failed/review-needed* before declaring completion.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "Premature completion despite delayed transfer or dead-letter work",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "Pending/failed/completed object counts and job terminal status",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The case attributes duplicates not only to the queues' at-least-once delivery contract but also to failures or late acknowledgments to Durable Objects after an object was already transferred.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "failures/late acknowledgments to Durable Objects after an object was already transferred.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Intact arrival requires the exact object identity and version plus matching bytes and metadata; a matching key is insufficient because another writer can replace the object, and object existence does not commit a separate metadata row.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "A matching key alone is insufficient if another writer may have replaced it.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+          "quote": "Object existence alone does not authorize exposure, and committing a metadata row does not atomically commit a remote object write.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Object-storage validators are not portable content proofs: a completed multipart object's ETag is not necessarily the MD5 of its bytes, and a checksum verifies bytes against an expected value but not permission, safe content or the authenticity of the supplied manifest.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+          "quote": "Its documentation explicitly cautions that a completed multipart object's ETag is not necessarily the MD5 of its bytes.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "A checksum verifies bytes against a trusted expected value; it does not establish permission, safe content or the authenticity of a maliciously supplied manifest.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A lost completion response produces an explicit unknown state rather than proof of failure or success; resolving it requires querying the exact intended object or version and verifying the expected metadata and checksum.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#original-worked-transfer-budget",
+          "quote": "A lost response introduces an explicit unknown state; it does not prove that completion failed.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+          "quote": "After a completion timeout, query the exact intended object/version and verify the expected metadata and checksum under the chosen API contract.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Listing is a stateful phase: listing sequence identifiers prevent competing duplicate enumerations and short-circuit redundant retries, while continuation position, object identifiers and listing state must be preserved because replayed list pages, reordering or overlapping workers are a distinct risk.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "a source listing is sequential through continuation tokens; numbering operations prevents competing duplicate enumerations and allows redundant retries to be short-circuited.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "Continuation position, object identifiers and listing state",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+          "quote": "Replayed list page, reordering or overlapping workers",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The second and third reported defenses cover concurrent or redelivered work and bookkeeping: a per-key transfer lock plus removal of the key on success lets a later redelivery recognize an already-processed key, and transactional accounting keeps a failed commit from advancing the completed-object total.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "consumers lock an object identity while processing; successful completion removes the key from the tracking database.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "inserting/deleting object keys and updating pending counts are coupled so failure to commit does not incorrectly advance the completed-object total.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The fourth reported defense, a destination existence check, skips an object found at the destination with a publish time after migration start.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "as a last defense, the system can skip an object found at the destination with a publish time after migration start.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The four defenses address duplicate work, not an end-to-end atomic transfer; destination-existence and timestamp checks alone are not sufficient to prove byte equality, metadata correctness, same-version source identity or authorization.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "not a magic end-to-end atomic transfer between S3 and R2",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "destination-existence and timestamp checks alone are not sufficient to prove byte equality, metadata correctness, same-version source identity or authorization.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The case classifies its approach as a company-specific idempotency design and warns against generalizing it to mutating sources or arbitrary overwrite semantics.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "do not silently generalize it to mutating sources or arbitrary overwrite semantics.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Deduplication is only as strong as its authority boundary: an in-memory set fails across replicas and restarts, and deduplication does not guarantee order.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+          "quote": "An in-memory set can deduplicate within one live process but fails across replicas, restarts and retained events.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+          "quote": "Deduplication removes duplicates, but doesn't guarantee order.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A local deduplication record cannot make a remote effect atomic: a crash between the local commit and an external delivery needs external idempotency or durable reconciliation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+          "quote": "External idempotency or durable reconciliation; local DB cannot make remote effect atomic",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Idempotent deduplication only holds under stated conditions: messages carry stable identity, effect and identity are recorded atomically, retention covers the redelivery window, and concurrent duplicates are handled.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+          "quote": "Messages carry stable identity; effect and identity are recorded atomically; retention covers the redelivery window; concurrent duplicates are handled.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "An idempotency key binds one logical intent and stops helping at expiry: after expiry historical deduplication is not guaranteed, and a reused key with changed intent is a conflict rather than idempotency.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "A key is only useful while its outcome record is retained; after expiry, historical deduplication is no longer guaranteed.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "The key does not make a different payload safe: a reused key with changed intent is a conflict, not idempotency.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Conditional writes protect a scoped object operation rather than a separate metadata row, and a mutable object name lets another writer change the bytes between verification and later use.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+          "quote": "They protect the scoped object operation; they do not commit a separate database row.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+          "quote": "If the application reads by a mutable name, another writer can change the bytes between verification and later use.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Migration completeness has multiple meanings with different unproved residue, and a row-count or sample-match gate must not be generalized across mutable OLTP authority, immutable batch output, historical ranges and streaming feeds.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "It is incorrect to generalize one row-count or sample-match gate across mutable OLTP authority, immutable batch output, historical migration ranges and streaming CDC feeds.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "Every mutation race, unobserved client, rollback after old data deletion",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "A progress signal can be a false cutover signal: a 100 percent traffic share can be treated as success while divergence is still growing.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "A 100% traffic share is treated as success while divergence is still growing.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "A durable queued architecture adds partitioned coordinator state, asynchronous acknowledgments, poison messages, idempotency rules, recovery operations and versioned historical job data.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "A durable queued architecture adds partitioned coordinator state, asynchronous acknowledgments, poison messages, idempotency rules, recovery operations and versioned historical job data.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "A local batch copier can be safer and cheaper for a limited fixed transfer set, and the case advises against adding the queue to a tiny one-off copy script without operational justification.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "A local batch copier can be safer and cheaper for a limited fixed transfer set.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#legacy-modernization-decision-transfer",
+          "quote": "do not add it to a tiny one-off copy script without operational justification.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Queue and orchestration fixed cost dominates small jobs: the first Worker/Queue proof of concept was slower for hundreds of objects, and a queue layer is not inherently lower latency than a local worker.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#outcomes-and-negative-lessons",
+          "quote": "For hundreds of small objects the POC was worse; a queue layer is not inherently lower latency than a local worker.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case",
+          "quote": "Queue and orchestration cost dominates small job",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Queue-based load leveling is contraindicated when the caller needs a synchronous result, a deadline would be violated by backlog, the broker does not persist accepted messages, or the queue becomes an unbounded hiding place; the choice reverses when queue delay and backlog risk exceed the smoothing benefit.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6a5f799a46729ab3e2fcdf168692b50a#overview",
+          "quote": "Reject when the caller needs a synchronous result, when backlog would violate a deadline, when the broker does not persist accepted messages, or when the queue becomes an unbounded hiding place.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6a5f799a46729ab3e2fcdf168692b50a#overview",
+          "quote": "Reverse the choice when queue delay and backlog risk exceed smoothing benefit",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "A queue does not create capacity: when offered work exceeds the drain rate, backlog and age grow even while every worker is busy, so the prescribed response is to bound retention and age and drain or reconcile rather than claim success.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+          "quote": "A queue does not create capacity: if offered work exceeds drain rate, backlog and age grow even while every worker is busy.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+          "quote": "Bound retention and age, reject before the queue is useless, and drain/reconcile rather than claiming success.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "An accepted work item requires durable acceptance at the point the caller is told accepted, not merely a producer-side handoff.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+          "quote": "durable acceptance when the caller is told \"accepted\"",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "Adding a broker, cache or shard is not an automatic step up, and an outbox or queue should not be adopted only because events are fashionable.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#alternatives-and-applicability-boundaries",
+          "quote": "Adding a broker, cache or shard is not an automatic step up.",
+          "supports": "C26",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#5-options-and-when-the-extra-components-are-unwarranted",
+          "quote": "Avoid using an outbox only because events are fashionable.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "An object inventory wider than a key census includes current and noncurrent versions, previews, transcodes, temporary parts, replication targets, edge caches, search references and backups.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+          "quote": "Account for current and noncurrent versions, previews, transcodes, temporary parts, replication targets, edge caches, search references and backups.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "The case's acceptance contract would pin source bucket/version and destination settings, inject queue duplicates and lost acknowledgments, verify byte-level content and metadata for representative and boundary cases, confirm the DLQ and resume workflow, and compare completion latency and cost across small, medium and large object populations.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "pin source bucket/version and destination settings",
+          "supports": "C28",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "inject queue duplicates and lost acknowledgments, verify byte-level content/metadata for representative and boundary cases, confirm the DLQ and resume workflow",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "Reconciliation must cover failures during copy as well as completion after copy but before acknowledging the work item.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "Reconciliation must cover failures during copy as well as completion after copy but before acknowledging the work item.",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C30",
+      "text": "The case's evidence limits are explicit: the publisher does not publish full per-object hash verification or an independently reproduced loss bound, and the 75,000-object ratio must not be presented as a p99 speedup for every migration.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "it does not publish full per-object hash verification or an independently reproduced loss bound.",
+          "supports": "C30",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case",
+          "quote": "The 75,000-object ratio must not be presented as a p99 speedup for every migration.",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C31",
+      "text": "The case does not specify a universal two-way rollback protocol and does not prove a per-object recovery time.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "The historical article does not specify a universal two-way rollback protocol or prove a per-object recovery time.",
+          "supports": "C31",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C32",
+      "text": "A completion claim based on enqueue counts is therefore a dispatch-coverage statement, not a destination-state statement: it can hold while objects are missing or wrong, and it can fail while the work succeeded and only the acknowledgment was lost.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "failures/late acknowledgments to Durable Objects after an object was already transferred.",
+          "supports": "C32",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928#decision-and-worked-result",
+          "quote": "Acknowledging receipt can precede a durable application effect",
+          "supports": "C32",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "not a magic end-to-end atomic transfer between S3 and R2",
+          "supports": "C32",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C33",
+      "text": "Because the queue does not reduce the dominant byte-transfer cost, it can pay only by reducing wall-clock through parallelism and avoiding re-copy through restartability and isolation; at small fixed populations the fixed orchestration cost dominates.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "It is attractive only when its extra operational cost buys useful concurrency and restartability at scale.",
+          "supports": "C33",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case",
+          "quote": "Queue and orchestration cost dominates small job",
+          "supports": "C33",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C34",
+      "text": "A destination-existence skip can convert a duplicate defense into a silent omission when an earlier attempt wrote a partial or wrong object and its acknowledgment was lost.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "as a last defense, the system can skip an object found at the destination with a publish time after migration start.",
+          "supports": "C34",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#original-worked-transfer-budget",
+          "quote": "A lost response introduces an explicit unknown state; it does not prove that completion failed.",
+          "supports": "C34",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+          "quote": "Object existence alone does not authorize exposure",
+          "supports": "C34",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C35",
+      "text": "Where source mutability, object versioning, target overwrite policy or authorization cannot be audited, the case's rule is to return insufficient evidence rather than claim a safe migration.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "quote": "When source mutability, object versioning, target overwrite policy or authorization cannot be audited, return **insufficient evidence** rather than claim safe migration.",
+          "supports": "C35",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C36",
+      "text": "Retries after an ambiguous acknowledgment can duplicate effects, and an unbounded queue converts overload into memory growth and expired work.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+          "quote": "Unbounded queue converts overload into memory growth and expired work; retries can duplicate effects after an ambiguous acknowledgment.",
+          "supports": "C36",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C37",
+      "text": "The case is a company engineering report in draft status with independent review still pending, not a review-cleared benchmark artifact.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#overview",
+          "quote": "original case draft; independent reviewer pending",
+          "supports": "C37",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#overview",
+          "quote": "company engineering report",
+          "supports": "C37",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C38",
+      "text": "An idempotency-key design is contraindicated when the operation is naturally idempotent, keys can collide across tenants, retention cannot cover the retry window, or the key store has no expiry and cleanup owner.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview",
+          "quote": "Reject when operations are naturally idempotent, when keys can collide across tenants, when retention cannot cover the retry window, or when the key store has no expiry and cleanup owner.",
+          "supports": "C38",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview",
+          "quote": "Expiry ends historical deduplication; a reused key with changed intent is a conflict, not idempotency.",
+          "supports": "C38",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928#decision-and-worked-result",
+    "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#observed-orchestration-stages-and-persistent-state-boundaries",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#original-worked-transfer-budget",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+    "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#legacy-modernization-decision-transfer",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#outcomes-and-negative-lessons",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#performance-result-population-and-negative-case",
+    "tycho.page.6a5f799a46729ab3e2fcdf168692b50a#overview",
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#alternatives-and-applicability-boundaries",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#5-options-and-when-the-extra-components-are-unwarranted",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#overview",
+    "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
