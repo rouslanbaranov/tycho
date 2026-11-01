@@ -1,0 +1,17 @@
+{
+  "task_id": "Q100",
+  "answer": "Both transactions run a check-then-insert: read accepted reservations overlapping the requested interval, and if none exist, insert a new accepted booking. Under PostgreSQL REPEATABLE READ each transaction reads from a single stable transaction snapshot fixed at its first non-transaction-control statement. Both SELECTs therefore see the same committed state from before either insert and both correctly find no conflicting reservation. Repeatable read guarantees that this view will not change for the rest of the transaction; it does not force a concurrent writer to re-check the reader's predicate. The corpus states that this level disallows phantom reads as repeated reads, yet serialization anomalies remain possible, so snapshot stability is not proof of a serializable invariant.\n\nThe two INSERTs create different new rows. No row version is written by both, so there is no shared write-write conflict for the database to detect, and the row inserted by the other transaction is invisible to this transaction's snapshot even if it commits first. There is also no predicate or gap protection over the empty interval: the corpus warns that locks may be missing for absent rows, so SELECT ... FOR UPDATE over a predicate that returns no rows locks nothing, and a mutex inside one application instance does not protect multiple replicas. With no conflicting row and no failing constraint, both transactions reach COMMIT and both accepted bookings persist.\n\nThe invariant \"no overlapping accepted bookings for the same unit\" is cross-row, so an application-level SELECT cannot enforce it. A general CHECK constraint cannot reference other rows, a plain unique index encodes identity rather than interval overlap, and naming GiST does not itself install the rule. Enforcement belongs at the data authority: an exclusion constraint such as EXCLUDE USING gist (unit_id WITH =, reserved_during WITH &&), typically requiring btree_gist and a partial WHERE accepted clause, makes the second INSERT fail; alternatively SERIALIZABLE isolation makes one transaction abort with a serialization failure that must be retried as the complete transaction from fresh state, or an explicit single-owner conditional state model decides the winner. The corpus presents this anomaly as a proposed failure model, not an executed PostgreSQL trace, and its SQL is an unrun teaching sketch.",
+  "citations": [
+    "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#3-a-synthetic-two-transaction-anomaly",
+    "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#2-a-snapshot-is-not-an-invariant",
+    "tycho.page.9176c39f97f544f884666e291ae38b90#2-mvcc-is-about-snapshot-visibility-not-a-replacement-for-reasoning-about-writes",
+    "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+    "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#4-serializable-still-needs-a-retry-protocol",
+    "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#5-correctness-and-query-performance-must-be-evaluated-together"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

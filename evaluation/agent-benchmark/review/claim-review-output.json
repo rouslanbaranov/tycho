@@ -1,0 +1,87 @@
+{
+  "status": "ai-editorial-review-not-human",
+  "items": [
+    {
+      "task_id": "Q000",
+      "claims_supported": "6/7",
+      "issues": [
+        "Core 1 overreaches by saying authentication establishes a tenant context: 58c3c4e5e19d46bcb2da66255eb61068 establishes a claimed subject, while c0dd410ffc6344b78e5a9c72589bf06f resolves tenant membership from authenticated context plus authoritative policy; the chapter treats tenant identity and authorization as separate boundaries.",
+        "The rest of core 1 and cores 2-5 plus both optional claims are supported by 31cda61d174248eaa326559d256ce352, 58c3c4e5e19d46bcb2da66255eb61068, 6bbeb9533a324758a1b970471c5b04e1, 69fe87997d804b3f9ee0f7b9e1655c73 and 37a28a568f7e987941749e198c03439a."
+      ],
+      "verdict": "revise"
+    },
+    {
+      "task_id": "Q002",
+      "claims_supported": "7/7",
+      "issues": [
+        "Required evidence a486e061c9564587b1e39a4e83024fca (both listed sections) concerns GC-collector and workload fit; it does not support any in-place runtime-upgrade claim and is off-topic for this question.",
+        "Optional 2's 'same boundary' is imprecise: 5a4108bc167f4e2387dbf019eac7881e supports compatibility-preserving DGS/Spring GraphQL consolidation for hundreds of dependent services, but does not demonstrate a data-ownership or extraction boundary."
+      ],
+      "verdict": "revise"
+    },
+    {
+      "task_id": "Q004",
+      "claims_supported": "8/8",
+      "issues": [
+        "Core 4 places the four-axis taxonomy (6bbeb9533a324758a1b970471c5b04e1) and the seven-dimension taxonomy (58c3c4e5e19d46bcb2da66255eb61068) under an 'or' as if interchangeable; both are evidenced, but they are different decompositions and should be attributed separately.",
+        "The cell-deployment optional claim is supported by 4856fd39b7e1bfa3b7430427192179fa but is a tangential scenario for a question about shared connection pools."
+      ],
+      "verdict": "accept"
+    },
+    {
+      "task_id": "Q006",
+      "claims_supported": "7/7",
+      "issues": [
+        "Optional 3 is a generic documentation-evidence rule; 13760750168f4e339d5d014e189828af and 629374fc3ed84a848794c0b63c4d4ddf support it, but it is only indirectly related to the Netflix retrospective and adds no Netflix-specific evidence."
+      ],
+      "verdict": "accept"
+    },
+    {
+      "task_id": "Q008",
+      "claims_supported": "8/8",
+      "issues": [
+        "Required evidence aeedcc93ea554edc9059b8f9ddefa292 is a region-failover and recovery scenario; it does not support the V12 stage schedule, rollback trigger, accounting, or reported results, so the required-evidence list contains an off-topic section.",
+        "All eight claims map to 26ddd5ca6c1bea39738561c3bdb1cf23, 7732cad079d3148dd26b24cc1fdef318 and ea00bb677b242deed4a1ff3fa91f948a."
+      ],
+      "verdict": "revise"
+    },
+    {
+      "task_id": "Q010",
+      "claims_supported": "8/8",
+      "issues": [
+        "Core 2 and optional 1 use invented latency numbers without repeating the source's explicit synthetic qualifier; the arithmetic is correct, but a reader could mistake 24 or 252 for measured values.",
+        "Core 4's 'breaks the accounting rather than merely adding error' is interpretive; the cited evidence establishes incompatible boundaries, not a quantified error comparison."
+      ],
+      "verdict": "accept"
+    },
+    {
+      "task_id": "Q012",
+      "claims_supported": "8/8",
+      "issues": [],
+      "verdict": "accept"
+    },
+    {
+      "task_id": "Q014",
+      "claims_supported": "7/8",
+      "issues": [
+        "Core 4 states isolated restore plus integrity and business reconciliation as a 'must' before cutover, but 60ffc845d47c44cba4af2760474d68c7 presents it as a 'safer proposed response' and explicitly records 'proposed, not executed'; the claim drops the chapter's nonclaim and evidence status.",
+        "Core 3's 'access to keys' is a recovery prerequisite rather than a WAL artifact; the cited drill table lists a wrong encryption key as a failure mode, not as a required artifact."
+      ],
+      "verdict": "revise"
+    },
+    {
+      "task_id": "Q016",
+      "claims_supported": "8/8",
+      "issues": [
+        "Core 3's 'exactly one declared authoritative owner' strengthens the evidence's 'one authoritative state at each transition' and 'single authority'; the intent is supported, but 'exactly' and 'declared' are not in the cited wording."
+      ],
+      "verdict": "accept"
+    },
+    {
+      "task_id": "Q018",
+      "claims_supported": "8/8",
+      "issues": [],
+      "verdict": "accept"
+    }
+  ]
+}

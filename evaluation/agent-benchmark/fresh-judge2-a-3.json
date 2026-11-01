@@ -1,0 +1,186 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q103",
+      "question": "Why does a parent that waits for ten independent dependency calls exceed its latency threshold far more often than any single child's p99 suggests?",
+      "layer_expected": "book",
+      "answer": "The parent's latency is a maximum over ten samples, so its miss rate is governed by the product of per-call CDFs, not by any single call's p99.\n\nUnder the book's deliberately simplified model \u2014 ten independent calls, each within the threshold on 99% of calls \u2014 all ten finish within it with probability 0.99^10 \u2248 90.4%, so about 9.6% of composed requests contain at least one call over the threshold, roughly ten times the child's 1% p99-exceedance rate; at fifty calls the same arithmetic gives 1 \u2212 0.99^50 \u2248 39.5%. In general, for N calls with distribution F(t) and a parent that waits for all replies, P(max \u2264 t) = F(t)^N: each extra child is another chance to cross the threshold, so the parent's threshold-failure probability compounds while the per-child p99 price stays 1%. The book labels these figures elementary model arithmetic on invented populations, not observations.\n\nThree further reasons make the real gap larger than that idealized floor.\n\n1. A percentile is a value of a distribution, not a maximum or a per-request guarantee. The child p99 does not bound the child's slowest call and is not the parent's p99; parent and fan-out percentiles do not add, and composing them needs joint-distribution assumptions a single p99 does not supply. The parent's own p99 is the 99th percentile of the maximum's distribution, which lies beyond any child p99 when the tail is heavy.\n\n2. The independence premise usually fails. Shared databases, GC pauses, network congestion, regional faults and request mix correlate child slowness, and shared connection pools, locks or fan-in serialization can make a nominally parallel fan-out effectively serial. Correlation makes the parent tail heavier and clusters misses rather than producing the tidy iid 9.6%.\n\n3. The comparison mixes measurement boundaries and populations. The child p99 is measured on individual dependency calls and typically excludes parent-side queueing, network and scheduling; timed-out, cancelled and failed operations belong in the user-visible latency population, and a success-only or completed-only histogram understates the tail (a closed-loop test that waits for each response also hides the backlog). A parent waiting for all ten pays the slowest prerequisite plus the serial stages around it, so its observation includes waits no single child sees.\n\nConsequence: the parent's deadline-miss rate cannot be inferred by quoting child p99s. Measure the parent-observed end-to-end distribution over the same offered demand, trace the critical path, and only then decide whether cutoffs for optional results, deadline propagation with remaining time and cancellation, bounded hedging or retries, or topology changes are justified; hedging and retries can shrink an independent slow-replica tail but multiply load when the bottleneck is shared.",
+      "citations": [
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+        "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+        "tycho.chapter.2ad010c2b29c4390b83bbdadeb346289#decision-and-worked-result",
+        "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+        "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#6-worked-decision-retain-hedge-or-split",
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract"
+      ],
+      "core_claims": [
+        "A percentile is a property of a distribution rather than a per-request maximum, so the observation window, sampling method and treatment of timed-out requests must be named before comparing values.",
+        "When a parent waits for all N calls with independent latency CDF F, the maximum is at most t with probability F(t)^N; at 0.99 per call, ten calls finish within the threshold about 90.4 percent of the time, leaving about 9.6 percent with a slow dependency.",
+        "Percentiles do not add: the parent's p99 is not the sum of the children's p99 values, and serial stages add elapsed time or hard limits rather than quantiles.",
+        "Whether the slowest child sits on the critical path depends on the correctness policy: all results required, quorum, first successful response, optional enrichment, or sequential dependencies.",
+        "Shared databases, GC events, network congestion or a regional fault correlate child latencies, so the F-to-the-N arithmetic is a model rather than a guarantee for a real service graph."
+      ],
+      "optional_claims": [
+        "Fan-out can become effectively serial through a shared connection pool, global lock or constrained executor, so launching asynchronous calls does not by itself prove parallelism.",
+        "Hedging can reduce an independent slow-replica tail but doubles work when a shared dependency is saturated, and speculative duplicate writes are unsafe because replicas may accept divergent effects."
+      ],
+      "required_evidence": [
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+        "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#4-hedging-replication-and-selective-degradation"
+      ]
+    },
+    {
+      "task_id": "Q111",
+      "question": "Why can a validly signed build attestation for an artifact digest still fail to establish that the artifact is eligible for release?",
+      "layer_expected": "book",
+      "answer": "A validly signed attestation is an authenticated *statement about a build*, not a release approval. Its leading limits are: (1) envelope scope \u2014 a signature/attestation envelope establishes only a cryptographic link between a statement and an authenticated key/identity; it cannot establish that the signer was authorized or that the statement is true, so \"valid signature, therefore approved\" is an explicit false inference. (2) Claim strength and scope \u2014 SLSA Build/Source tracks are versioned and level-scoped: provenance can exist at Build L1 without platform-generated signed provenance (L2) or build-time tampering resistance (L3), and a level is not attained merely because an artifact carries an attestation or a custom script writes signed JSON. A consumer must know and check the expected builder identity, build type, parameters, source revision and trust root, not merely that the envelope verifies; validation also depends on pinned tool/format/issuer policy, key rotation/revocation and expiry. (3) Subject binding and policy mismatch \u2014 the artifact is the subject, never a mutable tag; an attestation bound to digest A is not evidence for digest B, and even a correctly bound, authentic attestation fails the gate when the issuer, signing identity, builder, source revision or target environment is not on the release allowlist (a CI account from an unapproved fork can sign correctly and still be rejected). (4) Eligibility is a separate, target-specific policy decision \u2014 release requires additional evidence beyond build provenance: SBOM coverage of the released object, scan/vulnerability freshness, target/environment eligibility and mixed-version runtime/data safety, evaluated by a gate outside the artifact that cannot be bypassed, with recorded decisions and a failure/exception process. A transparency-log entry supports inclusion/accountability but does not establish the publisher's authority. Consequently, provenance about how bytes were built cannot establish correctness, security or permission to deploy: a signed artifact remains a candidate whose release eligibility must be independently verified, and passing yields candidate eligibility, not proof of operational safety.",
+      "citations": [
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#4-authenticity-is-not-authorization",
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#5-missing-evidence-must-fail-the-gate-appropriately",
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#7-a-release-gate-belongs-outside-the-artifact-itself",
+        "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+        "tycho.page.56bd7133980b4b1992816a98308be676#2-slsa-1-2-levels-and-provenance-have-explicit-scopes",
+        "tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries",
+        "tycho.page.faf8361106c2458b97e046319d7fa979#3-provenance-reproducibility-and-signatures"
+      ],
+      "core_claims": [
+        "The artifact digest is the subject, so an attestation bound to digest A is not evidence for digest B even when both share an image name.",
+        "A signature proves a cryptographic link between a statement and an authenticated key, not that the signer was authorized or that the statement is true.",
+        "Provenance describes builder identity, build process and materials within a declared scope, not runtime correctness or freedom from vulnerabilities.",
+        "Verification must check the expected builder identity, signature, build type and parameters against a release policy, because accepting any validly signed statement is not a meaningful policy.",
+        "SLSA Build and Source tracks are separately scoped, so one artifact's attestation does not automatically attain a level, and intended inputs, allowed builder process and target release constraints cannot collapse into a single signed check."
+      ],
+      "optional_claims": [
+        "SBOM coverage depends on the generator and its input visibility, so a source-only SBOM cannot establish the component set of the released runtime image.",
+        "A dependency name without exact identity is insufficient for exposure analysis, and aliases, forks or vendored source preserve uncertainty."
+      ],
+      "required_evidence": [
+        "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+        "tycho.page.56bd7133980b4b1992816a98308be676#2-slsa-1-2-levels-and-provenance-have-explicit-scopes",
+        "tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity"
+      ]
+    },
+    {
+      "task_id": "Q119",
+      "question": "Why can a closed-loop load generator report low latency and low throughput while an independent arrival stream would overload the same service?",
+      "layer_expected": "book",
+      "answer": "Because the two generators ask different questions of the service: a closed loop fixes the client population and lets offered arrivals fall when responses slow, while an independent (open) arrival stream fixes the arrival rate and lets the queue grow when the service cannot keep up.\n\n1) The closed loop's next arrival depends on the previous response. A fixed number of virtual users waits for each response (plus optional think time) before issuing again, so the generator can never offer more work than the service returns; throughput is bounded by population/(response time + think time). The corpus' synthetic arithmetic: 20 users at 0.2 s per iteration give an ideal ceiling of about 100 iterations/s, but the same 20 users at 2 s per iteration can offer only about 10/s; 100 users at 2 s give 50/s and at 4 s give 25/s. Low throughput is therefore partly the generator's own feedback ceiling, not the service's capacity.\n\n2) Low reported latency follows from the same feedback. When the service slows, the closed population automatically reduces offered traffic, so the backlog that independent arrivals would create never forms; there is no growing queue to wait in, and the measured residence time stays at the (small) per-iteration time. A closed load test can thus look calm precisely because it stops pushing when the system degrades. The corpus states the inversion directly: a benchmark can produce precise numbers while measuring the wrong population, and a system that slows its load generator may appear more responsive than one that actually serves its intended traffic.\n\n3) An open generator schedules arrivals independently of completion. If the exogenous rate exceeds the sustainable completion rate, the difference accumulates as backlog: synthetic traces show 120 offered/s against 80 completed/s building roughly 800 outstanding requests in 20 s (then needing at least 10 s to drain), and 200 offered/s against 150 completed/s adding about 1,500 in 30 s. Waiting time, deadlines and retries then deteriorate even though per-request service work is unchanged, and without admission control an unbounded queue converts overload into memory growth and expired work. That is the overload the closed loop never exposes.\n\n4) Measurement artifacts amplify the illusion. Coordinated omission: when a blocked generator stops scheduling, recorded latency excludes the waits that the intended arrival schedule would have imposed, and histogram corrections reconstruct modeled, not observed, intervals. Denominator shrinkage: fewer completed operations, unsent scheduled iterations and rejected attempts can coexist with a lower p99; a lower p99 with fewer successful and more rejected requests is not a performance improvement without an explicit service contract. A generator that is itself resource-limited can likewise record latency only for the subset it managed to send.\n\n5) Practical reading. Record the intended and actual arrival schedule, unsent/dropped iterations, generator CPU saturation, queue depth and wait, and admitted vs completed rates; reconcile them rather than reporting one number. Choose a closed model only when the real population genuinely waits between operations; use an open-arrival model (or an independent arrival rate with a concurrency cap) to test whether the service survives the demand it must actually absorb; and do not compare latency or throughput figures produced under different arrival models. All numeric examples above are synthetic illustrations from the corpus, not executed measurements.",
+      "citations": [
+        "tycho.page.bfa3a283746b42998825234aca63b101#2-open-versus-closed-arrivals-the-generator-can-hide-degradation",
+        "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#workload-generators-closed-feedback-versus-independent-arrivals",
+        "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+        "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e#purpose-and-mission",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission",
+        "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#2-arrival-shape-is-part-of-the-architecture-requirement"
+      ],
+      "core_claims": [
+        "An open arrival model issues requests independently of service completion, while a closed model starts each next iteration only after the previous one finishes.",
+        "With 20 concurrent virtual users at 0.2 seconds per iteration the idealized ceiling is about 100 iterations per second; when service time becomes 2 seconds the same closed population can offer only about 10 per second.",
+        "A response-driven generator therefore hides the queue that independent arrivals would create, which is the coordinated-omission problem.",
+        "Dropped or unsent scheduled iterations are not service rejections, so scheduled arrivals, transmitted attempts, admitted operations and completed useful operations must be recorded as separate denominators.",
+        "Histogram correction can model missing intervals from a known expected schedule, but corrected samples are not observations of requests that never happened, so raw data and correction assumptions must both be preserved."
+      ],
+      "optional_claims": [
+        "A lower p99 accompanied by fewer successful and more rejected requests is not a performance improvement without an explicit service-level contract permitting that trade-off.",
+        "A timestamped claim that a generator sent a target rate is not evidence until the actual sent and unsent intended workloads are reported together."
+      ],
+      "required_evidence": [
+        "tycho.page.bfa3a283746b42998825234aca63b101#2-open-versus-closed-arrivals-the-generator-can-hide-degradation",
+        "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+        "tycho.page.bfa3a283746b42998825234aca63b101#1-write-the-experiment-claim-before-starting-a-load-generator"
+      ]
+    },
+    {
+      "task_id": "Q127",
+      "question": "Why does a monotonic fencing token protect a resource only when the destination stores the highest accepted epoch atomically?",
+      "layer_expected": "atlas",
+      "answer": "A fencing token protects a resource only where the thing that can refuse the write remembers the newest number it has ever accepted.\n\n1. The token is a claim, not enforcement. The coordinator issues a monotonic epoch with ownership, but it cannot stop a paused holder from resuming and sending work; only the destination that holds the resource can refuse the effect. Issuance records who owns the lease, not which external writes will be accepted.\n\n2. Monotonicity supplies the order; the stored maximum supplies the cutoff. Because tokens never repeat and always increase, token order tracks ownership order, so the largest accepted value marks the boundary between current and superseded authority. Storing the highest accepted token and rejecting a lower one makes acceptance a one-way ratchet: once token 42 is accepted there, token 41 can never commit again, wherever it comes from. A destination that remembers nothing, or remembers less than the maximum, judges a delayed, retried or reordered write against a cutoff that has not advanced, so the stale write passes.\n\n3. The ratchet must be atomic and durable. The comparison and the protected effect have to be one step (a conditional update or compare-and-update at the destination); otherwise two writers can both read an old cutoff and both conclude they are current. The stored value must also survive restart and restoration: an empty or rolled-back counter re-admits a stale token, and reusing a value after expiry breaks the monotonicity the whole argument rests on.\n\n4. Its reach is exactly the guarded effect. Compare-and-reject proves ordering between owners, not that the old owner stopped, and it does not deduplicate two writes under the same epoch. Every protected resource and every unrelated side effect needs its own guard. If the new holder has not yet established its newer epoch at the destination, the destination holds no evidence of takeover, so comparing against the last observed token does not prove the old holder lost the lease. Where the destination cannot fence, serialize through an authoritative effect owner or a stable idempotent operation identity instead of claiming mutual exclusion from a token nobody compares.",
+      "citations": [
+        "tycho.page.4961bb03a6534242a0977db265b68d95#bounded-pattern-ownership-notes",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#bounded-pattern-ownership-notes",
+        "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction",
+        "tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment"
+      ],
+      "core_claims": [
+        "A lease is a time-bounded grant: the coordinator can reassign ownership after expiry and issue a new epoch, but it cannot make a paused holder disappear or stop that holder from resuming and writing.",
+        "The fencing card requires that the destination can compare tokens, that tokens increase monotonically, and that a stale owner may still run but cannot commit; a token that is never compared, or compared after the effect, is decoration rather than mutual exclusion.",
+        "Protection holds only where the destination checks and persists the highest accepted token atomically with the protected effect, and comparing against the last observed token does not prove the old holder lost the lease if the new epoch has not yet been established at that destination.",
+        "The design must define the takeover linearization point and the handling of in-flight writes; after a missed renewal, ownership is uncertain rather than failed, so protected mutations should stop while coordination quorum is unavailable.",
+        "Fencing does not deduplicate: two writes within the same epoch need effect identity or a conditional state version, and epoch reuse after a restored lease store breaks monotonicity unless generation continuity is part of the recovery contract."
+      ],
+      "optional_claims": [
+        "Where the destination cannot enforce tokens, route the effect through an authoritative owner or retain an explicit unresolved-safety boundary.",
+        "For a single database, a transactional conditional update or unique constraint can provide the same exclusion without a separate lock service."
+      ],
+      "required_evidence": [
+        "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#entry-inventory",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#bounded-pattern-ownership-notes",
+        "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#chapter-result-and-counterexample"
+      ]
+    },
+    {
+      "task_id": "Q135",
+      "question": "Why does the atlas allow permissive mutual TLS during a migration instead of requiring strict mutual TLS from the start?",
+      "layer_expected": "atlas",
+      "answer": "The atlas does not present permissive mutual TLS as an end state; it presents it as a bounded migration mode. Its Workload Identity / mTLS card sets strict versus permissive mTLS as the decision, and describes permissive as accepting plaintext and mutual TLS during migration, then switching to STRICT once workloads have sidecars. The technical-owner notes state the reason directly: permissive mode is most useful during migrations when workloads without a sidecar cannot use mutual TLS. Because those workloads cannot participate in mTLS until a sidecar is injected, a STRICT-only policy would leave them without an accepted path instead of migrating them. The atlas also makes strict mTLS conditional on a workload identity issuer, automated certificate rotation, and policy that binds identity to service, and it lists network location as the only identity or non-automatable rotation as hard contraindications. Turning on STRICT before those conditions hold would not yield authenticated workload identity anyway.\n\nThe destination remains strict: the card says to switch to STRICT once workloads are migrated with sidecar injection. That matches the book's per-hop TLS view, where a certificate identifies the endpoint it was presented to rather than the final application, and each hop whose encryption terminates at a proxy needs its own declared protection; a global strict flag cannot authenticate hops whose proxies do not yet exist. The TLS guidance applies the same staging principle to credential replacement: plan overlap and verify the new chain before making it the only accepted path.\n\nThe trade-off is explicit. While permissive mode is on, plaintext is accepted, so peer authentication is not enforced for those connections, and a valid certificate authenticates the workload, not every operation it requests. Certificate issuance availability is part of the request path and a failed rotation can be an outage; the page labels those claims plausible but synthetic, and its source boundary supports permissive mode but not revocation, trust-root bootstrapping, key storage or lifetime policy, or rotation-failure impact. The card's decision state is applicable-under-conditions, which is why permissive is allowed only as a transition with a defined exit to STRICT, not as an indefinite substitute for it.",
+      "citations": [
+        "tycho.page.e18ec327be0da89802c1b579dfbd6044#overview",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes",
+        "tycho.page.37a28a568f7e987941749e198c03439a#the-trust-question",
+        "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ"
+      ],
+      "core_claims": [
+        "The Workload Identity / mTLS card's competing alternative is permissive mTLS, which accepts plain text and mutual TLS during migration and then switches to STRICT once workloads have sidecars.",
+        "Either mode is a good fit only when a workload identity issuer exists, certificate rotation is automated, and policy can bind identity to service.",
+        "The card rejects the pattern when network location is the only available identity or when rotation cannot be automated, so a migration mode cannot substitute for an identity issuer.",
+        "Certificate expiry must be monitored and certificates and keys rotated periodically; the cited source supports permissive mode and peer authentication but leaves certificate revocation, trust-root bootstrapping, key storage and lifetime policy synthetic.",
+        "Zero Trust Architecture supplies the target: every access is authenticated and authorized at the resource rather than trusted because it is inside a network, and its hard contraindication is enforcement that cannot reach the resource."
+      ],
+      "optional_claims": [
+        "The Zero Trust card's related entries are Federated Identity, Least Privilege, RBAC/ABAC and Workload Identity / mTLS, so mutual TLS is one control inside a broader authorization decision.",
+        "The mTLS card makes strictness conditional on platform capability and declares a decision state of applicable-under-conditions rather than recommending one mode by default."
+      ],
+      "required_evidence": [
+        "tycho.page.e18ec327be0da89802c1b579dfbd6044#overview",
+        "tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview",
+        "tycho.chapter.419769c372ccaa569796954878e3bef9#chapter-result-and-counterexample"
+      ]
+    },
+    {
+      "task_id": "Q143",
+      "question": "What evidence status does a V12 input carry when it is computed from one measured and one assumed value, and what can change that status?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A V12 input computed from one measured and one assumed value is a derived value, and it carries the status of its weakest input: assumed, not measured. The calibration page defines derived as \"a value computed from other inputs by a stated formula\" and states that \"a derived value inherits the weakest status of its inputs\"; since measured is the stronger status of the pair, the computed parameter is labeled assumed (it cannot claim a measured source). That status is recorded per parameter in the model contract, so the label sticks to the parameter, not to the intermediate arithmetic. What can change it: only new evidence. A parameter can change status only with new evidence - in practice a real measurement of the previously assumed input (or an independent measurement of the computed quantity itself) that satisfies the measured definition: a named source plus a measurement method, sample size and period; the contract validator requires an evidence status of measured to be backed by a source and a measurement record. The same inheritance rule means the derived value's inherited status rises only when its weakest input is measured. Things that do not change it: repeating the assumed value in a decision record (explicitly stated not to make it measured), relabeling it, adding precision, or re-running the model. A scenario override that changes a parameter without updating the calibration note instead makes the evidence status ambiguous. Until a measurement exists, the model stays uncalibrated and any decision leaning on the computed value stays conditional or returns insufficient evidence, with the missing measurement and a review trigger named.",
+      "citations": [
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome"
+      ],
+      "core_claims": [
+        "V12 uses four calibration statuses: measured, assumed, derived and unknown.",
+        "A derived input is computed from measured or assumed inputs by a stated formula.",
+        "A derived input inherits the weakest status of its inputs unless the derivation itself is validated, so an input computed from one measured and one assumed value carries assumed status.",
+        "A parameter changes status only with new evidence, and repeating an assumed value in a decision record does not make it measured.",
+        "An unknown input has no defensible value, and the model must not invent one."
+      ],
+      "optional_claims": [
+        "A recorded status of uncalibrated is a complete value in the model contract, not a missing field.",
+        "Every parameter in the model contract carries a unit, value type, evidence status, source identifiers and a note."
+      ],
+      "required_evidence": [
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure"
+      ]
+    }
+  ]
+}

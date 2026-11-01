@@ -1,0 +1,14 @@
+{
+  "task_id": "Q102",
+  "answer": "Reciprocal rank fusion (RRF) is rank-only by design: for each document it sums 1/(k + rank_r(d)) across the ranked lists that contain it, with documents absent from a list contributing zero. The reason is that the underlying scores are not commensurable. BM25 scores, cosine distances and reranker logits have different numerical scales and are not calibrated probabilities, so adding them directly is unsafe unless they have been calibrated against real relevance data. A rank is a shared ordinal signal that survives any monotone rescaling of a retriever's scores, needs no per-retriever normalization, and lets heterogeneous lexical and semantic lists be combined by one simple rule. The cost is that score magnitude and confidence are discarded: a document that barely leads one list receives the same reciprocal as one that leads by a wide margin, and ties, missing ranks, duplicate IDs or list truncation can change the outcome.\n\nThe k constant is a ranking hyperparameter, not the number of documents or the list length. Because it is added to the rank in the denominator, it controls how steeply each list's contribution decays with depth, and therefore the balance between top-rank emphasis and cross-list consensus: a small k makes the first positions dominate and discounts deep results quickly, while a large k flattens the curve so that agreement across several lists and moderately ranked hits carry more weight. It also caps a rank-1 contribution at 1/(k+1). The book's examples use k=60 only as an illustrative setting; k should be tuned and evaluated against lexical-only, vector-only and other fusion baselines on held-out judgments rather than treated as a universal constant. RRF still does not guarantee top-k recall, intent understanding, freshness, ACL safety or correctness.",
+  "citations": [
+    "tycho.page.b919c3c84861491c82334b6e00bf443e#2-reciprocal-rank-fusion-handles-incompatible-score-scales",
+    "tycho.chapter.6d25a036c078402a85ec464227a48a31#engineering-walkthrough-hand-computed-rank-fusion-and-a-false-evidence-match",
+    "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

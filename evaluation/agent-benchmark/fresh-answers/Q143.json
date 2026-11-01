@@ -1,0 +1,16 @@
+{
+  "task_id": "Q143",
+  "answer": "A V12 input computed from one measured and one assumed value is a derived value, and it carries the status of its weakest input: assumed, not measured. The calibration page defines derived as \"a value computed from other inputs by a stated formula\" and states that \"a derived value inherits the weakest status of its inputs\"; since measured is the stronger status of the pair, the computed parameter is labeled assumed (it cannot claim a measured source). That status is recorded per parameter in the model contract, so the label sticks to the parameter, not to the intermediate arithmetic. What can change it: only new evidence. A parameter can change status only with new evidence - in practice a real measurement of the previously assumed input (or an independent measurement of the computed quantity itself) that satisfies the measured definition: a named source plus a measurement method, sample size and period; the contract validator requires an evidence status of measured to be backed by a source and a measurement record. The same inheritance rule means the derived value's inherited status rises only when its weakest input is measured. Things that do not change it: repeating the assumed value in a decision record (explicitly stated not to make it measured), relabeling it, adding precision, or re-running the model. A scenario override that changes a parameter without updating the calibration note instead makes the evidence status ambiguous. Until a measurement exists, the model stays uncalibrated and any decision leaning on the computed value stays conditional or returns insufficient evidence, with the missing measurement and a review trigger named.",
+  "citations": [
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

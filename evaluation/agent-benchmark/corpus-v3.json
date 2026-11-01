@@ -6,7 +6,7 @@
       "acceptable_alternatives": [],
       "claim_source": "ai-curated-not-human",
       "core_claims": [
-        "Authentication establishes a claimed subject and a tenant context; it does not decide whether that subject may perform a specific action on a specific object, which authorization must evaluate separately for subject, action, object and tenant.",
+        "Authentication establishes a claimed subject and credentials; it does not decide whether that subject may perform a specific action on a specific object, which authorization must evaluate separately for subject, action, object and tenant membership.",
         "A tenant identifier supplied in a URL is untrusted input, and even a tenant identifier derived from a signed session does not by itself establish access to an arbitrary object.",
         "Object identifiers can be unique only within a tenant, so an item or reservation reference cannot be resolved safely without its tenant context; the policy decision must cover the actual tenant and that specific object.",
         "Tenant membership does not authorize every object, property or action inside the tenant: a public read permitted across tenants does not imply authority to cancel a tenant-specific reservation.",
@@ -150,7 +150,7 @@
       "layer_expected": "book",
       "optional_claims": [
         "For the synthetic runtime case the recorded decision state is CONDITIONAL_CANDIDATE for in-place upgrade and insufficient evidence for big-bang service extraction until an independent data/API boundary is demonstrated.",
-        "The DGS/Spring GraphQL consolidation illustrates the same boundary: the problem was compatibility-preserving consolidation for hundreds of dependent services, not replacing the query technology itself."
+        "The DGS/Spring GraphQL consolidation is a compatibility-preserving service-interface example, not evidence of a data-ownership or extraction boundary."
       ],
       "question": "When can an in-place runtime upgrade address a modernization problem without moving data ownership?",
       "question_type": "multi-hop",
@@ -160,8 +160,6 @@
         "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss",
         "tycho.page.35d5be6a4e074758afff95bf3ec68bc5#purpose-and-mission",
         "tycho.page.5a4108bc167f4e2387dbf019eac7881e#architecture-question",
-        "tycho.page.a486e061c9564587b1e39a4e83024fca#genuine-counterexample-spiky-allocation-and-long-running-batch",
-        "tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer",
         "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1#purpose-and-mission"
       ],
       "rubric": {
@@ -520,7 +518,6 @@
         "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#diagram",
         "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
         "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
-        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
         "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
         "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
         "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting"
@@ -867,8 +864,8 @@
       "core_claims": [
         "A physical point-in-time restore requires a consistent physical base backup of the cluster, not a set of periodic SQL dumps.",
         "The restore also needs the complete archived WAL chain covering the interval from the base backup to the chosen recovery point, together with the matching timeline.",
-        "Recovery must run on a compatible PostgreSQL runtime with the required configuration, storage and access to keys; a missing WAL segment, wrong encryption key or inaccessible archive blocks the restore.",
-        "The base backup and WAL artifacts must first restore into an isolated target and pass database integrity plus application/business-effect reconciliation before cutover, because a running database alone does not prove recovery.",
+        "Recovery must run on a compatible PostgreSQL runtime with the required configuration and storage; access to the right encryption keys is a recovery prerequisite, while a missing WAL segment, wrong key or inaccessible archive blocks the restore.",
+        "A proposed, not executed, safer response is to restore the base backup and WAL into an isolated target and pass database integrity plus application/business-effect reconciliation before cutover; a running database alone does not prove recovery.",
         "A streaming replica is not a substitute for these artifacts: it may already have replayed the deletion or corruption, so it cannot serve as a historical recovery source."
       ],
       "difficulty": "hard",

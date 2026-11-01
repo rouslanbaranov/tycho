@@ -1,0 +1,17 @@
+{
+  "task_id": "Q126",
+  "answer": "Workload identity answers only which workload is calling: it authenticates a principal and, at most, binds a certificate to a service, but it does not decide whether that principal may perform a given operation on a given object. Authorization has to evaluate principal, action, object, context and policy version, usually with tenant and delegation constraints, and deny by default. Without an explicit policy, possession of a valid identity becomes blanket permission: any workload that can reach an endpoint may act on any object identifier it presents, and indirect paths (exports, batch jobs, caches, replayed events, admin APIs) inherit the same access. The risk concentrates in three places. Scope: identity alone sets no resource, action or time limit, so blast radius is whatever reachability allows and permission creep stays invisible. Revocation: a credential with no attached policy has no bounded owner and no revocation path independent of the compromised principal. Enforcement: a remote policy decision is not enforcement unless the resource boundary binds it to the actual object and action, and a cryptographically valid token can outlive the session or object permission it was issued for. Pairing identity with policy turns authentication into a bounded, explainable and deniable decision; coarse roles may be enough for small stable systems, but the pairing cannot be inferred from a zero-trust label.",
+  "citations": [
+    "tycho.page.e9524931fbcc4b4e833f6b0465a27698#2-authentication-is-not-authorization",
+    "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#least-privilege",
+    "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+    "tycho.page.dde63373c50f4f4a80e727b6e160def5#integrated-decision-and-reading-route"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

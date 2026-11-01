@@ -1,0 +1,130 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "atlas",
+  "items": [
+    {
+      "question": "What alternative must a colocated helper beat in the Sidecar card, and what different alternative must it beat in the Ambassador card?",
+      "required_evidence": [
+        "tycho.page.2462dbd13c464291bcbf4325d2d2bd97#overview",
+        "tycho.page.0465c87ed370438db997a1fcfcbe54cd#overview"
+      ],
+      "core_claims": [
+        "The Sidecar card asks whether auxiliary runtime behavior should run in a colocated helper beside the main workload rather than inside it, and its good-fit condition requires the helper to share the application instance's lifecycle and to be schedulable by the platform.",
+        "For Sidecar the competing alternative is a language-specific library or traditional extension when its deeper integration and lower network overhead dominate the colocated-helper benefit, and the same trade-off is the card's hard contraindication.",
+        "The Ambassador card asks whether client connectivity should be offloaded to a colocated out-of-process proxy, fitting cases where many languages need common connectivity, a legacy application is hard to modify, or monitoring and resilience belong outside the client.",
+        "For Ambassador the competing alternative is a client library invoked directly by the application when proxy overhead outweighs offloading, and proxy latency that outweighs the offloading benefit is its hard contraindication."
+      ],
+      "optional_claims": [
+        "The two failure contracts differ: Sidecar requires startup and shutdown ordering between application and helper to avoid races, while Ambassador's failure note concerns the safety of its managed retries.",
+        "Each card lists the other as a related entry, both exclude provider-specific implementations, and both declare the decision state applicable-under-conditions rather than a product choice."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why can a TTL shorter than the business freshness requirement still be rejected when a hard read-after-write contract exists?",
+      "required_evidence": [
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory"
+      ],
+      "core_claims": [
+        "The TTL-Based Expiration card makes a TTL shorter than the business freshness requirement a good-fit condition rather than a guarantee, and additionally requires that staleness be bounded by time and refresh cost be acceptable.",
+        "Its hard contraindications include a hard read-after-write contract, synchronized expiry that would stampede the source, and a TTL longer than the acceptable stale window; shortening the TTL does not remove the first two conditions.",
+        "The card's competing alternatives are explicit invalidation or versioned keys, and it says to reverse the choice when TTL expiry causes unacceptable misses or stale decisions.",
+        "The Cache Invalidation card requires an authoritative change that can emit an invalidation signal and consumers that tolerate a bounded stale window, and it is rejected when no reliable invalidation path exists or stale reads violate a hard contract.",
+        "Even explicit invalidation does not promise immediate freshness: the same card states that a reader can miss or briefly see stale data immediately after a write."
+      ],
+      "optional_claims": [
+        "The C05 entry inventory adds Write-Around as a card that rejects read-after-write freshness when invalidation is unreliable, so TTL and write-around fail the same contract for different reasons.",
+        "The TTL card names synchronized expiry and stale reads as its common failure modes, so the decision turns on correctness rather than on expected hit rate."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why must a claim-check token be published only after the payload write, and which failures remain after that ordering is enforced?",
+      "required_evidence": [
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview",
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory"
+      ],
+      "core_claims": [
+        "The Claim Check card requires the token to be published only after the payload write succeeds because the write and publish form a non-atomic pair that can otherwise leave an orphaned payload or a token consumers cannot resolve.",
+        "Even with that ordering the card names duplicate claim checks, integrity mismatches, store outages and data loss, and it requires an idempotent consumer for duplicate claim checks.",
+        "The card's guidance is to expire and garbage-collect claims and to fail closed when retrieval is impossible, so an unresolvable token becomes a declared failure rather than a silent partial read.",
+        "Claim Check is rejected when the extra retrieval hop cannot meet the latency target, when payload lifecycle or failure handling has no owner, or when authorization cannot remain an independent interaction between producer or consumer systems and the store.",
+        "The C03 Idempotent Receiver card supplies the deduplication conditions: messages must carry stable identity, identity and effect must be recorded atomically, and retention must cover the redelivery window."
+      ],
+      "optional_claims": [
+        "The C04 Idempotency Key card applies the same retention logic to client-supplied keys: expiry ends historical deduplication, and a reused key with changed intent is a conflict rather than idempotency.",
+        "When the payload fits the transport and latency budget and no sensitivity, retention or repeated-serialization reason applies, the card prefers keeping the payload inline."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "When does the atlas prefer structured logs with request IDs over distributed tracing?",
+      "required_evidence": [
+        "tycho.page.ff387baa8697be02afec1be6807b858f#overview",
+        "tycho.page.fd57fe37e916adffc5819aa849245d1d#overview",
+        "tycho.chapter.419769c372ccaa569796954878e3bef9#chapter-result-and-counterexample"
+      ],
+      "core_claims": [
+        "The Distributed Tracing card names structured logs with request IDs as its competing alternative and says to reverse toward trace infrastructure only when cross-service latency diagnosis justifies it.",
+        "Tracing is a good fit only when trace context can propagate, the sampling policy is explicit, sensitive data is excluded, and trace storage and retention are owned.",
+        "The card rejects tracing when one service suffices, when context cannot cross a boundary, or when trace data would leak sensitive payloads.",
+        "Its failure concern is broken context propagation and sampling bias, so a trace-based conclusion depends on both propagation and sampling being sound.",
+        "Structured Logging is a good fit only with stable fields, defined redaction, owned retention and cost, and available correlation IDs, and it is rejected when logs contain unredactable sensitive data, schema churn is unowned, or volume overwhelms storage."
+      ],
+      "optional_claims": [
+        "The tracing card's source record notes that sampling was not a served source section, so its sampling policy is synthetic guidance rather than a source claim.",
+        "The C11 counterexample section states that none of the chapter's cards establishes technical sufficiency, so choosing logs over traces remains a bounded decision."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why does the atlas allow permissive mutual TLS during a migration instead of requiring strict mutual TLS from the start?",
+      "required_evidence": [
+        "tycho.page.e18ec327be0da89802c1b579dfbd6044#overview",
+        "tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview",
+        "tycho.chapter.419769c372ccaa569796954878e3bef9#chapter-result-and-counterexample"
+      ],
+      "core_claims": [
+        "The Workload Identity / mTLS card's competing alternative is permissive mTLS, which accepts plain text and mutual TLS during migration and then switches to STRICT once workloads have sidecars.",
+        "Either mode is a good fit only when a workload identity issuer exists, certificate rotation is automated, and policy can bind identity to service.",
+        "The card rejects the pattern when network location is the only available identity or when rotation cannot be automated, so a migration mode cannot substitute for an identity issuer.",
+        "Certificate expiry must be monitored and certificates and keys rotated periodically; the cited source supports permissive mode and peer authentication but leaves certificate revocation, trust-root bootstrapping, key storage and lifetime policy synthetic.",
+        "Zero Trust Architecture supplies the target: every access is authenticated and authorized at the resource rather than trusted because it is inside a network, and its hard contraindication is enforcement that cannot reach the resource."
+      ],
+      "optional_claims": [
+        "The Zero Trust card's related entries are Federated Identity, Least Privilege, RBAC/ABAC and Workload Identity / mTLS, so mutual TLS is one control inside a broader authorization decision.",
+        "The mTLS card makes strictness conditional on platform capability and declares a decision state of applicable-under-conditions rather than recommending one mode by default."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why do a missed lease renewal and an expired timeout both leave the outcome uncertain, and what must happen before either is treated as settled?",
+      "required_evidence": [
+        "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#entry-inventory",
+        "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory",
+        "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#chapter-result-and-counterexample"
+      ],
+      "core_claims": [
+        "The Timeout card calls a timeout an ambiguous outcome rather than proof that the remote effect stopped, and requires looking up the durable outcome, cleaning up resources, and not blind-retrying non-idempotent work.",
+        "The Lease-Based Ownership card treats ownership as uncertain after a missed renewal because pauses, delayed renewal and quorum loss can leave two owners acting at once.",
+        "Fencing Tokens requires the destination to compare monotonically increasing tokens so that a stale owner may still run but cannot commit, which is what actually bounds the stale write.",
+        "Lease-Based Ownership lists destination fencing as a good-fit condition and rejects expiry that could allow two active owners without fencing, so the lease duration alone is not the safety mechanism.",
+        "The C08 counterexample states that a lease without destination fencing is not evidence for the fencing card's safety conditions."
+      ],
+      "optional_claims": [
+        "The Distributed Lock card's competing alternatives are lease-based ownership with fencing, single-writer partitioning, or a conditional write or unique constraint.",
+        "The Timeout card also rejects work that must complete regardless of time and cancellation that leaves irreversible effects with no reconciliation path."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "task_id": "Q146",
+  "answer": "Rejection and timeout are different exits, so a bigger buffer moves loss from the door to the waiting line. Rejection happens only when the bounded queue or bulkhead is full; timeout happens after admission, when an attempt's deadline expires while it is queued or in service. For each attempt the deadline is set when that attempt arrives (arrival plus timeout), so queue waiting consumes the same budget as service; a queued request that reaches its deadline is removed and counted as timed out.\n\nEnlarging the bound admits requests that a smaller queue would have refused, so the rejection rate falls. But extra slots add waiting, not service capacity: when offered load exceeds drain rate, backlog and queue age grow even while every worker is busy. The marginal admitted request waits past its remaining deadline, so it leaves as a timeout instead of a rejection. Because expired requests leave the queue, the buffer need not stay full, so full-queue rejections remain rare even under saturation. The V12 overload run shows the accounting: 30 requests/s offered to 24/s capacity with a 40-request queue and a one-second deadline produced 0.0005 rejection, 0.3495 timeout and 0.6488 success, with mean queue length 12.79 and server utilization 0.9966; the queue was large enough to absorb arrivals but not large enough to prevent deadline expiry.\n\nThe effect is amplified when a timeout does not cancel the underlying work (capacity is spent on results no caller can use) and when timed-out attempts are retried. It is also bounded: without expiry or abandonment, a larger queue only postpones rejection; once the buffer fills under sustained overload, the excess must still be rejected. That is why rejection rate alone is misleading. Report offered, admitted, rejected, timed-out and completed populations separately, size the buffer by maximum acceptable queue age against the deadline, and prefer deadline-aware admission: a fast refusal of work that cannot meet its deadline is safer than admitting it to expire later.",
+  "citations": [
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+    "tycho.page.c33e9e4b605a4aa3b073a9f91437fc26#original-decision-model-a-finite-worker-and-waiting-budget",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

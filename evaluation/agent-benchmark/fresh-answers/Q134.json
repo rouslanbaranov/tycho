@@ -1,0 +1,18 @@
+{
+  "task_id": "Q134",
+  "answer": "The atlas treats distributed tracing as applicable only under conditions and names structured logs with request IDs as its fallback. The Distributed Tracing card lists structured logs with request IDs as the competing alternative and says to reverse that choice (i.e., adopt tracing) only when cross-service latency diagnosis justifies the trace infrastructure. So structured logs with request IDs are preferred in the card's three hard-contraindication cases: when one service suffices (the owner notes say to reject tracing as a fit for a single-service request), when trace context cannot cross a boundary, and when trace data would leak sensitive payloads. The decision boundary also favors logs (or metrics) when the question is an aggregate latency figure or a discrete business event rather than the cross-component path itself; tracing is warranted only when the cross-component path is the question. That preference is itself conditional: structured logging requires stable, versioned field names and redaction rules, owned retention/cost, and available correlation IDs, and it is rejected when logs would hold unredactable sensitive data, schema churn is unowned, or volume overwhelms storage. Finally, logs with request IDs remain operational evidence, not an authoritative audit record: logs may carry trace/span IDs but must not fabricate them, and accountability or irreversible-action obligations require a dedicated durable audit record. Both atlas cards are applicable-under-conditions, not unconditional defaults.",
+  "citations": [
+    "tycho.page.ff387baa8697be02afec1be6807b858f#overview",
+    "tycho.page.f921597aae854c6996459fc025a9bca3#bounded-pattern-ownership-notes",
+    "tycho.page.fd57fe37e916adffc5819aa849245d1d#overview",
+    "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#bounded-pattern-ownership-notes",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#2-correlation-without-recording-credentials",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#6-architecture-decisions-and-access-controls"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

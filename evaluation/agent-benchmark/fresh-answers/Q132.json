@@ -1,0 +1,17 @@
+{
+  "task_id": "Q132",
+  "answer": "Because a TTL and a read-after-write contract are different kinds of claim, and shortening the TTL only changes the size of a gap it never closes. A freshness requirement is an age budget (data may lag up to N seconds); a TTL is a wall-clock lifetime that starts when a value is filled or loaded, and expiry is driven by the clock, not by writes. A hard read-after-write guarantee is instead an ordering claim: after a write completes, a later read (at least in the same session) must include that write. Since expiry is not tied to writes, a copy loaded just before the write remains eligible for up to almost the whole TTL afterwards, so a TTL below the freshness budget bounds worst-case age but still leaves a nonzero window in which a read returns pre-write state. The ordering gap is the real defect: the cache knows when it loaded a value, not which source revision the value carries, so it cannot prove the value is newer than the write, and a short TTL plus retried invalidation 'bounds the damage' without proving freshness. The stale-fill race shows the violation survives invalidation itself: a reader that loaded V1 can write V1 back with a fresh TTL after the writer committed V2 and invalidated the key, resurrecting pre-write state for another full TTL. Shortening the TTL further is also not a free fix, because synchronized expiry stampedes the source, which the pattern card lists as a separate hard contraindication. What can satisfy the contract is a mechanism tied to the write rather than to elapsed time: versioned keys and a revision gate on fill, an invalidation intent made durable at commit (outbox) and retried, or a version-checked/authoritative read on the sensitive path, as in the exclusive-booking case where the cached availability value must not authorize a decision; the cache can keep serving the paths whose requirement really is only bounded staleness.",
+  "citations": [
+    "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+    "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+    "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+    "tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes",
+    "tycho.page.33742c54f667446cbf57cb9f3696a533#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness",
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#name-the-observation-that-must-survive-routing"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

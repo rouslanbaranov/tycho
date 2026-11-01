@@ -1,0 +1,16 @@
+{
+  "task_id": "Q128",
+  "answer": "An open breaker contains a fault only while it replaces real calls to a genuinely failing dependency with a bounded, observable fast-fail. It hides the fault instead in five recognizable situations. (1) The failure is local, not in the dependency: an open caused by local resource exhaustion is recorded as a dependency failure, so the real bottleneck leaves the telemetry and nothing is protected. (2) The failure is caller-specific or the breaker key is shared: shared opens attribute one caller's defect to the whole dependency and deny traffic that would have succeeded, turning a narrow bug into an apparent outage. (3) The dependency is required: an open path with a fallback that calls the same dependency, an unbounded alternate path, or a default value presents missing mandatory data as a complete result, so the outage becomes a silent product change. (4) Recovery is unproven: a cooldown without a bounded half-open probe yields false recovery, and open gets treated as recovered when it is only deferred detection. (5) Telemetry is derived from the calls the breaker suppresses: rejected calls are not dependency failures and need their own metric, otherwise the error rate falls as the fault worsens, and absence of errors is misread as health (zero observed errors at idle; dropped traces are not proof that nothing failed). Containment holds when failures are fast and repeated calls amplify them, the threshold requires a minimum request volume, half-open probes are bounded and close only after consecutive successes, and an explicit fail-fast or independent fallback contract exists with fallback ownership and the user-visible degradation recorded. Where an open breaker would hide a local resource problem, a retry budget with jitter, an admission limit or a bounded timeout is the better instrument.",
+  "citations": [
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+    "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory",
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+    "tycho.page.77e5d6cab6c083335efb7fc74b423809#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

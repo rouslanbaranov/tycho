@@ -1,0 +1,186 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q107",
+      "question": "Why does restoring a consistent stream-processing checkpoint not prove that an external side effect happened exactly once?",
+      "layer_expected": "book",
+      "answer": "A consistent checkpoint is a consistent cut of what the stream runtime manages: operator state plus source positions. The snapshot contains no record of the external system's state, so restoring it replays input from the checkpointed position and re-issues any external call made after that cut. The checkpoint proves 'internal state and input position are mutually consistent at this cut', not 'this business effect happened once'. The same document set states the limit directly: a consistent processor checkpoint cannot recover an expired input or reverse an independently committed external effect.\n\nTwo failure windows expose the gap. (1) The effect is committed, then the process crashes before a checkpoint covering it: restore replays the input and performs the effect again, a duplicate unless the sink deduplicates. (2) A local 'done' marker is committed before the external call, then the process crashes: the replayed input is skipped and the effect is lost. After a lost acknowledgment the process cannot distinguish 'applied' from 'not applied'; a timeout is not evidence that an external job did not start, nor that an RPC was sent. The checkpointed state records intent and offsets, not the external outcome.\n\nThere is no atomic transaction spanning the processor and the external system. The outbox analysis makes this explicit: one local transaction can cover business state plus publication intent, yet a relay may still send twice, and a consumer's call into another external system is outside the local commit; the consumer must own the effect under its own atomic authority or define reconciliation. Product guarantees are scoped the same way: Kafka Streams exactly_once_v2 and Flink checkpoints cover their own sources, state, and commit protocols, and the Kafka Streams documentation notes the scoped guarantee does not encompass an unrelated SQL transaction, payment, or email.\n\nExactly-once for the external world must therefore be supplied at the destination: a stable effect or idempotency key whose outcome record commits atomically with the effect; an idempotent/upsert or transactional sink that participates in the checkpoint commit protocol; destination-checked monotonic epochs that reject a stale writer; or an authoritative outcome lookup with reconciliation. Where the downstream supports neither a stable effect key nor readback, no wrapper can establish a business-level exactly-once claim - the corpus says to record unknown and design recovery. Restored state and a running job are evidence about the processor, not about the external effect; the effect needs its own identity/readback and a crash-injection test that includes the external call.\n\nSo 'effectively once' is an operational property - at-least-once replay plus idempotence, dedup, or an atomic sink - rather than a theorem implied by checkpoint consistency.",
+      "citations": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints",
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route",
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+        "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#3-scheduler-state-is-not-the-external-effect",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#2-kafka-streams-tasks-state-stores-and-changelogs"
+      ],
+      "core_claims": [
+        "A checkpoint stores operator state and source positions consistently so that recovery can resume from a defined input position.",
+        "An arbitrary external sink remains outside that guarantee unless a compatible sink commit protocol and recovery semantics are demonstrated.",
+        "If the sink is outside the checkpoint commit protocol, restoring the input position can process the event again after its external effect already occurred, so the sink needs its own idempotency or compensation contract.",
+        "Snapshotting state cannot retroactively cancel an external effect such as an email send, which has its own acknowledgment and idempotency contract.",
+        "Recovery tests must verify restored state, emitted output and input position, and must test a real external effect separately instead of inferring correctness from internal guarantees."
+      ],
+      "optional_claims": [
+        "A checkpoint is not automatically a migration artifact because a version upgrade can change state serialization, operator identity and restore compatibility.",
+        "Event-time watermarks and late-data handling remain business policies rather than properties proven by checkpointing."
+      ],
+      "required_evidence": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints",
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#6-failure-recovery-experiments"
+      ]
+    },
+    {
+      "task_id": "Q115",
+      "question": "Why can a component inventory produced from a source checkout fail to establish the component set of the released container image?",
+      "layer_expected": "book",
+      "answer": "A component inventory produced from a source checkout cannot establish the released container image's component set because it describes a different subject with a narrower scope. First, the source revision is only a versioned authoring input: it cannot establish whether the same bytes produced the deployed artifact, and source, build, artifact and promotion are separately controlled boundaries; the artifact digest, not a mutable tag or source tree, identifies the released object. Second, image assembly adds content that source visibility does not include: base-image operating-system packages, build-stage tools, generated code, bundled binaries and artifacts copied into a runtime layer can all be present in the image without appearing in a source scan; the book's synthetic error is precisely an obsolete OS package copied into a runtime layer after source scanning. Third, no SBOM format creates perfect coverage without a capable generator and suitable input visibility; a credible inventory must declare its scope (build-time, runtime, transitive, platform/system packages, generated code and bundled binaries), unresolved identities, known omissions, and nested image-layer or dynamically loaded dependencies. Package metadata may be unavailable, and aliases, forks and vendored source leave component identity uncertain. Fourth, the inventory must be bound to the exact release artifact and digest, not merely to the source tree; an SBOM whose subject digest belongs to a previous release must be rejected. To establish the image's component set, inspect the actual released image/digest and its layers, bind the result to that digest, and disclose per-scanner coverage and omissions; if that cannot be done, preserve the gap as a verification task rather than reporting no vulnerabilities.",
+      "citations": [
+        "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+        "tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity",
+        "tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries",
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#6-original-worked-decision-controlled-artifact-promotion"
+      ],
+      "core_claims": [
+        "An SBOM enumerates components and relationships only within its format and generator coverage, and the evidence-object table says it cannot establish the absence of undiscovered dependencies.",
+        "A scan performed at source checkout may omit runtime image layers: the worked example copies an obsolete operating-system package into a runtime layer after the source scan.",
+        "Because the artifact is the subject rather than a mutable tag, a statement bound to digest A is not evidence for digest B even when both carry the same image name.",
+        "Release verification therefore binds the inventory and provenance to the exact released digest, states each scanner's scope and known omissions, and inspects the actual image instead of inferring from the source tree.",
+        "A valid signature proves only that a statement was made by an authenticated key; it does not show that the signer was authorized or that the statement is true."
+      ],
+      "optional_claims": [
+        "Dependency names without exact identity leave exposure analysis uncertain because aliases, forks, vendored source and missing metadata obscure which component is present.",
+        "A report of no vulnerabilities from one scanner is a point-in-time observation, not proof of absence."
+      ],
+      "required_evidence": [
+        "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+        "tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity",
+        "tycho.page.38bb8a14ebb54866a7004080318b47e1#purpose-and-mission"
+      ]
+    },
+    {
+      "task_id": "Q123",
+      "question": "Why does a subscriber's bounded request(n) not by itself protect a reactive service from overload?",
+      "layer_expected": "book",
+      "answer": "A bounded `request(n)` constrains only how many items one subscription may deliver at one boundary; it is not a capacity limit for the service. Five distinct gaps explain why it cannot by itself prevent overload.\n\n1. **It is a protocol contract, not an enforced ceiling.** `request(n)` is demand coordination between a `Publisher` and `Subscriber`, and it is a flow-control boundary only if the producer and its operators respect it. A hot stream, an eager prefetch, a non-backpressure-aware bridge, or a source that cannot slow down still buffers or emits independently of demand. Where that happens, backpressure renames the queue rather than removing the work.\n\n2. **Demand counts items, not the work each item causes.** One requested element may trigger a blocking JDBC call, an expensive query, a lock wait, or a connection-pool lease. A blocking callback on an event loop stalls unrelated sessions while demand stays at n=1, and a driver pool or hidden library queue can be saturated without any protocol violation: subscriber demand does not cap an unrelated driver pool or hidden queue. Moving blocking calls to a bounded elastic scheduler relocates the waiting and resource budgeting; it does not reduce it.\n\n3. **Overload is an arrival-rate problem at shared resources.** Capacity is limited by CPU, thread/connection pools, database locks, broker quotas and downstream APIs. One subscriber's bounded demand says nothing about how many other subscriptions, streams, unary requests or replicas are admitted concurrently, nor about offered load from independent clients. Rejection must occur before the expensive operation; once work is resident, a per-subscription limit has arrived too late. The service needs admission control, load shedding and deadlines, which demand signalling does not supply.\n\n4. **Bounds relocate rather than absorb excess.** A bounded queue, a bounded scheduler (which still has a queue whose saturation and expired deadlines must be measured), or a bounded `flatMap` concurrency value moves the limit; excess becomes latency, memory growth, stale work or downstream queue pressure instead of an explicit rejection. Bounded inner-publisher concurrency does not bound upstream hot sources, pool sizes, retries or internal operator queues. Little's Law (L = lambda * W) is an accounting identity, not a saturation prediction: while offered work exceeds completions, backlog simply grows even with every worker busy.\n\n5. **The limit's scope is local, and cancellation is not termination.** Per-subscription or per-instance limits multiply with connections, tenants and replicas, so a global quota requires shared accounting or a documented, bounded overshoot. Demand control also ends at cancellation: cancelling stops new delivery but does not prove in-flight database work was aborted or a committed effect rolled back, so a slow or disconnected subscriber can keep consuming resources after it stops requesting.\n\nThe defensible design therefore names the protected resource, places admission before the expensive operation, bounds queue count and age, bounds retries and amplification, sets quota scope deliberately, and reports offered, admitted, rejected and completed work separately. `request(n)` is a necessary part of that contract, never a substitute for it.",
+      "citations": [
+        "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e#2-reactive-streams-is-demand-coordination-not-a-magic-queue",
+        "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e#1-nonblocking-i-o-is-an-end-to-end-contract",
+        "tycho.page.114da51171c2474ebd56ee3bebad3bcb#engineering-walkthrough-subscriber-demand-does-not-protect-an-unseen-blocking-queue",
+        "tycho.page.577d52b851c3478eb73e301ace1bcfea#5-failure-recovery-and-overload-boundaries",
+        "tycho.page.0c7b8f00661648f3b50e448471f5cc7e#3-reactor-3-7-0-scheduler-choice-and-context",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#measurement-model"
+      ],
+      "core_claims": [
+        "Reactive Streams coordinates demand through request(n) only when publisher and operators respect the protocol, and an uncontrollable upstream still needs a documented buffer, drop, backoff or fail policy.",
+        "A blocking JDBC callback or unbounded internal queue on an event loop can enqueue work before demand is honored, so the public request protocol does not cap that queue.",
+        "Blocking an event loop stalls unrelated operations assigned to it, and moving the blocking call to a bounded elastic scheduler protects responsiveness but only relocates waiting and resource budgeting.",
+        "Cancellation asks a stream to stop delivering new work, but it does not establish that a database transaction, HTTP request or external effect was rolled back.",
+        "Reactive programming does not automatically mean parallel execution, faster computation, a durable queue or a stronger transaction."
+      ],
+      "optional_claims": [
+        "A synchronous stack may be adequate when libraries and requirements are blocking, because nonblocking's principal benefit is resource efficiency under I/O waits.",
+        "A bounded reactive path should be compared with thread-per-request execution under equal offered messages before it is chosen."
+      ],
+      "required_evidence": [
+        "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e#2-reactive-streams-is-demand-coordination-not-a-magic-queue",
+        "tycho.page.114da51171c2474ebd56ee3bebad3bcb#engineering-walkthrough-subscriber-demand-does-not-protect-an-unseen-blocking-queue",
+        "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e#1-nonblocking-i-o-is-an-end-to-end-contract"
+      ]
+    },
+    {
+      "task_id": "Q131",
+      "question": "What alternative must a colocated helper beat in the Sidecar card, and what different alternative must it beat in the Ambassador card?",
+      "layer_expected": "atlas",
+      "answer": "In the Sidecar card, the colocated helper must beat a language-specific library or traditional extension, which wins when deeper integration and lower network overhead matter. In the Ambassador card, the colocated out-of-process proxy must instead beat a client library invoked directly by the application, which wins when proxy overhead outweighs offloading.",
+      "citations": [
+        "tycho.page.2462dbd13c464291bcbf4325d2d2bd97#overview",
+        "tycho.page.0465c87ed370438db997a1fcfcbe54cd#overview"
+      ],
+      "core_claims": [
+        "The Sidecar card asks whether auxiliary runtime behavior should run in a colocated helper beside the main workload rather than inside it, and its good-fit condition requires the helper to share the application instance's lifecycle and to be schedulable by the platform.",
+        "For Sidecar the competing alternative is a language-specific library or traditional extension when its deeper integration and lower network overhead dominate the colocated-helper benefit, and the same trade-off is the card's hard contraindication.",
+        "The Ambassador card asks whether client connectivity should be offloaded to a colocated out-of-process proxy, fitting cases where many languages need common connectivity, a legacy application is hard to modify, or monitoring and resilience belong outside the client.",
+        "For Ambassador the competing alternative is a client library invoked directly by the application when proxy overhead outweighs offloading, and proxy latency that outweighs the offloading benefit is its hard contraindication."
+      ],
+      "optional_claims": [
+        "The two failure contracts differ: Sidecar requires startup and shutdown ordering between application and helper to avoid races, while Ambassador's failure note concerns the safety of its managed retries.",
+        "Each card lists the other as a related entry, both exclude provider-specific implementations, and both declare the decision state applicable-under-conditions rather than a product choice."
+      ],
+      "required_evidence": [
+        "tycho.page.2462dbd13c464291bcbf4325d2d2bd97#overview",
+        "tycho.page.0465c87ed370438db997a1fcfcbe54cd#overview"
+      ]
+    },
+    {
+      "task_id": "Q139",
+      "question": "Why does candidate C, with two attempts and linear backoff, show higher retry amplification and a higher timeout rate than candidate B?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "C is not retrying more per request than B: far more of C's first attempts miss their deadline, and every miss re-queues the request. That one fact drives both metrics, because the extra attempts raise retry amplification and add load that produces still more timeouts.\n\nMeasured on the same 20 requests/s Poisson workload for 1,800 s after a 300 s warmup with 30 replications: B has retry amplification 1.004, timeout rate 0.0041 and success 0.9996; C has 1.079, 0.111 and 0.9679. Both offer 20 requests/s to 24 requests/s of capacity (12/0.5 s and 18/0.75 s), so nominal capacity and offered-load utilization (0.833) are identical; the difference is resilience headroom, not capacity.\n\n1. Amplification counts realized attempts, not the allowed budget. Retry amplification is total attempts divided by offered requests, so 1.004 means about 0.4% of B's requests made a second attempt even though B may make three, and 1.079 means about 7.9% of C's requests made a second attempt even though C may make only two. B's third attempt is unused headroom; C's second attempt is a routine fallback. Raising the attempt ceiling does not raise amplification unless attempts fail.\n\n2. The deadline-to-service-time ratio sets the first-attempt timeout rate. B's per-attempt timeout is 2.0 s against a 0.5 s lognormal mean (CV 0.6), a 4x ratio; C's is 1.5 s against 0.75 s, a 2x ratio. The deadline starts at arrival and afresh at each retry, and it fires whenever queueing delay plus service exceeds it. Halving the ratio pushes much more of the queueing tail past the deadline. C's p95 of 1.769 s already exceeds its own 1.5 s deadline, which a single attempt cannot do, so C's tail is made of requests that waited through a first attempt plus a backoff; B's p95 of 1.206 s stays well inside its 2.0 s deadline.\n\n3. Retries feed back into load, and timeouts are counted per attempt. C's 7.9% extra attempts raise effective offered load from 20 to about 21.6 requests/s against 24, i.e. utilization from 0.833 to about 0.90, where waiting time rises steeply; B's 0.4% raises it only to about 0.84. C's 11.1% timeout rate is consistent with per-attempt counting: about 7.9% first-attempt timeouts plus about 3.2% second-attempt timeouts that ended the request (success 0.9679 means about 3.2% ended unsuccessfully after at most two attempts), which sums to 11.1%. Each retried-and-failed request therefore contributes two timeout events, so one request population inflates both metrics.\n\n4. Backoff and jitter decide whether retries arrive as a trickle or a synchronized wave. B's exponential backoff (base 0.2 s) uses full jitter; jitter reduces synchronized retry waves, and without it clients that failed together retry together. The comparison records full jitter for B and records no jitter for C, whose declared policy is linear backoff, so C's retries are correlated and arrive as a burst, the documented retry-storm failure mode where a load spike hits the service when it can least absorb it. Those bursts lengthen waits and make the retried attempts themselves likely to miss their deadline.\n\nNet: C's higher amplification and higher timeout rate are two views of one feedback loop. A tight per-attempt deadline turns queueing variance into timeouts; the timeouts become correlated retries that add about 8% load and push utilization toward 0.9; the added load produces more timeouts. B escapes the loop because its few retries are jittered and given twice the deadline headroom, so its three-attempt budget is almost never consumed.\n\nLimits: these are synthetic discrete-event results, not production measurements. The pages read do not state C's service-time coefficient of variation or its linear-backoff base, and the split of C's 11.1% timeout rate into first-attempt and retry components is inferred from the stated definitions rather than reported separately.",
+      "citations": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b"
+      ],
+      "core_claims": [
+        "Retry amplification is total attempts divided by offered requests, and V12 reports it for every discrete-event run.",
+        "Candidate A has amplification 1.000 and a 0.0778 timeout rate, B has 1.004 and 0.0041, and C has 1.079 and 0.111.",
+        "B's three attempts with exponential backoff and full jitter absorb transient service-time variation without materially increasing offered load.",
+        "C's two attempts with linear backoff raise attempts per request while still timing out 11.1% of requests, so its retry budget adds load without meeting the deadline.",
+        "Jitter reduces synchronized retry waves, without which many clients that failed at the same time retry at the same time."
+      ],
+      "optional_claims": [
+        "C's success rate of 0.9679 is below B's 0.9996 even though C has the largest server pool of the three candidates.",
+        "All three candidates receive the same Poisson workload at 20 requests per second, so the amplification difference comes from the retry policy rather than from arrivals."
+      ],
+      "required_evidence": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results"
+      ]
+    },
+    {
+      "task_id": "Q147",
+      "question": "When does a simulated output require batch means instead of the independent-replication standard error?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Use batch means when the reported metric is computed from one simulation run (a single realization or one long run) and the observations within that run are dependent, so the run's n observations are not n independent samples. In that case the independent-replication formula se = s/sqrt(n) treats correlated observations as if each added independent information and understates the standard error. Batch means divides the single run into batches, averages within each batch, and estimates the standard error from the spread of the resulting approximately independent batch means. Kim and Whitt recommend batch means for simulation output analysis and for finite-window measurement, where warm-up and edge effects also matter. Use the independent-replication standard error when the metric is an average over n genuinely independent replications, as in V12: each replication has its own seed, se = s/sqrt(n), and the 95% interval is mean +/- 1.96*se. That formula does not become more valid if replications are correlated or the output is heavy-tailed; a shared random stream makes the standard error too small. The practical test is therefore how the output was produced and whether the units being averaged are independent: separate-seed replications support the replication-based standard error, while a single long run with autocorrelated output (or only a finite measurement window) requires batch means or another dependence-aware error method. V12 itself uses independent replications and therefore does not apply batch means; its limitations state this, and it notes that a future model with one long run would need a different error method. Batch means corrects the error estimate for within-run dependence, not bias from warm-up, model misspecification, or a nonstationary window.",
+      "citations": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat"
+      ],
+      "core_claims": [
+        "With n independent replications the standard error of the mean is s divided by the square root of n, and V12 gives each replication its own seed so replications are independent by construction.",
+        "Within a single replication, events are dependent by design, so a metric computed from one long run cannot use the independent-replication formula.",
+        "Batch means estimate the standard error by splitting one long run into batches, and V12 does not apply them because it uses independent replications.",
+        "The run's limitations must state which error method was used, and a future model based on one long run would need a different method.",
+        "V12 does not adapt the replication count during a run; the scenario declares it, and an adaptive rule would need its own seeded decision log."
+      ],
+      "optional_claims": [
+        "A shared random stream across replications makes the reported standard error too small.",
+        "The stopping rule uses a pilot of at least ten replications to estimate the standard error, then computes the required n for the target relative error."
+      ],
+      "required_evidence": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications"
+      ]
+    }
+  ]
+}

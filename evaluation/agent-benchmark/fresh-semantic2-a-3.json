@@ -1,0 +1,73 @@
+{
+  "status": "ai-judge-not-human",
+  "schema_version": 1,
+  "input": "evaluation/agent-benchmark/fresh-judge2-a-3.json",
+  "input_sha256": "28882605cbfca33de8776a639f1ca4cc3330c090c3c274dd189d9735d0e29653",
+  "judged_at": "2026-11-01T02:42:32+01:00",
+  "judge": {
+    "harness": "DeepSeek Harness",
+    "model": "deepseek-flash",
+    "basis": "supplied answer and core_claims only; no evidence or other file read"
+  },
+  "rubric": {
+    "answer_support": "2 = direct, substantively correct answer to the question; 1 = partly on point, materially incomplete or partly unsupported; 0 = off-topic or contradicted",
+    "core_coverage": "2 = every core claim substantively addressed; 1 = most core claims addressed but one or more materially missing or only partial; 0 = core claims largely unaddressed",
+    "citation_valid": "boolean; cited anchors well-formed, unique and topically consistent with the claims they back (evidence text was not opened per the grading instruction)",
+    "pass": "true iff answer_support == 2 and core_coverage == 2"
+  },
+  "summary": {
+    "tasks": 6,
+    "passed": 2,
+    "failed": 4
+  },
+  "items": [
+    {
+      "task_id": "Q103",
+      "answer_support": 2,
+      "core_coverage": 1,
+      "citation_valid": true,
+      "pass": false,
+      "notes": "Derives the 0.99^10 ~ 90.4% composition, states that percentiles do not add, and notes that correlation turns F-to-the-N into a model, but discusses only the all-results-required case and never contrasts quorum, first-success, optional-enrichment or sequential-dependency policies on the critical path."
+    },
+    {
+      "task_id": "Q111",
+      "answer_support": 2,
+      "core_coverage": 2,
+      "citation_valid": true,
+      "pass": true,
+      "notes": "Covers subject/digest binding, signature versus authorization, provenance scope, expected-builder policy checks and separately scoped SLSA Build/Source levels, ending on eligibility as a separate target-specific gate decision."
+    },
+    {
+      "task_id": "Q119",
+      "answer_support": 2,
+      "core_coverage": 2,
+      "citation_valid": true,
+      "pass": true,
+      "notes": "Explains the closed-loop feedback ceiling with the 100/s and 10/s figures, coordinated omission, open-arrival backlog arithmetic, separate denominators, and that histogram corrections are modeled rather than observed."
+    },
+    {
+      "task_id": "Q127",
+      "answer_support": 2,
+      "core_coverage": 1,
+      "citation_valid": true,
+      "pass": false,
+      "notes": "Explains the monotonic ratchet, atomic compare-and-replace with the protected effect, durability across restart and the absence of deduplication, but never defines the takeover linearization point or the rule to stop protected mutations while the coordination quorum is unavailable."
+    },
+    {
+      "task_id": "Q135",
+      "answer_support": 2,
+      "core_coverage": 1,
+      "citation_valid": true,
+      "pass": false,
+      "notes": "Explains the sidecar-less migration path, the issuer/rotation/identity-binding preconditions, the hard contraindications and the source boundary, but omits expiry monitoring and the Zero Trust target that access be authorized at the resource rather than by network location."
+    },
+    {
+      "task_id": "Q143",
+      "answer_support": 2,
+      "core_coverage": 1,
+      "citation_valid": true,
+      "pass": false,
+      "notes": "Correctly answers assumed status via weakest-input inheritance and that only new evidence changes it, but never names the four-status set including unknown or states that an unknown input has no defensible value that must not be invented."
+    }
+  ]
+}

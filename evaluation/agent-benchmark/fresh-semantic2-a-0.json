@@ -1,0 +1,81 @@
+{
+  "status": "ai-judge-not-human",
+  "schema_version": 1,
+  "input": "evaluation/agent-benchmark/fresh-judge2-a-0.json",
+  "input_sha256": "553927079a2e964a16792851363683a40482a99572642631728dc040ccb6c015",
+  "judged_at": "2026-11-01T02:24:57+01:00",
+  "judge": {
+    "harness": "DeepSeek Harness",
+    "model": "deepseek-flash",
+    "basis": "supplied answer and core_claims only; no evidence or other file read"
+  },
+  "rubric": {
+    "answer_support": "2 = direct, substantively correct answer to the question; 1 = partly on point, materially incomplete or partly unsupported; 0 = off-topic or contradicted",
+    "core_coverage": "2 = every core claim substantively addressed; 1 = most core claims addressed but one or more materially missing or only partial; 0 = core claims largely unaddressed",
+    "citation_valid": "boolean; cited anchors well-formed, unique and topically consistent with the claims they back (evidence text was not opened per the grading instruction)",
+    "pass": "true iff answer_support == 2 and core_coverage == 2"
+  },
+  "summary": {
+    "tasks": 7,
+    "passed": 2,
+    "failed": 5
+  },
+  "items": [
+    {
+      "task_id": "Q100",
+      "answer_support": 2,
+      "core_coverage": 1,
+      "citation_valid": true,
+      "pass": false,
+      "notes": "Correctly explains the stable Repeatable Read snapshot, the absence of a shared write-write conflict over different inserted rows, and the need for an exclusion constraint, SERIALIZABLE retry or single-owner model, but never addresses the core claim that a failed transaction is not an accepted booking and that a committed booking whose reply was lost needs a durable operation ID and status lookup."
+    },
+    {
+      "task_id": "Q108",
+      "answer_support": 2,
+      "core_coverage": 2,
+      "citation_valid": true,
+      "pass": true,
+      "notes": "Covers every core claim - per-reader visibility of the replaced version, retention while an older snapshot may still need it, vacuum reuse gated by that horizon, long-lived read transactions holding the horizon open, and reuse-inside-relation versus VACUUM FULL - and states plainly what the read sources do not document."
+    },
+    {
+      "task_id": "Q116",
+      "answer_support": 2,
+      "core_coverage": 1,
+      "citation_valid": true,
+      "pass": false,
+      "notes": "Gives a strong four-way contrast of authority, ordering domain, durability contract and expiry mode for the four cursors, but omits the core claims about connector lag, slot retention and resnapshotting, changelog-restore catch-up cost, and the exactly_once_v2 scope limit."
+    },
+    {
+      "task_id": "Q124",
+      "answer_support": 2,
+      "core_coverage": 1,
+      "citation_valid": true,
+      "pass": false,
+      "notes": "Explains routing-versus-state exposure, the CONFIRMED_V2 case and the missing rollback no-return boundary, but omits the core claim that a small canary sample can miss rare tenant or long-tail operations so incomplete coverage is not a green result."
+    },
+    {
+      "task_id": "Q132",
+      "answer_support": 2,
+      "core_coverage": 1,
+      "citation_valid": true,
+      "pass": false,
+      "notes": "Rightly separates the age-budget claim from the ordering claim, cites the synchronized-expiry contraindication and notes that invalidation does not promise immediacy, but leaves several card-level claims partial: refresh cost and the TTL-longer-than-window condition, the rule for reversing the choice, and the Cache Invalidation card's preconditions and rejection conditions."
+    },
+    {
+      "task_id": "Q140",
+      "answer_support": 2,
+      "core_coverage": 1,
+      "citation_valid": true,
+      "pass": false,
+      "notes": "Correctly explains declared-n input, the seeded decision log an adaptive rule would need, peeking and the ex-post threshold status, but does not give the documented stopping rule's pilot of at least 10 replications, standard-error estimate and computed required n."
+    },
+    {
+      "task_id": "Q148",
+      "answer_support": 2,
+      "core_coverage": 2,
+      "citation_valid": true,
+      "pass": true,
+      "notes": "Covers all five core claims, including share as one stock beside backlog, divergence and rollback drain, the reconciliation backlog, the staged 8,925.5-divergence and 10%-rollback figures, the false-cutover failure mode and the evidence a supported cutover requires."
+    }
+  ]
+}

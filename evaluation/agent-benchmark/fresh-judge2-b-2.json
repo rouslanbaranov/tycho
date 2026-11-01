@@ -1,0 +1,185 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q102",
+      "question": "Why does reciprocal rank fusion add only rank reciprocals rather than the underlying lexical and semantic scores, and what does the k constant control?",
+      "layer_expected": "book",
+      "answer": "Reciprocal rank fusion (RRF) is rank-only by design: for each document it sums 1/(k + rank_r(d)) across the ranked lists that contain it, with documents absent from a list contributing zero. The reason is that the underlying scores are not commensurable. BM25 scores, cosine distances and reranker logits have different numerical scales and are not calibrated probabilities, so adding them directly is unsafe unless they have been calibrated against real relevance data. A rank is a shared ordinal signal that survives any monotone rescaling of a retriever's scores, needs no per-retriever normalization, and lets heterogeneous lexical and semantic lists be combined by one simple rule. The cost is that score magnitude and confidence are discarded: a document that barely leads one list receives the same reciprocal as one that leads by a wide margin, and ties, missing ranks, duplicate IDs or list truncation can change the outcome.\n\nThe k constant is a ranking hyperparameter, not the number of documents or the list length. Because it is added to the rank in the denominator, it controls how steeply each list's contribution decays with depth, and therefore the balance between top-rank emphasis and cross-list consensus: a small k makes the first positions dominate and discounts deep results quickly, while a large k flattens the curve so that agreement across several lists and moderately ranked hits carry more weight. It also caps a rank-1 contribution at 1/(k+1). The book's examples use k=60 only as an illustrative setting; k should be tuned and evaluated against lexical-only, vector-only and other fusion baselines on held-out judgments rather than treated as a universal constant. RRF still does not guarantee top-k recall, intent understanding, freshness, ACL safety or correctness.",
+      "citations": [
+        "tycho.page.b919c3c84861491c82334b6e00bf443e#2-reciprocal-rank-fusion-handles-incompatible-score-scales",
+        "tycho.chapter.6d25a036c078402a85ec464227a48a31#engineering-walkthrough-hand-computed-rank-fusion-and-a-false-evidence-match",
+        "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design"
+      ],
+      "core_claims": [
+        "BM25 scores, cosine distances and model reranker logits have different numerical scales, so adding them directly is unsafe unless they are calibrated against real relevance data.",
+        "Reciprocal rank fusion gives each document the sum over ranked lists of one divided by k plus its rank in that list, and a document missing from a list contributes zero.",
+        "The k constant is a ranking hyperparameter that damps the influence of top ranks, not the number of documents in the corpus or in any list.",
+        "A document ranked first and second across two lists can outrank a document ranked first in only one list; with k=60 the page's example ranks A above C despite C's single first place.",
+        "Rank fusion guarantees neither top-k recall nor freshness, access-control safety or correctness, because candidate generation and filters still decide which documents can be fused at all."
+      ],
+      "optional_claims": [
+        "Exact nearest-neighbor search supplies a recall reference within one embedding model, metric, filter and corpus version, but it does not establish that the ranking matches human relevance labels."
+      ],
+      "required_evidence": [
+        "tycho.page.b919c3c84861491c82334b6e00bf443e#2-reciprocal-rank-fusion-handles-incompatible-score-scales",
+        "tycho.page.b919c3c84861491c82334b6e00bf443e#1-retrieval-has-multiple-independent-signals",
+        "tycho.page.66d2977575264168a8616e09d0900af6#1-the-retrieval-contract-begins-before-embeddings"
+      ]
+    },
+    {
+      "task_id": "Q110",
+      "question": "Why can a CPU-utilization autoscaler reduce replica count while request latency is rising, and what should be examined instead?",
+      "layer_expected": "book",
+      "answer": "A CPU-utilization autoscaler regulates CPU busyness, not whether requests are making progress. When requests wait on a slow downstream (a database lock, remote I/O, a connection pool, a broker quota), they consume little or no application CPU while their latency and the pending backlog grow. The autoscaler therefore observes low utilization and, especially with a scale-in stabilization window or tolerance, removes replicas. That is backwards: fewer replicas supply less concurrency and admission capacity for work that is already waiting, so queue age and latency rise further. The controller is scaling a resource that is not the bottleneck. A replica-average utilization can also hide one hot replica, and a short or smoothed measurement window can treat a transient as spare capacity.\n\nExamine the scarce resource and the user-visible outcome instead:\n- Latency: p95/p99 end-to-end latency against an SLO, separated into queue/wait time and service/downstream spans, not only mean app CPU.\n- Queue and concurrency: queue depth and age, pending/in-flight requests, per-replica concurrency, and counts of offered versus admitted, completed, rejected and timed-out work.\n- Errors and retries: rejection and timeout ratios, retry amplification, duplicate side effects, and successful completion rate rather than attempts.\n- Downstream saturation: backend CPU and connections, database lock waiting, pool hold times and wait counts, broker quota, cache hit/miss and external quotas. Instrument the named downstream wait; unchanged application CPU elsewhere is a clue, not proof of spare capacity.\n- The control loop: when the autoscaler observed the metric, when it decided, what it requested, and when the units became usefully ready; plus measurement-window staleness, scale-in stabilization, in-flight drain, min/max limits and missing metrics.\n\nThen choose the matching action. If a shared downstream is the bottleneck, bounded admission/backpressure, query or lock repair, or a downstream budget change may be correct, and adding application replicas can increase contention and retries. Use CPU as the scaling signal only when the work is genuinely CPU-bound and partitionable; otherwise target queue age, latency or concurrency, or a custom downstream-budget signal, paired with an independent guardrail. Evaluate the policy end-to-end with a replayable offered-demand trace so scale-in is tested against rising latency.",
+      "citations": [
+        "tycho.page.d2a71d85f3144ba395303b8432b38d37#4-controller-stability-scale-out-and-scale-in-are-asymmetric",
+        "tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst"
+      ],
+      "core_claims": [
+        "When requests wait on a slow database rather than consume CPU, application CPU utilization can stay low while latency and pending work rise.",
+        "A CPU-driven controller can interpret that low utilization as excess capacity and scale in, increasing pressure and the fraction of pending requests.",
+        "Replica count is not a direct measure of useful capacity because a replica can be limited by a shared downstream budget it does not control.",
+        "Controller design separates scale-up urgency from scale-down conservatism because reacting to every spike causes oscillation while excessive smoothing underreacts to sustained overload.",
+        "The remedy may be upstream admission limits, query or lock repair, or a database budget change rather than additional application instances."
+      ],
+      "optional_claims": [
+        "Scale-out response time decomposes into metric, decision, provisioning, warm-up and routing stages that can overlap, so summing their averages is not an empirical estimate.",
+        "A deferred queue operation is not equivalent to a completed synchronous operation when the user contract requires an answer within a deadline."
+      ],
+      "required_evidence": [
+        "tycho.page.d2a71d85f3144ba395303b8432b38d37#4-controller-stability-scale-out-and-scale-in-are-asymmetric",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#1-decompose-the-actual-scale-out-response-time",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst"
+      ]
+    },
+    {
+      "task_id": "Q118",
+      "question": "When a caller submits an unauthorized document ID copied from a citation, why is omitting that document from ranked results insufficient, and what else must the service deny?",
+      "layer_expected": "book",
+      "answer": "The ranked list is only one of several ways to reach a document, so removing the identifier from it closes one channel and leaves the rest open. An identifier copied out of a citation is a stable object handle, and the citation lends it apparent legitimacy without conferring any right. The negative-test matrix names this exact case \u2014 \"Unauthorized document ID obtained from a citation\" \u2014 and requires the service to \"Deny reading/metadata for that subject\", while noting that \"Hiding it from ranking only\" does not prove the control. The same rule appears as a property of ranking itself: \"A search that ranks a forbidden title but excludes its body can still leak metadata. Count, title, snippet, related links and citations must be evaluated against authorization, not just the final open-file operation.\"\n\nSo besides the ranked entry, the service must deny:\n\n1. The direct read by identifier \u2014 the body, section or range of that document. Authorization belongs to the exact object and must be checked after resolving it, not to the query that produced the identifier; every document/section-level read must pass deterministic authorization regardless of how the caller reached it.\n\n2. The metadata and derived projections around the object: title, snippet, result counts, related links and citation rows, which must be evaluated against authorization, not only the final open-file call.\n\n3. Alternate views of the same content. Indexes, caches and citations are \"alternate views of the same authorized content, not independent permissions\"; a cross-collection link is never permission to read its target and a \"related document\" is a navigation hint, not an ACL bypass. Cache keys must reflect principal/tenant scope, and a revoked grant must block even when an old candidate list or cached snippet still holds the document.\n\n4. The answer surface. Summaries, citations and \"supporting evidence\" may use permitted text only, because a restricted assertion can leak through paraphrase even when no restricted page is displayed.\n\n5. The existence signal. The denial must not distinguish \"exists but forbidden\" from \"absent\": an empty authorized result is not proof that the corpus lacks the document, and the response may state that nothing was found in the permitted scope \"without revealing the existence or identity of excluded material\". \"A correct response can cite only allowed sources or state that required evidence is inaccessible\u2014never disclose the forbidden source to justify refusal.\"\n\nIn short, a citation is provenance, not authorization: a valid link from a permitted page must not launder a restricted target into authorized content. The service also must not expose an unrestricted lookup-by-ID: resolution should be limited to approved stable IDs, and where no policy can authorize the read, the function should not exist at all.",
+      "citations": [
+        "tycho.page.b38397b1d9fe456dbdb30e5b2ec2f3c8#6-a-synthetic-negative-test-matrix",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+        "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#5-privacy-audit-and-retention-boundaries",
+        "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#4-versioned-provenance-and-cross-collection-isolation",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization",
+        "tycho.page.9145b7ce81d4461b90d3c6285128c18a#original-ranked-set-counterexample-authorization-is-not-optional-relevance"
+      ],
+      "core_claims": [
+        "Each document read must be evaluated against the actual authorized subject and object, not a collection-wide login, and an end-user identity is not permission to read every document that matches a query.",
+        "A search that ranks a forbidden title but excludes its body can still leak metadata, so count, title, snippet, related links and citations must also be evaluated against authorization.",
+        "For an unauthorized ID obtained from a citation, the required behavior is to deny reading and metadata for that subject; hiding the item from ranking alone does not prove denial.",
+        "A cached snippet from a different scope must not be served, and neither a cache hit ratio nor a successful authentication is evidence of entitlement.",
+        "Denial cases should be exercised end-to-end with synthetic restricted fixtures and independent authorization configurations, because passing a boundary check covers only the tested patterns."
+      ],
+      "optional_claims": [
+        "Model-generated action arguments should be rejected by deterministic schema and access-policy checks rather than by trusting the model's promise to send correct input.",
+        "Refusing an unsupported write through a search tool requires the side-effect API to be absent, not just a claim that the surface is read-only."
+      ],
+      "required_evidence": [
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+        "tycho.page.b38397b1d9fe456dbdb30e5b2ec2f3c8#6-a-synthetic-negative-test-matrix"
+      ]
+    },
+    {
+      "task_id": "Q126",
+      "question": "Why must workload identity be paired with an authorization policy before a caller's operations are allowed?",
+      "layer_expected": "atlas",
+      "answer": "Workload identity answers only which workload is calling: it authenticates a principal and, at most, binds a certificate to a service, but it does not decide whether that principal may perform a given operation on a given object. Authorization has to evaluate principal, action, object, context and policy version, usually with tenant and delegation constraints, and deny by default. Without an explicit policy, possession of a valid identity becomes blanket permission: any workload that can reach an endpoint may act on any object identifier it presents, and indirect paths (exports, batch jobs, caches, replayed events, admin APIs) inherit the same access. The risk concentrates in three places. Scope: identity alone sets no resource, action or time limit, so blast radius is whatever reachability allows and permission creep stays invisible. Revocation: a credential with no attached policy has no bounded owner and no revocation path independent of the compromised principal. Enforcement: a remote policy decision is not enforcement unless the resource boundary binds it to the actual object and action, and a cryptographically valid token can outlive the session or object permission it was issued for. Pairing identity with policy turns authentication into a bounded, explainable and deniable decision; coarse roles may be enough for small stable systems, but the pairing cannot be inferred from a zero-trust label.",
+      "citations": [
+        "tycho.page.e9524931fbcc4b4e833f6b0465a27698#2-authentication-is-not-authorization",
+        "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#least-privilege",
+        "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "Mutual TLS authenticates both ends of a service connection with automatically rotated credentials, so it establishes which workload is on the connection rather than which operations that workload may perform.",
+        "Secure naming checks that the service account in the server certificate is authorized to run the target service; it binds an identity to a service, not a caller to an action.",
+        "The bounded owner note states that a valid certificate authenticates the workload, not every operation it requests, so authorization policy must bind identity to service while least privilege scopes each identity to the permissions its current task needs.",
+        "Expired or shared credentials break authentication, and certificate issuance sits in the request path: expiry must be monitored and keys rotated periodically, while the bounded note treats a failed rotation as a plausible outage risk rather than a measured one.",
+        "Permissive mTLS accepts both mutual TLS and plain text while workloads without a sidecar are migrated and should switch to STRICT once sidecar injection is complete, so permissive mode is a migration state with an owned exit rather than a steady state."
+      ],
+      "optional_claims": [
+        "The card rejects workload identity when network location is the only available identity or when certificate rotation cannot be automated.",
+        "Certificate revocation, trust-root bootstrap, key storage, lifetime policy and rotation-failure impact are outside the cited source headings and remain synthetic guidance."
+      ],
+      "required_evidence": [
+        "tycho.page.e18ec327be0da89802c1b579dfbd6044#overview",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes",
+        "tycho.page.6023770f1256fc30b9784e10d312a3da#overview"
+      ]
+    },
+    {
+      "task_id": "Q134",
+      "question": "When does the atlas prefer structured logs with request IDs over distributed tracing?",
+      "layer_expected": "atlas",
+      "answer": "The atlas treats distributed tracing as applicable only under conditions and names structured logs with request IDs as its fallback. The Distributed Tracing card lists structured logs with request IDs as the competing alternative and says to reverse that choice (i.e., adopt tracing) only when cross-service latency diagnosis justifies the trace infrastructure. So structured logs with request IDs are preferred in the card's three hard-contraindication cases: when one service suffices (the owner notes say to reject tracing as a fit for a single-service request), when trace context cannot cross a boundary, and when trace data would leak sensitive payloads. The decision boundary also favors logs (or metrics) when the question is an aggregate latency figure or a discrete business event rather than the cross-component path itself; tracing is warranted only when the cross-component path is the question. That preference is itself conditional: structured logging requires stable, versioned field names and redaction rules, owned retention/cost, and available correlation IDs, and it is rejected when logs would hold unredactable sensitive data, schema churn is unowned, or volume overwhelms storage. Finally, logs with request IDs remain operational evidence, not an authoritative audit record: logs may carry trace/span IDs but must not fabricate them, and accountability or irreversible-action obligations require a dedicated durable audit record. Both atlas cards are applicable-under-conditions, not unconditional defaults.",
+      "citations": [
+        "tycho.page.ff387baa8697be02afec1be6807b858f#overview",
+        "tycho.page.f921597aae854c6996459fc025a9bca3#bounded-pattern-ownership-notes",
+        "tycho.page.fd57fe37e916adffc5819aa849245d1d#overview",
+        "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#bounded-pattern-ownership-notes",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#2-correlation-without-recording-credentials",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#6-architecture-decisions-and-access-controls"
+      ],
+      "core_claims": [
+        "The Distributed Tracing card names structured logs with request IDs as its competing alternative and says to reverse toward trace infrastructure only when cross-service latency diagnosis justifies it.",
+        "Tracing is a good fit only when trace context can propagate, the sampling policy is explicit, sensitive data is excluded, and trace storage and retention are owned.",
+        "The card rejects tracing when one service suffices, when context cannot cross a boundary, or when trace data would leak sensitive payloads.",
+        "Its failure concern is broken context propagation and sampling bias, so a trace-based conclusion depends on both propagation and sampling being sound.",
+        "Structured Logging is a good fit only with stable fields, defined redaction, owned retention and cost, and available correlation IDs, and it is rejected when logs contain unredactable sensitive data, schema churn is unowned, or volume overwhelms storage."
+      ],
+      "optional_claims": [
+        "The tracing card's source record notes that sampling was not a served source section, so its sampling policy is synthetic guidance rather than a source claim.",
+        "The C11 counterexample section states that none of the chapter's cards establishes technical sufficiency, so choosing logs over traces remains a bounded decision."
+      ],
+      "required_evidence": [
+        "tycho.page.ff387baa8697be02afec1be6807b858f#overview",
+        "tycho.page.fd57fe37e916adffc5819aa849245d1d#overview",
+        "tycho.chapter.419769c372ccaa569796954878e3bef9#chapter-result-and-counterexample"
+      ]
+    },
+    {
+      "task_id": "Q142",
+      "question": "Why is a normal-approximation confidence interval acceptable for the V12 success rate but risky for its p95 latency?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The same formula, mean +/- 1.96*se, is applied to two different estimands. It is a confidence interval for a mean, so it is well behaved where the metric is a bounded mean and misapplied where the metric is a tail quantile.\n\n1. What the interval actually estimates. V12 computes se = s/sqrt(n) across independent replications (each replication has its own seed) and forms mean +/- 1.96*se. The justification is the sampling distribution of a sample mean, not the convenience of the metric. Its accuracy depends on the shape of the output distribution and on n; it \"does not become more valid if the replications are correlated or the output distribution is heavy-tailed\" (standard-error).\n\n2. Why it is acceptable for the success rate. The success rate is a bounded metric: a proportion in [0,1], i.e. a mean of bounded outcomes. Its per-replication spread cannot be driven by rare extreme values the way a latency can, skew is limited by the bounded support, and the sampling distribution approaches normality at moderate n. That is exactly the stated reason: at 30 replications the approximation \"is reasonable for a bounded metric such as success rate\". The reported run also sits far from any resolution limit: success rate 0.9218 with se about 0.00038, relative error 0.00041 against a 0.02 threshold (relative-error). The interval remains strictly inside [0,1], so no boundary correction is needed. Acceptability here is a property of the estimand (bounded mean, small variance), not of the metric's importance.\n\n3. Why it is risky for the p95 latency. Four compounding reasons:\n   - Wrong estimand. mean +/- 1.96*se bounds an expectation. A p95 is a value of the latency distribution, estimated as a tail order statistic. Its sampling variability is governed by the density near the 95th percentile, not by s/sqrt(n). Reusing the mean's interval for the quantile silently changes the quantity being bounded.\n   - Heavy tail. For heavy-tailed latency, s is dominated by rare large observations, the central limit theorem converges slowly, and the tail statistic's sampling distribution is skewed. V12 itself records that for a heavy-tailed latency the approximation \"can understate the tail uncertainty\"; the page names the corresponding failure mode, \"Heavy-tail denial. A latency tail is summarized by a mean and a normal interval\". A nominal 95% interval can then be optimistically narrow, which is approximation artifact presented as precision.\n   - Tail information is not recoverable from a mean. Sums and counts reconstruct a mean under compatible populations but \"cannot reconstruct an arbitrary high-percentile distribution\", and quantile estimation needs distributional resolution (bucket boundaries, enough tail observations). A mean-and-standard-error interval carries no tail resolution, so a p95 interval built from it inherits none.\n   - Coverage fails exactly where the tail lives. Owen's list of where simple Monte Carlo fails \u2014 heavy tails, dependent samples, misspecified distributions, rare events \u2014 is the tail's home ground. Coverage is 95% only \"under the model's assumptions\", and the tail is where those assumptions are weakest and least testable.\n\n4. The honest limit that applies to both. The interval covers the true mean in repeated sampling about 95% of the time under the model. It does not cover the true production value if the model is biased or inputs are mis-specified, and it does not cover a single future request (coverage-and-its-assumptions). For the success rate near 1.0 there is a ceiling effect: variance is small and the interval narrow, but the metric cannot reveal failures the model does not represent. Convergence means only that the sampling error of the reported metric is small under the declared model; it does not mean the model is valid, the inputs are measured, or the decision is correct (what-convergence-does-not-mean).\n\nBottom line: the normal approximation is acceptable for the success rate because the estimand is a bounded mean whose variance and skew are small, so the approximation's error is negligible at the achieved relative error and the interval stays away from the [0,1] boundary. It is risky for p95 latency because the estimand is a tail quantile of a heavy-tailed distribution, where the mean-based standard error neither targets the right quantity nor reflects the uncertainty that matters \u2014 it can understate tail uncertainty and invite heavy-tail denial.",
+      "citations": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design"
+      ],
+      "core_claims": [
+        "V12 computes the standard error as s divided by the square root of n and reports a 95% interval as the mean plus or minus 1.96 standard errors across independent replications.",
+        "The normal approximation is reasonable for a bounded metric such as success rate at 30 replications, but for a heavy-tailed latency it can understate the tail uncertainty.",
+        "A 95% interval covers the true mean in repeated sampling under the model's assumptions; it does not cover a single future request or the production value when the model is biased or the inputs are mis-specified.",
+        "Replications are independent because each uses its own seed, so batch means are not applied; a metric computed from one long run would need a different error method.",
+        "The candidate B run reports 30 replications and p95 latency 1.206 seconds, and its limitations record that the confidence intervals use a normal approximation."
+      ],
+      "optional_claims": [
+        "Candidate A's success rate has a relative error of about 0.00041, while the p95 values in the worked comparison are reported without an interval.",
+        "A bounded success rate avoids some heavy-tail problems but introduces a ceiling effect that a latency metric does not share."
+      ],
+      "required_evidence": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results"
+      ]
+    }
+  ]
+}

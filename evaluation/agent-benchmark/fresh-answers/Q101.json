@@ -1,0 +1,15 @@
+{
+  "task_id": "Q101",
+  "answer": "JDK 21-23: a virtual thread unmounts from its carrier only at blocking operations the scheduler supports. Blocking inside a synchronized block or method was not such an operation: the virtual thread stayed mounted while it waited to enter or while it held the monitor, so its carrier could not run another virtual thread. Long or frequent pinned waits can exhaust the carrier pool; then a signaled virtual thread that has been unmounted still needs a free carrier, so requests can stall even after the lock is released - a scheduler/resource interlock rather than necessarily a permanently held mutex. JEP 444 treats this as a scalability risk, not a correctness failure.\n\nJDK 24 (JEP 491) changes monitor handling so a virtual thread can unmount while holding a monitor, while waiting to enter a monitor, and during Object.wait(). In normal HotSpot monitor handling (the default LM_LIGHTWEIGHT and LM_MONITOR modes), blocking while owning or entering a Java monitor therefore no longer implies the JDK 21 monitor-pinning problem.\n\nBlocking paths that can still pin:\n- Native method or foreign-function calls: a virtual thread in such a frame can still pin, and JEP 491 does not guarantee that every native/foreign callback unmounts.\n- Exceptional VM paths: the source says these still require diagnosis, but does not enumerate them.\n- Legacy LM_LEGACY locking mode: the reviewed monitor fix covered LM_LIGHTWEIGHT and LM_MONITOR but not LM_LEGACY, so that mode remains a path to check.\n\nCaveats: JEP 491 does not make a Java monitor non-serializing, remove lock contention or add downstream capacity. Short in-memory monitor sections did not by themselves require replacement; long or frequent pinned waits were the concern. Verify the exact JDK build and locking-mode flags rather than assuming pinning is gone; JDK 21's JEP 444 describes JFR jdk.VirtualThreadPinned events and the historical jdk.tracePinnedThreads diagnostic. Cross-cutting libraries (tracing, security, metrics) may still contain native calls and should be tested under load.",
+  "citations": [
+    "tycho.page.8ece705ef365401395fd06585173b1f1#the-mechanism",
+    "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem",
+    "tycho.page.8ece705ef365401395fd06585173b1f1#transferability-limits",
+    "tycho.page.c880ba1a0a594ad38d6713d198e46436#pinning-depends-on-the-jdk-release"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

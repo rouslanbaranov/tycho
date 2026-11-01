@@ -1,0 +1,13 @@
+{
+  "task_id": "Q130",
+  "answer": "Because a saga has already committed partial effects and no global rollback exists, a compensating transaction is a second forward business commitment, not the restoration of prior state, so each of the three properties must be carried by the compensation itself. Authorization: the domain decides which effects are reversible and which need manual reconciliation; only an owner can decide the business reversal, and the explicit cost/risk test (compensate only when the counter-effect costs less than leaving the failed step unresolved) is a business judgement, not a technical undo. The pattern card rejects compensation when no owner can decide the business reversal, and choreography's conflicting compensations require declared or centrally enforced ordering. Evidence: before dispatch the workflow records workflow identity, step identity and expected outcome; after it records committed, failed or unknown. The compensation needs idempotent effect identity and a confirmed release or repair state, and a trace proves correlation, not durable business truth; when the counter-effect cannot be proven, the honest output is a user-visible unknown state rather than a claimed reversal. Failure mode: the compensation can fail or be applied twice; a release can fail, a delivered message cannot be un-delivered and a handed-over kit may be irreversible, so a failed compensation remains a repair item needing bounded retries, retry/repair ownership, a terminal-state check and manual reconciliation. Hiding a failed compensation behind an automatically completed workflow state is a named orchestration risk. Treating compensation as undo falsely assumes that an inverse exists, that it always succeeds, that it restores the previous state, and that it needs no new authority or record; therefore compensation ordering is declared in reverse dependency order rather than assumed to be the reverse of the forward path, and the compensation is modelled as a second business decision with its own failure semantics.",
+  "citations": [
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "task_id": "Q113",
+  "answer": "The shortfall comes from the order of operations and the candidate budget, not from the filter being wrong. An approximate index (HNSW graph traversal or IVF list probing) selects and examines a bounded candidate set by vector distance; the metadata predicate is evaluated on those candidates afterwards, so a row limit of k counts surviving rows, not candidates scanned. With selectivity s, a candidate pool of m yields roughly s*m eligible items, while the scan budget (ef_search, nprobe, fetch size) is normally sized for k or a small multiple of k rather than k/s. A highly selective filter (one tenant or version among thousands) therefore leaves too few eligible rows. Approximation compounds this: traversal is steered only by distance, ineligible nodes still consume the budget, eligible nodes may be reachable only through them or sit in unprobed IVF lists, and the engine stops when its budget or search bounds are exhausted, not when k eligible rows are found. The result is a silently short, lower-recall answer set; a synthetic example in the book scans 40 candidates of which 2 are tenant-eligible, so LIMIT 10 returns 2. That shortfall is a recall measurement problem, not evidence that the corpus holds no relevant material and not a reason to infer restricted counts or relax authorization. Mitigations, all version-scoped: iterative index scans that continue under configured bounds until enough eligible rows or exhaustion (documented for pgvector 0.8.0+), partitioning or partial indexes per filter value or tenant so each index contains only eligible rows, a larger candidate budget with exact re-check/rerank, filter-aware or hybrid indexes, and exact-scan fallback when the eligible population is small. Evaluate recall@k against an exact top-k restricted to eligible documents, and record candidate budget, filter selectivity and snapshot between runs.",
+  "citations": [
+    "tycho.page.9145b7ce81d4461b90d3c6285128c18a#4-metadata-filtering-creates-a-subtle-recall-and-security-boundary",
+    "tycho.page.9145b7ce81d4461b90d3c6285128c18a#original-ranked-set-counterexample-authorization-is-not-optional-relevance",
+    "tycho.page.411a855b84384e86b3b7fb60a3f63464#5-pgvector-versus-faiss-versus-a-vector-database",
+    "tycho.page.411a855b84384e86b3b7fb60a3f63464#6-failure-cases-and-evaluation",
+    "tycho.page.66d2977575264168a8616e09d0900af6#3-ann-index-types-and-their-trade-offs"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

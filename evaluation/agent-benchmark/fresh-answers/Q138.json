@@ -1,0 +1,19 @@
+{
+  "task_id": "Q138",
+  "answer": "V12 prevents a second free with a state check at event-processing time, not by cancelling the completion in the heap. The event queue holds the completion scheduled at dispatch, and the engine leaves stale events in the heap (it does not delete them) and validates the request state whenever an event is popped. If the timeout fires first, the timeout handler performs the one release: an in-service request releases its server, the attempt is counted as timed out, and a retry is scheduled after backoff (or the request terminally fails). When the still-queued completion event is later processed, the request is no longer in service for that attempt, so the engine finds no in-service request and ignores the event; the release path is never entered and the server is freed only once. The rule is symmetric: if the completion is processed first, the request completes and the later timeout finds a completed request and is ignored. Ordering keeps this deterministic: the heap orders by (time, priority, insertion sequence) with a monotonically increasing insertion counter, so ties are total; completion and timeout both use priority 0, and insertion sequence decides when timestamps are equal. Any tie resolves to one first event that mutates state, and the second is neutralized by the same state check. The worked sequence shows the case directly: a request waits 0.9 s, starts service, has its completion at t=1.3 and timeout at t=1.0; the timeout releases the server and schedules a retry, and the completion at t=1.3 finds no in-service request and is ignored. The double-release risk is named as a failure mode (a timeout and a completion both freeing the same server, raising capacity beyond the configured pool), and the verification matrix records test_timeout_before_completion and test_completion_before_timeout as passing; the event-ordering checks include that a stale completion after a timeout does not free a second server. Limits: this is a synthetic reference engine; the verification tests show a deterministic, self-consistent timeout state machine, not that the priority order matches a production scheduler, and the book asserts no production validation.",
+  "citations": [
+    "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#a-worked-sequence",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": 25000,
+    "estimated": true
+  }
+}

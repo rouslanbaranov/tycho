@@ -1,0 +1,16 @@
+{
+  "task_id": "Q127",
+  "answer": "A fencing token protects a resource only where the thing that can refuse the write remembers the newest number it has ever accepted.\n\n1. The token is a claim, not enforcement. The coordinator issues a monotonic epoch with ownership, but it cannot stop a paused holder from resuming and sending work; only the destination that holds the resource can refuse the effect. Issuance records who owns the lease, not which external writes will be accepted.\n\n2. Monotonicity supplies the order; the stored maximum supplies the cutoff. Because tokens never repeat and always increase, token order tracks ownership order, so the largest accepted value marks the boundary between current and superseded authority. Storing the highest accepted token and rejecting a lower one makes acceptance a one-way ratchet: once token 42 is accepted there, token 41 can never commit again, wherever it comes from. A destination that remembers nothing, or remembers less than the maximum, judges a delayed, retried or reordered write against a cutoff that has not advanced, so the stale write passes.\n\n3. The ratchet must be atomic and durable. The comparison and the protected effect have to be one step (a conditional update or compare-and-update at the destination); otherwise two writers can both read an old cutoff and both conclude they are current. The stored value must also survive restart and restoration: an empty or rolled-back counter re-admits a stale token, and reusing a value after expiry breaks the monotonicity the whole argument rests on.\n\n4. Its reach is exactly the guarded effect. Compare-and-reject proves ordering between owners, not that the old owner stopped, and it does not deduplicate two writes under the same epoch. Every protected resource and every unrelated side effect needs its own guard. If the new holder has not yet established its newer epoch at the destination, the destination holds no evidence of takeover, so comparing against the last observed token does not prove the old holder lost the lease. Where the destination cannot fence, serialize through an authoritative effect owner or a stable idempotent operation identity instead of claiming mutual exclusion from a token nobody compares.",
+  "citations": [
+    "tycho.page.4961bb03a6534242a0977db265b68d95#bounded-pattern-ownership-notes",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#bounded-pattern-ownership-notes",
+    "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction",
+    "tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

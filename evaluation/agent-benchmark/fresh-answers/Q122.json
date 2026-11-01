@@ -1,0 +1,18 @@
+{
+  "task_id": "Q122",
+  "answer": "An even shard set equalizes assigned rows, keys or hash ranges — not work. Because the shard map makes each key range single-owner, a tenant whose key dominates the workload stays pinned to one owner no matter how many shards are added: the synthetic example of 2,000 write attempts/s where one workshop contributes 1,500/s leaves a 1,500/s hot key, and the 20/s mean across 100 workshops misrepresents the hottest owner. Spreading the other 500/s cannot split that single-owner workload, and uniform-key load tests hide the effect because real requests concentrate on one resource. Key choice compounds this: hash partitioning of a high-cardinality key reduces skew only across otherwise uniform distinct keys (a single hot key stays hot), ordered-range partitioning adds a right-edge insert hotspot, and directory routing can place hot tenants deliberately but pays control-plane availability and routing-cache freshness. Placement endpoints alone do not isolate a tenant either: cells give a durable home and shuffle shards reduce overlap, but only if retries and queues can actually use the spare endpoints and no shared dependency sits underneath, and hashing does not make assignments statistically independent.\n\nA resharding move must preserve correctness during movement, not just produce a correct target topology. The invariants are: exactly one authoritative owner per key at every moment; old and new routing epochs recorded and clients compatible while both exist; copy plus ordered change capture with a determinate resume position so no update is lost or double-applied; verification of counts and domain invariants (equal row counts prove nothing about referential correctness); fencing of stale writers and stale routing caches at cutover so a cached old epoch cannot commit on both shards; reconciliation on divergence instead of declaring success; observation of hot-key traffic, retries, tail latency and replication lag; and a forward-repair plan rather than a promise of rollback after irreversible new state. A delayed old-version delete or update can even resurrect a record in the new owner, so stable operation identity and source ordering must be defined before the new owner is exposed.\n\nBefore resharding, confirm the bottleneck is distribution itself: query/index tuning, bounded pools, read replicas, caching immutable reads and isolating one tenant may remove the need, and replicas do not expand single-authority write serialization.",
+  "citations": [
+    "tycho.page.0d34dd26886340b89fd4f1499d790a81#integrated-decision-and-reading-route",
+    "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+    "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cells-and-shuffle-shards-solve-different-placement-questions",
+    "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition",
+    "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+    "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

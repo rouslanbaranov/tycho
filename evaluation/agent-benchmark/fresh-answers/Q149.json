@@ -1,0 +1,22 @@
+{
+  "task_id": "Q149",
+  "answer": "A decision can be decision-supported only as a conditional status, not as a claim about the world. V12 separates three statuses in a decision record: model-verified/partially-verified/unverified for the engine, calibrated/partially-calibrated/uncalibrated for the inputs, and decision-supported/insufficient-evidence for the outcome. A decision-supported outcome on an uncalibrated model is therefore defined as a conditional result: it says the decision follows from the declared assumptions and constraints, it does not say the assumptions are true, and the record must state the condition and the measurements that would reverse it.\n\nSupport is then constructed, not discovered in the numbers:\n\n1. Keep every assumption visible with a status. All nine V12 inputs (arrival rate, service mean, service CV, servers, queue capacity, timeout, dual-write lag, reconciliation capacity, divergence threshold) are assumed, each paired with the measurement that is missing; repeating an assumed value in a decision record does not make it measured, and a derived value inherits the weakest status of its inputs.\n\n2. Bind the recommendation to declared constraints and declared priorities. The record keeps hard, soft and non-quantitative constraints in separate fields from metrics and evidence statuses. Candidates are eliminated by constraint rather than by a weighted score (C fails the cost and p95 latency ceilings), survivors are compared on business-comparable metrics, and the tie-break between them is declared as a decision, not as a simulation output.\n\n3. Do not let precision substitute for validity. Narrow replication intervals do not make inputs measured; the sensitivity screen is used to rank what to measure first, not to prove a production driver; and the recommendation stays bounded by a declared range (a measured arrival above 22 requests/second or a mean service time above 0.65 seconds moves the utilization boundary).\n\n4. Record the exit. Reversal triggers, limitations and unverified non-quantitative constraints (an untested operability review) keep the claim conditional and revisitable; the conditional form is the mechanism, not a defect.\n\nWhen the assumed ranges span the decision boundary, the same machinery must instead return insufficient-evidence with recommendation none - a hard input assumed whose range crosses the boundary, a hard constraint the model cannot evaluate, or a confidence interval containing both a pass and a fail. That is a complete outcome, not a model failure, and the record names the measurement, the supporting/rejecting range, the measurement owner, the consequence of staying put and the next review trigger. The V12-D and V12-E gates check that calibration statuses and decision evidence are present, and the gates explicitly establish neither production validity nor owner acceptance.",
+  "citations": [
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

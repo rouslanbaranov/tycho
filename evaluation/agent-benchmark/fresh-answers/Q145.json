@@ -1,0 +1,22 @@
+{
+  "task_id": "Q145",
+  "answer": "A model contract is a record about evidence, not evidence itself, and the automated checks inspect the record. In V12 the validator enforces strict schema conformance, unique identifiers, reference resolution and stored-hash matches. Each of those is a property of the artifact: a claim is present, well-typed, resolvable and internally consistent. The book states the limit plainly: the validator cannot check that a source actually supports a parameter, because that is an editorial and review task; the contract only prevents an obvious mismatch between the label and the record. A contract does not prove the model is useful, it makes the model's claims inspectable. Presence is what is checked — a missing field is a validation failure, not a note — so passing certifies completeness and consistency, not truth.\n\nMisstating evidence is therefore invisible by construction, and the book names the ways it survives a green check: verification theater (a case marked pass with fields filled but a false claim, which the strict schema cannot detect), calibration laundering (an assumed value copied into a measured field, which source and measurement requirements make harder but not impossible), and evidence inflation (a model-verified engine presented as a validated system). Parameter drift leaves the run executable while the evidence status becomes ambiguous. Hashes do not close the gap either: the recorded failure is a hash over the wrong fields, where a hash covering only metrics makes a changed limitation or convergence status invisible, and replay is a reproducibility check, not a truth check — it shows stored inputs, engine and seed reproduce stored metrics, not that the model is valid or the inputs measured.\n\nFull gate coverage is layered, not cumulative: a passing local check is not independent review, CI, owner acceptance or production validity; the independent review gate is not claimed by the validator; and the gates do not establish that the source claims are true. A record can even be valid while declaring insufficient evidence, since that is a complete outcome, not a failure. The contract is a guardrail, not a reviewer; it does not replace source evidence, calibration, security review or owner acceptance, and it makes those gaps visible rather than closing them.\n\nSo the root cause is that the evidence claim is self-declared and the check is closed over the same record and the same files the author controls. Schema, hash and replay detect inconsistency, not correspondence with a source or a system. Correspondence requires an independent reader, which is why the book assigns it to editorial and independent review and keeps the residual uncertainty explicit in the contract's own fields instead of treating a green validator as proof.",
+  "citations": [
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+    "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#boundaries-and-evidence",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

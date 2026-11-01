@@ -1,0 +1,193 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q104",
+      "question": "Why can twelve routes, five outcome classes, three regions and forty instances produce 7,200 metric series, and why does that series count not determine ingest volume?",
+      "layer_expected": "book",
+      "answer": "A metric series is identified by a metric name plus one specific combination of label values, so independent label dimensions multiply rather than add. With 12 routes, 5 method/outcome groupings, 3 regions and 40 emitting instances, all-combinations arithmetic gives 12 x 5 x 3 x 40 = 7,200 distinct label tuples and therefore up to 7,200 series for one metric. The book presents this as explicitly hypothetical upper-bound dimensionality arithmetic, not a measured time-series database (TSDB) footprint or sample rate; it also sets aside further multipliers such as per-instance process recycling, per-tenant/URL labels and histogram encoding. For example, adding 20 classic histogram buckets per series adds cumulative bucket series plus count and sum series, raising series identity counts again.\n\nThe series count does not determine ingest volume because cardinality counts identities at rest, whereas ingest is a flow of samples per unit time. Ingest volume scales with active series multiplied by sampling or scrape frequency: 7,200 series scraped every 15 seconds produce four times the samples of the same 7,200 series sampled every 60 seconds, and the chapter's larger illustrative case (40 x 5 x 3 x 2,000 = 1,200,000 combinations at one sample per series every 15 seconds) reaches up to 80,000 samples/s. Actual active combinations can be far lower than the theoretical product, and samples may be dropped, delayed or batched in the collection pipeline. Ingest and storage resource cost also depend on metric type, compression, retention, index overhead, query fan-out and multi-region replication, not on series count alone. The chapter's own caveat states that no measured series count, collector, backend or data was generated, so 7,200 is a model whose implication for ingest must be computed with a stated sample interval and pipeline behavior.",
+      "citations": [
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#4-cardinality-is-multiplicative-and-architectural",
+        "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#1-separate-measurement-generation-from-retrieval",
+        "tycho.chapter.ef166b5f7d76454ca4c8a685c6ce033e#8-public-evidence-caveats-and-navigation"
+      ],
+      "core_claims": [
+        "Metric series identity combines the metric name with distinct label or attribute value sets, so additional label dimensions multiply the series count rather than adding to it.",
+        "The page's hypothetical product of 12 routes, 5 method-and-outcome groupings, 3 regions and 40 instances yields 7,200 series before per-instance process recycling, tenant or URL labels and histogram buckets are counted.",
+        "Cardinality is not volume: the same 7,200 series scraped every 15 seconds and every minute incur different ingest and storage cost, and metric type, compression, retention, index overhead and query fan-out change the budget.",
+        "Request, trace, customer or ephemeral resource identifiers used as labels can create unbounded series, saturate ingestion and time-series indexing, drop samples and leak sensitive data.",
+        "Aggregation loses information by design: averaging percentiles across groups is generally invalid, deleted buckets remove resolution for later quantiles, and a daily average can hide a ten-minute queue crisis."
+      ],
+      "optional_claims": [
+        "An empty or stale series can look like zero errors, so pipeline health needs sample freshness, target health and explicit unknown-data handling.",
+        "Detailed per-entity investigation belongs in access-controlled logs or traces rather than in unlimited metric labels."
+      ],
+      "required_evidence": [
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#4-cardinality-is-multiplicative-and-architectural",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics"
+      ]
+    },
+    {
+      "task_id": "Q112",
+      "question": "Why can a metric label such as a tenant identifier multiply storage and query cost even when request volume is unchanged, and what should carry the per-tenant detail instead?",
+      "layer_expected": "book",
+      "answer": "Cost follows series count, not request count. A metrics backend identifies a time series by its metric name plus the complete set of label/attribute values, so every distinct value combination becomes a separate series with its own label-index entry, compressed chunks, write-ahead/duplication and retention copies, and its own place in the query working set. Adding tenant_id does not add requests; it multiplies the series space by the number of tenant values. One hypothetical metric family with 40 routes, 5 status classes, 3 zones and 2,000 tenants has a potential product of 1,200,000 series; removing tenant_id leaves 600. At an unchanged request volume the same requests are merely spread across far more series, so storage, index, compaction and query resources grow while throughput stays flat. Cardinality is therefore not volume: retention time and query cost depend on the number of series and samples kept, not on how many requests were counted.\n\nQuery cost rises through the same mechanism. Label-index lookups, fan-out, aggregation, query concurrency and long-range analytical scans must resolve and touch every matching series, and dashboards or alerts evaluate per series even when the application is healthy. High-cardinality labels also leak tenant identity and enlarge the disclosure blast radius; an unbounded dimension can saturate ingestion and drop samples, which corrupts the very evidence the label was meant to provide.\n\nWhat should carry the per-tenant detail instead: keep metrics bounded using route templates, explicit status classes and service/queue dimensions, with a stated tenant aggregation and redaction policy and only a small number of bounded per-tenant series where operational diagnosis truly needs them. Put request, session, user and tenant identifiers in access-controlled logs and traces with strict attribute allowlists, separate retention and separate access scopes/index privileges. Put authoritative per-tenant accounting, authorization decisions, irreversible effects and audit obligations in a dedicated audit store with enforceable retention and immutability, not in metric labels. Where routine per-tenant aggregates are required, derive them with recording rules or downsampled rollups, accepting that aggregated data cannot later reconstruct per-tenant tails or expose per-tenant fairness and authorization failures, and that a cheaper dashboard must not hide severe tail errors.\n\nLimits: all numeric examples in the cited sections are hypothetical upper-bound arithmetic, not measured TSDB footprint, and no benchmark or production data was used.",
+      "citations": [
+        "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#4-cardinality-is-multiplicative-and-architectural",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#4-cardinality-and-storage-cost",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#6-architecture-decisions-and-access-controls",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.chapter.49cb8db3af4e406ea6988c8e5e852acf#decision-and-worked-result"
+      ],
+      "core_claims": [
+        "Metric series identity combines the metric name with its label value sets, so a label with many distinct values creates many separately indexed and retained series.",
+        "Cardinality is multiplicative across label dimensions, so the walkthrough's 40 routes x 5 status classes x 3 zones x 2,000 tenants is an upper bound of 1,200,000 potential series.",
+        "Removing tenant_id from that example reduces the upper-bound combination count to 600, showing how much of the cost came from one label.",
+        "Cardinality is not the same as sample volume because scrape interval, compression, retention, index overhead and query fan-out also determine cost.",
+        "Unique request, customer or trace identifiers may leak sensitive data, so bounded route templates and status classes are preferred for metrics while detailed correlation belongs in access-controlled logs or traces."
+      ],
+      "optional_claims": [
+        "Aggregation and downsampling lose information by design: percentiles cannot be averaged across groups, and sampled telemetry cannot satisfy an audit obligation.",
+        "A daily average can hide a ten-minute queue crisis, and histograms with incompatible bucket boundaries misrepresent the merged distribution."
+      ],
+      "required_evidence": [
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#4-cardinality-is-multiplicative-and-architectural",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage"
+      ]
+    },
+    {
+      "task_id": "Q120",
+      "question": "Why can horizontal autoscaling fail to prevent overload during a burst even when the controller eventually selects the correct replica count?",
+      "layer_expected": "book",
+      "answer": "Horizontal autoscaling acts through a delayed feedback loop, so a burst can be over \u2014 or can already have exhausted the old capacity \u2014 before any new replica becomes useful; a controller that eventually selects the 'correct' replica count has still lost the race.\n\n(1) Timescale mismatch. The book decomposes scale-out response time into metric event/aggregation, decision, capacity provisioning, application warm-up and effective service/routing delay, and warns that stages may overlap so average sums are not an empirical estimate. Its synthetic walkthrough doubles arrivals for 40 s while measurement (15 s) + decision (10 s) + scheduling (20 s) + warm-up (25 s) places the first healthy extra capacity at about 70 s \u2014 after the burst ended. Capacity that arrives after a short burst cannot absorb the initial surge; unlimited admission lets unfinished work grow during the gap.\n\n(2) Desired count is not useful capacity. Replicas must be placed, started, warmed (runtime init, compilation, connection establishment, cache fill), pass readiness and receive routed traffic; a new replica can be marked running while its downstream database budget is still exhausted, so readiness timestamps overstate usable capacity.\n\n(3) Correct count is not effective throughput. When the scarce resource is shared or serial \u2014 a hot item lock, database locks, a fixed connection ceiling, an external quota \u2014 adding replicas multiplies contention, connection churn and retries instead of goodput; a ten-replica deployment opening 30 connections each can request 300 backend connections. A CPU-targeted policy can meanwhile see low utilization while requests wait on the database and even scale in, increasing pressure.\n\n(4) Damage accumulates and outlives the delay. With unbounded admission, queue occupancy and age, expired deadlines, duplicated retries and cold-start effects build up; after the burst, newly scaled replicas may wake into a backlog and interfere with normal requests. Retry amplification can keep load high after the trigger disappears, so the system stays degraded even once the replica count is right.\n\n(5) Feedback is lagged and smoothed. Stabilization windows and tolerances that are necessary to stop replica oscillation necessarily underreact to a genuine fast overload, and the decision is computed from a measurement window that already describes the past; policy metrics can also be distorted by newly started instances' initialization signals. The chosen count can therefore overshoot or land on the falling edge of the burst.\n\nThe chapter's integrated conclusion is to compare demand timescale with detection, provisioning, readiness and warm-up delay before relying on autoscaling: pre-provision headroom for the measured lag, use scheduled/predictive capacity or warm pools when the scale-out path is slower than the burst, and add queueing, admission control or load shedding for the gap. A converged desired-replica value must not be read as achieved availability, and no single CPU threshold or replica number is universally optimal.",
+      "citations": [
+        "tycho.chapter.1d8d87e683bc428e8dbed087106f37fd#decision-and-worked-result",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#1-decompose-the-actual-scale-out-response-time",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+        "tycho.page.d2a71d85f3144ba395303b8432b38d37#4-controller-stability-scale-out-and-scale-in-are-asymmetric",
+        "tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission"
+      ],
+      "core_claims": [
+        "Autoscaling is a feedback loop whose useful capacity arrives only after metric aggregation, decision, provisioning, application warm-up and routing, and those stages can overlap rather than sum as measured latencies.",
+        "While that delay runs, new demand still reaches the old infrastructure, so a burst can end before the first additional replica is able to serve work.",
+        "In the book's synthetic walkthrough, 15 seconds of measurement, 10 of decision, 20 of scheduling and 25 of warm-up place the first useful capacity about 70 seconds after onset, after a 40-second burst.",
+        "In a separate synthetic example, 300 attempted operations per second against a 160 per second warm ceiling for 15 seconds, with a 45-second scale-out sequence, leave roughly 2,100 attempted operations unserved under fixed rates.",
+        "Reserved headroom, scheduled scaling, bounded queues, admission control and faster warm-up address the gap, while deferring work asynchronously does not satisfy a contract that requires a synchronous answer within 700 ms."
+      ],
+      "optional_claims": [
+        "Adding replicas can worsen correct throughput when all replicas contend on the same downstream bottleneck, such as a single hot reservation key.",
+        "A newly started replica can be marked running before its downstream budget or caches are usable, so readiness timestamps alone do not measure useful extra capacity."
+      ],
+      "required_evidence": [
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#1-decompose-the-actual-scale-out-response-time",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#purpose-and-mission"
+      ]
+    },
+    {
+      "task_id": "Q128",
+      "question": "When does an open circuit breaker hide the underlying fault instead of containing it?",
+      "layer_expected": "atlas",
+      "answer": "An open breaker contains a fault only while it replaces real calls to a genuinely failing dependency with a bounded, observable fast-fail. It hides the fault instead in five recognizable situations. (1) The failure is local, not in the dependency: an open caused by local resource exhaustion is recorded as a dependency failure, so the real bottleneck leaves the telemetry and nothing is protected. (2) The failure is caller-specific or the breaker key is shared: shared opens attribute one caller's defect to the whole dependency and deny traffic that would have succeeded, turning a narrow bug into an apparent outage. (3) The dependency is required: an open path with a fallback that calls the same dependency, an unbounded alternate path, or a default value presents missing mandatory data as a complete result, so the outage becomes a silent product change. (4) Recovery is unproven: a cooldown without a bounded half-open probe yields false recovery, and open gets treated as recovered when it is only deferred detection. (5) Telemetry is derived from the calls the breaker suppresses: rejected calls are not dependency failures and need their own metric, otherwise the error rate falls as the fault worsens, and absence of errors is misread as health (zero observed errors at idle; dropped traces are not proof that nothing failed). Containment holds when failures are fast and repeated calls amplify them, the threshold requires a minimum request volume, half-open probes are bounded and close only after consecutive successes, and an explicit fail-fast or independent fallback contract exists with fallback ownership and the user-visible degradation recorded. Where an open breaker would hide a local resource problem, a retry budget with jitter, an admission limit or a bounded timeout is the better instrument.",
+      "citations": [
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+        "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.77e5d6cab6c083335efb7fc74b423809#overview"
+      ],
+      "core_claims": [
+        "The breaker rejects calls fast to avoid repeating costly calls to a dependency whose failures are fast and amplifying, so an open state is a decision about call cost rather than a measurement of the dependency's health.",
+        "An open caused by local resource exhaustion hides the real bottleneck, because the breaker is scoped to one dependency and does not replace a timeout, backpressure or a retry budget.",
+        "Rejected calls are not dependency failures and need their own metric; without it, the open state is read as dependency evidence that the rejection never established.",
+        "A fallback that calls the same dependency or an unbounded alternate path only hides the outage, so an explicit fallback or fail-fast contract with recorded user-visible degradation is required.",
+        "Open is not recovery: half-open admits a bounded probe with limited concurrent probes and closes only after consecutive successes, and the threshold needs a minimum request volume so one failure does not trip a quiet dependency."
+      ],
+      "optional_claims": [
+        "When failures are not fast, a retry budget with jitter, an admission limit or a bounded timeout may be preferable to a breaker.",
+        "The atlas reverses the breaker choice when its state adds more coordination than the repeated-call cost it avoids."
+      ],
+      "required_evidence": [
+        "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities"
+      ]
+    },
+    {
+      "task_id": "Q136",
+      "question": "Why do a missed lease renewal and an expired timeout both leave the outcome uncertain, and what must happen before either is treated as settled?",
+      "layer_expected": "atlas",
+      "answer": "Both events are expiries observed only on the local side, and neither settles the remote state transition. In a lease, the holder renews before expiry and the coordinator may reassign after expiry, creating a new epoch: a renewal that receives no response may have been committed, or may have been lost while the lease expired and a successor was granted authority. The old holder's clock and local belief are not the authority, and a paused holder can resume later, so a missed renewal makes ownership uncertain, not failed, and must not be read as a successful renewal. A request timeout has the same shape: it is only a local wait bound, the server may have committed the effect before the reply was lost, and cancellation does not undo a committed effect, so no answer does not mean no commit. The workflow must preserve what is needed to resolve the ambiguity rather than guess: a stable logical operation identity (scoped to owner, payload and a declared retention window) that survives retries and leader changes; a durable authoritative outcome record - new, in-progress, committed, rejected or incompatible duplicate - committed atomically with the effect, retained for the retry/reconciliation horizon and queryable when an acknowledgment is lost; for ownership, a monotonic epoch/fencing token persisted and checked atomically at the destination, with a defined takeover linearization point and no token reuse; and the explicit unknown state itself, so it is reconciled or repaired and never collapsed into false success or false failure.",
+      "citations": [
+        "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#bounded-pattern-ownership-notes",
+        "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+        "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+        "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem"
+      ],
+      "core_claims": [
+        "The Timeout card calls a timeout an ambiguous outcome rather than proof that the remote effect stopped, and requires looking up the durable outcome, cleaning up resources, and not blind-retrying non-idempotent work.",
+        "The Lease-Based Ownership card treats ownership as uncertain after a missed renewal because pauses, delayed renewal and quorum loss can leave two owners acting at once.",
+        "Fencing Tokens requires the destination to compare monotonically increasing tokens so that a stale owner may still run but cannot commit, which is what actually bounds the stale write.",
+        "Lease-Based Ownership lists destination fencing as a good-fit condition and rejects expiry that could allow two active owners without fencing, so the lease duration alone is not the safety mechanism.",
+        "The C08 counterexample states that a lease without destination fencing is not evidence for the fencing card's safety conditions."
+      ],
+      "optional_claims": [
+        "The Distributed Lock card's competing alternatives are lease-based ownership with fencing, single-writer partitioning, or a conditional write or unique constraint.",
+        "The Timeout card also rejects work that must complete regardless of time and cancellation that leaves irreversible effects with no reconciliation path."
+      ],
+      "required_evidence": [
+        "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#entry-inventory",
+        "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory",
+        "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#chapter-result-and-counterexample"
+      ]
+    },
+    {
+      "task_id": "Q144",
+      "question": "Why is an omitted dependency acceptable in a model boundary only when it cannot change the comparison under the declared conditions?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Because a model boundary is a decision instrument, not a replica of the system. The book starts from the decision: name the purpose, the alternatives being compared, the observable that would distinguish them, the exclusions and the validity conditions, then keep the smallest model that can distinguish those alternatives inside that declared domain. The test for an omission is therefore not whether the dependency exists in reality, but whether it can alter the comparison the model is asked to support.\n\nIf the omitted actor, dependency or failure cannot change the decision-relevant metric, the ranking, or a hard-constraint pass/fail under the declared conditions, the omission is decision-invariant: the model still preserves every distinction the decision uses. Including the detail would add state, parameters and verification burden without changing the answer, and could obscure the original question through scope creep. That is the positive reason to leave it out.\n\nIf the omitted dependency can change the comparison, the model can return a different answer than the alternatives warrant. The book names the failure modes: a boundary mismatch, where missing admission behavior can reverse the result, and an omitted dependency, where a downstream timeout is replaced by a constant service time and the model can no longer show the failure that motivates the decision. The comparison then ranks a model artifact rather than the real candidates, so its result cannot justify the choice.\n\nThe declared conditions turn \"cannot change\" into a bounded, reviewable claim. They fix workload, metrics, constraints and the validity range; the identical-workload rule makes the comparison like-for-like, and hard constraints define elimination. Without them, the invariance claim has no scope and cannot be challenged. The model contract records exclusions explicitly, and a validity limit is a condition on the result's use, not a disclaimer: if the decision later needs the omitted mechanism, the model is outside its domain. Reversal triggers name the conditions under which the recommendation would change.\n\nSo the operative test is materiality to the comparison, not completeness: does the omitted or added detail change a metric that can reverse the decision? If yes, it belongs inside the boundary or the comparison is invalid; if no, it may be omitted and must be declared. When the conditions change, the claim must be re-established, or the omission becomes validity drift.",
+      "citations": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#overview",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+      ],
+      "core_claims": [
+        "A model boundary separates the model's own state from the rest of the world and is not the same as a service boundary or a team boundary.",
+        "An omitted actor, dependency or failure is acceptable only if the omitted part cannot change the comparison under the declared conditions.",
+        "Replacing a downstream timeout with a constant service time removes the failure that motivates the decision, so the model can no longer show the effect being compared.",
+        "A boundary placed after request admission can reverse a result when the decision concerns a caller-visible outcome.",
+        "A reviewable scope statement records purpose, alternatives, deciding observable, excluded items and validity range so a reader can challenge whether each exclusion is material."
+      ],
+      "optional_claims": [
+        "A stock-and-flow model can show utilization and backlog growth at 20 requests per second against 24 per second but cannot report the p95 latency of successful requests.",
+        "Sargent separates conceptual-model validity from operational validity, and a scope statement addresses only the conceptual side."
+      ],
+      "required_evidence": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits"
+      ]
+    }
+  ]
+}

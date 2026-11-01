@@ -1,0 +1,18 @@
+{
+  "task_id": "Q114",
+  "answer": "A retry budget bounds the population its layer can see, not the end-to-end logical operation; when several layers retry independently, each layer's retries become the next layer's offered load, so the budgets compose multiplicatively rather than additively.\n\nUnder a deliberately simplified fully nested model, three layers that each allow three attempts per request can produce up to 27 downstream attempts for one logical intent, while every layer still reports that it honored its own cap; the corpus records this as a pathological upper bound, not an observed measurement (V07/C05). A lower layer's 'offered requests' denominator already includes retries injected above it, so its locally correct ratio or token bucket is applied to an already inflated base, and its amplification is invisible to the layer that caused it.\n\nThree scope leaks make this possible. First, identity: a connection, an HTTP/2 stream, one attempt and a logical business operation have different identities, so a budget keyed on attempts at one hop cannot tell that many attempts descend from one operation (V08/C08). Second, aggregation: a budget enforced per instance or replica is multiplied by replica count and routing, just as independent local token buckets let aggregate spend approach N times the intended scope; a shared quota needs atomic accounting, leases or a documented approximation (V07/C05 local limits). A per-request attempt cap bounds one operation but not the aggregate work of many clients, a per-client ratio can be unstable for sparse clients, and only a process- or service-wide retry budget directly protects a shared dependency (V02/C05). Third, timing: retries are triggered exactly when capacity is degraded, and without jitter clients retry in lockstep and turn a brief failure into a sustained wave; a timeout larger than the caller's deadline keeps work running after the caller gave up, and per-hop independent timeouts let the aggregate vastly exceed the caller's budget (V12/C03; V02/C05). The feedback is positive: retries consume the capacity whose shortage caused the failures, raising timeouts and therefore further retries (V12/C03).\n\nJitter and backoff spread attempts but do not bound aggregate load; a retry storm can still overload a shared dependency (V02/C05). The corpus's remedy is to designate retry ownership, retry only at the layer immediately above the layer that rejected the request, propagate a specific 'overloaded; do not retry' result instead of a generic error that every layer retries, make every attempt consume the same end-to-end deadline and attempt budget, and measure retry amplification by layer with original attempts and retries counted separately (V02/C05; V12/C03). That is why budgets enforced independently at several layers can still amplify offered load beyond any one layer's budget: no single layer holds the end-to-end attempt counter or the shared capacity signal.",
+  "citations": [
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
