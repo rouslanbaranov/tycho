@@ -34,8 +34,8 @@ limits.
     src="https://img.shields.io/badge/Pattern%20Atlas-145-0f766e"></a>
   <a href="sources/CATALOG.md"><img alt="Evidence-Grounded"
     src="https://img.shields.io/badge/Evidence--Grounded-166534"></a>
-  <a href="authoring/STATE.md"><img alt="Promoted 92 of 145 entries"
-    src="https://img.shields.io/badge/Promoted-92%20of%20145-2ea043"></a>
+  <a href="authoring/STATE.md"><img alt="Promoted 93 of 145 entries"
+    src="https://img.shields.io/badge/Promoted-93%20of%20145-2ea043"></a>
   <a href="authoring/MCP-READ-ONLY-MVP.md"><img alt="MCP"
     src="https://img.shields.io/badge/MCP-111827"></a>
   <a href="authoring/MCP-AGENT-TOOL-CONTRACT.md"><img alt="AI Agents"
