@@ -137,7 +137,6 @@ flowchart LR
     P --> O["Existing canonical owner page"]
     V --> R["V12 derived reverse index"]
     R --> V
-    O -. "no write-back" .-> V
 ~~~
 
 Text alternative: a V12 decision record points to a pattern identifier and the existing owner

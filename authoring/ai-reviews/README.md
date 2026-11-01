@@ -197,3 +197,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | #540 API Composition + BFF | pass | `2026-11-01-api-composition-deepseek.md` | `f2e517876bc814e190043b1c9a34d99550784ae3e3cac409d2cae57e0e0ee1e0` |
 | 2026-11-01 | DeepSeek Reviewer | #540 Aggregator + Scatter-Gather | pass | `2026-11-01-aggregator-deepseek.md` | `dcd5e1afd7d1a9bd50ff9e3dd5c135d8339a01f6b3382b3a338425ecf8b444eb` |
 | 2026-11-01 | DeepSeek Reviewer | V12 semantic consistency | pass | `2026-11-01-v12-semantic-deepseek.md` | `93d0478776cccb9e9bf07a16cb9a41b7816ea6d98ff2465d28dde0a2db4a02d6` |
+| 2026-11-01 | DeepSeek Reviewer | V12 semantic minors | pass | `2026-11-01-v12-semantic-minors-deepseek.md` | `fb49cf637ad4a5b9cb30624951eb0203cabc4cc346752e3ddc2dd3a5966bf985` |
