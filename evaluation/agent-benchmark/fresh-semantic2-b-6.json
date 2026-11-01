@@ -1,0 +1,59 @@
+{
+  "status": "ai-judge-not-human",
+  "judge": "deepseek-harness-ai",
+  "source_file": "evaluation/agent-benchmark/fresh-judge2-b-6.json",
+  "layer": "answer-and-core-claims-only",
+  "task_count": 6,
+  "pass_count": 5,
+  "fail_count": 1,
+  "tasks": [
+    {
+      "task_id": "Q106",
+      "answer_support": 2,
+      "core_coverage": 2,
+      "citation_valid": true,
+      "pass": true,
+      "notes": "Answer binds the subject to the exact digest rather than the tag, separates authenticity from authorization, lists the full gate binding set with fail-closed refusal, and marks verification as eligibility rather than runtime safety, covering every core claim."
+    },
+    {
+      "task_id": "Q114",
+      "answer_support": 2,
+      "core_coverage": 2,
+      "citation_valid": true,
+      "pass": true,
+      "notes": "Answer explains layered budgets, the 27-attempt pathological bound, per-instance aggregation and timing leaks, and the retry-ownership/end-to-end-deadline remedy, leaving only idempotency of retried effects implicit."
+    },
+    {
+      "task_id": "Q122",
+      "answer_support": 2,
+      "core_coverage": 1,
+      "citation_valid": true,
+      "pass": false,
+      "notes": "Answer fully explains hot-tenant skew and the resharding invariants (single owner, epochs, fencing, reconciliation), but never addresses the core claim that a frequently changing key creates a move storm."
+    },
+    {
+      "task_id": "Q130",
+      "answer_support": 2,
+      "core_coverage": 2,
+      "citation_valid": true,
+      "pass": true,
+      "notes": "Answer carries authorization, evidence and failure semantics for compensation and matches the saga-not-rollback framing, though it omits the single-transaction/two-phase-commit alternative named in the claims."
+    },
+    {
+      "task_id": "Q138",
+      "answer_support": 2,
+      "core_coverage": 2,
+      "citation_valid": true,
+      "pass": true,
+      "notes": "Answer precisely describes the heap-retained stale completion, the state check that neutralizes it, the symmetric timeout case, the worked sequence and the double-release tests."
+    },
+    {
+      "task_id": "Q146",
+      "answer_support": 2,
+      "core_coverage": 2,
+      "citation_valid": true,
+      "pass": true,
+      "notes": "Answer reproduces the 0.0005 rejection and 0.3495 timeout accounting and explains the rejection-to-timeout shift plus deadline-aware sizing, covering retry amplification only briefly."
+    }
+  ]
+}
