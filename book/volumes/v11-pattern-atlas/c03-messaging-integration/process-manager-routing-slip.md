@@ -79,29 +79,3 @@ source.
 **Decision state.** applicable-under-conditions.
 
 **Related entries.** Saga; Idempotent Receiver; Correlation Identifier; Workflow Failure.
-
-## Chapter result and counterexample
-
-Twenty cards establish a conditional decision route. Owner sections are bounded; none
-establishes technical sufficiency.
-
-Counterexample: a durable subscriber that replays an unbounded history without an owner
-is not evidence for the durable-subscriber card's retention conditions.
-
-## Navigation and prerequisites
-
-- Parent: [V11](../README.md).
-- Previous: [V11/C02](../c02-api-communication/README.md).
-- Next: [V11/C04](../c04-consistency-events/README.md).
-- Prerequisite: V10/C03 — pattern applicability and contraindications.
-- Registry: [pattern registry](../../../../edition/patterns/registry.v1.json).
-- Card batch: [card batches](../../../../edition/patterns/card-batches.v1.json).
-- Coverage map: [candidate coverage](../../../../edition/patterns/coverage-map.v1.json).
-
-## Evidence and known limits
-
-- All 20 cards cite read ledger units; owner links and backlinks are self-checked.
-- Owner links are bounded sections, not dedicated EIP pattern pages.
-- No entry claims sufficient technical or decision coverage.
-- No independent editorial review, benchmark, production observation or runtime test
-  is asserted.
