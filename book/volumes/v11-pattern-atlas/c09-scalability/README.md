@@ -90,34 +90,7 @@ See [Load Balancing](load-balancing.md).
 
 ### Horizontal Scaling
 
-**Identity.** Horizontal Scaling; family Scalability and load distribution; kind
-scalability-pattern; priority core.
-
-**Decision question.** Should capacity be added by running more instances rather than a
-larger instance?
-
-**Good-fit conditions.** The workload can partition across instances; shared state is
-removable; startup and coordination costs are bounded.
-
-**Hard contraindications.** Reject when the bottleneck is a single shared resource, when
-instances cannot be stateless, or when coordination cost grows faster than capacity.
-
-**Competing alternative.** Vertical scaling or a larger partition. Reverse the choice when
-shared-state contention dominates added instances.
-
-**Failure and recovery.** Coordination and cold-start lag are common; verify ceiling in
-the owner section.
-
-**Technical owner.** [Horizontal Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-scaling) — replica scaling and coordination cost are bounded; per-service capacity math is owner-specific.
-
-**Sources.** [src.k8s-hpa](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-k8s-hpa.2026-10-21: all thirty served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Vertical Scaling; Autoscaling; Load Balancing; Sharding.
+See the [Horizontal Scaling](horizontal-scaling.md) card.
 
 ### Vertical Scaling
 
@@ -125,100 +98,15 @@ See the [dedicated Vertical Scaling card](vertical-scaling.md).
 
 ### Autoscaling
 
-**Identity.** Autoscaling; family Scalability and load distribution; kind
-scalability-pattern; priority core.
-
-**Decision question.** Should capacity be adjusted automatically from observed or
-predicted demand?
-
-**Good-fit conditions.** Metrics reflect useful demand; scale-up/down delays are
-acceptable; stabilization prevents oscillation.
-
-**Hard contraindications.** Reject when demand is stable, when startup lag exceeds the
-burst, or when the metric can be gamed.
-
-**Competing alternative.** Static capacity or scheduled scaling. Reverse the choice when
-autoscaling churn and cold starts dominate cost.
-
-**Failure and recovery.** Lag and oscillation are common; verify stability in the owner
-section.
-
-**Technical owner.** [Autoscaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#autoscaling) — signal, lag and hysteresis are bounded; capacity forecast is service-specific.
-
-**Sources.** [src.keda](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-keda.2026-10-21: the single served heading read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Horizontal Scaling; Vertical Scaling; Load Balancing; Capacity
-Planning.
+See the [Autoscaling](autoscaling.md) card.
 
 ### Cell-Based Architecture
 
-**Identity.** Cell-Based Architecture; family Scalability and load distribution; kind
-scalability-pattern; priority core.
-
-**Decision question.** Should the system be partitioned into cells with bounded blast
-radius and independent operation?
-
-**Good-fit conditions.** Workloads can be routed to a cell; a cell is a dependency
-boundary; cell failover/migration is owned.
-
-**Hard contraindications.** Reject when a single global dependency defeats isolation, when
-cell routing is unowned, or when the cost of duplicate cells is prohibitive.
-
-**Competing alternative.** Single shared deployment or deployment stamps without
-isolation. Reverse the choice when cell duplication and routing complexity exceed
-blast-radius benefit.
-
-**Failure and recovery.** Cell routing and cross-cell dependencies are common; verify
-boundaries in the owner section.
-
-**Technical owner.** [Cell-Based Architecture](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#cell-based-architecture) — cell placement is bounded, not a universal stamp deployment recipe.
-
-**Sources.**
-[src.cell-boundaries](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch7-cell-boundaries.2026-10-22: sections "What is a cell-based
-architecture?", "A typical workload", "A workload with cell-based architecture". The
-Deployment Stamps page remains a comparison only, not the cell source.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Deployment Stamps; Shuffle Sharding; Tenant Isolation; Failover.
+See the [Cell-Based Architecture](cell-based-architecture.md) card.
 
 ### Shuffle Sharding
 
-**Identity.** Shuffle Sharding; family Scalability and load distribution; kind
-scalability-pattern; priority advanced.
-
-**Decision question.** Should each tenant be assigned a random subset of shards to reduce
-overlapping blast radius?
-
-**Good-fit conditions.** Many tenants exist; shard assignment can be consistent; enough
-shards exist to reduce overlap.
-
-**Hard contraindications.** Reject when there are too few shards, when assignment cannot
-be stable, or when the operational cost of many assignments is high.
-
-**Competing alternative.** Cell-based partitioning or dedicated shards. Reverse the choice
-when overlap reduction does not justify assignment complexity.
-
-**Failure and recovery.** Hot tenants and uneven overlap are common; verify assignment in
-the owner section.
-
-**Technical owner.** [Shuffle Sharding](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#shuffle-sharding) — shuffle sharding is bounded, not a hashing implementation guide.
-
-**Sources.**
-[src.cortex-shuffle-sharding](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-cortex-shuffle.2026-10-21: all eighteen served headings
-read. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Cell-Based Architecture; Sharding; Tenant Isolation; Load Balancing.
+See the [Shuffle Sharding](shuffle-sharding.md) card.
 
 ### Deployment Stamps
 

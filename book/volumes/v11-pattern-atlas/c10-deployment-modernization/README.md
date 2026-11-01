@@ -93,67 +93,11 @@ none claims sufficient technical or decision coverage.
 
 ### Rolling Deployment
 
-**Identity.** Rolling Deployment; family Deployment and legacy modernization; kind
-deployment-pattern; priority core.
-
-**Decision question.** Should instances be replaced incrementally while traffic continues?
-
-**Good-fit conditions.** Multiple instances and a readiness signal exist; old/new versions
-are compatible; drain/rollback is defined.
-
-**Hard contraindications.** Reject when versions cannot coexist, when no readiness/drain
-control exists, or when rollback requires simultaneous replacement.
-
-**Competing alternative.** Blue/green or recreate. Reverse the choice when incremental
-compatibility cost exceeds rollout benefit.
-
-**Failure and recovery.** Partial-version exposure is common; verify readiness in the
-owner section.
-
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#rolling-deployment) — rolling replacement and readiness are bounded; controller-specific surge math is platform-specific.
-
-**Sources.** [src.k8s-deployments](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-k8s-deployment.2026-10-21: all 48 headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Blue/Green Deployment; Canary Release; Feature Flags; Readiness
-Probes.
+See the [Rolling Deployment](rolling-deployment.md) card.
 
 ### Blue-Green Deployment
 
-**Identity.** Blue/Green Deployment; family Deployment and legacy modernization; kind
-deployment-pattern; priority core.
-
-**Decision question.** Should traffic switch between two complete environments rather than
-replace in place?
-
-**Good-fit conditions.** Two environments fit the cost; state is externalized or readable by
-both versions; in-flight work can drain or route to both; switch/rollback is quick; data
-compatibility is explicit.
-
-**Hard contraindications.** Reject when duplicate capacity is prohibitive, when state
-cannot be shared, or when a switch would lose in-flight work.
-
-**Competing alternative.** Rolling deployment or canary. Reverse the choice when duplicate
-environment cost exceeds rollback benefit.
-
-**Failure and recovery.** Data compatibility and switch atomicity are common; verify state
-in the owner section.
-
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#blue-green-deployment) — traffic switch and rollback are bounded; infrastructure provisioning is platform-specific.
-
-**Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-argo-bluegreen.2026-10-21: all fifteen served headings
-read. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Rolling Deployment; Canary Release; Immutable Infrastructure;
-Controlled Cutover.
+See the [Blue/Green Deployment](blue-green-deployment.md) card.
 
 ### Canary Release
 
