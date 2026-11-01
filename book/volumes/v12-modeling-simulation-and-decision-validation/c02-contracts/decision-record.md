@@ -22,7 +22,7 @@ route_hints:
     - "tycho.page.b8e3757528ca1f60a472a6fd9deb7489"
     - "tycho.page.ea9adae8cf8a3196a3515d383b075f53"
   excludes:
-    - "No production measurement, independent review or owner acceptance is asserted."
+    - "No measurement, independent review, owner acceptance or pattern promotion is asserted."
   keywords:
     - "decision record"
     - "constraints"
@@ -32,10 +32,9 @@ evidence_scope:
   source_ids:
     - "src.madr"
     - "src.nygard-adr"
-    - "src.sargent-vv"
   claim_ids: []
   status: "source-linked"
-  notes: "Page-local source records and limits; not independent review."
+  notes: "Source-level citations; claim IDs not mapped. Page-local limits; not independent review."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-29"
@@ -74,9 +73,11 @@ The contract contains:
 
 - id, version, title and status;
 - question and context;
-- constraints: hard, soft and non-quantitative;
+- constraints: hard, soft (optional) and non-quantitative;
 - candidates: identifier, scenario, runs, pattern identifiers and owner pages;
-- metrics: identifier, unit, direction and business-comparable flag;
+- metrics: identifier, unit, direction and business-comparable flag. The flag means
+  candidates use the same metric definition; it does not mean the metric is measured or
+  business-valid;
 - evidence: model verification, calibration, simulation and source identifiers. In the current
   schema `evidence.simulation` carries the decision status by convention; it describes the
   decision, not whether the simulation executed;

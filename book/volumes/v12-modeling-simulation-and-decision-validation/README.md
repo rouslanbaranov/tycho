@@ -29,7 +29,7 @@ route_hints:
     - "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23"
     - "tycho.chapter.77831d9a57067de6faa1da630a83f49b"
   excludes:
-    - "No production measurement, independent review or pattern promotion is asserted."
+    - "No measurement, independent review, owner acceptance or pattern promotion is asserted."
   keywords:
     - "simulation"
     - "system dynamics"
@@ -48,7 +48,7 @@ evidence_scope:
     - "src.little-law"
   claim_ids: []
   status: "source-linked"
-  notes: "Volume navigation only; page-local ledgers are authoritative for limits."
+  notes: "Source-level citations; claim IDs not mapped. Page-local ledgers are authoritative."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-29"

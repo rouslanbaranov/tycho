@@ -5115,49 +5115,74 @@
         "mechanism": {
           "state": "supported",
           "quote": "An orchestrator persists a state machine and sends commands to participants.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
+          "reason": "Microservices.io binds orchestrator commands; state-machine persistence is Tycho design guidance.",
           "binding": {
-            "source_id": "src.temporal",
-            "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
-            "section": "Intro to Workflows",
-            "quote": "Each Workflow Execution emits a series of Commands and processes a sequence of Events , which are recorded in an Event History .",
-            "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2"
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "section": "Solution",
+            "quote": "Orchestration - an orchestrator (object) tells the participants what local transactions to execute",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
           }
         },
         "invariant": {
           "state": "supported",
           "quote": "Its guarantees are only as strong as versioned state persistence, activity semantics, timer reliability and recovery configuration.",
-          "reason": "Bounds guarantees by versioned state, activity semantics, timers and recovery configuration.",
+          "reason": "Temporal binds durable execution and compensation recovery; versioned state persistence, activity semantics, timer reliability and recovery configuration are Tycho analysis.",
           "binding": {
             "source_id": "src.temporal",
-            "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
-            "section": "Resuming a Workflow",
-            "quote": "Because the Workflow is re-executed to rebuild its state: It has to make the same decisions when given the same history. It shouldn't depend on any values not recorded in the history which would be different between runs.",
-            "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2"
+            "ledger_record": "read.temporal-saga-pattern.2026-11-01",
+            "section": "Benefits and trade-offs",
+            "quote": "Temporal's durable execution guarantees that compensations will execute even after Worker failures.",
+            "revision": "987aec66a21037418c7f9930c139aaeb2a20b76690ef140769d6886c5e11e5c9"
           }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Operational failure appears as a lost coordinator, a history that cannot advance, or an activity applied twice.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
+          "reason": "Tycho taxonomy of coordinator failure; Temporal binds partial effects and idempotent compensations.",
           "binding": {
             "source_id": "src.temporal",
-            "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
-            "section": "How Workflow replay works",
-            "quote": "When a Workflow yields or encounters an error, the goal of Temporal is to bring the Workflow back to the exact same state it was in before the pause occurred.",
-            "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2"
-          }
+            "ledger_record": "read.temporal-saga-pattern.2026-11-01",
+            "section": "Problem",
+            "quote": "A credit card may be charged but the Activity fails before returning success.",
+            "revision": "987aec66a21037418c7f9930c139aaeb2a20b76690ef140769d6886c5e11e5c9"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.temporal",
+              "ledger_record": "read.temporal-saga-pattern.2026-11-01",
+              "section": "Best practices",
+              "quote": "Make all compensations idempotent.",
+              "revision": "987aec66a21037418c7f9930c139aaeb2a20b76690ef140769d6886c5e11e5c9"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Prefer one transaction when every effect shares an owner and a database.",
-          "reason": "Source describes durable workflow orchestration only; no alternative to orchestration."
+          "reason": "Microservices.io distinguishes choreography and orchestration; Temporal rates choreography coupling. The preference and reversal rule is Tycho guidance.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "section": "Solution",
+            "quote": "There are two ways of coordination sagas",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.temporal",
+              "ledger_record": "read.temporal-saga-pattern.2026-11-01",
+              "section": "Comparison with alternatives",
+              "quote": "| Saga (choreography) | Eventual | Event-driven compensations | Very loose | High |",
+              "revision": "987aec66a21037418c7f9930c139aaeb2a20b76690ef140769d6886c5e11e5c9"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "saga-orchestration",
         "question": "Should a central coordinator drive saga steps and compensations?",
-        "competing_alternative": "Choreography or one local transaction. Reverse the choice when central coordination becomes a bottleneck or single point of failure.",
+        "competing_alternative": "Choreography or one local transaction. **Tycho guidance:** reverse the choice when central coordination becomes a bottleneck or single point of failure.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -5166,12 +5191,24 @@
         "source_id": "src.temporal",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          },
+          {
+            "source_id": "src.temporal",
+            "ledger_record": "read.temporal-saga-pattern.2026-11-01",
+            "revision": "987aec66a21037418c7f9930c139aaeb2a20b76690ef140769d6886c5e11e5c9"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
-      "notes": "Section 5 explains guarantee dependencies, risks and the single-transaction alternative; step coordination itself is not detailed."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Technical and decision coverage sufficient. Alternative bound to microservices.io and Temporal; preference/reversal, invariant factors and failure taxonomy are Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.compensating-transaction",
@@ -18399,7 +18436,7 @@
       ],
       "unit_count": 5,
       "dedicated_units": 5,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Saga, choreography, orchestration, compensation and process manager have distinct units."
     },
@@ -18700,15 +18737,15 @@
     "mechanism_supported": 124,
     "invariant_supported": 100,
     "failure_recovery_supported": 98,
-    "alternative_supported": 100,
-    "technical_partial_bounded": 10,
+    "alternative_supported": 101,
+    "technical_partial_bounded": 9,
     "technical_partial": 47,
     "technical_name_only": 0,
-    "technical_sufficient": 88,
-    "decision_partial_bounded": 57,
+    "technical_sufficient": 89,
+    "decision_partial_bounded": 56,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 88,
+    "decision_sufficient": 89,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

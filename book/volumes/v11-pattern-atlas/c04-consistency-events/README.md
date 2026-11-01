@@ -56,7 +56,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-31"
+updated_at: "2026-11-01"
 source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
@@ -197,36 +197,7 @@ unit, not a benchmark.
 
 ### Saga Orchestration
 
-**Identity.** Saga Orchestration; family Data consistency, transactions and event
-sourcing; kind transaction-pattern; priority core.
-
-**Decision question.** Should a central coordinator drive saga steps and compensations?
-
-**Good-fit conditions.** The workflow is complex; central visibility and recovery are
-required; the orchestrator can own durable history, timers, idempotent activities and
-versioned workflow code.
-
-**Hard contraindications.** Reject when the orchestrator becomes a hidden monolith, when
-participants must remain autonomous, or when no team can own workflow state.
-
-**Competing alternative.** Choreography or one local transaction. Reverse the choice when
-central coordination becomes a bottleneck or single point of failure.
-
-**Failure and recovery.** Coordinator loss, stuck histories, duplicate activities and
-upgrade conflicts are possible; replay from durable history and hold unknown external
-effects for repair.
-
-**Technical owner.** [Saga Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga-orchestration) — workflow selection is bounded, not a dedicated Temporal or orchestration manual.
-
-**Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-temporal-workflows.2026-10-21: all four served headings read.
-The record supports durable orchestration only; saga
-compensation semantics are synthetic guidance. The source is a public
-pattern/specification unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Saga; Saga Choreography; Process Manager; Workflow Failure.
+See the [dedicated Saga Orchestration card](saga-orchestration.md).
 
 ### Compensating Transaction
 
