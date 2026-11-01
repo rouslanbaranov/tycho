@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-11-01. Entries: 342.
+Inventory date: 2026-11-01. Entries: 345.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -70,6 +70,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.aws-strangler / core | [Strangler fig pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-decomposing-monoliths/strangler-fig.html) — AWS Prescriptive Guidance | Bounded public page for incremental replacement, coexistence, rollback planning, interception prerequisites and facade failure conditions. | admitted-for-research / public-web-or-author-download |
 | src.aws-cqrs / core | [CQRS pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-data-persistence/cqrs-pattern.html) — AWS Prescriptive Guidance | Bounded public page for CQRS command/query separation, command-side validation and eventual consistency. | admitted-for-research / public-web-or-author-download |
 | src.microsoft-ddd / core | [Use domain analysis to model microservices](https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis) — Microsoft Learn | Bounded public page for domain analysis, bounded contexts, ubiquitous language and context maps. | admitted-for-research / public-web-or-author-download |
+| src.azure-multiregion-appservice / supporting | [Multiple-region architectures for Azure App Service disaster recovery](https://learn.microsoft.com/en-us/azure/architecture/web-apps/guides/multi-region-app-service/multi-region-app-service) — Microsoft Learn | Replication lag, active-active/passive comparison and probe-driven RTO for the Geode pattern | admitted-for-research / public-web-or-author-download |
 
 ## Contracts
 
@@ -487,3 +488,10 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | ID / priority | Source | Planned use | Admission / access |
 |---|---|---|---|
 | src.grpc-hedging / core | [Request Hedging](https://grpc.io/docs/guides/request-hedging/) — gRPC authors | Hedged request budget, cancellation, retry alternative and overload throttling. | admitted-for-research / public-web-or-author-download |
+
+## Networking
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.azure-traffic-manager / supporting | [Azure Traffic Manager documentation](https://learn.microsoft.com/en-us/azure/traffic-manager/) — Microsoft Learn | Global DNS routing, health probing, stale-route and failover limits for the Geode pattern | admitted-for-research / public-web-or-author-download |
+| src.azure-multiregion-design / supporting | [Multiregion network design](https://learn.microsoft.com/en-us/azure/networking/design-guide/multi-region) — Microsoft Learn | Active-active versus active-passive conditions, DNS TTL, replication latency and conflict resolution for the Geode pattern | admitted-for-research / public-web-or-author-download |

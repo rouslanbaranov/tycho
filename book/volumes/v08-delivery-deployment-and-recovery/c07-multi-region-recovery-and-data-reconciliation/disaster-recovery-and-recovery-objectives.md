@@ -48,7 +48,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-19"
 updated_at: "2026-11-01"
-source_inspection_date: "2026-11-01"
+source_inspection_date: null
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765:-1 -->

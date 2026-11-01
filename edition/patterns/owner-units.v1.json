@@ -13463,13 +13463,13 @@
         "mechanism": {
           "state": "supported",
           "quote": "Geode places identical regional nodes behind a global routing layer so clients can use a nearby healthy region.",
-          "reason": "States the nodes-plus-routing mechanism.",
+          "reason": "Explains the regional nodes behind a global routing layer and the shared replication backplane.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch5-geode.2026-10-21",
+            "ledger_record": "read.geode-pattern.2026-11-01",
             "section": "Solution",
             "quote": "Deploy the service into multiple satellite deployments spread around the globe, each of which is called a geode . The geode pattern harnesses key features of Azure to route traffic via the shortest path to a nearby geode, which improves latency and performance.",
-            "revision": "b543566b65aa0fd4b4a0620253a67e6fae1c1427e347bb37f5e80e9775baf364"
+            "revision": "51c8ee87974c51995c6d68eeb59480b8ed298951a4f7a4f784d0bc9fd07ce143"
           }
         },
         "invariant": {
@@ -13478,27 +13478,185 @@
           "reason": "Lists the replication, health, routing and authority preconditions.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch5-geode.2026-10-21",
+            "ledger_record": "read.geode-pattern.2026-11-01",
             "section": "Solution",
             "quote": "Each geode is behind a global load balancer, and uses a geo-replicated read-write service like Azure Cosmos DB to host the data plane, ensuring cross-geode data consistency.",
-            "revision": "b543566b65aa0fd4b4a0620253a67e6fae1c1427e347bb37f5e80e9775baf364"
+            "revision": "51c8ee87974c51995c6d68eeb59480b8ed298951a4f7a4f784d0bc9fd07ce143"
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The failure path is a route to a stale or isolated region; the router must use an authoritative health and data-freshness signal, and failover must fence the old writer.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "A route can remain stale or point at an isolated region; use a reachability probe and a separate freshness gate, and fence the old writer before failover.",
+          "reason": "Traffic Manager keeps a cached endpoint until the DNS TTL expires, cannot move existing connections, returns a geographic endpoint whether healthy or not, and answers as if all degraded endpoints were online; multi-location probes can include dependency checks; replication is asynchronous and lag must be monitored; fencing is Tycho guidance because the selected sources do not prescribe it.",
+          "binding": {
+            "source_id": "src.azure-traffic-manager",
+            "ledger_record": "read.azure-traffic-manager-monitoring.2026-11-01",
+            "section": "Endpoint failover and recovery",
+            "quote": "Clients continue to use the endpoint until the DNS cache expires.",
+            "revision": "f68e82fce1a574efa716b23def677e27edf1f631408936e060c6a21af5614e46"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.azure-traffic-manager",
+              "ledger_record": "read.azure-traffic-manager-routing.2026-11-01",
+              "section": "Geographic traffic-routing method",
+              "quote": "Since a region can be mapped only to one endpoint, Traffic Manager returns a response whether the endpoint is healthy or not.",
+              "revision": "8d24ab4466811d244cda4c24002f0c77558be7c5f8f3046da97cb6bf32b8679c"
+            },
+            {
+              "source_id": "src.azure-traffic-manager",
+              "ledger_record": "read.azure-traffic-manager-routing.2026-11-01",
+              "section": "Weighted traffic-routing method",
+              "quote": "Clients and the recursive DNS servers that clients use to resolve DNS names cache DNS responses.",
+              "revision": "8d24ab4466811d244cda4c24002f0c77558be7c5f8f3046da97cb6bf32b8679c"
+            },
+            {
+              "source_id": "src.azure-traffic-manager",
+              "ledger_record": "read.azure-traffic-manager-monitoring.2026-11-01",
+              "section": "Traffic-routing methods",
+              "quote": "One exception to normal traffic-routing behavior occurs when all eligible endpoints have a degraded status. Traffic Manager makes a \"best effort\" attempt and responds as if all the Degraded status endpoints actually are in an online state.",
+              "revision": "f68e82fce1a574efa716b23def677e27edf1f631408936e060c6a21af5614e46"
+            },
+            {
+              "source_id": "src.azure-traffic-manager",
+              "ledger_record": "read.azure-traffic-manager-monitoring.2026-11-01",
+              "section": "Endpoint failover and recovery",
+              "quote": "Because Traffic Manager works at the DNS level, it cannot influence existing connections to any endpoint.",
+              "revision": "f68e82fce1a574efa716b23def677e27edf1f631408936e060c6a21af5614e46"
+            },
+            {
+              "source_id": "src.azure-traffic-manager",
+              "ledger_record": "read.azure-traffic-manager-monitoring.2026-11-01",
+              "section": "How endpoint monitoring works",
+              "quote": "Use this path to perform application-specific checks, such as checking performance counters or verifying database availability.",
+              "revision": "f68e82fce1a574efa716b23def677e27edf1f631408936e060c6a21af5614e46"
+            },
+            {
+              "source_id": "src.azure-traffic-manager",
+              "ledger_record": "read.azure-traffic-manager-monitoring.2026-11-01",
+              "section": "How endpoint monitoring works",
+              "quote": "Traffic manager aggregates the average health of the probes rather than rely on a singular probe instance.",
+              "revision": "f68e82fce1a574efa716b23def677e27edf1f631408936e060c6a21af5614e46"
+            },
+            {
+              "source_id": "src.azure-traffic-manager",
+              "ledger_record": "read.azure-traffic-manager-faq.2026-11-01",
+              "section": "Is Traffic Manager resilient to Azure region failures?",
+              "quote": "By design, Traffic Manager components are resilient to a complete failure of any Azure region.",
+              "revision": "5f87df653e9335478caddc8ff1459f2b4fa62cf56c38c528305803f06f1974e2"
+            },
+            {
+              "source_id": "src.azure-traffic-manager",
+              "ledger_record": "read.azure-traffic-manager-faq.2026-11-01",
+              "section": "What is DNS TTL and how does it impact my users?",
+              "quote": "a higher TTL also means that your data doesn't reflect the latest health information that Traffic Manager has obtained through its probing agents.",
+              "revision": "5f87df653e9335478caddc8ff1459f2b4fa62cf56c38c528305803f06f1974e2"
+            },
+            {
+              "source_id": "src.azure-multiregion-design",
+              "ledger_record": "read.azure-multiregion-network.2026-11-01",
+              "section": "Data replication and latency",
+              "quote": "Active-active patterns with bidirectional writes require conflict resolution strategies at the application or database layer. The network provides connectivity, but applications must handle write conflicts.",
+              "revision": "00b0f80facd7925b7fe44bdae538074ca96dd47c64e561ccfc54890591d8f606"
+            },
+            {
+              "source_id": "src.azure-multiregion-appservice",
+              "ledger_record": "read.azure-appservice-multiregion.2026-11-01",
+              "section": "Recommendations",
+              "quote": "Replication to the secondary region is asynchronous, so include possible replication lag and storage-account failover in your recovery design.",
+              "revision": "ec445f73d1d922b052ec786084532069f641b7cbde3c09fcc8a0ac8de5a4396e"
+            },
+            {
+              "source_id": "src.azure-multiregion-appservice",
+              "ledger_record": "read.azure-appservice-multiregion.2026-11-01",
+              "section": "Cross-region replication",
+              "quote": "Monitor Last Sync Time to understand current replication lag.",
+              "revision": "ec445f73d1d922b052ec786084532069f641b7cbde3c09fcc8a0ac8de5a4396e"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Active-passive recovery is the alternative when cross-region consistency is not worth the routing complexity.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Active-passive recovery is the alternative when writes must stay in one region, state cannot be replicated cheaply, cost prevents full active-active capacity, or RTO tolerance allows activation time.",
+          "reason": "The multiregion guidance gives those active-passive conditions, requires both regions to serve any request and the lowest RTO for active-active, requires conflict resolution for bidirectional writes, and warns that the passive path can drift.",
+          "binding": {
+            "source_id": "src.azure-multiregion-design",
+            "ledger_record": "read.azure-multiregion-network.2026-11-01",
+            "section": "Active-passive",
+            "quote": "Your application has strict write-region requirements or can't easily replicate state.",
+            "revision": "00b0f80facd7925b7fe44bdae538074ca96dd47c64e561ccfc54890591d8f606"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.azure-multiregion-design",
+              "ledger_record": "read.azure-multiregion-network.2026-11-01",
+              "section": "Active-active",
+              "quote": "Both regions serve traffic simultaneously. A global load balancer, such as Traffic Manager or Front Door, distributes requests across regions based on proximity, performance, or weight.",
+              "revision": "00b0f80facd7925b7fe44bdae538074ca96dd47c64e561ccfc54890591d8f606"
+            },
+            {
+              "source_id": "src.azure-multiregion-design",
+              "ledger_record": "read.azure-multiregion-network.2026-11-01",
+              "section": "Active-active",
+              "quote": "Your application can handle requests in any region without region-specific state dependencies.",
+              "revision": "00b0f80facd7925b7fe44bdae538074ca96dd47c64e561ccfc54890591d8f606"
+            },
+            {
+              "source_id": "src.azure-multiregion-design",
+              "ledger_record": "read.azure-multiregion-network.2026-11-01",
+              "section": "Active-active",
+              "quote": "You need the lowest possible RTO (failover is immediate because the healthy region already serves traffic).",
+              "revision": "00b0f80facd7925b7fe44bdae538074ca96dd47c64e561ccfc54890591d8f606"
+            },
+            {
+              "source_id": "src.azure-multiregion-design",
+              "ledger_record": "read.azure-multiregion-network.2026-11-01",
+              "section": "Active-passive",
+              "quote": "One region (primary) handles all traffic. The secondary region stays ready but doesn't serve user requests until a failover event.",
+              "revision": "00b0f80facd7925b7fe44bdae538074ca96dd47c64e561ccfc54890591d8f606"
+            },
+            {
+              "source_id": "src.azure-multiregion-design",
+              "ledger_record": "read.azure-multiregion-network.2026-11-01",
+              "section": "Active-passive",
+              "quote": "Cost constraints prevent running full capacity in two regions simultaneously.",
+              "revision": "00b0f80facd7925b7fe44bdae538074ca96dd47c64e561ccfc54890591d8f606"
+            },
+            {
+              "source_id": "src.azure-multiregion-design",
+              "ledger_record": "read.azure-multiregion-network.2026-11-01",
+              "section": "Active-passive",
+              "quote": "Test failover regularly. Network configurations in the passive region can drift if not validated.",
+              "revision": "00b0f80facd7925b7fe44bdae538074ca96dd47c64e561ccfc54890591d8f606"
+            },
+            {
+              "source_id": "src.azure-multiregion-design",
+              "ledger_record": "read.azure-multiregion-network.2026-11-01",
+              "section": "Security considerations",
+              "quote": "Traffic Manager failover depends on DNS TTL. Shorter TTLs enable faster failover but increase DNS query volume. Front Door provides connection-level failover that doesn't depend on client DNS cache expiration.",
+              "revision": "00b0f80facd7925b7fe44bdae538074ca96dd47c64e561ccfc54890591d8f606"
+            },
+            {
+              "source_id": "src.azure-multiregion-appservice",
+              "ledger_record": "read.azure-appservice-multiregion.2026-11-01",
+              "section": "Active-active architecture",
+              "quote": "Active-active architectures spread incoming traffic across identical web apps in multiple separate regions.",
+              "revision": "ec445f73d1d922b052ec786084532069f641b7cbde3c09fcc8a0ac8de5a4396e"
+            },
+            {
+              "source_id": "src.azure-multiregion-appservice",
+              "ledger_record": "read.azure-appservice-multiregion.2026-11-01",
+              "section": "Active-passive architecture",
+              "quote": "Active-passive architectures use identical web apps in multiple separate regions, but Azure Front Door routes traffic to only one active region at a time.",
+              "revision": "ec445f73d1d922b052ec786084532069f641b7cbde3c09fcc8a0ac8de5a4396e"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "geode",
         "question": "Should identical nodes be deployed across regions behind a global routing layer?",
-        "competing_alternative": "Cell-based single-region deployment or active-passive recovery. Reverse the choice when cross-region consistency and cost exceed locality benefit.",
+        "competing_alternative": "Active-passive recovery when strict write-region requirements, hard-to-replicate state, cost constraints or RTO tolerance make active-active routing unjustified; a single-region cell when locality is not needed. Active-active is justified when both regions can serve any request and the lowest RTO is required, accepting bidirectional replication and conflict resolution. Active-passive lowers cost but its passive path can drift; test failover and failback. Reverse when consistency and routing complexity exceed locality benefit; this selection rule is Tycho guidance.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -13507,12 +13665,44 @@
         "source_id": "src.microsoft-cloud-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.geode-pattern.2026-11-01",
+            "revision": "51c8ee87974c51995c6d68eeb59480b8ed298951a4f7a4f784d0bc9fd07ce143"
+          },
+          {
+            "source_id": "src.azure-traffic-manager",
+            "ledger_record": "read.azure-traffic-manager-routing.2026-11-01",
+            "revision": "8d24ab4466811d244cda4c24002f0c77558be7c5f8f3046da97cb6bf32b8679c"
+          },
+          {
+            "source_id": "src.azure-traffic-manager",
+            "ledger_record": "read.azure-traffic-manager-monitoring.2026-11-01",
+            "revision": "f68e82fce1a574efa716b23def677e27edf1f631408936e060c6a21af5614e46"
+          },
+          {
+            "source_id": "src.azure-traffic-manager",
+            "ledger_record": "read.azure-traffic-manager-faq.2026-11-01",
+            "revision": "5f87df653e9335478caddc8ff1459f2b4fa62cf56c38c528305803f06f1974e2"
+          },
+          {
+            "source_id": "src.azure-multiregion-design",
+            "ledger_record": "read.azure-multiregion-network.2026-11-01",
+            "revision": "00b0f80facd7925b7fe44bdae538074ca96dd47c64e561ccfc54890591d8f606"
+          },
+          {
+            "source_id": "src.azure-multiregion-appservice",
+            "ledger_record": "read.azure-appservice-multiregion.2026-11-01",
+            "revision": "ec445f73d1d922b052ec786084532069f641b7cbde3c09fcc8a0ac8de5a4396e"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Bounded ownership note with full mechanism, failure path and alternative."
+      "notes": "Four dimensions bound 2026-11-01 to the Geodes pattern, Traffic Manager routing, monitoring and FAQ, multiregion network design and multiple-region App Service guidance. Fencing, the separate freshness gate and the selection rule remain Tycho; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.static-content-hosting",
@@ -18013,8 +18203,8 @@
     "embedded_units": 0,
     "mechanism_supported": 124,
     "invariant_supported": 96,
-    "failure_recovery_supported": 93,
-    "alternative_supported": 97,
+    "failure_recovery_supported": 94,
+    "alternative_supported": 98,
     "technical_partial_bounded": 12,
     "technical_partial": 51,
     "technical_name_only": 0,
