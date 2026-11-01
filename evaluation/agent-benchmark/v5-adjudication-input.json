@@ -1,0 +1,78 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q154",
+      "question": "A daily booking total is computed in event time; event E5 arrives after the watermark has closed its window, and a later cancellation must change the total. Why is finalization at the watermark not proof that earlier events are complete, and what must the lateness and correction contract decide before the total is treated as settled?",
+      "answer": "Watermark finalization is a stated lateness expectation, not proof of completeness. A watermark tells operators how much lateness they expect and when to finalize; it asserts \"nothing older is expected\", not \"everything older has arrived\". Arrival order differs from event-time order: E5 carries event time 10:01 but reaches the operator after its watermark advanced beyond that window, so the window closes with a valid event still in flight. A later cancellation is stronger still: it is a legitimate business correction that must change the total, and no watermark anticipates it.\n\nBefore the daily total is settled, the lateness and correction contract must decide the event-time source and daily boundary (clock, time zone); allowed lateness and idle-partition handling; whether finalized windows may be reopened, and for how long state is retained; the correction form (update or retraction, side output, compensating adjustment event, or drop with an explicit metric); and the sink contract (idempotent upsert or transaction with replay deduplication), so a restored checkpoint cannot double-apply the correction. Otherwise the number is \"best known now\", not settled; a business forbidding revisions needs separate adjustments. The book's scenario is synthetic, so version-specific watermark behavior still needs release evidence.",
+      "citations": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "Event time differs from the time at which data is observed, and a watermark states how much lateness the operator expects and when a window will be finalized rather than proving that every earlier event has arrived.",
+        "A late event that misses finalization must follow a declared policy such as drop with an explicit metric, side output, update or retraction, or deferred finalization, and none of these is universally correct.",
+        "The correction policy must match the external output, because a sink that cannot accept corrections or idempotent upserts cannot publish revised totals even when operator state is restored correctly.",
+        "A consistent checkpoint restores operator state and source positions but does not decide whether a late business correction is discarded, emitted as an update or routed to reconciliation, and a business that forbids revising settled totals needs a separate adjustment event.",
+        "The declared policy dimensions include event-time source, window boundaries, handling of delayed or idle partitions, retained state and TTL, and output correction support, and out-of-order fixtures plus measured output freshness are needed to test them."
+      ],
+      "optional_claims": [
+        "A checkpoint is not automatically a migration artifact, since serializer, operator identity or topology changes can make restored state incompatible.",
+        "Exactly-once processing inside the stream processor does not extend to an independently acknowledged external effect."
+      ],
+      "judge_0": {
+        "task_id": "Q154",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": false,
+        "pass": true,
+        "notes": "All five core claims are substantively covered, with the only residual gap being the claim that out-of-order fixtures and measured output freshness are needed to test the declared lateness and correction policy; the failure-recovery-experiments anchor is uncited."
+      },
+      "judge_1": {
+        "task_id": "Q154",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: the declared lateness and correction policy must be tested with out-of-order fixtures and measured output freshness, which the answer never states."
+      }
+    },
+    {
+      "task_id": "Q164",
+      "question": "Why is R + W > N necessary but not sufficient for a quorum read to return the newest acknowledged write?",
+      "answer": "R + W > N guarantees intersection, not freshness. Every read quorum of R replicas must share at least one replica with the W replicas that acknowledged the newest write, so that version is present among the responses \u2014 provided both operations use the same replica set and the write actually reached W replicas. Intersection is necessary: with R + W \u2264 N the sets can be disjoint and no respondent can supply the value. It is not sufficient, because a replica holding the newest copy does not force the response that copy.\n\nSufficiency needs more. The write must really be durable on W replicas; a failed or partial write leaves only older versions to intersect. Membership must be strict: Dynamo and Riak sloppy quorums route to fallback nodes, so the R respondents and W acknowledgers can be different sets. The reader must select the newest version: Cassandra's last-write-wins timestamps assume a total order, Dynamo and Riak can return concurrent siblings, and clock skew can invert that order. Replica movement during membership change can also break old/new overlap. Read repair and hinted handoff are best-effort; anti-entropy converges only eventually. A leader simplifies ordering but still needs a majority; per-session read-your-writes is a separate obligation. Evidence is documentation and a 2007 paper, not an implementation test.",
+      "citations": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+        "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#worked-history-and-counterexample"
+      ],
+      "core_claims": [
+        "When R + W > N, the read and write voter sets intersect, so the read consults at least one replica that acknowledged the write.",
+        "Intersection supplies only a candidate: the reader must select the highest version and repair stale replicas, or an older value can still be returned.",
+        "Causally unordered concurrent versions need an application-defined total order before a highest-version rule can be applied.",
+        "A membership change must keep the old and new quorums overlapping, and a sloppy quorum buys availability by giving up that intersection guarantee.",
+        "Quorum arithmetic depends on a correctly configured voter set; adding a voter can raise the required majority without increasing tolerated failures."
+      ],
+      "optional_claims": [
+        "A leader-based protocol can simplify reads and writes but still needs a quorum for election and commit."
+      ],
+      "judge_0": {
+        "task_id": "Q164",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Core claim 5 is missing: quorum arithmetic on a misconfigured voter set, where adding a voter raises the required majority without increasing tolerated failures, is never discussed."
+      },
+      "judge_1": {
+        "task_id": "Q164",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: intersection, version selection and repair, concurrent siblings, membership overlap with sloppy quorums and voter-set configuration are all addressed."
+      }
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "task_id": "Q169",
+  "answer": "An exact scan is a baseline, not a certificate. The book scopes it narrowly: it is \"a useful ground truth for approximate search recall, within the same model, metric, filtering and corpus version,\" and it \"does not establish that the embedding ranking matches human relevance labels.\" A model change breaks that scope twice. First, old and new vectors are incomparable: an exact scan over old vectors certifies a space the serving path no longer queries, while scanning new query vectors against an old index yields distances that mean nothing; a partially re-embedded corpus hides that mixture inside one recall figure. Second, recall@k against exact top-k measures only approximation loss. A new model relocates neighborhoods, so an index can score recall 1.0 in its own space while returning semantically wrong or stale documents; exactness cannot see relevance, freshness or authorization. Certification therefore needs a version-locked re-embed and rebuild, dual evaluation against a judged query population, filter-scoped exact baselines, negative queries and lifecycle checks. Prior certification does not transfer. Exact scan stays necessary for measuring approximation error, never sufficient for acceptance. Confidence is high on the mechanism; the book reports no measured degradation, and lexical search returned zero results in this session, so navigation used outline and page reads.",
+  "citations": [
+    "tycho.page.66d2977575264168a8616e09d0900af6#2-exact-nearest-neighbors-are-the-reference-baseline",
+    "tycho.page.66d2977575264168a8616e09d0900af6#1-the-retrieval-contract-begins-before-embeddings",
+    "tycho.page.411a855b84384e86b3b7fb60a3f63464#6-failure-cases-and-evaluation",
+    "tycho.page.411a855b84384e86b3b7fb60a3f63464#5-pgvector-versus-faiss-versus-a-vector-database",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+    "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+    "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#purpose-and-mission",
+    "tycho.chapter.1c08d660af40408188c2d556f8d77358#decision-and-worked-result"
+  ],
+  "evidence": [
+    {
+      "claim": "An exact scan is a ground-truth baseline only within the same model, metric, filtering and corpus version.",
+      "section_key": "tycho.page.66d2977575264168a8616e09d0900af6#2-exact-nearest-neighbors-are-the-reference-baseline",
+      "note": "Observed: \"This is a useful ground truth for approximate search recall, within the same model, metric, filtering and corpus version. It does not establish that the embedding ranking matches human relevance labels.\""
+    },
+    {
+      "claim": "Embedding model/version, dimension, preprocessing and tokenizer are retrieval-contract elements, and queries must use a compatible encoder.",
+      "section_key": "tycho.page.66d2977575264168a8616e09d0900af6#1-the-retrieval-contract-begins-before-embeddings",
+      "note": "Observed: contract item 3 requires a documented embedding model/version, dimension, preprocessing and tokenizer; the query path is routed through \"Same compatible encoder\"."
+    },
+    {
+      "claim": "A model upgrade makes old and new vectors incomparable, and the stated minimum check is a model-version lock, re-embedding and dual evaluation.",
+      "section_key": "tycho.page.411a855b84384e86b3b7fb60a3f63464#6-failure-cases-and-evaluation",
+      "note": "Observed failure-table row: \"Embedding model upgraded | Old/new vectors incomparable or ranking shifts | Model version lock, re-embed and dual-evaluation\"."
+    },
+    {
+      "claim": "ANN recall is defined against exact top-k restricted to eligible documents, with index revision, embedding model and ACL revision kept compatible.",
+      "section_key": "tycho.page.411a855b84384e86b3b7fb60a3f63464#5-pgvector-versus-faiss-versus-a-vector-database",
+      "note": "Observed table rows: \"ANN recall | Compare to exact top-k restricted to eligible documents\" and \"Snapshot correctness | Index revision, embedding model and ACL revision remain compatible\"."
+    },
+    {
+      "claim": "A defensible comparison holds source snapshot, chunk boundaries, qrels, permission filters and evaluation queries fixed; similarity or a top result is not proof of source support.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+      "note": "Observed: \"A defensible comparison uses the same source snapshot, chunk/section boundaries, qrels, permission filters and evaluation queries where possible\"; \"Neither semantic similarity nor “top result found” certifies that a source supports the requested claim.\""
+    },
+    {
+      "claim": "Recall@k is computed over judged relevant items under chosen qrels, and pooled judgments are approximations rather than a complete truth set.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+      "note": "Observed: \"Recall@k uses a denominator of all judged relevant items under the chosen qrels\"; TREC pooled judgments are described as assumptions/approximations for a particular collection."
+    },
+    {
+      "claim": "Evaluation sets must include negative or unanswerable queries, stale refresh windows, renamed or deleted content and version identity.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+      "note": "Observed bullets: negative/unanswerable questions, renamed/deleted content, contradictory editions, changed documents and stale index refresh windows; label queries with reviewer context and snapshot/version identity."
+    },
+    {
+      "claim": "Index generations belong to an admitted source revision, are validated before promotion, and mixed versions produce answers whose sources never coexisted.",
+      "section_key": "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+      "note": "Observed: define how a candidate generation is validated before promotion and whether queries pin one generation; \"A mix of document versions can produce an internally plausible answer whose sources never coexisted at one point in time.\""
+    },
+    {
+      "claim": "Retrieval quality spans relevance, coverage, freshness, authorization, latency and cost; a high similarity score alone is not evidence of a correct answer.",
+      "section_key": "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#purpose-and-mission",
+      "note": "Observed: \"Information retrieval quality therefore spans relevance, coverage, freshness, authorization, latency and cost. A high similarity score alone is not evidence of a correct answer.\""
+    },
+    {
+      "claim": "The chapter decision pairs an exact reference with a relevant query set, so exactness alone is not the acceptance criterion.",
+      "section_key": "tycho.chapter.1c08d660af40408188c2d556f8d77358#decision-and-worked-result",
+      "note": "Observed: \"Evaluate embedding/version choices and approximate-neighbor recall against an exact reference and a relevant query set.\""
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "atlas",
+  "items": [
+    {
+      "question": "Why does a failed coordinator leave prepared participants holding locks, and why must one durable decision exist before any participant applies the outcome?",
+      "required_evidence": [
+        "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#1-define-the-invariant-before-naming-consistency",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example"
+      ],
+      "core_claims": [
+        "A coordinator asks every participant to prepare, collects the votes, and then records one commit or abort decision that participants apply while still holding prepared state; no participant may commit before that durable decision exists.",
+        "A failure after the prepare phase leaves the transaction in doubt: prepared nodes wait for a commit or rollback from the global coordinator, and until resolution the data stays locked for both reads and writes.",
+        "The prepared state and the commit-point record are written to durable logs so recovery can resolve the transaction after a coordinator failure; PostgreSQL stores prepared state on disk and expects an external transaction manager to track and close prepared transactions.",
+        "Because a participant that has voted to prepare cannot safely decide alone, a coordinator outage blocks the resources it touched instead of letting participants commit independently and diverge.",
+        "Saga is the alternative when that blocking is unacceptable: it sequences local transactions and compensating actions, avoiding prepared locks but accepting visible intermediate states, no automatic rollback, and compensation that can itself fail."
+      ],
+      "optional_claims": [
+        "A single local transaction is preferable when every resource participating in the invariant shares one database.",
+        "Coordinator recovery is a single point of failure and participant heterogeneity makes the protocol costly, so its decision boundary covers prepared locks rather than a portable recovery algorithm."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a session token guarantee read-your-writes without making stored data globally consistent, and what must happen when that token cannot survive failover?",
+      "required_evidence": [
+        "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#bounded-pattern-ownership-notes",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#where-the-dependency-must-travel"
+      ],
+      "core_claims": [
+        "Session consistency is scoped to one client session: Cosmos DB returns an updated session token after every write and promises read-your-writes and writes-follow-reads within that session, not across clients or processes.",
+        "The token acts as a minimum version barrier rather than a pinned historical version, and Cosmos session tokens are partition-bound, so a token cannot order reads that land on another partition.",
+        "Read-your-writes and monotonic reads are per-process properties in Jepsen's definitions and do not apply to operations performed by other processes, so another user may still observe an older state.",
+        "After client recreation the token cache is re-created, so the requirement must be rebuilt from durable state or narrowed; an epoch or lineage field is needed before a token may cross a leadership change, and a sticky route that cannot survive failover is not a session guarantee.",
+        "The routing layer owns the wait, reroute and rejection policy: when no replica can satisfy the token, return a retryable failure rather than an older snapshot, and do not collapse a multiwriter frontier into one scalar version."
+      ],
+      "optional_claims": [
+        "Causal consistency is the stronger adjacent contract, and MongoDB provides all four causal guarantees only with majority reads and majority writes.",
+        "A linearizable read path is the alternative when the product requires one latest state rather than per-client continuity."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a cached not-found keep hiding an object after it has been created, and what must a negative cache key include before a denial may be shared?",
+      "required_evidence": [
+        "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#6-a-discriminating-failure-experiment"
+      ],
+      "core_claims": [
+        "Caching an absent result protects against repeated misses for nonexistent identifiers, but it creates a freshness question because a cached not-found can hide an object created later.",
+        "RFC 9111 permits storing negative results only inside its storage rules, and a shared cache must not reuse an authorization-bearing response unless a response directive allows storage by a shared cache.",
+        "A cached negative must not become a universal statement that an object does not exist for all principals: a decision has to be bound to the authenticated subject, action, resource, tenant and relevant context, and cached only for that same scope and policy state within the approved freshness limit.",
+        "A cached denial can outlive a grant or a revocation, so the denial must be bounded by the shorter of its TTL and the revocation deadline, the key must be deleted or versioned on create, grant, revoke and delete, and an unknown backend error must never be cached as absence.",
+        "Per-principal keying, a short TTL and bypass are the bounded alternatives: prefer per-principal keying for authorization decisions, a short TTL for public existence checks, and bypass when the revocation deadline is shorter than any useful TTL."
+      ],
+      "optional_claims": [
+        "CloudFront caches a 403 only when the origin sends max-age or s-maxage, while Cloudflare gives 404 and 410 a three-minute default edge TTL and does not cache other status codes by default.",
+        "Double keying adds material such as the referring site to a cache key; for authorization the analogous material is the principal, tenant and policy revision."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why does one general-purpose API become a poor fit for materially different clients, and what must a per-client backend avoid becoming?",
+      "required_evidence": [
+        "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "A backend for frontend is a separate backend for one client experience, owned by the frontend team, that customizes the client API and may compose several service calls.",
+        "AWS defines the pattern as one backend per user experience instead of one general-purpose API, and Microsoft says it customizes one interface without affecting others while frontend teams independently manage their own BFF service.",
+        "Code duplication is a probable outcome that must be traded against a better-tailored experience, cross-cutting features such as monitoring and authorization should stay abstracted, and domain logic remains with the service that owns the business rule.",
+        "The BFF is tightly coupled to one client and released with it while the composed services have independent lifecycles, so the composition contract must be versioned and the client contract tested; divergence between composition and domain API is drift.",
+        "Reject the BFF when one contract serves all clients, when it would own core business rules, when no team owns its lifecycle, or when the split multiplies deployments without a measured client benefit."
+      ],
+      "optional_claims": [
+        "Isolating a service per frontend interface contains malfunctions, so one client's availability does not determine another client's access.",
+        "A shared API with client-side selection is the alternative when the client differences are small and can be expressed without a new authority."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why must a scatter-gather fix a completeness rule and a straggler policy before it can return an answer, and what must the response disclose about participants that did not reply?",
+      "required_evidence": [
+        "tycho.page.b864f32bd58a4f7b8eaaa223cdecfea7#overview",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "Scatter-gather sends one request to several participants and gathers their responses, so it needs a completeness condition and a deadline; the source names wait-for-all, first-best and fixed-timeout strategies.",
+        "The controller can configure a timeout that ignores responses taking too long, and the aggregator then combines the partial responses into a result, so an implementation must communicate to the client that the response is incomplete.",
+        "A bounded implementation assigns a per-recipient deadline and a correlation key, accepts at most one reply per participant, and declares a quorum or completeness rule plus a policy for late and duplicate responses.",
+        "The aggregator needs correlation, a completeness condition, an aggregation algorithm and eviction of late responses, and a partial result needs a versioned schema and a caller-visible completeness marker naming who answered and who did not.",
+        "Do not use it when one authority must answer, when responses are not comparable, or when fan-out tail latency would exceed the caller's budget; cost and tail latency grow with the number of participants."
+      ],
+      "optional_claims": [
+        "An aggregator alone is the alternative when responses already exist and no broadcast is needed, because the gather step is the aggregator component inside scatter-gather.",
+        "When a required participant is missing or delayed, the incomplete set should raise an error after a timeout rather than block further processing indefinitely."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why does placing a service copy in every region not remove the failover problem, and what must be established before the old regional writer is replaced?",
+      "required_evidence": [
+        "tycho.page.6f2a9c4e1b7d4a8f9e3c5b0d2a6f8e1c#overview",
+        "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+        "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "A geode places a regional node in each geography behind a global routing layer so clients use a nearby healthy region, and each geode is a self-contained regional deployment with a geo-replicated read-write service.",
+        "Geodes do not exist in isolation and any geode can take over after a regional outage, which requires a data replication and consistency contract, a regional health signal, a routing rule and an explicit failover authority.",
+        "A route can stay stale or point at an isolated region: DNS answers persist until the client's cache expires, the routing service cannot move existing connections, and geographic routing returns an endpoint whether it is healthy or not.",
+        "The routing probe is authoritative for reachability rather than data freshness, because inter-region replication is asynchronous; replication lag must be monitored and a 200 response does not prove that a region's writes are current.",
+        "Before failover the old writer must be fenced, and the global router remains a critical dependency even though it is not a proven regional single point of failure; stale DNS, long-lived connections and a health signal that ignores freshness are the residual risks."
+      ],
+      "optional_claims": [
+        "Active-passive recovery is the alternative when writes must stay in one region, state cannot be replicated cheaply, cost prevents full active-active capacity, or the RTO tolerance allows activation time.",
+        "When every eligible endpoint is degraded, the routing service makes a best-effort attempt and answers as if the endpoints were online, so a probe bounds detection but not correctness."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

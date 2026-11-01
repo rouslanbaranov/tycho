@@ -1,0 +1,166 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q153",
+      "question": "A client pages through a list ordered by creation time with a keyset cursor while rows are inserted and one caller's access to a row is revoked. Why does the keyset cursor avoid offset drift without giving a stable snapshot, and what must the cursor bind so a stale page cannot expose the revoked row?",
+      "layer_expected": "book",
+      "answer": "A keyset cursor stores the last ordering tuple, here (created_at, id), not a row count: the next page is a strict comparison on that tuple. Inserts ahead of the cursor change no earlier position, so no row is re-shown or skipped by a numeric shift, the offset failure when rows are inserted upstream. That is position stability only. The cursor says where the scan resumes, not which set existed; rows whose sort key or visibility changes still cross the boundary, so the result is a defined ordering over a live set, not a snapshot. Stable-key traversal accordingly prices a stable total order (a unique tie-break such as id) plus a stated concurrent insert/update policy; snapshot export instead needs retention, expiry and consistent authorization.\n\nBecause one page sequence spans many independent requests, the cursor must bind query and filters, ordering key and direction, any snapshot or watermark, and the caller's access scope (principal, tenant), then be validated on every request with explicit expiry. Crucially the cursor is a continuation hint, not authorization. Object-level permission must be rechecked at the authority that serves the row, because revocation propagates with a bound and previously served copies persist. Binding access scope blocks cross-tenant or expired cursors; per-request recheck blocks a stale page exposing a row the caller has lost.",
+      "citations": [
+        "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+        "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+        "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#4-object-authorization-and-tenant-scoping-must-compose",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example"
+      ],
+      "core_claims": [
+        "An offset can shift when earlier items are inserted or removed, while a keyset cursor avoids that specific position shift when the ordering key is stable but does not by itself create a snapshot.",
+        "Rows that change the sort key or become invisible can still move across page boundaries, so the contract must state the concurrent insert and update policy and whether omissions or repetition are possible.",
+        "Best-effort live lists, stable-key traversal, snapshot exports and change feeds promise different membership and completeness, and each pays a different price in retained state, expiry and authorization work.",
+        "An opaque cursor must bind the query, filter, order, snapshot and relevant access scope, be validated on every request, and define expiry and restart semantics rather than silently restarting from the beginning.",
+        "A cursor is a continuation hint and not authorization, so permission must be rechecked even when a snapshot retains previously visible rows and a revoked row must not be returned from a stale page."
+      ],
+      "optional_claims": [
+        "A cursor bound only to the last seen key can be replayed across tenants when effective access scope is not part of the bound state.",
+        "A list whose ordering key is not stable cannot deliver stable-key traversal even if the cursor itself is opaque and signed."
+      ],
+      "required_evidence": [
+        "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+        "tycho.page.de9c5bc478ba44718fcb731e69109dce#6-testable-acceptance-and-negative-evidence",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#purpose-and-mission"
+      ]
+    },
+    {
+      "task_id": "Q157",
+      "question": "Why can three replicas spread across two zones still lose the booking journey together, and what must a recovery test demonstrate beyond healthy processes?",
+      "layer_expected": "book",
+      "answer": "Three replicas in two zones are not three independent failure domains. If they form a three-voter group, one zone holds at least two, so losing that zone leaves too few votes to commit; a surviving process can still pass health checks while unable to reach quorum. Placement also hides shared dependencies: in the book's fictional deployment all three API replicas use one identity endpoint and a database writer reachable only through zone A, plus shared gateway and egress paths. When zone A fails, those fail together, so a zone-spread label did not create isolation. A read-only catalogue can be an honest degraded mode; 200 OK from a stale cache is not a recovered booking service.\n\nA recovery test must prove the booking journey and authoritative truth recover, not merely that processes are healthy. It should inject one declared failure class in an isolated environment and verify the exact journey\u2014authorization, commit, visible confirmation, readback, and dependent index/notification effects\u2014yields correct outcomes or explicit rejections. It must demonstrate business invariants (no double booking; every acknowledged reservation present or accounted as declared RPO loss; ambiguous outcomes reconciled), fencing to exactly one writer, dependency recovery, detection-to-routing time, actual measured RTO/RPO and operator interventions. Failback needs separate validation. Without that evidence, the honest result is insufficient evidence and writes stay paused.",
+      "citations": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+        "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+        "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#6-falsifiable-drill-protocol"
+      ],
+      "core_claims": [
+        "A replica can remain healthy at process level while the user journey is unavailable, because replicas in different zones can still share one datastore, identity endpoint, routing plane or egress path.",
+        "In the book's synthetic deployment, zone-B replicas stay up after zone A fails but cannot authorize or commit reservations, so a zone-spread label did not remove the shared failure domain.",
+        "Degraded operation such as read-only catalogue access with new reservations refused is valid only when explicitly promised, and 200 OK responses from an obsolete cache do not demonstrate booking health.",
+        "The proposed test removes zone A's compute and selected network services, then independently injects database and identity loss while recording completed journeys, unauthorized or stale responses, detection-to-routing time, RPO/RTO and required operator interventions.",
+        "Recovery must avoid promoting two booking writers, and a simpler active/passive topology with demonstrated failover may be safer than nominal active/active without state fencing."
+      ],
+      "optional_claims": [
+        "Running more replicas does not guarantee isolation unless their placement and dependency sets are modeled.",
+        "Kubernetes topology-spread guidance and provider recovery guidance support placement controls and failure-scoped objectives, but neither certifies this hypothetical architecture."
+      ],
+      "required_evidence": [
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#purpose-and-mission",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#integrated-decision-and-reading-route"
+      ]
+    },
+    {
+      "task_id": "Q161",
+      "question": "Why can a higher Recall@5 fail to justify a retrieval change, and what must lexical, vector or hybrid candidates share before their ranking metrics are comparable?",
+      "layer_expected": "book",
+      "answer": "Higher Recall@5 cannot justify a retrieval change by itself because it is one cutoff against one judgment set. Recall@5 divides by all judged relevant items under the chosen qrels, so changed queries, judged depth or candidate pool move the number without better retrieval; pooled judgments are approximations and unjudged items are not proven irrelevant. It also ignores precision and context bloat, ranking below rank 5, answer and citation correctness, freshness, authorization, latency and cost. A gain can be an in-sample artifact, and a 20-question set cannot establish general quality.\n\nLexical, vector and hybrid candidates become comparable only under the same frozen corpus revision, section boundaries, eligible permission filters, evaluation queries and fixed qrels, with judgments covering a common pooled candidate depth and unjudged handling declared. Cutoff, denominator and aggregation must match. Raw BM25, cosine and reranker scores are not interchangeable: direct addition is unsafe without calibration, and rank fusion uses ranks rather than pretending those scales agree. Compare lexical-only, vector-exact/ANN, hybrid-fusion and reranked ablations pairwise.\n\nEvidence: retrieval-judgments sections 2-3; hybrid-evaluation sections 5-6; end-to-end evaluation sections 6-7; fusion-signals section 2. Confidence is medium: methodological prose and synthetic examples, no executed benchmark; significance testing is not covered.",
+      "citations": [
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+        "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+        "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design",
+        "tycho.page.5f1fe7b87ce443889dd4662fe845794a#6-evaluate-the-end-to-end-information-task",
+        "tycho.page.5f1fe7b87ce443889dd4662fe845794a#7-failure-and-recovery",
+        "tycho.page.b919c3c84861491c82334b6e00bf443e#2-reciprocal-rank-fusion-handles-incompatible-score-scales",
+        "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model"
+      ],
+      "core_claims": [
+        "Precision@k, Recall@k, MRR@k and nDCG@k answer different questions, and their common misuses include treating unjudged items as irrelevant, assuming the judgments contain every relevant item, and treating graded relevance as a probability.",
+        "Recall@k divides by all judged relevant items under the chosen relevance judgments, so pooled judgments are an assumption for a particular collection rather than a complete and permanent relevance map.",
+        "In the book's fictional example, systems A and B score 1.0 and 0.5 Recall@5 under complete judgments, which says nothing by itself about trustworthiness, freshness, citations or the total user outcome.",
+        "A defensible comparison holds the source snapshot, chunk or section boundaries, relevance judgments, permission filters and evaluation queries fixed, and reports index build time, size, latency percentiles, freshness and deletion lag, cost and citation recoverability beside the ranking scores.",
+        "The evaluation set must include exact identifiers, conceptual and multi-part questions, false friends, unanswerable questions, renamed or deleted content and permission scopes; automatically generated keyword queries cannot establish expert search quality."
+      ],
+      "optional_claims": [
+        "Lexical retrieval may excel on exact identifiers, vector retrieval on vocabulary mismatch, and hybrid fusion adds complexity that must itself be benchmarked.",
+        "Semantic similarity or a top result found does not certify that a source supports the requested claim."
+      ],
+      "required_evidence": [
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons"
+      ]
+    },
+    {
+      "task_id": "Q165",
+      "question": "Why can an index that helps a uniform workload make the same query slower after one tenant's rows become skewed?",
+      "layer_expected": "book",
+      "answer": "An index is a bet on a distribution, not a property of a query. The planner picks an access path from cost and sampled-statistics row estimates. While tenant rows are uniform, tenant_id = ? matches a small fraction, so an index scan touches few heap pages and wins. After one tenant holds most rows, that parameter matches most of the table: the query is no longer selective, so the index prunes little and the path becomes many entries plus scattered heap visits. With fresh statistics the planner may correctly abandon it for a sequential scan; with stale or independence-assuming statistics it keeps the index and pays that cost. Either way the uniform-distribution assumption, not the index definition, made the query fast. The regression is per parameter value, so small tenants still benefit while the hot one suffers; averages hide this.\n\nDo not just drop the index. Refresh or extend statistics, then compare EXPLAIN (ANALYZE, BUFFERS) for hot and cold tenants with pinned parameters and comparable cache state. Partial, covering or tenant-scoped paths may preserve cold-tenant wins, but charge write, storage and maintenance cost, also concentrated on the hot tenant. The 60 percent example is synthetic; no workload was executed, so exact plans and latency remain unverified.\n\nEvidence: access-selectivity 1, 3; same-index walkthrough; plan-lifecycle 4-5; negative cases 6.",
+      "citations": [
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+        "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+        "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#purpose-and-mission",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps"
+      ],
+      "core_claims": [
+        "An index family supports only particular operators and orderings, and the presence of an index does not guarantee the planner chooses it or that the path is cheaper.",
+        "The planner derives row and selectivity estimates from stored statistics, and correlated predicates can defeat an independence assumption and produce a badly estimated plan.",
+        "When a large fraction of rows qualifies, or the index path is more expensive under the planner's assumptions, a sequential scan can be the correct choice.",
+        "A plan that improves one data distribution can worsen another, so the access path is a decision condition tied to the tested workload rather than a universal index rule.",
+        "EXPLAIN ANALYZE establishes behavior for one statement, parameter set and environment, not the user population's p99, and an index scan appearing after index creation does not by itself prove an end-to-end latency improvement."
+      ],
+      "optional_claims": [
+        "A compound index on tenant, state and creation time may stop being chosen once one tenant holds most rows and most records are closed.",
+        "BRIN summaries can be tiny yet fail to prune blocks when values are randomly scattered, and GIN reduces tag-search scan work at the cost of posting-list maintenance."
+      ],
+      "required_evidence": [
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#2-compare-access-methods-by-the-supported-operator-workload",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+        "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases"
+      ]
+    },
+    {
+      "task_id": "Q169",
+      "question": "Why is an exact nearest-neighbor scan insufficient to certify an approximate index after the embedding model changes?",
+      "layer_expected": "book",
+      "answer": "An exact scan is a baseline, not a certificate. The book scopes it narrowly: it is \"a useful ground truth for approximate search recall, within the same model, metric, filtering and corpus version,\" and it \"does not establish that the embedding ranking matches human relevance labels.\" A model change breaks that scope twice. First, old and new vectors are incomparable: an exact scan over old vectors certifies a space the serving path no longer queries, while scanning new query vectors against an old index yields distances that mean nothing; a partially re-embedded corpus hides that mixture inside one recall figure. Second, recall@k against exact top-k measures only approximation loss. A new model relocates neighborhoods, so an index can score recall 1.0 in its own space while returning semantically wrong or stale documents; exactness cannot see relevance, freshness or authorization. Certification therefore needs a version-locked re-embed and rebuild, dual evaluation against a judged query population, filter-scoped exact baselines, negative queries and lifecycle checks. Prior certification does not transfer. Exact scan stays necessary for measuring approximation error, never sufficient for acceptance. Confidence is high on the mechanism; the book reports no measured degradation, and lexical search returned zero results in this session, so navigation used outline and page reads.",
+      "citations": [
+        "tycho.page.66d2977575264168a8616e09d0900af6#2-exact-nearest-neighbors-are-the-reference-baseline",
+        "tycho.page.66d2977575264168a8616e09d0900af6#1-the-retrieval-contract-begins-before-embeddings",
+        "tycho.page.411a855b84384e86b3b7fb60a3f63464#6-failure-cases-and-evaluation",
+        "tycho.page.411a855b84384e86b3b7fb60a3f63464#5-pgvector-versus-faiss-versus-a-vector-database",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+        "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+        "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#purpose-and-mission",
+        "tycho.chapter.1c08d660af40408188c2d556f8d77358#decision-and-worked-result"
+      ],
+      "core_claims": [
+        "An exact scan is a recall reference only within the same embedding model and version, distance metric, normalization, filter scope and corpus revision that produced the approximate index.",
+        "Changing the embedding model redefines the vector space, so rankings and recall figures computed against the previous model no longer describe the new index even when the document IDs are unchanged.",
+        "Agreement with exact neighbors measures traversal fidelity rather than relevance, because the exact ranking is not evidence that the embedding ordering matches human judgments.",
+        "HNSW, IVF and quantized indexes trade recall against latency, memory and build or update cost, and duplicate vectors, cluster shape and deletion behavior can change achieved accuracy without any configuration edit.",
+        "Neither HNSW nor IVF guarantees a particular recall percentage across data distributions, so a single headline number cannot be carried to a different corpus or query population."
+      ],
+      "optional_claims": [
+        "Exact search remains the better production choice when it fits the latency budget, because it removes approximation from the ranking step entirely.",
+        "Vector distance expresses representation proximity, so every returned neighbor still needs canonical source, revision and access verification before it supports an answer."
+      ],
+      "required_evidence": [
+        "tycho.page.66d2977575264168a8616e09d0900af6#2-exact-nearest-neighbors-are-the-reference-baseline",
+        "tycho.page.66d2977575264168a8616e09d0900af6#1-the-retrieval-contract-begins-before-embeddings",
+        "tycho.page.66d2977575264168a8616e09d0900af6#3-ann-index-types-and-their-trade-offs",
+        "tycho.page.9145b7ce81d4461b90d3c6285128c18a#4-metadata-filtering-creates-a-subtle-recall-and-security-boundary"
+      ]
+    }
+  ]
+}

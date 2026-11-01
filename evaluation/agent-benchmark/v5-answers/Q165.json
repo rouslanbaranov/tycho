@@ -1,0 +1,66 @@
+{
+  "task_id": "Q165",
+  "answer": "An index is a bet on a distribution, not a property of a query. The planner picks an access path from cost and sampled-statistics row estimates. While tenant rows are uniform, tenant_id = ? matches a small fraction, so an index scan touches few heap pages and wins. After one tenant holds most rows, that parameter matches most of the table: the query is no longer selective, so the index prunes little and the path becomes many entries plus scattered heap visits. With fresh statistics the planner may correctly abandon it for a sequential scan; with stale or independence-assuming statistics it keeps the index and pays that cost. Either way the uniform-distribution assumption, not the index definition, made the query fast. The regression is per parameter value, so small tenants still benefit while the hot one suffers; averages hide this.\n\nDo not just drop the index. Refresh or extend statistics, then compare EXPLAIN (ANALYZE, BUFFERS) for hot and cold tenants with pinned parameters and comparable cache state. Partial, covering or tenant-scoped paths may preserve cold-tenant wins, but charge write, storage and maintenance cost, also concentrated on the hot tenant. The 60 percent example is synthetic; no workload was executed, so exact plans and latency remain unverified.\n\nEvidence: access-selectivity 1, 3; same-index walkthrough; plan-lifecycle 4-5; negative cases 6.",
+  "citations": [
+    "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+    "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+    "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+    "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#purpose-and-mission",
+    "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+    "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+    "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases",
+    "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps"
+  ],
+  "evidence": [
+    {
+      "claim": "Index usefulness is conditional on query shape and data distribution, not on the index existing.",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+      "note": "Observed text: different access patterns and selectivity mean these workloads 'do not necessarily benefit from the same index'; 'An index exists' is not sufficient and a sequential scan may be correct when a large fraction qualifies."
+    },
+    {
+      "claim": "Planner row estimates are sampled-statistics hypotheses; stale samples and correlated predicates can make them wrong.",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+      "note": "Observed text: PostgreSQL uses single-column and extended statistics; correlated predicates can fool independence assumptions; growth, skew and schema changes invalidate prior assumptions."
+    },
+    {
+      "claim": "For a tenant/state/created_at query, one tenant holding 60% of rows and mostly closed records changes estimated selectivities; the index may still be chosen, or not, but is not guaranteed useful.",
+      "section_key": "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+      "note": "Observed: the source states the planner may estimate different selectivities and that index presence does not guarantee choice or usefulness. Inference (not measured): a non-selective predicate forces many index entries and row visits, so the access path loses its advantage."
+    },
+    {
+      "claim": "A plan change may improve the skewed case B and worsen the uniform case A; this is a decision condition, not a universal index rule.",
+      "section_key": "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+      "note": "Observed: two controlled cases (100,000 balanced rows; same count with a hot tenant and correlated state) with pinned parameters, planner settings, statistics and cache state."
+    },
+    {
+      "claim": "An index can make selective reads faster but adds storage, maintenance and write overhead, so the trade-off must be judged on representative distributions.",
+      "section_key": "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#purpose-and-mission",
+      "note": "Observed text: 'An index can make selective reads faster but adds storage, maintenance and write overhead'; the right question is which actual row distributions justify an access path."
+    },
+    {
+      "claim": "Plan cost units are not milliseconds; when estimates and actual rows diverge, investigate skew and statistics before attributing latency to the query.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+      "note": "Observed diagram and workflow. EXPLAIN ANALYZE executes the query; the page states no plan was run for it."
+    },
+    {
+      "claim": "An index changes the data lifecycle: write/WAL, storage, vacuum, cache pressure and planning time can outweigh a small read win.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+      "note": "Observed. Relevant because a hot tenant concentrates both the reads that may regress and the writes that maintain the index."
+    },
+    {
+      "claim": "An estimate of 10 rows against 100,000 actual is a possible bad cardinality assumption; adding another index is not the only fix.",
+      "section_key": "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases",
+      "note": "Observed negative-case table; the page labels these illustrative possibilities, not executed results."
+    },
+    {
+      "claim": "Averages hide a hot owner: a synthetic example averages 20 attempts/s across 100 owners while one owner carries 1,500/s.",
+      "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+      "note": "Partition/shard-key context, not index evidence. Used only as an analogy that average workload statistics conceal per-tenant skew; the transfer to planner selectivity is inference."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

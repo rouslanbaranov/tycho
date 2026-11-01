@@ -1,0 +1,78 @@
+{
+  "task_id": "Q155",
+  "answer": "A lower estimated cost only proves the planner's cost model now prefers that path. Cost values are internal units over estimated rows and selectivity, not milliseconds; row counts come from sampled statistics, so skew or staleness can make an index look cheaper than its real execution. The chosen scan still spends heap access, buffer cache, locks, pool wait, network and client serialization before a user sees a response, and queueing can absorb a real server-side saving. A server-side improvement is therefore neither user latency nor p99.\n\nNet benefit is decided by whole-workload lifecycle costs: write/update latency and WAL volume on every base-table write; storage and backup/restore size; vacuum, bloat and cache pressure; build time and lock exposure during rollout; extra planning time; and multiplication across replicas or tenants. Weigh those against the scan or drift cost the index removes. In a write-heavy workload, an index saving milliseconds per read is a net loss if it raises every update or checkpoint.\n\nBoundaries: covering index-only scans need visibility-map bits, otherwise heap visits resume and the gain disappears; a sequential scan, partition pruning or materialized view may win instead. Unknowns: no representative workload was executed here, so this is design reasoning, not measurement.",
+  "citations": [
+    "tycho.page.9176c39f97f544f884666e291ae38b90#4-explain-estimated-plan-costs-are-not-milliseconds",
+    "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+    "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+    "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+    "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases",
+    "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+    "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes",
+    "tycho.page.41daaaaf1b34f0d26e3346804ac0e85e#overview",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+    "tycho.page.045713bc4f054663b676e4e1b6fe9725#7-controlled-acceptance-method"
+  ],
+  "evidence": [
+    {
+      "claim": "Estimated plan cost is an internal cost unit, not an elapsed-time prediction.",
+      "section_key": "tycho.page.9176c39f97f544f884666e291ae38b90#4-explain-estimated-plan-costs-are-not-milliseconds",
+      "note": "Observed: 'Its cost fields use internal cost units; they are not latency predictions in ms. Row count estimates depend on sampled statistics and selectivity.'"
+    },
+    {
+      "claim": "EXPLAIN is not a user latency report; caching, load, locks, network and client serialization must be observed separately.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+      "note": "Observed: 'The estimated cost is in planner units; it should not be read as elapsed milliseconds.' Then: 'Observe actual run context, caching, concurrent load, locks, network and client serialization separately.'"
+    },
+    {
+      "claim": "An EXPLAIN estimate can demonstrate the planner's modeled access-path preference but cannot prove measured end-to-end latency.",
+      "section_key": "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+      "note": "Observed table row: 'EXPLAIN estimated rows/cost | Planner's modeled access-path preference | Measured end-to-end latency'. Same table: stale histograms are 'a plausible cause of incorrect row estimates', and pool wait/lock time is latency 'outside scan plan'."
+    },
+    {
+      "claim": "Planner estimates are hypotheses about table contents, invalidated by skew, growth and stale samples.",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+      "note": "Observed: 'Planner estimates are not guaranteed measured data'; correlated predicates 'can fool naive independence assumptions, producing badly estimated joins or scan plans'."
+    },
+    {
+      "claim": "An index scan appearing after creating an index does not establish end-to-end p99 improvement under peak load.",
+      "section_key": "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases",
+      "note": "Observed row: 'Index scan appears after creating B-tree | Planner found it cheaper for tested input | End-to-end p99 improvement under peak load'. Also: covering index may enable index-only scan sometimes, which does not establish that heap reads always disappear."
+    },
+    {
+      "claim": "Lifecycle costs deciding net benefit: write/update latency and WAL, storage and backup size, vacuum/bloat/cache pressure, build lock exposure, planning time, replica/tenant multiplication.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+      "note": "Observed six-item list. Observed: 'For high write demand, an index improving one query by a few milliseconds can be a net loss if it increases every update or checkpoint cost.' Unit of value: 'correct completed user operations across the whole workload'."
+    },
+    {
+      "claim": "Alternatives can dominate: sequential scan, covering index, partition pruning or materialized view; concurrent build is not free.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+      "note": "Observed: a sequential scan, covering index, partition pruning or materialized view 'may be preferable when the index would cost more writes than it saves'; concurrent creation 'has its own constraints, phases and resource costs; it is not a free online operation'."
+    },
+    {
+      "claim": "A covering path fails quietly when the query shape changes; index-only gain needs visibility-map bits, and cost tracks rows inspected not rows returned.",
+      "section_key": "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes",
+      "note": "Observed quotes: 'the heap entry must be visited ... so no performance advantage is gained over a standard index scan'; 'The relevant factor is not how many rows the query delivers but how many rows the database must inspect to find them.'"
+    },
+    {
+      "claim": "Index adoption is conditioned on maintenance and write cost being acceptable against the scan or drift cost removed.",
+      "section_key": "tycho.page.41daaaaf1b34f0d26e3346804ac0e85e#overview",
+      "note": "Atlas Index Table card: good-fit requires 'the write path can maintain the lookup and repair drift' and 'maintenance and write cost are acceptable against the scan or drift cost removed'; contraindicated when a native covering index or materialized view already serves the path. State: applicable-under-conditions. Atlas layer, draft registry."
+    },
+    {
+      "claim": "User latency is time in system, including waiting, not server service time.",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+      "note": "Observed: 'Time in system: from first arrival to terminal outcome.' Modeled/synthetic evidence in V12 queue model, not production observation."
+    },
+    {
+      "claim": "Acceptance requires fixed inputs, statistics, warm/cold state, and capturing client-level p95/p99 with write, maintenance and storage cost.",
+      "section_key": "tycho.page.045713bc4f054663b676e4e1b6fe9725#7-controlled-acceptance-method",
+      "note": "Observed steps 5-8: compare with and without the index under the same input and warm/cold state; 'Include writes, index maintenance, lock waits, storage and backup cost'; capture 'client-level latency ... and p95/p99'. The procedure is a design proposal; no steps were run."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "task_id": "Q162",
+  "answer": "Filtering changes what the assistant read; it cannot change what the caller may do. Authorization is a relation between an authenticated principal, a specific action and a specific object, decided against policy - not a property of text. The principal table lists a retrieved document as untrusted data, not executable instruction or approval to call another tool, so neither the sentence's presence nor its removal confers authority.\n\nFiltering is also unsound as a gate: there is \"no foolproof natural-language filter\", and the risk is structural once retrieved text is merged into high-priority instructions or read as a tool command. Paraphrase, encoding, citations and titles evade any text check, so filtering is depth in defense, never enforcement.\n\nThe check belongs at the authority that protects the effect: a separate action API whose server-side enforcement point evaluates subject-action-resource entitlement, validates arguments against a narrow schema and allowed IDs, and rechecks entitlement \"even if the agent previously searched successfully\". Deny by default, re-evaluate at execution including delayed jobs, fail closed when authority cannot be established. Human confirmation suits irreversible effects but is not a substitute for ACLs; model confidence never replaces deterministic checks.\n\nEvidence map: principal-tools sections 1-3; security-architecture section 2; decision gates section 7.",
+  "citations": [
+    "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+    "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+    "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+    "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract"
+  ],
+  "evidence": [
+    {
+      "claim": "A retrieved document is untrusted data and is explicitly not executable instruction or approval to call another tool.",
+      "section_key": "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+      "note": "Observed: principal table gives retrieved document/search result the control 'Untrusted data, source ID, revision and access classification' and the 'It is not' cell 'Executable instruction or approval to call another tool'; the action executor holds 'Independent permission enforcement', not authority delegated because a model requested it. Same section states every read and every action is evaluated against the actual authorized subject and object, citing deny-by-default least privilege."
+    },
+    {
+      "claim": "Any separately allowed action must pass its own authorization, schema, risk and confirmation gate rather than inherit authority from a retrieved paragraph.",
+      "section_key": "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+      "note": "Observed: text alternative to the flow diagram says 'Any separately allowed action must pass its own authorization, schema, risk and confirmation gate - not inherit authority from a retrieved paragraph.' The diagram separates a 'Bounded data result (untrusted content)' into a reasoning client that may only call a 'Separate action API' behind a 'Policy / confirmation / effect gate'. Also: 'A model's confidence or chain-of-thought is never a replacement for deterministic access checks.'"
+    },
+    {
+      "claim": "Text filtering cannot be a sound authorization gate because no foolproof natural-language filter exists and the failure mode is structural.",
+      "section_key": "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+      "note": "Observed: 'There is **no foolproof natural-language filter**; preventing unacceptable effects requires server-side boundaries that do not depend solely on how the language model interprets prose.' Also 'A guard based only on \"ignore malicious text\" is fragile: the risk is structural when retrieved text is merged into high-priority instructions or interpreted as a tool command.' Controls listed include provenance labelling, capability limits, narrow argument schemas, and independent confirmation."
+    },
+    {
+      "claim": "Entitlement must be checked again at the authority that protects the effect, even after a successful search, and confirmation does not replace ACLs.",
+      "section_key": "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+      "note": "Observed: 'Check entitlement **again at the authority that protects the effect**, even if the agent previously searched successfully.' and 'Require explicit independent human confirmation for actions with significant irreversible impact where appropriate; confirmation is not a substitute for ACLs.' This is the location answer: the effect-protecting authority, not the retrieval layer or the prompt."
+    },
+    {
+      "claim": "Enforcement is a reproducible subject-resource-action policy decision at a named enforcement point, re-decided when delayed work executes.",
+      "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+      "note": "Observed: the service/API handler 'authorizes subject-resource-action pairs with authenticated context and explicit tenant ownership'; the asynchronous path binds intent at enqueue time 'then performs a new validity/replay/expiry decision when execution occurs. A delayed job is not automatically authorized forever'; a policy decision must record 'policy revision, identity assurance, resource ownership snapshot, action, expiry, reason code, enforcement point and outcome'."
+    },
+    {
+      "claim": "Deny by default, test confused-deputy paths, and fail closed when authority cannot be established.",
+      "section_key": "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture",
+      "note": "Observed: 'Network location is not trust; a valid token is not object permission.' Failure guidance: 'Deny by default, test indirect and confused-deputy paths, keep a bounded break-glass path with audit, and fail closed when authority cannot be established.'"
+    },
+    {
+      "claim": "The agent is an untrusted proposer; a separate authority records the affirmative decision, so model self-assessment never becomes authorization.",
+      "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#human-agent-responsibility-contract",
+      "note": "Observed: 'treat an autonomous coding agent as an *untrusted proposer* of bounded diffs'; 'A separate reviewer validates the dangerous boundaries and records an affirmative decision; no other agent's self-assessment can be silently promoted to independent human acceptance.' Inference: this is written for code-change agents; I extend the same separation to general tool calls."
+    }
+  ],
+  "abstain": false,
+  "confidence": "high for the mechanism; the cited pages are conceptual and carry evidence_status unknown, content_review self-checked, with no runtime or production measurement.",
+  "unknowns": [
+    "No section addressing classifier or guardrail evasion specifically was found; the dedicated-evasion gap is inferred from the 'no foolproof natural-language filter' statement rather than measured.",
+    "Atlas and modeling-and-simulation layers were not reachable through the documented CLI surface (search accepts no layer or volume flag), so cross-layer coverage of this question is unverified.",
+    "The book gives no threshold for when human confirmation is required, only 'significant irreversible impact where appropriate'."
+  ],
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

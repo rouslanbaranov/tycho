@@ -1,0 +1,77 @@
+{
+  "task_id": "Q161",
+  "answer": "Higher Recall@5 cannot justify a retrieval change by itself because it is one cutoff against one judgment set. Recall@5 divides by all judged relevant items under the chosen qrels, so changed queries, judged depth or candidate pool move the number without better retrieval; pooled judgments are approximations and unjudged items are not proven irrelevant. It also ignores precision and context bloat, ranking below rank 5, answer and citation correctness, freshness, authorization, latency and cost. A gain can be an in-sample artifact, and a 20-question set cannot establish general quality.\n\nLexical, vector and hybrid candidates become comparable only under the same frozen corpus revision, section boundaries, eligible permission filters, evaluation queries and fixed qrels, with judgments covering a common pooled candidate depth and unjudged handling declared. Cutoff, denominator and aggregation must match. Raw BM25, cosine and reranker scores are not interchangeable: direct addition is unsafe without calibration, and rank fusion uses ranks rather than pretending those scales agree. Compare lexical-only, vector-exact/ANN, hybrid-fusion and reranked ablations pairwise.\n\nEvidence: retrieval-judgments sections 2-3; hybrid-evaluation sections 5-6; end-to-end evaluation sections 6-7; fusion-signals section 2. Confidence is medium: methodological prose and synthetic examples, no executed benchmark; significance testing is not covered.",
+  "citations": [
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+    "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+    "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design",
+    "tycho.page.5f1fe7b87ce443889dd4662fe845794a#6-evaluate-the-end-to-end-information-task",
+    "tycho.page.5f1fe7b87ce443889dd4662fe845794a#7-failure-and-recovery",
+    "tycho.page.b919c3c84861491c82334b6e00bf443e#2-reciprocal-rank-fusion-handles-incompatible-score-scales",
+    "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model"
+  ],
+  "evidence": [
+    {
+      "claim": "Recall@5's denominator is all judged relevant items under the chosen qrels, so changed judgments or queries move the score.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+      "note": "Observed: 'Recall@k uses a denominator of all judged relevant items under the chosen qrels'; the metric table lists 'Assuming judgments include every relevant item' as a misuse. Inference: because the numerator (top k) and denominator (qrels) are fixed by the evaluation contract, identical k, qrels and aggregation are prerequisites for cross-system Recall comparison."
+    },
+    {
+      "claim": "Pooled relevance judgments are approximations for one collection; unjudged results are not proven irrelevant.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+      "note": "Observed: NIST TREC pooled judgments are called 'assumptions/approximations for a particular collection, not an eternal complete map of relevance'; 'Treating unjudged as definitely irrelevant' is listed as a precision misuse."
+    },
+    {
+      "claim": "A higher Recall@5 alone says nothing about trustworthiness, version freshness, citation support or total user outcome.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+      "note": "Observed: the page's fictional example concludes Recall@5=1 versus 0.5 'says nothing by itself about trustworthiness, version freshness, citations or total user outcome.'"
+    },
+    {
+      "claim": "Recall@k ignores precision, position beyond k and answer quality, so a gain can still bury needed evidence.",
+      "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality",
+      "note": "Observed: the Recall@k row's error-if-omitted is 'Miss key dependency while top result looks similar'; separate dimensions cover precision, MRR/nDCG, answer correctness, citation support, freshness, latency, token and operational cost."
+    },
+    {
+      "claim": "Matched comparisons require the same snapshot, chunk boundaries, qrels, permission filters and evaluation queries.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+      "note": "Observed: 'A defensible comparison uses the same source snapshot, chunk/section boundaries, qrels, permission filters and evaluation queries where possible'; report Precision/Recall/nDCG 'under fixed judgments'."
+    },
+    {
+      "claim": "Ablations must share corpus revision, eligible filters, query set and measurement environment, and tune separately from acceptance.",
+      "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design",
+      "note": "Observed: 'Use the same underlying corpus/revision, exact eligible filters, query set and measurement environment'; run lexical-only, vector-exact, vector ANN, hybrid fusion and reranker ablations; 'Separate training/tuning questions from acceptance; an author-generated in-sample set alone is too easy'; assess pairwise trade-offs."
+    },
+    {
+      "claim": "Without a complete judgment pool, Recall is only against known judgments; small query sets cannot establish general quality.",
+      "section_key": "tycho.page.5f1fe7b87ce443889dd4662fe845794a#6-evaluate-the-end-to-end-information-task",
+      "note": "Observed: report Recall@k/nDCG@k with 'unjudged handling declared'; absent a complete pool, disclose recall 'against known judgments, not absolute relevance'; a 20-question corpus is 'much too small'. Inference: a shared pooled candidate depth is therefore needed before cross-system Recall differences are attributable to ranking."
+    },
+    {
+      "claim": "Missing qrels must be recorded as a judgment gap, never counted as false negatives.",
+      "section_key": "tycho.page.5f1fe7b87ce443889dd4662fe845794a#7-failure-and-recovery",
+      "note": "Observed: failure table row 'Missing qrels | Label judgment gap, do not count all unjudged documents as false'; model changes require comparing compatible spaces rather than mixing them."
+    },
+    {
+      "claim": "BM25, cosine and reranker scores live on different scales; adding them without calibration is unsafe, and RRF uses ranks.",
+      "section_key": "tycho.page.b919c3c84861491c82334b6e00bf443e#2-reciprocal-rank-fusion-handles-incompatible-score-scales",
+      "note": "Observed: 'BM25 scores, cosine distances and model reranker logits have different numerical scales. Adding them directly is unsafe unless calibrated using real relevance data'; RRF is rank-only and 'does not guarantee top-k recall'."
+    },
+    {
+      "claim": "Mixing index generations can produce an internally plausible answer whose sources never coexisted.",
+      "section_key": "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+      "note": "Observed: 'A mix of document versions can produce an internally plausible answer whose sources never coexisted at one point in time'; queries should pin one generation and candidate generations are validated before promotion."
+    },
+    {
+      "claim": "The evaluation query population must represent real questions, not only automatically generated keyword queries.",
+      "section_key": "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+      "note": "Observed: 'A dataset containing only automatically generated simple keyword queries cannot establish real expert search quality'; label questions and relevant sections with snapshot/version identity and keep disagreements and unjudged results uncertain."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

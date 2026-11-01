@@ -1,0 +1,55 @@
+{
+  "task_id": "Q158",
+  "answer": "A read-then-insert check is a check-then-act race: two simultaneous first attempts can both read \"no key\" before either writes, so both execute and commit duplicate effects. Identity resolution and creation must be one atomic durable operation—a uniqueness constraint, insert-on-conflict, or compare-and-set—so only one attempt wins; the other sees in-progress (409), waits, or resolves the committed outcome, but must not execute independently. Because the first attempt may commit and then lose its response, the outcome record and business effect must commit together, and a same-key, same-payload retry must return that recorded outcome (including saved failures), not re-execute; status lookup or reconciliation resolves ambiguous acknowledgments.\n\nA key returning with different parameters is a conflict, not a replay: compare normalized fingerprint inputs and reject it (for example 422, distinct from 400 missing key and 409 in-progress). After retention ends, historical deduplication is no longer guaranteed: the key no longer proves sameness, so the owner must publish what happens to late arrivals—treat them as new requests that may duplicate the effect, or route them to operator reconciliation—rather than silently claiming idempotence. Retention must cover the client retry/reconciliation horizon; expired, in-progress, and mismatch are distinct states. Evidence: identity contract, synthetic double-submit sequence, and atomic-authority sections. Unknown: no executed concurrency test; confidence high on mechanism, moderate on exact status-code mappings.",
+  "citations": [
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#bounded-pattern-ownership-notes",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+    "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview",
+    "tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests"
+  ],
+  "evidence": [
+    {
+      "claim": "Two simultaneous first attempts can both pass a naive read-then-insert check; the identity decision must be atomic, and a lost acknowledgment retry must resolve the committed outcome.",
+      "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+      "note": "Synthetic sequence commits reservation R7 for K42, loses the response, then retries K42/P and resolves the same R7. It states two simultaneous first attempts cannot both pass a naive read-then-insert check unless the state authority makes their identity decision atomic, and that an in-progress/wait/conflict/result-lookup protocol is needed."
+    },
+    {
+      "claim": "Lookup and creation must be mutually safe under concurrent identical requests, and expiry must align with the client retry horizon and late-arrival policy.",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+      "note": "Requires a database uniqueness/locking strategy and a test; reject same-key/different-intent reuse; document expiry; do not claim key expiry is safe without aligning client retry horizon, business retention and late-arrival policy."
+    },
+    {
+      "claim": "A durable uniqueness constraint or state-machine conditional write decides new, in-progress, committed, rejected or incompatible duplicate at one authority boundary.",
+      "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+      "note": "In-memory sets fail across replicas and restarts. The contract checks normalized identity against a retained prior operation, decides state atomically, commits effect and outcome correspondence, exposes status lookup, and defines retention and post-expiry behavior."
+    },
+    {
+      "claim": "The outcome record and business effect must commit together, and a duplicate retry returns the saved response rather than re-executing.",
+      "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#bounded-pattern-ownership-notes",
+      "note": "Tycho rule supported by AWS ACID and Azure same-transaction statements; Stripe returns the saved response including 500 errors; the inspectable record carries key, caller scope, fingerprint inputs, outcome and state. Expired, in-progress and fingerprint-mismatch are distinct answers."
+    },
+    {
+      "claim": "A changed payload on a reused key is a conflict, not idempotency; after expiry historical deduplication is no longer guaranteed.",
+      "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+      "note": "The key binds one logical intent, caller/payload scope and retention window to an authoritative outcome. The invariant says a key is only useful while its outcome record is retained and that a reused key with changed intent is a conflict, not idempotency."
+    },
+    {
+      "claim": "Conflict handling distinguishes 400 missing key, 422 different payload and 409 in-progress, and retention must cover the retry window.",
+      "section_key": "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview",
+      "note": "Atlas card summarizes IETF draft separation of 400/422/409, Stripe saved-response replay, AWS parameter-mismatch validation error and Azure in-progress/completed records; rule: reject mismatched fingerprints, distinguish in-progress from expired, keep the record for the retry window."
+    },
+    {
+      "claim": "Required tests include simultaneous same-key requests, changed payload, lost acknowledgment after commit and delayed replay after expiry; no such tests were executed.",
+      "section_key": "tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests",
+      "note": "The chapter lists these fixtures and says no such tests have been executed for this chapter; logical intents, attempts, accepted effects, duplicate observable side effects and unresolved outcomes must be counted separately."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "task_id": "Q166",
+  "answer": "A cached absence or denial is not a fact about the object; it is a decision about a subject acting under one policy state. An object-ID key universalizes one principal's miss or refusal. Visibility and existence vary by tenant and principal, so a shared negative can confirm a protected object's existence to an unauthorized caller or deny a permitted user because another principal was refused. It can hide a later create or grant.\n\nPolicy is mutable, so the key needs revision. A cached denial can outlive a grant; a cached permit can outlive revocation. Without a revision component, invalidating entries after a policy edit requires finding them; a revision bump makes them unreachable. A key covering tenant, principal or scope, operation, resource and policy revision mirrors OWASP's bound tuple; it also bounds denial by the shorter of TTL and revocation deadline. RFC 9111's storage rules constrain HTTP caches but do not define application authorization semantics.\n\nTrade-offs: per-principal keys multiply cardinality and reduce hit rate; short TTLs make staleness explicit; bypass is safer when revocation deadlines are short. For global public existence checks, object ID plus a short TTL suffices. Unknown: no measured revocation latency; sources are guidance, not tests, so confidence is high on mechanism, low on timing. Evidence: negative-cache §4; identity/authorization §1–3, §5, §7; security-tests §6.",
+  "citations": [
+    "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests",
+    "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+    "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+    "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview"
+  ],
+  "evidence": [
+    {
+      "claim": "Authorization is a decision about a subject, action, resource and current context, not an intrinsic property of an object.",
+      "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions",
+      "note": "Observed: 'Authorization decides whether the subject can execute a specific action on a specific resource under current context and obligations.'"
+    },
+    {
+      "claim": "A policy decision must record its policy revision so that it is reproducible and auditable.",
+      "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+      "note": "Observed: 'record policy revision, identity assurance, resource ownership snapshot, action, expiry, reason code, enforcement point and outcome.'"
+    },
+    {
+      "claim": "Object-level permission must be checked after resolving the exact object identifier; guessed identifiers are the documented broken-object-authorization path.",
+      "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization",
+      "note": "Observed: OWASP API1; 'Check ownership/permission after resolving that exact object, including batch, search and nested-resource paths.'"
+    },
+    {
+      "claim": "A cached negative must not become a universal non-existence statement when visibility varies by principal or tenant.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed Tycho rule: 'A cached negative must never become a universal statement that an object does not exist for all authorized principals if visibility varies by principal or tenant.'"
+    },
+    {
+      "claim": "An authorization-sensitive negative key includes tenant, principal or scope, checked operation and policy revision; a key missing one of these is not shared.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed Tycho rule; consistent with OWASP 'Bound reuse': same subject, action, resource scope, tenant and policy/input state within the approved freshness limit."
+    },
+    {
+      "claim": "Cached denials can outlive grants and cached permits can outlive revocation, so denial is bounded by the shorter of TTL and revocation deadline and invalidated on create, grant, revoke and delete.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed paraphrase: deny for at most the shorter of TTL and revocation deadline; delete or version the key on create, grant, revoke and delete; never cache an unknown backend error as absent."
+    },
+    {
+      "claim": "A shared cache or search index needs tenant-scoped keys and object ACLs; a correct database policy does not automatically protect them.",
+      "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+      "note": "Observed cache/index row: 'Tenant-scoped keys, per-request filters and invalidation'; a tenant filter 'may be bypassed by direct SQL, cache keys, exports or privileged jobs.'"
+    },
+    {
+      "claim": "Cross-tenant cached objects, summaries or result identifiers can leak through an otherwise permitted path.",
+      "section_key": "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+      "note": "Observed teaching scenario: 'A receives B's cached incident via a permitted public page'; cache and search must apply object ACLs to bodies, summaries, result IDs and linked records."
+    },
+    {
+      "claim": "Unauthorized requests must not reveal the existence of protected objects, and a stale authorization cache is a failure mode to exercise.",
+      "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests",
+      "note": "Observed verification items 4-5: exercise a 'stale authorization cache'; unauthorized requests 'should neither reveal existence of protected objects nor generate unbounded logging costs.'"
+    },
+    {
+      "claim": "Per-principal keying, a short TTL and bypass are the bounded alternatives; object ID plus a short TTL can suffice for public existence checks, while a global denial can be shared.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed Tycho choice rule: 'prefer per-principal keying for authorization decisions, a short TTL for public existence checks, and bypass when the revocation deadline is shorter than any useful TTL. Reverse when repeated misses dominate origin load and the denial is global for the key.'"
+    },
+    {
+      "claim": "Negative caching is contraindicated when negative entries leak existence or authorization, and its alternatives are per-principal keying, short TTL or bypass.",
+      "section_key": "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview",
+      "note": "Observed pattern card: 'Reject ... when negative entries leak existence or authorization'; OWASP bound-reuse tuple and CloudFront 403 cacheability are cited."
+    },
+    {
+      "claim": "HTTP caching rules govern storage and reuse but do not define application authorization semantics, and the inspected units do not measure keying, revocation or failure behavior.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed: RFC 9111 allows negative results only within its storage rules and forbids shared-cache reuse of Authorization-bearing responses unless explicitly allowed; 'Those rules bound storage and reuse; they do not define an application's authorization semantics.' No measurement of this page's behavior."
+    },
+    {
+      "claim": "Cache reuse is gated on authorization as well as freshness at every cache layer.",
+      "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+      "note": "Observed: a read may reuse local, shared, then source values 'only when each value satisfies the required freshness and authorization.'"
+    },
+    {
+      "claim": "Per-principal keying multiplies cache cardinality and can reduce hit rate.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Inference (mechanism): splitting the cache key by principal reduces sharing; the page's reverse condition for repeated global-denial misses implies the same load trade-off."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

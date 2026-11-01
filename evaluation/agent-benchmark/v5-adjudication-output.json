@@ -1,0 +1,19 @@
+{
+  "status": "ai-adjudicator-not-human",
+  "items": [
+    {
+      "task_id": "Q154",
+      "pass": false,
+      "core_claims_met": 3,
+      "core_claims_total": 5,
+      "notes": "Independent re-read. Claims 1-3 are substantively covered: watermark as a stated lateness expectation rather than proof of completeness, including event-time vs arrival order; late-event options (drop with metric, side output, update/retraction, deferred finalization via reopening/TTL); and sink contract requiring idempotent upsert or transactional replay deduplication, with separate adjustments for a business that forbids revisions. Claim 4 is only partial: the separate-adjustment half is present, but the answer never states that a consistent checkpoint restores operator state and source positions while not deciding whether a late correction is discarded, emitted as an update, or reconciled; the restored checkpoint appears only as a double-apply hazard. Claim 5 is incomplete: the policy dimensions are listed (event-time source, daily boundary, allowed lateness, idle partitions, state retention/TTL, correction form, sink support), but the required testing with out-of-order fixtures and measured output freshness is never stated; 'synthetic scenario ... needs release evidence' is not a test plan. Prior judge split noted; no prior label adopted."
+    },
+    {
+      "task_id": "Q164",
+      "pass": false,
+      "core_claims_met": 4,
+      "core_claims_total": 5,
+      "notes": "Independent re-read. Claims 1-4 are substantively covered: R+W>N forces voter-set intersection so the read consults an acknowledging replica; intersection only yields a candidate because the reader must select the highest version and repair stale replicas; concurrent siblings need an application-defined total order before last-write-wins applies (clock skew caveat); and membership change must preserve old/new overlap while sloppy quorums trade intersection for availability. Claim 5 is absent: the answer never states that quorum arithmetic depends on a correctly configured voter set, nor that adding a voter can raise the required majority without increasing tolerated failures. 'Provided both operations use the same replica set' and the membership-overlap discussion address set identity, not the majority arithmetic of a misconfigured or enlarged voter set. Prior judge split noted; no prior label adopted."
+    }
+  ]
+}

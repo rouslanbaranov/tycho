@@ -1,0 +1,66 @@
+{
+  "task_id": "Q151",
+  "answer": "Because the fee prices one resource for one period, while lifecycle cost prices the whole obligation. A managed service shifts work rather than removing it: recovery, retention, access and lifecycle duties remain, and are repriced through storage and egress, retained logs and traces, backup and restore drills, support tiers, incident response and staffed on-call. Migration adds double-running, data copy and rollback or forward-repair cost the monthly fee never shows. A fixed instance fee also hides idle redundancy and state growth, while a consumption fee hides traffic growth; either can rise after the pilot month.\n\nBefore treating the fee as evidence, compare both options on the same horizon, workload mix and mandatory service levels, using one cost-category list: compute and idle headroom, storage, IOPS, backup and restore, egress, telemetry retention, CI and security, operator time, migration coexistence, decommissioning. Rank by cost per correct user journey, report break-even under sensitivity, and exclude any candidate failing a hard gate first: an option that misses availability or restore targets is not cheaper. The book supplies no vendor prices, so quantities and ranges must come from the team's own measurements.",
+  "citations": [
+    "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#4-operating-cost-is-a-lifecycle-not-a-monthly-instance-fee",
+    "tycho.page.32a5de3daa2d4f74b879165a4119f63a#2-cost-must-include-more-than-infrastructure-instance-prices",
+    "tycho.page.32a5de3daa2d4f74b879165a4119f63a#3-original-synthetic-comparison",
+    "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#purpose-and-mission",
+    "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#4-unit-cost-and-sensitivity",
+    "tycho.page.76244dbe2bd44035b7154f821191f6f2#engineering-walkthrough-hard-constraints-before-weighted-cost-scoring",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#overview",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think"
+  ],
+  "evidence": [
+    {
+      "claim": "Operating cost is a lifecycle, not a monthly instance fee; it includes retention, CI and security scanning, change effort, restore drills, migration double-running, rollback/repair, training and decommissioning.",
+      "section_key": "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#4-operating-cost-is-a-lifecycle-not-a-monthly-instance-fee",
+      "note": "Observed: explicit list plus 'A credible comparison uses the same horizon, workload mix and mandatory service levels.'"
+    },
+    {
+      "claim": "A managed service shifts responsibilities but does not remove recovery, access or lifecycle obligations, so labor and risk are not zeroed by the fee.",
+      "section_key": "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#4-operating-cost-is-a-lifecycle-not-a-monthly-instance-fee",
+      "note": "Observed quote: \"'Managed service' shifts responsibilities but does not remove recovery/access/lifecycle obligations.\""
+    },
+    {
+      "claim": "Cost categories must be fixed over a defined review period; a low monthly hosting estimate that excludes restorable backups and staffed response cannot be ranked against a fully operated alternative.",
+      "section_key": "tycho.page.32a5de3daa2d4f74b879165a4119f63a#2-cost-must-include-more-than-infrastructure-instance-prices",
+      "note": "Observed: category list (compute, datastore, egress, telemetry, CI, on-call, migration/irreversibility) and the comparability warning."
+    },
+    {
+      "claim": "A cheaper option is cheaper only at a simplistic accounting boundary: the synthetic comparison excludes migration and risk and can fail an availability gate.",
+      "section_key": "tycho.page.32a5de3daa2d4f74b879165a4119f63a#3-original-synthetic-comparison",
+      "note": "Observed: B is 55 invented units cheaper on 'Subtotal excluding migration and risk', but a single warm replica can violate availability; values labelled invented, not provider prices."
+    },
+    {
+      "claim": "The decision question is the least costly configuration satisfying correctness, service targets, recovery and operational constraints across the actual demand distribution, not the lowest price per virtual machine.",
+      "section_key": "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#purpose-and-mission",
+      "note": "Observed, with the caveat that the demand distribution and price inputs are unknown here."
+    },
+    {
+      "claim": "Cost must be normalised per correct user journey, and conclusions must be reported as break-even conditions because a decision can reverse when any input changes.",
+      "section_key": "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a#4-unit-cost-and-sensitivity",
+      "note": "Observed: 'A decision can reverse when any of these change. Report break-even conditions'; sensitivity varies egress, logs, idle capacity, storage growth."
+    },
+    {
+      "claim": "A multi-year model must separately carry implementation effort, recurring operations, storage/egress/telemetry, drills, coexistence and forward repair, and hard gates are applied before weighted scoring.",
+      "section_key": "tycho.page.76244dbe2bd44035b7154f821191f6f2#engineering-walkthrough-hard-constraints-before-weighted-cost-scoring",
+      "note": "Observed: 'three-year model', 'Hold a 36-month horizon'; option excluded on an operating constraint before cost scoring. Synthetic staffing inputs, not TCO."
+    },
+    {
+      "claim": "A staged path is only interpretable against a baseline measured over the same horizon, which can determine whether rollback completes.",
+      "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#overview",
+      "note": "Observed (modeling-and-simulation layer): staged path compared with a no-cutover baseline; rollback did not complete 'within the horizon'; establishes a measurement agenda, not a decision."
+    },
+    {
+      "claim": "Exit and rollback are conditional: after irreversible effects, recovery requires forward repair or restore, whose cost the monthly fee omits.",
+      "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+      "note": "Observed: three reversibility classes and forward-repair/restore requirement; used for the migration and exit-cost claim."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

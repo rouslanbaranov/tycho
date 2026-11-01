@@ -1,0 +1,558 @@
+{
+  "status": "ai-judge-not-human",
+  "summary": {
+    "n": 20,
+    "pass": 7,
+    "pass_rate": 0.35,
+    "agreement": 0.9,
+    "support2": 20,
+    "coverage2": 7,
+    "citation": 16,
+    "layers": {
+      "book": {
+        "n": 20,
+        "pass": 7,
+        "support2": 20,
+        "coverage2": 7,
+        "citation": 16
+      }
+    },
+    "failed": [
+      "Q150",
+      "Q151",
+      "Q152",
+      "Q154",
+      "Q155",
+      "Q156",
+      "Q158",
+      "Q161",
+      "Q162",
+      "Q164",
+      "Q166",
+      "Q167",
+      "Q169"
+    ],
+    "disagreements": [
+      "Q154",
+      "Q164"
+    ],
+    "adjudicated": 2,
+    "adjudicated_pass": 0
+  },
+  "rows": [
+    {
+      "id": "Q150",
+      "layer": "book",
+      "a": {
+        "task_id": "Q150",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Missing the core claim that Kubernetes topology-spread only influences placement and cannot guarantee post-removal balance or database consistency, so placement must be paired with an isolated fault test of compute, identity and storage loss; the required evidence anchor for that claim is uncited."
+      },
+      "b": {
+        "task_id": "Q150",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: Kubernetes topology-spread placement guarantees neither balance after node removal nor database consistency, so placement must be paired with an isolated compute, identity and storage fault test."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false
+    },
+    {
+      "id": "Q151",
+      "layer": "book",
+      "a": {
+        "task_id": "Q151",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Misses the core claim that recurring manual work is a capacity constraint and that automation introduced to remove it is itself a maintained system needing ownership, tests, monitoring and rollback."
+      },
+      "b": {
+        "task_id": "Q151",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that recurring manual work is a capacity constraint and that automation introduced to remove it is itself a maintained system needing ownership, tests, monitoring and rollback."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q152",
+      "layer": "book",
+      "a": {
+        "task_id": "Q152",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Core claim 5 is missing: the answer never compares lexical, vector and hybrid retrieval on one evidence base, nor warns that semantic similarity or a top result does not certify support."
+      },
+      "b": {
+        "task_id": "Q152",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that lexical, vector and hybrid retrieval must be compared on the same evidence base, including fusion and reranking complexity."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q153",
+      "layer": "book",
+      "a": {
+        "task_id": "Q153",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is substantively missing; the change-feed variant and cursor restart semantics are the only claim details left implicit."
+      },
+      "b": {
+        "task_id": "Q153",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; the answer distinguishes position stability from snapshot semantics and covers cursor binding, expiry and per-request authorization."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q154",
+      "layer": "book",
+      "a": {
+        "task_id": "Q154",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": false,
+        "pass": true,
+        "notes": "All five core claims are substantively covered, with the only residual gap being the claim that out-of-order fixtures and measured output freshness are needed to test the declared lateness and correction policy; the failure-recovery-experiments anchor is uncited."
+      },
+      "b": {
+        "task_id": "Q154",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: the declared lateness and correction policy must be tested with out-of-order fixtures and measured output freshness, which the answer never states."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false,
+      "adjudicated": {
+        "task_id": "Q154",
+        "pass": false,
+        "core_claims_met": 3,
+        "core_claims_total": 5,
+        "notes": "Independent re-read. Claims 1-3 are substantively covered: watermark as a stated lateness expectation rather than proof of completeness, including event-time vs arrival order; late-event options (drop with metric, side output, update/retraction, deferred finalization via reopening/TTL); and sink contract requiring idempotent upsert or transactional replay deduplication, with separate adjustments for a business that forbids revisions. Claim 4 is only partial: the separate-adjustment half is present, but the answer never states that a consistent checkpoint restores operator state and source positions while not deciding whether a late correction is discarded, emitted as an update, or reconciled; the restored checkpoint appears only as a double-apply hazard. Claim 5 is incomplete: the policy dimensions are listed (event-time source, daily boundary, allowed lateness, idle partitions, state retention/TTL, correction form, sink support), but the required testing with out-of-order fixtures and measured output freshness is never stated; 'synthetic scenario ... needs release evidence' is not a test plan. Prior judge split noted; no prior label adopted."
+      }
+    },
+    {
+      "id": "Q155",
+      "layer": "book",
+      "a": {
+        "task_id": "Q155",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Misses the controlled-acceptance core claim (with and without the index under fixed version, SQL parameters, dataset, resources and concurrency, reporting writes, maintenance, lock waits, storage and client p95/p99) and never discusses EXPLAIN ANALYZE."
+      },
+      "b": {
+        "task_id": "Q155",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the EXPLAIN ANALYZE core claim that it executes the statement, adds instrumentation overhead and is unsafe on a data-changing statement against uncontrolled state."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q156",
+      "layer": "book",
+      "a": {
+        "task_id": "Q156",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Core claims 4 and 5 are missing: there is no treatment of redaction occurring only after sensitive bytes have traversed intermediate paths, and nothing on retained agent-interaction records; per-copy access enforcement and revocation are only gestured at."
+      },
+      "b": {
+        "task_id": "Q156",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that redaction at a central collector occurs after sensitive bytes have traversed intermediate paths, so exposure must be limited at emission and the whole ingestion chain verified."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q157",
+      "layer": "book",
+      "a": {
+        "task_id": "Q157",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is substantively missing; the active/passive alternative and the zone-A compute plus independent database/identity injection steps are only implicit."
+      },
+      "b": {
+        "task_id": "Q157",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; shared failure domains, degraded-mode honesty, journey-level drill evidence and single-writer fencing are all stated."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q158",
+      "layer": "book",
+      "a": {
+        "task_id": "Q158",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Missing the core claim distinguishing logical operation, transport attempt, resource, event and consumer-effect identities at their own durability boundaries, and the five-identities and retry-policy anchors are uncited."
+      },
+      "b": {
+        "task_id": "Q158",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: the five distinct identities (operation, transport attempt, resource, event, consumer effect) and the ban on minting a new operation ID per retry are absent."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false
+    },
+    {
+      "id": "Q159",
+      "layer": "book",
+      "a": {
+        "task_id": "Q159",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing; the answer declares the late-event policy, checkpoint limits, sink idempotency, settled-invoice adjustment events and the jointly chosen event-time contract."
+      },
+      "b": {
+        "task_id": "Q159",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No missing core claim: the late-event policy options, checkpoint limits, sink idempotency, adjustment-event fallback and coupled processing contract are all stated."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q160",
+      "layer": "book",
+      "a": {
+        "task_id": "Q160",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: the synthetic 60 percent closed-record case and the pinned comparison conditions are covered, with extended statistics only implicit."
+      },
+      "b": {
+        "task_id": "Q160",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: the answer covers access-pattern fit, planner choice, the 60 percent tenant distribution, pinned comparison conditions and correlated-predicate estimation limits."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q161",
+      "layer": "book",
+      "a": {
+        "task_id": "Q161",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The evaluation-set composition claim is missing: exact identifiers, conceptual and multi-part questions, false friends, unanswerable and renamed or deleted content, and permission scopes."
+      },
+      "b": {
+        "task_id": "Q161",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that the evaluation set must span exact identifiers, conceptual and multi-part questions, false friends, unanswerable items, renamed or deleted content and permission scopes, so generated keyword queries cannot establish expert search quality."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q162",
+      "layer": "book",
+      "a": {
+        "task_id": "Q162",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that search results leak through metadata such as counts, titles, snippets, related links and citations that must be filtered against the authorized subject and object, along with the no-mutation baseline for a read-only search surface."
+      },
+      "b": {
+        "task_id": "Q162",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claims: separating transport, data and effect control (with a no-mutation baseline for a read-only service) and filtering metadata such as counts, titles, snippets and citations."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q163",
+      "layer": "book",
+      "a": {
+        "task_id": "Q163",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All core claims covered; the write-speculation claim is brief, naming the idempotency identity but not the reconciliation path for a committed canceled loser."
+      },
+      "b": {
+        "task_id": "Q163",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No missing core claim: the measured-percentile trigger, bounding preconditions, shared-capacity load effect and write idempotency requirement are all stated."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q164",
+      "layer": "book",
+      "a": {
+        "task_id": "Q164",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Core claim 5 is missing: quorum arithmetic on a misconfigured voter set, where adding a voter raises the required majority without increasing tolerated failures, is never discussed."
+      },
+      "b": {
+        "task_id": "Q164",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: intersection, version selection and repair, concurrent siblings, membership overlap with sloppy quorums and voter-set configuration are all addressed."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true,
+      "adjudicated": {
+        "task_id": "Q164",
+        "pass": false,
+        "core_claims_met": 4,
+        "core_claims_total": 5,
+        "notes": "Independent re-read. Claims 1-4 are substantively covered: R+W>N forces voter-set intersection so the read consults an acknowledging replica; intersection only yields a candidate because the reader must select the highest version and repair stale replicas; concurrent siblings need an application-defined total order before last-write-wins applies (clock skew caveat); and membership change must preserve old/new overlap while sloppy quorums trade intersection for availability. Claim 5 is absent: the answer never states that quorum arithmetic depends on a correctly configured voter set, nor that adding a voter can raise the required majority without increasing tolerated failures. 'Provided both operations use the same replica set' and the membership-overlap discussion address set identity, not the majority arithmetic of a misconfigured or enlarged voter set. Prior judge split noted; no prior label adopted."
+      }
+    },
+    {
+      "id": "Q165",
+      "layer": "book",
+      "a": {
+        "task_id": "Q165",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is substantively missing; the operator/ordering support limit of an index family and the EXPLAIN-not-a-p99-report caution are left implicit."
+      },
+      "b": {
+        "task_id": "Q165",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; the answer ties the regression to per-parameter selectivity and plan estimates and limits the evidence to unexecuted synthetic plans."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q166",
+      "layer": "book",
+      "a": {
+        "task_id": "Q166",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": false,
+        "pass": false,
+        "notes": "Missing the core claim that backend errors or unknown failures must not be cached as absence and that the authorization path must fail closed and recheck changed state; the discriminating-failure-experiment and authority/data-contract anchors are uncited."
+      },
+      "b": {
+        "task_id": "Q166",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: a backend error or unknown failure must not be cached as absence, and the authorization path must fail closed and recheck on state change."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": false
+    },
+    {
+      "id": "Q167",
+      "layer": "book",
+      "a": {
+        "task_id": "Q167",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Misses the core claim that head sampling decides near the start of a request and can exclude a request before a later severe error or slow completion makes it interesting."
+      },
+      "b": {
+        "task_id": "Q167",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that head sampling decides near the start of a request and can exclude it before a later severe error or slow completion makes it interesting."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q168",
+      "layer": "book",
+      "a": {
+        "task_id": "Q168",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: locked prepared state, commit-point logging, vote-as-input, contraindication and the saga trade-off are covered, though recovery authority is only lightly specified."
+      },
+      "b": {
+        "task_id": "Q168",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: prepared locks, the durable commit-point decision and in-doubt state, the bar on unilateral resolution, the contraindication and saga trade-offs are all addressed."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q169",
+      "layer": "book",
+      "a": {
+        "task_id": "Q169",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The ANN index trade-off claim is missing: HNSW, IVF and quantization costs, duplicate vectors, cluster shape and deletion behavior changing achieved accuracy."
+      },
+      "b": {
+        "task_id": "Q169",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing the core claim that HNSW, IVF and quantized indexes trade recall against latency, memory and build or update cost and that duplicate vectors, cluster shape and deletion behavior change achieved accuracy."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "Why can a duplicate read sent to a second replica shorten the tail while increasing the load that produced the tail?",
+      "required_evidence": [
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#4-hedging-replication-and-selective-degradation",
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+        "tycho.page.667f60a8c7d146809d4e3b98efe02213#overview",
+        "tycho.page.364e2c08af2a47249d9d3431346f046c#overview"
+      ],
+      "core_claims": [
+        "A hedge re-sends the same read to an equivalent replica only after the first attempt has been outstanding beyond a measured latency percentile; the first acceptable response wins and the other copies are canceled.",
+        "The hedge stays bounded only when replica equivalence, an attempt cap, working cancellation and a delay taken from that request class's measured distribution all hold together.",
+        "Each extra copy consumes capacity on the same dependency, so when replicas share a bottleneck the hedge can raise offered load and delay recovery instead of shortening the tail.",
+        "A hedged write can still commit an effect from a canceled loser even though the client accepts one response, so speculation over writes needs an idempotency identity and a reconciliation path."
+      ],
+      "optional_claims": [
+        "Deferring the second request to the 95th-percentile point limited the added load to about five percent in the cited Tail at Scale example.",
+        "gRPC makes maxAttempts mandatory, caps values above five at five, and throttles further hedges when its token count falls to a threshold."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why is R + W > N necessary but not sufficient for a quorum read to return the newest acknowledged write?",
+      "required_evidence": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+        "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#normal-operation-failure-and-recovery"
+      ],
+      "core_claims": [
+        "When R + W > N, the read and write voter sets intersect, so the read consults at least one replica that acknowledged the write.",
+        "Intersection supplies only a candidate: the reader must select the highest version and repair stale replicas, or an older value can still be returned.",
+        "Causally unordered concurrent versions need an application-defined total order before a highest-version rule can be applied.",
+        "A membership change must keep the old and new quorums overlapping, and a sloppy quorum buys availability by giving up that intersection guarantee.",
+        "Quorum arithmetic depends on a correctly configured voter set; adding a voter can raise the required majority without increasing tolerated failures."
+      ],
+      "optional_claims": [
+        "A leader-based protocol can simplify reads and writes but still needs a quorum for election and commit."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can an index that helps a uniform workload make the same query slower after one tenant's rows become skewed?",
+      "required_evidence": [
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#2-compare-access-methods-by-the-supported-operator-workload",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+        "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#6-original-negative-cases"
+      ],
+      "core_claims": [
+        "An index family supports only particular operators and orderings, and the presence of an index does not guarantee the planner chooses it or that the path is cheaper.",
+        "The planner derives row and selectivity estimates from stored statistics, and correlated predicates can defeat an independence assumption and produce a badly estimated plan.",
+        "When a large fraction of rows qualifies, or the index path is more expensive under the planner's assumptions, a sequential scan can be the correct choice.",
+        "A plan that improves one data distribution can worsen another, so the access path is a decision condition tied to the tested workload rather than a universal index rule.",
+        "EXPLAIN ANALYZE establishes behavior for one statement, parameter set and environment, not the user population's p99, and an index scan appearing after index creation does not by itself prove an end-to-end latency improvement."
+      ],
+      "optional_claims": [
+        "A compound index on tenant, state and creation time may stop being chosen once one tenant holds most rows and most records are closed.",
+        "BRIN summaries can be tiny yet fail to prune blocks when values are randomly scattered, and GIN reduces tag-search scan work at the cost of posting-list maintenance."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why must a cached absence or denial be scoped to a principal and a policy revision rather than to an object identifier alone?",
+      "required_evidence": [
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#6-a-discriminating-failure-experiment",
+        "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview",
+        "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract"
+      ],
+      "core_claims": [
+        "Caching an absent result protects the source from repeated misses for nonexistent IDs, but the entry can outlive a create and hide an object that now exists.",
+        "An authorization answer must be keyed by subject, action, resource, tenant and relevant policy or input state, so a key that omits the principal or tenant can be reused for a different caller.",
+        "A cached permit must not outlive a required revocation deadline, and the authorization path must fail closed and recheck when the relevant state changes.",
+        "A cached denial must be bounded by the shorter of its TTL and the revocation deadline, and deleted or versioned on create, grant, revoke and delete.",
+        "A backend error or unknown failure must not be cached as absence, and a negative entry must not become a universal statement of nonexistence across principals or tenants."
+      ],
+      "optional_claims": [
+        "A stale allow or deny decision can have more serious authorization consequences than an old description, which is why per-principal keying, a short TTL or bypass are the bounded alternatives.",
+        "CloudFront caches a 403 only when the origin marks it cacheable, while Cloudflare gives 404 and 410 a three-minute default Edge TTL and does not cache other status codes by default."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a trace set be adequate for diagnosing one slow request yet invalid for estimating how often requests are slow?",
+      "required_evidence": [
+        "tycho.page.bc30179a9cda4c12b9deb383e8751d47#4-sampling-limits-what-the-trace-can-support",
+        "tycho.page.aac0f46189b74948bedfc30a81ec80e5#2-causal-and-temporal-interpretation",
+        "tycho.page.f921597aae854c6996459fc025a9bca3#bounded-pattern-ownership-notes",
+        "tycho.page.ff387baa8697be02afec1be6807b858f#overview"
+      ],
+      "core_claims": [
+        "A trace can show where a request spent time only when context crosses the boundaries, instrumentation covers the suspected operation, and sampling and export failures are disclosed.",
+        "Head sampling decides near the start of a request, so it can exclude a request before a later severe error or slow completion makes it interesting.",
+        "Tail and adaptive sampling can retain slow or failed traces, but they require buffered state and collector resources, decide late, and bias the retained population.",
+        "A trace is a sampled, propagated observation rather than a complete transaction log, so a selected set cannot estimate every service success ratio unless the design supports that inference and the uncertainty is disclosed.",
+        "Metrics are the appropriate aggregate signal for fleet latency or error rate, and a missing span remains ambiguous until instrumentation coverage and sampling policy are known."
+      ],
+      "optional_claims": [
+        "A successful span status does not prove that the database commit or a downstream external effect was correct.",
+        "When observability data is used only in aggregate and can be pre-aggregated, sampling may not be appropriate, and metrics can aggregate measurements instead."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "After every participant votes to prepare, why can a two-phase commit stay undecided, and why must a prepared participant wait rather than resolve it alone?",
+      "required_evidence": [
+        "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+        "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension",
+        "tycho.page.db64c44e7af846f9b54a524a37a1b9dd#5-failure-matrix-and-an-experiment-contract",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "In prepare, each participant records prepared state and keeps its locks, so until the coordinator's decision arrives its data is locked for both reads and writes.",
+        "The commit or abort decision is recorded in a commit-point log so prepared participants can apply it after failure; if the coordinator fails before that record is available, the transaction is in doubt.",
+        "A participant that votes yes may not commit on its own; resolution requires coordinator or external transaction manager recovery, whether automatic or forced.",
+        "Two-phase commit is contraindicated when coordinator failure would block critical resources, because prepared locks and coordinator recovery become single points of delay.",
+        "A saga replaces prepared state with local transactions and compensating actions, avoiding prepared locks but lacking automatic rollback and isolation and exposing intermediate states."
+      ],
+      "optional_claims": [
+        "Participants must support the exact prepare protocol; an arbitrary external API, queue or database does not join a shared atomic transaction merely because the application calls the operation a transaction.",
+        "Compensating transactions in the saga alternative can themselves fail, leaving the system inconsistent."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

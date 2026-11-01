@@ -1,0 +1,152 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q152",
+      "question": "A new retriever returns several relevant documents that no earlier system retrieved and that the judgment pool never judged. Why can its Recall@k look worse than the system whose results built the pool, and what must be re-run before the two are compared?",
+      "layer_expected": "book",
+      "answer": "Recall@k is scored against fixed judgments: the denominator is the judged-relevant documents, and an unjudged document adds nothing. A pool built from earlier systems' top-k therefore contains only what those systems returned. The new retriever's extra relevant documents lie outside the pool, so they earn no credit; worse, they occupy top-k slots and displace judged-relevant documents. Its measured Recall@k can drop below the pool-builder's even when it retrieves more genuinely relevant material: a selection bias favoring whoever defined the pool. The book names the matching misuses: treating unjudged results as definitely irrelevant and assuming judgments include every relevant item.\n\nRe-running the metric alone is not enough. Re-run the judgment cycle: extend the pool with the new retriever's top-k results, obtain independent judgments for every newly surfaced document, then recompute Recall@k and nDCG@k for all systems against the same expanded qrels, on the same frozen corpus revision, filters and query set, declaring how unjudged items were handled. Keep old and new numbers side by side so the bias magnitude stays visible.\n\nBoundaries: unjudged is not irrelevant; recall against known judgments is not absolute relevance; a small question set cannot generalize. Confidence is high on the mechanism, moderate on the remedy steps.",
+      "citations": [
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+        "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality",
+        "tycho.page.a4335241afc0408d9e137bc2a027ebed#6-a-reproducible-evaluation-design",
+        "tycho.page.5f1fe7b87ce443889dd4662fe845794a#6-evaluate-the-end-to-end-information-task",
+        "tycho.chapter.e3cf27f8212a455bb53e135ee18bbaa9#decision-and-worked-result"
+      ],
+      "core_claims": [
+        "Pooled judgments are an assumption and approximation for a particular collection, not a complete map of relevance, so a document that no pooling system retrieved may never be judged and unjudged does not mean irrelevant.",
+        "Recall@k uses a denominator of all judged relevant items under the chosen qrels, so a retriever whose novel relevant results were never pooled is penalized by the denominator instead of credited for finding them.",
+        "Precision@k that counts unjudged results as definitely irrelevant, and comparisons that change source snapshots, chunk boundaries, qrels, permission filters or query populations, can reverse the apparent ranking.",
+        "A defensible comparison re-pools with the candidate's results and re-judges the union, or reports the judgment-pool limitation explicitly, while keeping the same snapshot and query set and reporting freshness, cost and maintenance alongside relevance.",
+        "Lexical, vector and hybrid retrieval must be compared on that same evidence base because fusion and reranking add complexity, and semantic similarity or a top result does not certify that a source supports the requested claim."
+      ],
+      "optional_claims": [
+        "A test set built only from automatically generated simple keyword queries cannot establish real expert search quality.",
+        "Graded nDCG values are relevance judgments under a pool, not probabilities, and negative or unanswerable queries need their own expected no-result behavior."
+      ],
+      "required_evidence": [
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#2-what-ranking-metrics-actually-measure",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons"
+      ]
+    },
+    {
+      "task_id": "Q156",
+      "question": "A team deletes retired customer records from its primary audit store, but a backup archive, a search index and an old incident export still contain them. Why does the primary deletion not satisfy the retention or erasure obligation, and what must the retention design inventory and govern?",
+      "layer_expected": "book",
+      "answer": "Deleting the record from the primary audit store closes one representation; it does not erase the data. The obligation follows every copy and derivation. The backup archive, search index and incident export are separately owned stores with their own access paths and lifetimes: a derived index keeps obsolete entries until deletion is applied, a versioned or immutable backup may retain the record until expiry and can resurrect it on restore, and the export sits outside the primary deletion path. Until each copy is suppressed, expired or isolated under a declared retention policy, the team can show only that one read path is closed, not that retention or erasure is satisfied.\n\nThe retention design must inventory authoritative rows and blobs, replicas, change logs and outbox entries, search and vector projections, caches, exports, operational logs and historical backups. For each it must govern owner, permitted content and access, retention policy, deletion mechanism and propagation, and completion evidence. It needs a durable, minimized retirement record that survives independently of backups, tombstone retention coordinated with backup age, offline-consumer windows, log retention and rebuild policy, and an isolated restore gate that reapplies retirements before exposure. If copies cannot be bounded, retain an exclusion mechanism or record the requirement as unresolved. Physical erasure remains provider-specific, and this is engineering evidence, not a legal determination.",
+      "citations": [
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+        "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+        "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+        "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#5-alternatives-and-failure-conditions"
+      ],
+      "core_claims": [
+        "Deleting a record from the primary store leaves copies in backups, search indexes, caches, derived analytics and old incident exports, so a retention or erasure claim must inventory every derived copy that can outlive the primary record.",
+        "Retention must balance actual business and legal requirements against minimization, deletion and incident needs, and a backup archive or search index can retain data after a primary record is removed.",
+        "Access control must follow each copy, so a shared audit service or cache enforces subject, object and tenant permissions and a derived index respects revocation instead of continuing to serve an old scope.",
+        "Redaction at a central collector occurs after sensitive bytes have already traversed intermediate paths, so exposure must be limited at emission and the whole ingestion chain verified.",
+        "Agent interactions add retained records such as questions, snippets, filters, result identifiers and tool arguments that can reveal sensitive content even when the underlying prose is public, so audit access and retention must be limited and separated from operational telemetry."
+      ],
+      "optional_claims": [
+        "Encrypting storage at rest does not by itself provide tamper evidence or prove integrity.",
+        "A log record containing an embedded instruction or fabricated identity is untrusted content rather than a privileged command to a downstream agent."
+      ],
+      "required_evidence": [
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test",
+        "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#5-privacy-audit-and-retention-boundaries",
+        "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission"
+      ]
+    },
+    {
+      "task_id": "Q160",
+      "question": "Why can an index that helped one tenant make the same query slower for another, and which conditions must be fixed before the two access paths are compared?",
+      "layer_expected": "book",
+      "answer": "An index serves a predicate shape and a data distribution, not a SQL string. For one tenant the filter may match a few rows, so a B-tree lookup is cheap. For another tenant the identical statement may match a large slice \u2014 the walkthrough's hot tenant holds 60% of rows and most records are closed, with correlated state values \u2014 where many index entries and heap fetches can cost more than a sequential scan. Statistics are sampled and approximate; correlated predicates can defeat independence assumptions, so the planner may misestimate the second tenant's rows and keep a path that suited the first. The index also adds planning time, cache pressure, WAL and maintenance work that may slow the second tenant even when its read does not benefit.\n\nBefore comparing the indexed and non-indexed paths, fix: PostgreSQL major/minor version; SQL text and pinned parameter values; schema and index set; a representative dataset reflecting the tenant's cardinality, correlation and skew; planner settings; freshly gathered statistics; memory and CPU/IO/concurrency limits; and identical cold/warm cache state. Compare estimated versus actual rows, buffer reads, index-only eligibility, client-visible p95/p99 and write/storage cost. Do not generalize from one parameter value or a non-representative sample. Confidence: moderate; the cases are synthetic and unexecuted, and plan-cache effects are not covered.",
+      "citations": [
+        "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#purpose-and-mission",
+        "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents",
+        "tycho.page.045713bc4f054663b676e4e1b6fe9725#7-controlled-acceptance-method",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change"
+      ],
+      "core_claims": [
+        "A primary-key lookup, a range filter, a full-text search and ordered pagination impose different access patterns, so the presence of an index does not show that it serves the workload.",
+        "The planner may correctly choose a sequential scan when a large fraction of rows qualifies or when the index path is more expensive under its estimates.",
+        "In the synthetic case one tenant owns 60 percent of the rows and most records are closed, so stored statistics can change the estimated selectivity even though the index and total row count are unchanged.",
+        "A controlled comparison pins query parameters, data shape, planner settings, statistics collection, available memory and cache state, then checks estimated versus actual rows, buffer reads, index-only eligibility and user-visible latency.",
+        "Correlated predicates can defeat independence assumptions; extended statistics and ANALYZE may improve estimates, but an EXPLAIN and a controlled workload test are still required."
+      ],
+      "optional_claims": [
+        "Exact operator support belongs to the index method, operator class and database version, not to the index family name alone.",
+        "A materialized read model may fit a different analytic query but adds freshness and rebuild cost; repairing statistics is preferable when measured against the actual distribution."
+      ],
+      "required_evidence": [
+        "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee#engineering-walkthrough-same-index-different-workload-distribution",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#2-compare-access-methods-by-the-supported-operator-workload",
+        "tycho.page.d66b60c435cc4f8480c15cc6e400b369#3-planner-estimates-are-hypotheses-about-table-contents"
+      ]
+    },
+    {
+      "task_id": "Q164",
+      "question": "Why is R + W > N necessary but not sufficient for a quorum read to return the newest acknowledged write?",
+      "layer_expected": "book",
+      "answer": "R + W > N guarantees intersection, not freshness. Every read quorum of R replicas must share at least one replica with the W replicas that acknowledged the newest write, so that version is present among the responses \u2014 provided both operations use the same replica set and the write actually reached W replicas. Intersection is necessary: with R + W \u2264 N the sets can be disjoint and no respondent can supply the value. It is not sufficient, because a replica holding the newest copy does not force the response that copy.\n\nSufficiency needs more. The write must really be durable on W replicas; a failed or partial write leaves only older versions to intersect. Membership must be strict: Dynamo and Riak sloppy quorums route to fallback nodes, so the R respondents and W acknowledgers can be different sets. The reader must select the newest version: Cassandra's last-write-wins timestamps assume a total order, Dynamo and Riak can return concurrent siblings, and clock skew can invert that order. Replica movement during membership change can also break old/new overlap. Read repair and hinted handoff are best-effort; anti-entropy converges only eventually. A leader simplifies ordering but still needs a majority; per-session read-your-writes is a separate obligation. Evidence is documentation and a 2007 paper, not an implementation test.",
+      "citations": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+        "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#worked-history-and-counterexample"
+      ],
+      "core_claims": [
+        "When R + W > N, the read and write voter sets intersect, so the read consults at least one replica that acknowledged the write.",
+        "Intersection supplies only a candidate: the reader must select the highest version and repair stale replicas, or an older value can still be returned.",
+        "Causally unordered concurrent versions need an application-defined total order before a highest-version rule can be applied.",
+        "A membership change must keep the old and new quorums overlapping, and a sloppy quorum buys availability by giving up that intersection guarantee.",
+        "Quorum arithmetic depends on a correctly configured voter set; adding a voter can raise the required majority without increasing tolerated failures."
+      ],
+      "optional_claims": [
+        "A leader-based protocol can simplify reads and writes but still needs a quorum for election and commit."
+      ],
+      "required_evidence": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+        "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#normal-operation-failure-and-recovery"
+      ]
+    },
+    {
+      "task_id": "Q168",
+      "question": "After every participant votes to prepare, why can a two-phase commit stay undecided, and why must a prepared participant wait rather than resolve it alone?",
+      "layer_expected": "book",
+      "answer": "Every participant voting prepare does not decide the outcome by itself. The coordinator collects the votes, then records exactly one commit-or-abort decision, and participants apply that decision while holding prepared state; the decision must survive coordinator failure. If the coordinator or commit-point site fails after the prepares but before that decision is durably recorded or delivered, no participant learns the outcome and the transaction becomes in-doubt. The documentation quoted in the owner section says prepared nodes \"wait until a COMMIT or ROLLBACK request is received from the global coordinator\", and that until resolution \"the data is locked for both reads and writes\".\n\nA prepared participant cannot resolve it alone because its yes vote is only an input, not the outcome: it does not know the other votes, and atomicity requires one authoritative decision applied everywhere. Committing early could contradict a later abort; aborting early could contradict a commit others applied \u2014 either breaks all-or-nothing (inference). Its locks and redo/undo state are exactly what let it apply either outcome, so waiting is the deliberate price of atomicity.\n\nBoundaries: prepared locks block resources, coordinator recovery is a single point, and heterogeneous participants add cost. 2PC is contraindicated when coordinator failure would block critical resources; saga trades atomicity for availability but adds compensation and loses isolation.",
+      "citations": [
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+        "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+        "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension"
+      ],
+      "core_claims": [
+        "In prepare, each participant records prepared state and keeps its locks, so until the coordinator's decision arrives its data is locked for both reads and writes.",
+        "The commit or abort decision is recorded in a commit-point log so prepared participants can apply it after failure; if the coordinator fails before that record is available, the transaction is in doubt.",
+        "A participant that votes yes may not commit on its own; resolution requires coordinator or external transaction manager recovery, whether automatic or forced.",
+        "Two-phase commit is contraindicated when coordinator failure would block critical resources, because prepared locks and coordinator recovery become single points of delay.",
+        "A saga replaces prepared state with local transactions and compensating actions, avoiding prepared locks but lacking automatic rollback and isolation and exposing intermediate states."
+      ],
+      "optional_claims": [
+        "Participants must support the exact prepare protocol; an arbitrary external API, queue or database does not join a shared atomic transaction merely because the application calls the operation a transaction.",
+        "Compensating transactions in the saga alternative can themselves fail, leaving the system inconsistent."
+      ],
+      "required_evidence": [
+        "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+        "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension",
+        "tycho.page.db64c44e7af846f9b54a524a37a1b9dd#5-failure-matrix-and-an-experiment-contract",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes"
+      ]
+    }
+  ]
+}

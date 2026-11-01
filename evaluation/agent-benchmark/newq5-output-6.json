@@ -1,0 +1,140 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "modeling-and-simulation",
+  "items": [
+    {
+      "question": "A checkout team keeps enlarging its simulation by adding a cache model, a database model and a deployment model, because it assumes that a more detailed model is a more accurate one. Why can the added detail fail to improve the decision, and what test should each proposed addition pass before its verification burden is accepted?",
+      "required_evidence": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope"
+      ],
+      "core_claims": [
+        "A model boundary is chosen from the decision, including purpose, alternatives, the distinguishing observable, exclusions and validity domain, rather than from the full structure of the system, and the smallest model that can separate the alternatives is preferred.",
+        "Stock-and-flow, discrete-event and hybrid models are choices about resolution that answer different questions rather than stages on a maturity ladder, and a discrete-event model is not automatically more accurate because it can be wrong at a finer resolution.",
+        "An addition is justified only when it can change a metric that could reverse the decision; otherwise it adds verification and run cost without changing the answer.",
+        "Each added parameter or state must be measurable, assumed or marked unknown, preserve units and conservation, and be covered by tests and a new validity limit, or it introduces an untested failure mode.",
+        "Conceptual validity, meaning a reasonable structure for the purpose, and operational validity, meaning output that matches the problem entity over the intended domain, are separate, so a detailed model can be conceptually reasonable yet operationally unvalidated."
+      ],
+      "optional_claims": [
+        "A stock-and-flow model can show stable or growing backlog at a stated utilization, but it cannot produce the p95 latency of successful requests because it contains no individual requests.",
+        "Model scope creep can lose the original question and make the comparison hard to review."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team gives every checkout candidate the same base seed and calls the comparison fair. Why is a shared seed base not by itself a fairness guarantee, and what must the scenario declare about seeds and replications?",
+      "required_evidence": [
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+        "tycho.page.687d2196433c3b076d00c73144dad431#components",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error"
+      ],
+      "core_claims": [
+        "A seed is part of the input contract rather than a knob for making a result look stable, and V12 uses a base seed with a deterministic per-replication seed while the run record stores the base seed and replication count.",
+        "Sharing the same random stream across candidates can create common random numbers, which is sometimes desirable for variance reduction, but it must be a declared choice rather than an unstated fairness assumption.",
+        "The engine gives each replication its own random source seeded from the scenario, so the declared seed scheme, not an assumption that runs are automatically paired, determines whether replications are dependent.",
+        "If a shared stream makes replications correlated, the standard error computed as s divided by the square root of n is too small and the nominal confidence interval understates uncertainty; correlated replications are a failure mode, not a precision gain.",
+        "Replications estimate sampling error only and do not remove input uncertainty, so the seed scheme cannot make an assumed input distribution measured or make a biased model valid."
+      ],
+      "optional_claims": [
+        "A seed scheme changed between candidates makes the comparison a different experiment rather than a rerun.",
+        "A larger replication count reduces the standard error, but it makes an assumed input distribution more precise rather than more true."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A sensitivity screen reports that service mean explains more fitted variance than arrival rate, and the team proposes to cancel the planned service-time measurement because the model already shows what matters. Why is that inference invalid, and what is the ranking legitimately used for?",
+      "required_evidence": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome"
+      ],
+      "core_claims": [
+        "The V12 screen fits a quadratic response surface to 48 sampled rows, so it assumes that a quadratic form is adequate over the sampled range, that input standardization is meaningful and that inputs are independent, and it is not a full Sobol analysis.",
+        "The reported shares describe the fitted variance under the declared distributions and sampled range, so service mean explains more there, but they do not prove that service time is the dominant production factor.",
+        "The decision record uses the ranking to identify what to measure first rather than to support a production claim, and treating a sensitivity ranking as a substitute for a missing measurement is an explicit failure mode.",
+        "A ranking supplies no value or distribution for the missing input, so the decision stays conditional until the named measurement exists, and a useful insufficient-evidence record names the measurement, the range that would change the outcome, the owner and the review trigger.",
+        "A ranking from an unstable sample can reverse, so the screen's shares are an approximation with their own sample and error limits rather than a durable fact."
+      ],
+      "optional_claims": [
+        "Correlated inputs are propagated by the separate Monte Carlo run, and the engine rejects a correlated screen because its variance decomposition assumes independent inputs.",
+        "A success rate near 1.0 has little variance, which can make the shares look unstable even when the modeled effect is real."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Two checkout candidates' 95% intervals overlap on success rate, so the review records no difference and keeps the cheaper candidate. Why is that an insufficient-evidence outcome rather than evidence of equivalence, and what must the record state instead?",
+      "required_evidence": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome"
+      ],
+      "core_claims": [
+        "A 95% interval covers the true mean in repeated sampling about 95% of the time under the model's assumptions, but it does not cover the production value when the model is biased or the inputs are mis-specified, and it does not cover a single future request.",
+        "Overlapping intervals mean the runs did not separate the candidates on that metric at that confidence; they do not establish that the difference is zero or bound it to a decision-relevant margin.",
+        "The checklist returns insufficient evidence when a decision-relevant interval spans both pass and fail or when two candidates are indistinguishable on the declared metrics, so no difference is a non-result rather than a tie.",
+        "The record must name the measurement and the range that would separate the candidates, its owner, the consequence of staying in the current state and the next review trigger.",
+        "More replications would reduce sampling error but not input uncertainty, and they would not repair a biased model, so a narrower synthetic interval would still not make the inputs representative."
+      ],
+      "optional_claims": [
+        "More replications make an assumed input distribution more precise, not more true."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Candidate A has the lower p95 latency, yet the V12 comparative record recommends candidate B. Why is that not a contradiction, and which part of the recommendation is a value judgment rather than a simulated fact?",
+      "required_evidence": [
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation"
+      ],
+      "core_claims": [
+        "All three candidates receive the same 20 requests-per-second Poisson workload for 1,800 seconds after a 300-second warmup, with the same seed scheme and metric definitions, so the candidate configuration is the intended experimental variable.",
+        "Candidate C is eliminated by the hard constraints: its cost per 1000 successes of 3.63 exceeds the 3.0 ceiling and its p95 of 1.769 seconds exceeds the 1.5-second ceiling, while A and B pass both.",
+        "B has the higher success rate (0.9996 versus 0.9218) and the lower cost per 1000 successes (1.34 versus 1.81), while A has the lower p95 (0.870 versus 1.206 seconds), so neither candidate dominates on every metric.",
+        "The record recommends B because the declared decision prioritizes successful completions and cost per success over the latency difference inside the 1.5-second ceiling, and that prioritization is a decision rather than a simulation output.",
+        "The recommendation is conditional because the non-quantitative operability constraint C3 was not tested, and the record names measured arrival rate, service time, p95 tail, cost weight, retry rate and operability review as reversal triggers."
+      ],
+      "optional_claims": [
+        "All three runs are converged under the 0.02 relative-error rule, and narrow synthetic intervals do not make the assumed inputs measured.",
+        "Candidate B's higher p95 comes from waiting longer before timing out, and it still completes more requests at lower cost per success."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A simulation measures a steady-state p95 from a window that starts at time zero, although the model starts empty and its queue fills during the first minutes. Why does that window bias the estimate, what must the scenario declare and the engine enforce about warmup, and why does convergence not repair the bias?",
+      "required_evidence": [
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+        "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean"
+      ],
+      "core_claims": [
+        "A measurement over a finite window is neither a long-run average nor a stationary expectation, and edge effects matter when the system does not start and end empty, so the model must report the window, the warmup and the uncertainty.",
+        "Counting completions that occur before the warmup expires in the measurement window is warmup leakage, which mixes the initial transient into the steady-state estimate and biases it.",
+        "The scenario contract fixes the workload, duration, warmup, metric definitions and seed scheme identically across candidates, so giving one candidate a shorter warmup is workload drift that invalidates the comparison.",
+        "The engine applies the declared warmup and duration rather than the process clock, so the warmup is part of the reproducible contract and not an analyst's post-hoc filter.",
+        "Convergence means only that sampling error is small under the declared model, which does not make a biased window valid, so a narrow interval around a contaminated estimate does not repair the bias."
+      ],
+      "optional_claims": [
+        "Little's law is a relation among long-run averages, not a per-request identity or a short-window guarantee, so the stock-flow estimate of time in system is labeled derived and carries the finite-window warning.",
+        "The stock-flow model can report backlog and utilization but has no individual p95, so the checkout comparison requires the event-level model for latency."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

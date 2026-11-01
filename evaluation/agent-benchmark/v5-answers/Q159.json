@@ -1,0 +1,51 @@
+{
+  "task_id": "Q159",
+  "answer": "Advancing a watermark declares expected lateness; it does not prove input is complete. The book treats a watermark as the policy saying how much lateness the operator expects and when to finalize a result. Finalization is a chosen boundary, not evidence that no earlier event can arrive: a booking stamped 10:01 can still arrive after the watermark passed its 10:00 window. The published total is therefore a version computed from the state available then; neither the watermark nor a checkpoint recovers an expired input or reverses a committed external effect.\n\nBefore applying the correction, the processing contract must declare the event-time source; window shape, boundaries and time zone; how delayed and idle partitions affect the watermark; the correction mode (drop with a metric, update/retract, side output, or deferral); which finalized windows may reopen and who owns restatement; sink idempotency, upsert or transaction semantics with checkpoint coordination; retained state, TTL and replay; and stable change identity for deduplication. It must also state downstream acknowledgment and reconciliation duties. If settled invoices may not change, use a separate adjustment event rather than silently revising the total; if that policy cannot meet reconciliation, a batch backfill is safer. Confidence is moderate: the model is synthetic, not an executed test.\n\n(Evidence: checkpoints-time §4; late-correction walkthrough; chapter decision.)",
+  "citations": [
+    "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+    "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+    "tycho.chapter.566e576a945b44628386d520214d6c4a#decision-and-worked-result"
+  ],
+  "evidence": [
+    {
+      "claim": "A watermark encodes expected lateness and a finalization choice, not proof that input is complete.",
+      "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+      "note": "Observed: the policy 'tells operators how much lateness they expect and when to finalize a result'; a synthetic booking event stamped 09:55 arrives at 10:12 after an earlier finalization."
+    },
+    {
+      "claim": "A late event can arrive after finalization, so a declared late-event policy is required and none of the options is universally correct.",
+      "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+      "note": "Observed: drop with an explicit metric, update/retract a prior result, side output, or defer finalization; 'None is universally correct'. The reading that the published total becomes a version is inference from that policy list."
+    },
+    {
+      "claim": "A checkpoint preserves operator state and source positions but does not decide how a late correction is handled.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Observed: 'a checkpoint alone does not decide whether a late business correction should be discarded, sent as an update or routed to a reconciliation stream'; correctness depends on the sink contract plus a declared policy for reopening finalized windows."
+    },
+    {
+      "claim": "The contract must explicitly choose event-time source, window boundary, watermark/lateness handling, correction mode, state retention and external-output capability.",
+      "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+      "note": "Observed: six-row 'Required explicit choice' table; external output must support corrections, idempotency and checkpoint coordination."
+    },
+    {
+      "claim": "Immutability of settled business records changes the correction mechanism.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Observed: a business that prohibits changing settled invoices may need a separate adjustment event rather than silently revising totals; if the lateness/retraction policy cannot satisfy reconciliation, a scheduled batch backfill may be safer."
+    },
+    {
+      "claim": "Event time, watermarks, retained state, checkpointing and replay must be treated as one declared processing contract.",
+      "section_key": "tycho.chapter.566e576a945b44628386d520214d6c4a#decision-and-worked-result",
+      "note": "Observed: chapter editorial conclusion; a consistent checkpoint cannot recover an expired input or reverse an independently committed external effect."
+    },
+    {
+      "claim": "CDC corrections need stable change identity and deduplication across snapshot and replay.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Observed: boundary table names database transaction position and stable change identity; snapshot followed by replay duplicates a change without dedup."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

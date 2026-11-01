@@ -1,0 +1,62 @@
+{
+  "task_id": "Q153",
+  "answer": "A keyset cursor stores the last ordering tuple, here (created_at, id), not a row count: the next page is a strict comparison on that tuple. Inserts ahead of the cursor change no earlier position, so no row is re-shown or skipped by a numeric shift, the offset failure when rows are inserted upstream. That is position stability only. The cursor says where the scan resumes, not which set existed; rows whose sort key or visibility changes still cross the boundary, so the result is a defined ordering over a live set, not a snapshot. Stable-key traversal accordingly prices a stable total order (a unique tie-break such as id) plus a stated concurrent insert/update policy; snapshot export instead needs retention, expiry and consistent authorization.\n\nBecause one page sequence spans many independent requests, the cursor must bind query and filters, ordering key and direction, any snapshot or watermark, and the caller's access scope (principal, tenant), then be validated on every request with explicit expiry. Crucially the cursor is a continuation hint, not authorization. Object-level permission must be rechecked at the authority that serves the row, because revocation propagates with a bound and previously served copies persist. Binding access scope blocks cross-tenant or expired cursors; per-request recheck blocks a stale page exposing a row the caller has lost.",
+  "citations": [
+    "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+    "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+    "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#4-object-authorization-and-tenant-scoping-must-compose",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example"
+  ],
+  "evidence": [
+    {
+      "claim": "Offset pagination drifts because a page position is a count, not a place; inserting or removing earlier items shifts every later page.",
+      "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+      "note": "Observed: \"A fictional list is ordered by created_at and stable ID. An offset can shift as earlier items are inserted or removed.\""
+    },
+    {
+      "claim": "A keyset cursor removes that specific position shift when the ordering key is stable, because the next page is a comparison against the last emitted tuple rather than an index.",
+      "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+      "note": "Observed: \"A keyset cursor avoids that specific position shift when the ordering key is stable, but does not by itself create a snapshot.\""
+    },
+    {
+      "claim": "It is position stability, not isolation: rows whose sort key or visibility changes can still move across page boundaries, so the caller sees a live set.",
+      "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+      "note": "Observed: \"Rows changing the sort key or visibility can still move across boundaries.\" Inference: therefore no repeatable membership across pages without an explicit snapshot/watermark."
+    },
+    {
+      "claim": "Stable-key traversal requires a stable total order (created_at alone is not unique, so a stable ID tie-break is needed) and a stated concurrent insert/update policy; snapshot export is a different contract with retention, expiry and consistent authorization.",
+      "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+      "note": "Observed contract table: \"Stable-key traversal | Defined ordering and cursor progression | Stable total order; explain concurrent insert/update policy\"; \"Snapshot export | Membership under a named snapshot/watermark | Snapshot retention, expiry and consistent authorization\"; ordering named as \"created_at and stable ID\"."
+    },
+    {
+      "claim": "The cursor must bind query/filter/order/snapshot and the relevant access scope, be validated on every request, and expire explicitly with restart semantics.",
+      "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+      "note": "Observed: \"Bind an opaque cursor to query/filter/order/snapshot and relevant access scope; validate it on every request. Expiry should be explicit, with restart semantics.\""
+    },
+    {
+      "claim": "A cursor is a continuation hint, not an authorization grant; permission must be rechecked even when a snapshot still retains previously visible rows.",
+      "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+      "note": "Observed: \"A cursor is a continuation hint, not authorization. Recheck permission even if a snapshot retains previously visible rows.\" Proposed case list includes \"revoked access within a snapshot\" and \"expired or cross-tenant cursor\"."
+    },
+    {
+      "claim": "Object-level authorization belongs at the authority that reads or commits the effect and must cover pagination among alternate access paths, not just the initial list or query.",
+      "section_key": "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#4-object-authorization-and-tenant-scoping-must-compose",
+      "note": "Observed rules 2-4: \"Enforce object-level authorization at the authority that reads or commits the effect\"; \"Check resource ownership during state transitions, not only during initial list/query\"; \"Scope every alternate access path: list, search index, caching, pagination, export...\""
+    },
+    {
+      "claim": "Revocation is bounded rather than instantaneous, so a previously built page must not be trusted as still-authorized.",
+      "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example",
+      "note": "Observed: \"Changing visibility from public to private is a revocation problem: removing the database's public flag does not erase every distributed copy already served\"; restricted objects may need \"authorization on every access\" or \"a capability with bounded lifetime\"."
+    },
+    {
+      "claim": "A multi-request page sequence cannot inherit a database transaction snapshot by default: Read Committed gives statement snapshots and Repeatable Read is transaction-scoped.",
+      "section_key": "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+      "note": "Observed: \"Read Committed statement snapshots from Repeatable Read transaction snapshots. Successive statements at Read Committed can see concurrent committed changes.\" Inference: holding a snapshot across client pages would require an explicit exported/retained snapshot instead."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
