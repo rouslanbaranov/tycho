@@ -1,0 +1,60 @@
+{
+  "task_id": "Q004",
+  "answer": "**Layer.** Book layer; this is a conceptual security/multitenancy question answered from book prose. Atlas and modeling-and-simulation artifacts are not required.\n\n## Direct answer\n\nThe residual concern is **resource isolation**, specifically **noisy-neighbour contention and connection-pool starvation**. Correct data permissions decide which rows or objects a tenant may read or write; they do not partition the pool's finite connection slots, wait queue, quota budget or failure domain. A tenant whose requests are slow, unbounded or retrying can hold or exhaust shared connections and make other tenants wait or time out. A shared pool therefore needs explicit per-tenant fairness and quotas, bounded waits, escape hatches and per-tenant failure containment — or dedicated pools when noisy-neighbour or compliance risk dominates.\n\n## Mechanism and justification\n\n1. **The isolation axes are separate.** The book separates identity/authorization, data, resource and lifecycle/operations isolation. Resource isolation is defined as *which compute, connection, queue, cache and quota capacity may be shared*, and the table lists 'one tenant's workload cannot delay another's' as a dangerous assumption rather than a default guarantee. Data permissions are an authorization/data-axis control; they do not allocate connections.\n\n2. **A pool is a finite shared budget.** A request that obtains a database connection and then waits on a slow remote call or holds a transaction prevents other requests from borrowing that connection; increasing pool size shifts the queue into the database instead of creating capacity. With tenants multiplexed over one pool, the tenant that holds leases longest, or issues the most concurrent work, consumes the shared slots and creates head-of-line blocking, timeouts and retry amplification for the others.\n\n3. **Correct tenant predicates do not remove noisy-neighbour risk.** The multitenancy page explicitly says a shared pool with tenant-scoped predicates is cheaper at low scale, but that per-tenant quotas and noisy-neighbour isolation are real costs, that a shared pool needs explicit fairness and escape hatches, and that it can strand capacity or fail to enforce quotas. Dedicated resources are justified when noisy-neighbour or compliance risk dominates; the choice is economic and risk-based, not a data-permission question.\n\n4. **The pool is also a shared failure domain.** The security page notes that equal CPU limits do not prevent shared storage or connection-pool starvation, and that shared-tenant designs must measure noisy-neighbor effects and per-tenant failure containment. Pool saturation with idle database CPU shows up as waiting clients and timeouts; long-held or leaked sessions exhaust capacity. One tenant's incident, traffic spike or retry storm can therefore degrade every tenant sharing the pool.\n\n## Boundaries and trade-offs\n\n- **Dedicated pools are not free.** Separate pools, roles or databases improve resource and failure isolation but multiply connection budgets, schema/version fan-out, backup, failover and observability costs. The book justifies a dedicated pool only when measured noisy-neighbour cost exceeds its operational cost.\n- **'Data permissions are correct' is itself an assumption.** The security page warns that a tenant filter may be bypassed by direct SQL, cache keys, exports or privileged jobs, and that a correct database policy does not automatically protect a shared cache or search index. The resource concern is additional to, not a substitute for, that verification.\n- **Session-scoped tenant binding is a separate trap.** Transaction pooling cannot preserve session state across transactions: session settings, temporary objects, advisory locks, LISTEN/NOTIFY and prepared statements need explicit compatibility review. If tenant scope is carried in session state rather than in per-query predicates, pool-mode semantics can break the binding; this is an inference from the pool-modes page, which does not itself analyze tenancy.\n- **Compliance and data residency can override performance arguments.** A shared physical pool may be unacceptable for tenants with stricter isolation obligations even when latency is fine.\n- **When the concern shrinks:** if the pool is physically shared but admission, quotas and failure domains are partitioned per tenant (hard per-tenant connection caps, separate queues, bulkheads), the residual issue becomes capacity sizing and observability rather than cross-tenant interference. If 'data permissions' is meant to include resource quotas, the question's premise changes.\n\n## Evidence map\n\n| Claim | Section key |\n|---|---|\n| Resource isolation (compute, connection, queue, cache, quota) is a distinct axis from data isolation; cross-tenant delay is a dangerous assumption | `tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions` |\n| Shared-table tenancy retains shared quotas and noisy neighbours; per-tenant schemas add connection-pool and operational complexity | `tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs` |\n| A shared pool with tenant-scoped predicates still needs fairness, quotas and escape hatches; it can strand capacity or fail to enforce quotas | `tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation` |\n| Equal CPU limits do not prevent connection-pool starvation; shared-tenant designs must measure noisy-neighbor effects and per-tenant failure containment | `tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional` |\n| A held connection lease blocks other borrowers; enlarging the pool moves the queue into the database | `tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use` |\n| Transaction pooling cannot preserve session state; session-affine features need review | `tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics` |\n| Pool saturation with idle DB CPU appears as waiting clients and timeouts; long-held or leaked sessions exhaust capacity | `tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery` |\n\n## Unknowns and confidence\n\n- **No measurement.** The corpus contains no tenant-level pool-starvation benchmark, no per-tenant quota formula and no test of cross-tenant session-state leakage. The operational controls are prescriptive prose, not measured results.\n- **Confidence.** High that resource isolation/noisy-neighbour and connection-pool starvation is the remaining concern once data permissions are granted. Medium on the exact control set and on the session-state caveat for tenant binding, because the latter is my inference across two sections.\n- **What would change the answer:** evidence that the shared pool already enforces hard per-tenant admission limits and independent failure domains; or a definition in which 'data permissions' also covers resource quotas. Neither is established by the sources read.",
+  "citations": [
+    "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+    "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs",
+    "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+    "tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use",
+    "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics",
+    "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery"
+  ],
+  "evidence": [
+    {
+      "claim": "Isolation has four separate dimensions; resource isolation covers shared compute, connection, queue, cache and quota capacity and is distinct from data isolation.",
+      "section_key": "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+      "note": "Observed: table rows 'Data isolation' and 'Resource isolation'; the resource row's dangerous assumption is 'One tenant's workload cannot delay another's'."
+    },
+    {
+      "claim": "A shared-application/shared-table tenancy model retains shared quotas and noisy neighbours even with tenant-key scoping; schema/database-per-tenant adds connection-pool and operational complexity.",
+      "section_key": "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs",
+      "note": "Observed: comparison table, shared-tables row says 'shared quotas and noisy neighbors'; schema-per-tenant row lists 'connection pools' among costs."
+    },
+    {
+      "claim": "A shared pool with tenant-scoped predicates is cheap at low scale but leaves noisy-neighbour and compliance risk; it needs explicit fairness and escape hatches and can strand capacity or fail to enforce quotas.",
+      "section_key": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+      "note": "Observed quotes: 'A shared pool with tenant-scoped predicates is cheaper at low scale; choose dedicated resources when noisy-neighbour or compliance risk dominates'; 'a shared pool needs explicit fairness and escape hatches'; 'can also strand capacity or fail to enforce quotas'. Inference: these limits survive correct per-query tenant predicates."
+    },
+    {
+      "claim": "Data permissions address only the data dimension; a tenant filter can be bypassed by direct SQL, cache keys, exports or privileged jobs, while connection-pool starvation is a compute/resource failure that CPU limits alone do not prevent.",
+      "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+      "note": "Observed: isolation table, Data and Compute rows; also the paragraph requiring measurement of noisy-neighbor effects and per-tenant failure containment."
+    },
+    {
+      "claim": "A shared-tenant design must test indirect data paths and measure cross-tenant leaks in errors, logs and search suggestions, not just query predicates.",
+      "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+      "note": "Observed closing paragraph; supports the boundary that 'data permissions correct' is an assumption that still needs verification."
+    },
+    {
+      "claim": "Connection capacity is finite: a lease held across unrelated work blocks other borrowers, and a larger pool shifts queueing into the database.",
+      "section_key": "tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use",
+      "note": "Observed: 'A request can obtain a DB connection and then call a slow remote API or sleep while still inside a transaction. That prevents other requests from borrowing the connection.' The tenant-level starvation reading is an inference from shared capacity; the section is not tenant-specific."
+    },
+    {
+      "claim": "Transaction pooling cannot preserve session-specific state across transactions; session settings, temporary objects and prepared statements need explicit review.",
+      "section_key": "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics",
+      "note": "Observed: pool-mode table and 'Session state cannot be presumed to persist across transactions.' Inference: tenant scope carried in session state, rather than per-query predicates, is a residual correctness/isolation boundary."
+    },
+    {
+      "claim": "Pool saturation with idle database CPU is observed as waiting clients and timeouts; long-held or leaked sessions cause resource exhaustion.",
+      "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+      "note": "Observed: failure-mode table. General pool behavior, not a tenant-specific measurement."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

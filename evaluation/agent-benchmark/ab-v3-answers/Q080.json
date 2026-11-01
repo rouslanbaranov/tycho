@@ -1,0 +1,87 @@
+{
+  "task_id": "Q080",
+  "answer": "# Direct answer\n\nV12 breaks a same-time tie with a three-part ordering key applied lexicographically: **scheduled time, then priority, then insertion sequence**. Time is compared first. Among events with the same scheduled time, the lower numeric priority is processed first: priority 0 for service completion and timeout, 1 for arrival, 2 for retry. If time and priority are both equal, the event with the smaller insertion sequence is processed first. The insertion sequence is a monotonically increasing integer assigned on insertion, so this final key is unique and the order is total and deterministic. In one sentence: same time means priority decides; same time and same priority means earlier insertion decides.\n\nScope: the question belongs to the V12 / modeling-and-simulation material. The rule is stated in the book layer's V12/C03 pages; no atlas evidence was needed. V12 here is the modeling-and-simulation volume, not a production scheduler.\n\n# Mechanism and justification\n\n**Why a tie-break is required at all.** The V12 page opens with a completion and a timeout both at t=1.0. If the completion is processed first the request succeeds; if the timeout is processed first the request fails and may retry. A model that relies on dictionary iteration order or an unstable sort is therefore not reproducible. The queue must define a total order rather than inherit one from the container.\n\n**The key is lexicographic, not three independent rules.** Priority is consulted only when scheduled times are equal. The insertion sequence is consulted only when both time and priority are equal. So \"same time\" does not by itself select a winner; it starts a two-stage tie-break, first by declared priority and then by insertion order.\n\n**The insertion sequence closes the tie completely.** The page states that V12's queue orders by time, then priority, then insertion sequence, and that the insertion sequence is a monotonically increasing integer, \"so the order is total and deterministic.\" The reference-engine page repeats the same key at the implementation level: \"A heap ordered by time, then priority, then insertion sequence.\" Its determinism rules say: \"Events at the same time are ordered by priority and insertion sequence.\" Because no two events share the same insertion sequence, no residual tie remains for heap internals or hash order to resolve.\n\n**Priority values are fixed for this model.** V12 uses three priorities:\n\n| Priority | Event type |\n|---|---|\n| 0 | service completion and timeout |\n| 1 | arrival |\n| 2 | retry |\n\nThe page explicitly calls this \"a modeling choice, not a universal rule\" and says the important property is that the choice is declared and tested. The numbering is stated as 0/1/2 and the structure is a heap ordered by priority, so the ascending reading is 0 before 1 before 2; this is implied rather than spelled out as a comparator. Under that reading, at one instant completions and timeouts are handled before new arrivals, and arrivals before retries.\n\n**What the rule resolves, case by case.**\n\n| Same scheduled time | Processed first | Reason |\n|---|---|---|\n| completion vs timeout | the earlier-inserted event | both have priority 0 |\n| completion or timeout vs arrival | completion or timeout | 0 before 1 |\n| arrival vs retry | arrival | 1 before 2 |\n| two arrivals, or two retries | the earlier-inserted event | same priority |\n\n**The completion-versus-timeout case is the sharp one.** Both types carry priority 0, so priority does not separate them. Only insertion order does. The text uses that pair to show why order matters but does not present a worked example in which the two are exactly simultaneous and therefore does not state which of the two wins such a tie. Applying the rule, the event inserted first wins. The timeout lifecycle says a request receives its timeout event when it enters the system, while the completion is scheduled around service start; that ordering makes the timeout the normally earlier insertion, hence normally first at an exact tie. That last step is an inference from the lifecycle, not an explicitly worked outcome.\n\n**Stale events do not change the ordering rule.** The engine does not delete stale events from the heap; it checks request state when the event is processed. A completion after a timeout, or a timeout after a completion, is ignored on state rather than removed. The ordering remains total, but the outcome also depends on that validity check.\n\n# Boundaries and trade-offs\n\n- **The priority order is a model decision.** Another system may need a different order. What V12 guarantees is that its choice is declared and tested, not that 0/1/2 is universally correct.\n- **\"Same time\" is defined by rounding.** V12 rounds scheduled times to 12 decimal places and compares event times as floats. Times that round equal are ties for this key; there is no general tolerance beyond that. The page lists floating-point equality as a failure mode and says a model with very small time units would need a declared tolerance.\n- **Determinism is not cross-platform bit reproducibility.** The reference-engine page says the same input and engine version should match, but a different floating-point platform can change the last digits. The tie-break rule fixes event order, not every metric digit.\n- **Event priority is not resource priority.** The resource model is a FIFO queue with capacity; it does not implement resource priority or preemption. The 0/1/2 values order the event calendar, not requests waiting for a server, so they should not be read as a request-scheduling policy.\n- **Evidence is design-level.** The evidence ledger says SimPy supports event, process and timeout vocabulary but \"does not establish the V12 ordering rules,\" and Sargent supports verification techniques but not a V12 sequence. The chapter is self-checked, not production-validated or independently reviewed. The ordering rule is therefore a documented modeling contract, not an empirically validated production behavior.\n- **Timeouts and retries interact with ties.** A retry schedules a new timeout at the retry time, and the deadline is per attempt. A tie between a retry-created timeout and other same-time events still goes through the same time/priority/insertion key.\n\n# Evidence map\n\n| Claim | Section key |\n|---|---|\n| V12 uses (time, priority, insertion sequence) plus a per-attempt timeout event | tycho.page.f914586e44ea034deaf2710c570328fc#overview |\n| At the same timestamp, order changes the outcome; unstable sort or dictionary order is not reproducible | tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model |\n| The queue orders by time, then priority, then insertion sequence; insertion sequence is monotonic, making the order total and deterministic | tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model |\n| Priority 0 = service completion and timeout; 1 = arrival; 2 = retry | tycho.page.f914586e44ea034deaf2710c570328fc#priorities |\n| The priority order is a declared modeling choice, not a universal rule | tycho.page.f914586e44ea034deaf2710c570328fc#priorities |\n| The reference engine's event queue is a heap ordered by time, then priority, then insertion sequence | tycho.page.687d2196433c3b076d00c73144dad431#components |\n| Determinism rule: events at the same time are ordered by priority and insertion sequence | tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules |\n| Unstable tie-breaking via hash order is a listed failure mode | tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes |\n| Scheduled times are rounded to 12 decimal places and compared as floats | tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes |\n| Stale events are not deleted from the heap; request state is checked when processed | tycho.page.f914586e44ea034deaf2710c570328fc#stale-events |\n| The resource queue is FIFO; the engine does not implement priority or preemption | tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics |\n| Determinism is not the same as reproducibility across platforms | tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules |\n| SimPy and Sargent support vocabulary and verification, not the V12 ordering rules | tycho.page.f914586e44ea034deaf2710c570328fc#evidence-ledger |\n\n# Unknowns and confidence\n\n- **Comparator direction is implied, not quoted.** The pages list 0/1/2 and say the heap is ordered by priority, but do not write \"ascending\" or show a comparator. The 0/1/2 numbering and the completion-before-arrival intent make ascending the natural reading; a reversed reading would contradict the stated numbering convention. Confidence: high, with this small textual gap.\n- **The insertion counter's reset scope is not stated.** \"Monotonically increasing integer\" does not say whether the counter resets per replication, per run or per engine instance. This does not affect tie resolution within one ordering, because any strictly increasing sequence is total, but it is an unresolved implementation detail.\n- **No exact same-time, same-priority worked example.** The completion-vs-timeout illustration is not an exact tie worked to a stated winner. The timeout-first consequence is inferred from the stated insertion lifecycle and is not directly observed in the text. Confidence: medium for that specific outcome; high for the rule itself.\n- **No independent validation.** The sources support the general simulation vocabulary and verification approach, not this ordering contract. The chapter is self-checked. A different engine version, a changed priority table or a declared floating-point tolerance would change the answer.\n\nOverall confidence: high that V12 breaks same-time ties by priority and then by monotonic insertion sequence; high that the question is answerable from the V12 book pages; medium on the concrete winner of an exact completion-versus-timeout tie.",
+  "citations": [
+    "tycho.page.f914586e44ea034deaf2710c570328fc#overview",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#evidence-ledger",
+    "tycho.page.687d2196433c3b076d00c73144dad431#components",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics"
+  ],
+  "evidence": [
+    {
+      "claim": "V12 uses (time, priority, insertion sequence) as its event-ordering rule, with a per-attempt timeout event.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#overview",
+      "note": "\"V12 uses (time, priority, insertion sequence) and a per-attempt timeout event.\""
+    },
+    {
+      "claim": "A completion and a timeout at the same timestamp can produce different outcomes, so an unstable order is not reproducible.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+      "note": "\"Two events at the same timestamp can produce different results depending on which is processed first.\""
+    },
+    {
+      "claim": "The event queue orders by time, then priority, then insertion sequence; the insertion sequence is a monotonically increasing integer, making the order total and deterministic.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+      "note": "\"The V12 event queue orders by time, then priority, then insertion sequence. The insertion sequence is a monotonically increasing integer, so the order is total and deterministic.\""
+    },
+    {
+      "claim": "V12 uses priority 0 for service completion and timeout, 1 for arrival and 2 for retry.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+      "note": "\"0 for service completion and timeout; 1 for arrival; 2 for retry.\""
+    },
+    {
+      "claim": "The priority order is a declared modeling choice, not a universal rule; it must be declared and tested.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+      "note": "\"The priorities are a modeling choice, not a universal rule.\""
+    },
+    {
+      "claim": "The reference engine implements the event queue as a heap ordered by time, then priority, then insertion sequence.",
+      "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#components",
+      "note": "\"Event queue. A heap ordered by time, then priority, then insertion sequence.\""
+    },
+    {
+      "claim": "A determinism rule states that events at the same time are ordered by priority and insertion sequence.",
+      "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+      "note": "\"Events at the same time are ordered by priority and insertion sequence.\""
+    },
+    {
+      "claim": "Unstable tie-breaking via hash order is a listed failure mode.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+      "note": "\"Unstable tie-breaking. Two events at the same time depend on hash order.\""
+    },
+    {
+      "claim": "V12 rounds scheduled times to 12 decimal places and compares event times as floats; no broader tolerance is declared.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+      "note": "\"V12 rounds scheduled times to 12 decimal places and compares event times as floats.\""
+    },
+    {
+      "claim": "Stale events are not deleted from the heap; request state is checked when the event is processed.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+      "note": "\"The engine does not delete stale events from the heap; it checks the request state when the event is processed.\""
+    },
+    {
+      "claim": "The resource queue is FIFO and the engine does not implement resource priority or preemption, so event priority is not request priority.",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+      "note": "\"a FIFO queue with a capacity\"; \"The engine does not implement priority or preemption.\""
+    },
+    {
+      "claim": "Determinism is not the same as cross-platform reproducibility; floating-point platforms can change the last digits.",
+      "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+      "note": "\"Determinism is not the same as reproducibility across platforms.\""
+    },
+    {
+      "claim": "The cited public sources support simulation vocabulary and verification, not the V12 ordering rules.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#evidence-ledger",
+      "note": "\"It does not establish the V12 ordering rules.\""
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

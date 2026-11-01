@@ -1,0 +1,125 @@
+{
+  "task_id": "Q076",
+  "answer": "# Direct answer\n\nAt every integration step, a stock-flow model should integrate the offered-work rate over the step to obtain an amount of offered work, then classify every unit of that amount at the declared ingress boundary as completed, rejected or remaining backlog. After the update it should assert the conservation identity. The model must not substitute completed throughput for offered work, let rejection disappear, or let service exceed what was offered plus carried backlog. Step width, units and update order are part of the model contract.\n\n# Mechanism and justification\n\n**Offered work enters as a flow; the identity needs a quantity.** The V12 order-intake model lists arrivals in requests per second as offered work, and rejection as offered work that cannot be admitted. Its conservation identity is written with offered as an accumulated quantity: offered = completed + rejected + backlog. At a step of width dt, a constant offered rate lambda contributes lambda times dt; if the rate varies inside the step, integrate the declared arrival profile over the step. Adding lambda directly to stocks, or comparing lambda with a backlog, loses units and makes the identity dimensionally meaningless. The three unit rules and the fixed 0.1-second step make this explicit.\n\n**Every offered unit is classified exactly once.** Admitted offered work becomes either completed or backlog; offered work that cannot be admitted becomes rejected. Rejection is a counted flow, while rejected is a cumulative stock. In the saturation order-intake run, 30 requests per second offered against 24 requests per second of service capacity with an 80-request admission limit yields 0.8 success, 0.2 rejection, 24 requests per second throughput and 77.6 requests of average backlog, and the identity holds. A model that tracks only completions and backlog lets rejected work vanish from the denominator and can report a high success rate while refusing work at the front door.\n\n**Capacity limits apply per step, in work units.** The per-step service bound is service capacity times dt, and admission is bounded by the declared admission capacity. The coexistence model writes target_served = min(arrival * target_share * dt, target_capacity * dt) and rejected = offered - target_served - legacy_served. That is the pattern to copy: split the offered amount, serve at most the capacity available in the step, and charge the remainder to rejection or backlog. A large step can admit a whole interval of arrivals at once, serve more than the available backlog and produce a negative stock; hence the fixed step, the non-negativity assertion after every update and the refusal of a negative backlog. Carry admitted-but-unserved work forward as backlog; do not count it again as newly offered work.\n\n**Check the identity at every step, not only at the end.** The order-intake model checks offered = completed + rejected + backlog at every step. Verification defines the stock-flow identity and the discrete-event identity offered = completed + rejected + failed + in_system; the check runs after every replication, and a conservation failure aborts the run rather than writing a partial record. A floating-point tolerance is acceptable; a persistent gap means the model is creating or destroying work.\n\n**Offered work has a provenance and a generator semantics.** Offered rate means arrivals presented to a defined boundary and window, and it must be separated from admitted, completed and in-flight quantities. A closed-loop generator can reduce offered demand when the system slows, masking the backlog an independent arrival stream would create; an open-loop generator keeps starts independent of service but can itself fail to send scheduled work. Record planned or scheduled arrivals, transmitted attempts, unsent intended work, admitted work, rejections and completions separately, and do not let any of these populations silently disappear. A dropped or unsent planned arrival is not the same as a service rejection.\n\n**Retries are attempts, not new logical demand.** The retry-amplification metric is total attempts divided by offered requests, and V12 reports it for every discrete-event run. If offered work is counted in logical operations, retries add load but must not inflate offered demand; if the model counts attempts, the unit of account must say so and logical identity must remain traceable.\n\n**The step is a declared contract.** The model specification contract requires time unit, state unit, abstraction boundary, dynamics including integration step, and invariants such as request conservation and non-negative backlog. Update order must be deterministic: two events at the same timestamp can produce different outcomes depending on which is processed first, so the model must declare and test the order. The stock-flow step plays the same role for fluid updates.\n\n# Boundaries and trade-offs\n\n- **Update-order convention is not fixed by the reviewed text.** The sources require a declared, deterministic order and non-negativity, but do not prescribe whether arrivals at a step boundary are credited at the start or end, or whether newly arrived work may be served in the same step. Choose one convention, test ties and boundaries, and keep it stable across runs. (Inference.)\n- **Initial and ending backlog.** The written identity assumes an empty start. If a run or window begins with backlog B0, the window identity is B0 + offered = completed + rejected + B_end. Record start and end backlog, warmup and whether the window is stationary, because finite-window edge effects otherwise make arrival and departure accounting incompatible. (Observed warning plus inference.)\n- **Unbounded queue alternative.** An unbounded queue never rejects, so all offered work accumulates as backlog. The identity still holds, but backlog and latency can become artifacts of the horizon. Explicit admission and rejection make overload observable. (Observed.)\n- **Conservation is necessary but not sufficient.** A model can conserve requests while assigning them to the wrong outcome, for example counting a timeout as a rejection or vice versa. Outcome paths need separate checks. (Observed.)\n- **Fluid versus event resolution.** A stock-flow model is appropriate for accumulation, feedback, delay, capacity and backlog growth when offered load exceeds capacity; it cannot represent individual request latency, deadlines or retry timing. Use discrete-event or hybrid resolution when those distinctions can change the decision. (Observed.)\n- **Open versus closed is contextual.** Neither generator is universally more realistic. Closed is appropriate when the modeled population genuinely waits between operations; open is appropriate when arrivals are external. The invalidity comes from hiding the choice, not from using either one. (Observed.)\n- **Workload boundary versus system boundary.** A planned arrival that a generator never sends never reaches ingress. It belongs in a separate unsent count and in the reconciliation of planned versus actual demand, not in service rejection or completion. (Observed.)\n- **Synthetic and uncalibrated parameters.** The V12 order-intake parameters are assumed, calibration is uncalibrated and the arrival process is not tested against a production trace. Conservation demonstrates internal consistency, not a real offered workload or capacity. (Observed.)\n\n# Evidence map\n\n| Claim | Section key |\n|---|---|\n| Offered work is an arrival flow; rejection is offered work that cannot be admitted; identity offered = completed + rejected + backlog must hold every step | tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step |\n| Large steps can overshoot and produce negative stock; fixed 0.1 s step; non-negativity; step is part of the model contract | tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step |\n| Order-intake stocks and flows; saturation run: 30 offered, 24 served, 0.8 success, 0.2 rejection, 77.6 backlog | tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example |\n| Per-step capacity split: served = min(arrival * share * dt, capacity * dt), rejected = offered - served | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting |\n| Conservation checked after every replication; failure aborts; discrete-event form adds failed + in_system | tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation |\n| Zero arrivals must produce no requests, no completions and no fabricated success | tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases |\n| Model contract declares time unit, state unit, dynamics and integration step, and invariants | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure |\n| Order-intake model is a fixed-step fluid model with a 0.1-second step and request conservation invariant | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model |\n| Offered rate is arrivals at a defined boundary and window; offered, admitted, completed and in-flight are distinct | tycho.page.2a3a20bc92314c7597b1792b8607c9d5#1-workload-nouns-that-must-not-be-interchanged |\n| Closed-loop generators can reduce offered demand as service slows; planned, transmitted and unsent work must be recorded | tycho.page.252426e0630c495d9cad7cb2c518fc69#workload-generators-closed-feedback-versus-independent-arrivals |\n| Unsent scheduled iterations are recorded separately from service rejections; denominators must not silently lose populations | tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission |\n| Finite windows with unfinished work make arrival and departure accounting incompatible; record start and end backlog, warmup and stationarity | tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window |\n| Unbounded queue never rejects; backlog and latency can be horizon artifacts; explicit rejection is recorded | tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure |\n| Retry amplification is total attempts divided by offered requests; retries add load without being new logical demand | tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification |\n| Equal-timestamp events can change outcomes depending on order; the order must be declared and tested | tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model |\n| Offered, admitted, completed and outstanding require separate accounting at consistent times | tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law |\n| Stock-flow is sufficient for backlog growth under offered load above capacity; event resolution is needed for latency distributions | tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events |\n| Choose an arrival model, warm-up policy and outcome accounting that preserve the tested workload | tycho.chapter.a55ddaaa45a647e29b51d6b5c0adbe05#decision-and-worked-result |\n\n# Unknowns and confidence\n\n- Unknown: whether offered work is credited at the start or end of a step, and how fractional work is handled. The sources require a declared and deterministic order but do not fix this convention.\n- Unknown: whether the 80-request admission limit acts as a stock or a per-step rate; the model contract's abstraction field should state this, and the choice changes rejection timing.\n- Not established: any production arrival trace or calibration. All order-intake figures are synthetic, and conservation is a verification result rather than operational validity.\n- Confidence is high on the conservation identity, unit treatment, explicit rejection and step-contract requirement; medium on generator semantics and retry treatment, where the principles are clear but application is contextual; low on empirical validity for any real system.",
+  "citations": [
+    "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+    "tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example",
+    "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model",
+    "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#1-workload-nouns-that-must-not-be-interchanged",
+    "tycho.page.bfa3a283746b42998825234aca63b101#2-open-versus-closed-arrivals-the-generator-can-hide-degradation",
+    "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+    "tycho.page.252426e0630c495d9cad7cb2c518fc69#workload-generators-closed-feedback-versus-independent-arrivals",
+    "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+    "tycho.chapter.a55ddaaa45a647e29b51d6b5c0adbe05#decision-and-worked-result",
+    "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#integrated-decision-and-reading-route"
+  ],
+  "evidence": [
+    {
+      "claim": "Offered work is an arrival flow, rejection is offered work that cannot be admitted, and offered = completed + rejected + backlog must hold at every step.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+      "note": "Observed: the three unit rules and the exact identity; the text states it must hold at every step and that V12 refuses a negative backlog."
+    },
+    {
+      "claim": "The order-intake model has backlog, completed and rejected stocks, with arrivals as offered work and rejection as unadmitted offered work.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example",
+      "note": "Observed: stock/flow definitions and synthetic saturation results (30 offered, 24 served, 0.8 success, 0.2 rejection, 77.6 backlog)."
+    },
+    {
+      "claim": "A too-large integration step can admit a whole interval of arrivals, serve more than available backlog and produce negative stock; the step is part of the model contract.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+      "note": "Observed: fixed 0.1-second step, non-negativity assertion after every update, and the statement that step choice is contractual."
+    },
+    {
+      "claim": "A per-step split serves min(arrival * share * dt, capacity * dt) and charges the remainder to rejection.",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+      "note": "Observed: the coexistence model writes the per-step target and legacy served formulas and rejected = offered - target_served - legacy_served."
+    },
+    {
+      "claim": "Conservation is checked after every replication and a failure aborts the run; discrete-event accounting adds failed and in_system.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+      "note": "Observed: stock-flow and discrete-event identities, abort-on-failure behavior, and the statement that conservation is necessary but not sufficient."
+    },
+    {
+      "claim": "Zero arrivals must produce no requests, no completions and no fabricated success.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+      "note": "Observed: boundary-case list including zero arrivals, zero servers and zero queue capacity."
+    },
+    {
+      "claim": "The model contract must declare time unit, state unit, dynamics and integration step, and invariants.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+      "note": "Observed: required top-level fields include abstraction (time and state unit) and dynamics with integration step, plus invariants."
+    },
+    {
+      "claim": "The order-intake model is a fixed-step fluid model with a 0.1-second step and request-conservation invariant.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model",
+      "note": "Observed: example contract excerpt and description of three stocks, assumed parameters and verification cases."
+    },
+    {
+      "claim": "Offered rate is arrivals at a defined boundary and window, distinct from admitted, completed and in-flight quantities.",
+      "section_key": "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#1-workload-nouns-that-must-not-be-interchanged",
+      "note": "Observed: the workload-noun table defines offered rate and warns that completed throughput is not offered rate."
+    },
+    {
+      "claim": "A closed-loop generator can offer less work as service slows, masking backlog; record planned versus actual arrivals and unsent work.",
+      "section_key": "tycho.page.252426e0630c495d9cad7cb2c518fc69#workload-generators-closed-feedback-versus-independent-arrivals",
+      "note": "Observed: closed versus open models, the 50-to-25 iterations/s illustration, and the requirement to record planned and actually started work."
+    },
+    {
+      "claim": "Unsent scheduled iterations are distinct from service rejections and must not silently disappear from the denominator.",
+      "section_key": "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+      "note": "Observed: four rates (scheduled, transmitted, admitted, completed), the dropped-iteration distinction, and the requirement for actual and unsent workloads."
+    },
+    {
+      "claim": "Finite windows with unfinished work make arrival and departure accounting incompatible; record start and end backlog, warmup and stationarity.",
+      "section_key": "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+      "note": "Observed: the one-request counterexample and the recommendation to record start/end backlog, arrival/exit counts, cohort, sampling and warmup."
+    },
+    {
+      "claim": "An unbounded queue never rejects and can report a horizon artifact; explicit rejection must be recorded.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+      "note": "Observed: the unbounded-queue failure statement and the requirement to count rejected work."
+    },
+    {
+      "claim": "Retry amplification is total attempts divided by offered requests; retries add load without being new logical demand.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+      "note": "Observed: the amplification definition and the A/B/C retry results."
+    },
+    {
+      "claim": "Events at the same timestamp can produce different outcomes, so the order must be declared and tested.",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+      "note": "Observed: the completion-versus-timeout example and the time-priority-insertion ordering rule."
+    },
+    {
+      "claim": "Offered demand, admitted work, completions and outstanding work need separate accounting at consistent times.",
+      "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+      "note": "Observed: the accounting table and the warning that arrival and departure boundaries differ in a short window."
+    },
+    {
+      "claim": "A stock-flow model is sufficient for backlog growth under offered load above capacity, while latency distributions require event resolution.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+      "note": "Observed: the chapter's comparison of stock-and-flow and discrete-event model families."
+    },
+    {
+      "claim": "Arrival model, warm-up policy and outcome accounting must preserve the tested workload.",
+      "section_key": "tycho.chapter.a55ddaaa45a647e29b51d6b5c0adbe05#decision-and-worked-result",
+      "note": "Observed: the chapter decision states that a closed-loop generator can reduce offered demand and mask backlog."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

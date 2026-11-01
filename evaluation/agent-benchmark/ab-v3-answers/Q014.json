@@ -1,0 +1,114 @@
+{
+  "task_id": "Q014",
+  "answer": "# Physical point-in-time restore with PostgreSQL WAL: required artifacts\n\n## Direct answer\n\nA physical point-in-time restore needs two mandatory data artifacts and a ring of supporting\nartifacts:\n\n1. A verified **physical base backup** of the PostgreSQL cluster — a consistent\n   file-system-level snapshot of the cluster, not a logical SQL dump.\n2. A **complete, continuous, compatible WAL archive** that starts at the base backup and reaches\n   the chosen **recovery target** on the correct **timeline**, with no missing or corrupt segment.\n3. The **recovery target definition** (the recovery stop point and the timeline history that\n   says which WAL lineage applies).\n4. The **non-WAL environment**: compatible PostgreSQL major version, tooling, extensions and\n   archive/backup formats; the source cluster/system ID and base-backup manifest or hash;\n   tablespaces and external files; configuration files; secrets and network/identity requirements;\n   restore-site storage, access, throughput and expected replay duration.\n5. For incremental base backups, the **ancestor backups and WAL summaries** they depend on, and a\n   retention decision that keeps those ancestors alive.\n\nThe source's minimum formulation is \"a valid base backup plus a continuous suitable WAL sequence\"\nfor point-in-time recovery (recovery-objects §2), and a restore is credible only if \"base backup,\ntimeline and WAL chain are complete and tested\" (replica-recovery §3).\n\n## Mechanism and justification\n\n- **The base backup reconstructs the data files; WAL replay moves them forward.** WAL records\n  modifications before the affected data pages must be written to table/index files (WAL\n  durability §1). Restoring the backup therefore produces a consistent but older cluster, which\n  archived WAL then advances to the chosen point.\n- **A logical dump cannot substitute.** The book explicitly separates SQL dumps, file-system-level\n  backup and continuous archiving: logical dumps are \"not physical base backups usable for WAL\n  replay\" (recovery-objects §2).\n- **Completeness is the hard condition, not the presence of some archive file.** A base backup\n  without the whole intervening WAL sequence cannot reach the target; the listed limitations are\n  \"missing/corrupted segments, archive lag, storage and replay time\" (recovery-objects §2), and\n  archive lag can increase potential data loss and create local WAL-disk pressure (§3).\n- **The target and the timeline turn \"a backup\" into \"a point\".** The recoverability contract\n  records the \"WAL sequence and archive completeness, timeline history and recovery stop point\"\n  (recovery-objects §3). \"A restore target before the completion of the selected base backup is\n  not automatically available using that base backup,\" and \"timeline and archive retention must\n  permit the actual desired point\" (§3).\n- **WAL does not carry the deployment around it.** \"Configuration files are not automatically\n  protected by WAL replay\" (recovery-objects §3). The contract record also lists tablespaces,\n  external files, config, secrets, network/identity requirements, database major version,\n  supported tooling/extensions and archive/backup formats, source cluster/system ID, and a\n  base-backup manifest with hash or verification evidence (§3).\n- **Incremental chains add ancestry.** Incremental base backups \"depend on prior backups and WAL\n  summaries\", and the record must say \"which earlier backups cannot be deleted safely\"\n  (recovery-objects §3).\n- **Restore-site capacity is an artifact condition.** The record covers \"restore location, target\n  disk size, network/archive throughput and access permissions\", \"expected replay duration\" and\n  \"whether recent unarchived WAL is accessible\" (recovery-objects §3).\n- **A restore is only demonstrated after replay and verification.** The drill gate requires the\n  entire base, needed WAL and configuration to be retrievable, replay to finish on a compatible\n  runtime, and then database invariants, business effects, dependents and governance to pass\n  (restore-drills §5). \"An untested restore is a hypothesis, not a capability\"\n  (Backup, PITR and Restore notes).\n\n## Artifact checklist\n\n| Artifact | What must be true | Evidence |\n|---|---|---|\n| Physical base backup | Consistent cluster snapshot, complete contents including tablespaces, taken before the target point, identifiable by manifest/hash | recovery-objects §2–§3 |\n| WAL archive | Continuous from the base backup's start to the target; no missing/corrupt segments; correct timeline; accessible and readable at restore time | recovery-objects §2–§3 |\n| Recovery target and timeline | Explicit stop point and timeline history; target after base-backup completion; retention permits the point | recovery-objects §3 |\n| Version/tooling matrix | Matching PostgreSQL major version, extensions and archive/backup formats; a compatible runtime for startup/replay | recovery-objects §3; restore-drills §5 |\n| Cluster identity and provenance | Source cluster/system ID, backup manifest, hash or verification evidence | recovery-objects §3 |\n| Tablespaces and external files | Captured separately from WAL replay | recovery-objects §3 |\n| Configuration, secrets, identity | Config files, secrets, roles and network/identity requirements; not covered by WAL | recovery-objects §3 |\n| Restore-site capacity | Location, disk size, archive/network throughput, permissions, expected replay duration | recovery-objects §3 |\n| Incremental ancestry (when used) | Prior backups plus WAL summaries; ancestor retention protected | recovery-objects §3 |\n| Isolated target and drill evidence | Restore on an isolated environment, then integrity/business checks and a recorded drill result | replica-recovery §5; restore-drills §5 |\n\n## Boundaries and trade-offs\n\n- **Physical PITR is not a logical backup or a replica.** Logical dumps may be a justified\n  alternative for small data and loose loss/time budgets, but they do not support WAL replay\n  (restore-drills §7; recovery-objects §2). A replica can inherit a deletion or corruption, and\n  promoting it can exclude some acknowledged writes (replica-recovery §3–§4).\n- **A WAL archive is not a working PITR procedure.** \"A WAL archive is not automatically a working\n  point-in-time recovery procedure\" (PostgreSQL WAL chapter, purpose). Missing segments or an\n  unretained timeline make the target unreachable regardless of backup quality.\n- **Retention is a two-sided constraint.** Replication slots can retain WAL for a consumer, and\n  unbounded retention can exhaust storage; limiting retention can leave a stalled consumer unable\n  to continue (replica-recovery, retained-WAL section). WAL retention must cover the restore\n  window without becoming an unmonitored disk liability.\n- **A target earlier than the base backup's completion is not available from that backup.** The\n  selected base backup bounds the earliest recoverable point (recovery-objects §3).\n- **Timeline lineage matters.** The artifact set must state the timeline history and stop point;\n  the sources describe timeline histories and note that timeline and archive retention must permit\n  the desired point, but do not work through promotion-dependent branching in this book.\n- **Configuration, keys and retention are part of the recovery objective.** Backup retention,\n  encryption keys and restore time belong to RPO/RTO, and an untested restore is a hypothesis\n  (Backup, PITR and Restore notes; replica-recovery §5).\n- **Adoption is conditional.** Start with a \"verified physical-base/WAL archive PITR design\" only\n  if its restore chain, access controls, costs and selected RPO/RTO can actually be tested\n  (restore-drills §7).\n\n## Evidence map\n\n| Claim | Section key |\n|---|---|\n| Base backup plus continuous WAL enables PITR; logical dumps cannot be replayed physically | tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ |\n| Missing/corrupt WAL, archive lag, storage and replay time bound recoverability | tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ |\n| Recovery stop point, timeline history, version/tooling, system ID, manifest/hash, tablespaces, config/secrets, retention and restore-site capacity are contract artifacts | tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies |\n| Target before base-backup completion is unavailable; timeline/archive retention must permit the point | tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies |\n| Incremental backups depend on prior backups and WAL summaries | tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies |\n| Restore only when base backup, timeline and WAL chain are complete and tested | tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication |\n| Provenance, encryption keys, retention, WAL continuity, off-fault-domain location are required | tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#5-backup-integrity-and-recovery-are-independently-testable |\n| Drill: retrieve entire base/needed WAL/config, replay on compatible runtime, verify invariants and business effects | tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command |\n| Physical-base/WAL PITR only if chain, access, cost and RPO/RTO are testable; logical backup may suffice otherwise | tycho.page.60ffc845d47c44cba4af2760474d68c7#7-decision-and-evidence-limits |\n| Untested restore is a hypothesis, not a capability | tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes |\n| WAL archive is not automatically a working PITR procedure | tycho.page.81efb7e6d72349768b6f202845cbe35e#purpose-and-mission |\n| WAL records modifications before data pages are written (basis for replay) | tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists |\n| PostgreSQL 17 §25.3 supports base backup + WAL recovery, timelines and chain constraints; it does not prove RPO/RTO | tycho.chapter.388c48be24414421a63481b37d05fdce#8-public-evidence-ledger-and-unverified-scope |\n| Concrete PostgreSQL control-file/parameter names are not enumerated by the cited sections (gap/inference) | tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies |\n\n## Unknowns and confidence\n\n- **Not established by these sections:** the concrete PostgreSQL control artifacts and parameter\n  names. The book speaks of \"recovery targets\", \"timeline histories\" and \"base backup\n  requirements\", but does not name the backup label/manifest, control file, restore command,\n  recovery signal or target-time/LSN settings. A complete operator checklist would need the\n  PostgreSQL 17 §25.3 text itself; naming those items here would be implementation-level inference,\n  not book evidence.\n- **Not established:** exact WAL segment boundary rules, behaviour when only the segment containing\n  the backup start is present, version differences in recovery configuration, and measured replay\n  time or storage sizing. The sources deliberately preserve these as unknowns.\n- **Confidence:** high for the artifact classes (base backup, WAL chain, target/timeline,\n  environment, provenance, capacity) because several sections independently state them and the\n  chapter ledger ties the mechanism to PostgreSQL 17 §25.3. Medium for implementation-level\n  completeness because the file-level details are outside the cited sections.\n- **What would change the answer:** an inspected PostgreSQL 17 §25.3 passage that enumerates the\n  exact artifacts and parameters; a rehearsed restore result showing a different binding\n  constraint; or a different DBMS/version with different recovery mechanics.",
+  "citations": [
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#5-backup-integrity-and-recovery-are-independently-testable",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+    "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+    "tycho.page.81efb7e6d72349768b6f202845cbe35e#purpose-and-mission",
+    "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#7-decision-and-evidence-limits",
+    "tycho.chapter.388c48be24414421a63481b37d05fdce#8-public-evidence-ledger-and-unverified-scope"
+  ],
+  "evidence": [
+    {
+      "claim": "Physical PITR requires a physical base backup plus a continuous, compatible WAL sequence; a logical dump is not a WAL-replay base.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+      "note": "Observed: 'a valid base backup plus a continuous suitable WAL sequence supports point-in-time recovery; logical dumps are not physical base backups usable for WAL replay.'"
+    },
+    {
+      "claim": "Missing or corrupt WAL segments and archive lag bound what point can be reached and can increase loss.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+      "note": "Observed: the physical-backup-plus-WAL limitation cell lists 'Missing/corrupted segments, archive lag, storage and replay time'; §3 adds that archive lag can increase potential data loss and create local WAL-disk pressure."
+    },
+    {
+      "claim": "The artifact set must include a recovery stop point, timeline history, version/tooling/formats, source system ID and base-backup manifest/hash.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+      "note": "Observed: contract list includes 'database major version, supported tooling/extension and archive/backup formats', 'source cluster/system ID, base-backup manifest and hash or verification evidence', and 'WAL sequence and archive completeness, timeline history and recovery stop point'."
+    },
+    {
+      "claim": "Tablespaces, external files, configuration, secrets and network/identity requirements must be carried separately because WAL replay does not protect configuration files.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+      "note": "Observed: 'configuration files are not automatically protected by WAL replay'; list includes 'tablespaces, external files, config, secrets and network/identity requirements'."
+    },
+    {
+      "claim": "A restore target before the selected base backup completes is not automatically available, and timeline/archive retention must permit the desired point.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+      "note": "Observed: direct sentences in §3."
+    },
+    {
+      "claim": "Incremental base backups depend on prior backups and WAL summaries, and earlier backups cannot be deleted safely.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+      "note": "Observed: 'incremental base backups depend on prior backups and WAL summaries'; 'incremental backup ancestry, which earlier backups cannot be deleted safely'."
+    },
+    {
+      "claim": "Restore-site capacity and access are artifact conditions: location, disk size, throughput, permissions, expected replay duration, recent unarchived WAL.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+      "note": "Observed: contract list entries for restore location, target disk size, network/archive throughput, access permissions, expected replay duration and recent unarchived WAL."
+    },
+    {
+      "claim": "A restore is only valid if the base backup, timeline and WAL chain are complete and tested.",
+      "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+      "note": "Observed: table row for 'Physical base backup + WAL archive' says 'Restore only if base backup, timeline and WAL chain are complete and tested'."
+    },
+    {
+      "claim": "A credible recovery plan needs provenance, encryption keys, retention, WAL continuity and off-fault-domain placement.",
+      "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#5-backup-integrity-and-recovery-are-independently-testable",
+      "note": "Observed: numbered plan item 2: 'Backup artifact provenance, encryption/keys, retention, WAL continuity and location outside the failed fault domain.'"
+    },
+    {
+      "claim": "The drill must retrieve the entire base, needed WAL and configuration, then replay on a compatible runtime with sufficient storage.",
+      "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+      "note": "Observed: Discover/Retrieve/Restore gate rows in the drill table."
+    },
+    {
+      "claim": "Restore-point selection requires the exact backup chain, WAL continuity and timestamp/timeline mapping.",
+      "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+      "note": "Observed: worked-restore-paradox row 'Select restore point | Exact backup chain, WAL continuity, timestamp/timeline mapping'."
+    },
+    {
+      "claim": "After replay, verification covers database invariants, business effects, dependents, availability and governance.",
+      "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+      "note": "Observed: gate table rows Consistency, Business effects, Dependents, Availability, Governance."
+    },
+    {
+      "claim": "An untested restore is a hypothesis, not a capability; the backup chain must be complete and restorable.",
+      "section_key": "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+      "note": "Observed: 'The backup chain must be complete and restorable... an untested restore is a hypothesis, not a capability.'"
+    },
+    {
+      "claim": "A WAL archive is not automatically a working point-in-time recovery procedure.",
+      "section_key": "tycho.page.81efb7e6d72349768b6f202845cbe35e#purpose-and-mission",
+      "note": "Observed: purpose paragraph distinguishes backup, WAL archive and PITR procedure."
+    },
+    {
+      "claim": "WAL records modifications before affected data pages are written, which is why replay from a base backup can reconstruct a consistent later state.",
+      "section_key": "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists",
+      "note": "Observed: paraphrase of the PostgreSQL 17 §28.3 WAL description in §1; the page labels the flow as conceptual."
+    },
+    {
+      "claim": "Physical-base/WAL PITR is conditional: adopt it only if restore chain, access controls, costs and RPO/RTO can be tested; logical backups may be justified for small data and loose budgets.",
+      "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#7-decision-and-evidence-limits",
+      "note": "Observed: decision-and-evidence-limits section."
+    },
+    {
+      "claim": "PostgreSQL 17 §25.3 supports the base-backup-plus-WAL mechanism, timelines and chain constraints but does not prove achieved RPO/RTO.",
+      "section_key": "tycho.chapter.388c48be24414421a63481b37d05fdce#8-public-evidence-ledger-and-unverified-scope",
+      "note": "Observed: chapter source ledger row for Continuous Archiving and PITR §25.3; 'does not prove' column says 'Achieved RPO/RTO in a production setup'."
+    },
+    {
+      "claim": "The cited sections do not enumerate concrete PostgreSQL control-file or recovery-parameter names; that level is inference/gap.",
+      "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+      "note": "Inference/gap: §3 names 'recovery targets, timeline histories, base backup requirements' only at category level; no file or GUC names appear."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": 55000,
+    "estimated": true
+  }
+}

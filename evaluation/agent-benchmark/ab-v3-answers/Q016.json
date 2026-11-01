@@ -1,0 +1,125 @@
+{
+  "task_id": "Q016",
+  "answer": "## Direct answer\n\nAn irreversible migration of authoritative state — the point after which old readers, old writes or old data cannot be restored without loss — should be gated by observed, invariant-specific evidence, not by deployment success, elapsed time, row counts or a successful backup job. Six evidence families are required, each produced at a pinned source/target observation boundary:\n\n1. **Authority accounting.** A named change owner; a written authority ledger with timestamped read-authority and write-authority cutovers; exactly one authorized writer per invariant in every intermediate state; proof that no uncoordinated overlapping writers exist; and an old/new client x API x data compatibility matrix that includes asynchronous readers and replay paths.\n2. **Semantic equivalence for the declared invariant.** State whether the invariant is identity, value equality, operation order, referential consistency, exactly-once side effects or bounded freshness, then compare both directions (missing and extra) per cohort at a fixed watermark. Row counts, checksums and happy-path samples are detectors, not proof.\n3. **Recovery proof.** A demonstrated restore of business state — not merely a started database or a configured backup — with the actual restored version, maximum permissible loss, measured time and the reconciliation of accepted operations; plus an approved forward-repair path for effects created after the no-return point.\n4. **Consumer and replay closure.** A complete inventory of active and historical readers/writers, consumers, subscriptions, tombstones and retained backups/projections; evidence that every old path is retired; and an explicit deprecation window for supported binaries.\n5. **Operational gate evidence.** Shadow/canary results under adverse timing (concurrent update, partial dual-write, stale reader, replay after cutover), tested retry identity and late-acknowledgment handling, an error budget, a stop/hold mechanism that works even if monitoring misses the fault, and evidence that the gate was actually observed rather than declared by calendar.\n6. **Authorized no-return decision.** Explicit approval of the irreversible change by an accountable owner, supported by an independent oracle or domain owner, with recorded residual unknowns, affected populations, repair backlog and rollback/recovery limits.\n\nIf any of these is missing, the correct outcome is to hold at the last reversible state, retain the old authority, or refuse the migration.\n\n**Layer note.** The question is answered from the book layer: v05 schema/retirement pages, v10 transition/cutover pages, M9 decision playbooks and v05 restore-drill pages. No modeling-and-simulation artifact is needed, because the question asks for evidence criteria rather than a specific model run, and the CLI exposes no decision-method lookup.\n\n## Mechanism and justification\n\n**Irreversibility is a property of durable writes and external effects, not of the deployment step.** A code rollback is reversible only if older binaries still interpret state written by newer binaries, external clients and asynchronous consumers still accept the older response/event contract, committed effects can be reconciled or safely replayed, the old route is still operational and authorized, and the rollback does not reintroduce a known defect. Once a new-only field or write exists, an image rollback can leave records unreadable; once a notification or external effect has been emitted, redeploying an older container does not retract it. The gate must therefore test what survives the rollback, not whether the rollout can be reversed in principle.\n\n**Authority must be singular at every state.** Two writers are not atomic merely because the schema contains both fields. The migration protocol needs a single fenced writer per invariant, an explicit rule for how double-writing is prevented, which source is current, how divergence is reconciled, and who may switch routing. A versioned sequence such as baseline, shadow, compatibility reads, bounded promotion and stabilized retirement is useful only when each state names its entry gate, exit gate and recovery path; the no-return approval belongs at the state where old readers and old replay paths are proved gone, not at the start of the project.\n\n**Evidence must match the invariant under test.** \"Migration complete\" has at least four different meanings across mutable online state, immutable batch output, historical ranges and streaming change feeds. Equality of row sets can be produced by a shared conversion bug; a count comparison of source A, B, C against target A, B, B hides one missing and one duplicated record; a digest only detects differences under one canonical encoding; and representative user journeys cover sampled populations, not every rare state. The gate must fix the observation boundary, compare both set-difference directions, classify every discrepancy, root-cause mismatches before repairing, and disclose what the sample cannot prove.\n\n**Recovery must be demonstrated, not configured.** A backup that has never been restored is a hypothesis; a replica that has already replayed a deletion is not a historical recovery source. The drill must cover discovery of the backup chain, retrieval of every required segment and key, restore on a compatible runtime, consistency checks, business-effect reconciliation against accepted operation IDs, dependents such as projections and consumers, the actual user journey, and a governed single-writer cutover. A restore may legitimately lose acknowledged operations when the recovery point predates their commits; that loss must be stated and approved, not hidden.\n\n**The final gate is governance.** The decision playbooks require an explicit approval for an irreversible destructive migration beyond successful code changes, and a stop state is a correct outcome when identity mapping is ambiguous or no independent oracle exists. A transition should end with an observed gate, not a calendar milestone; after the no-return point, failures use an approved forward-repair path rather than fictional rollback.\n\n## Boundaries and trade-offs\n\n- **Data shape changes the gate.** Do not transfer one comparison across mutable OLTP authority, immutable batch output, partition checkpoints and CDC ingestion. The historical cases in the sources use different authorities, observation windows and failure modes; they are not A/B benchmarks of one architecture.\n- **Equality is not correctness.** Both implementations can share the same wrong semantics. A named business oracle or domain owner is required when meaning, audit or authorization changes; an oracle that covers only happy-path counts is a refusal condition.\n- **Evidence is sampled and time-scoped.** Shadow reads prove the inspected requests and cases, not every mutation race, unobserved client or rollback after old data deletion. Residual risk, affected populations and repair backlog must be recorded and accepted.\n- **Some migrations should stop.** Undefined identity mapping, production-authoritative writes that are unrecoverable after rollback, source snapshots that differ in unmeasured ways, changed audit/authorization context and happy-path-only comparisons are explicit refusal or hold conditions. An unresolvable identity is a correct stop, not incomplete engineering.\n- **Reversibility has grades.** Distinguish reversible before write exposure, conditionally reversible during coexistence, and forward repair or restore required after irreversible effects. Irreversible cleanup should be refused unless backups and reverse transformations can restore newly accepted writes.\n- **Alternatives can be better.** A smaller reversible change, an additive mapping layer, retaining the old representation longer, or a big-bang replacement of a small well-understood system with proven restoration may be preferable. Dual-state observability and temporary complexity have real cost, and a contract phase with no date becomes a permanent dual schema.\n- **The sources do not establish a universal state machine or thresholds.** They are time-scoped first-party reports and original synthetic analyses, and the Tycho pages state that no migration, cutover or restore was executed and that independent review is pending. The answer is a synthesized evidence protocol, not measured proof.\n\n## Evidence map\n\n| Claim | Section key |\n|---|---|\n| Code rollback is reversible only under five compatibility/reconciliation conditions; otherwise forward repair or restore is required. | tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think |\n| Before authority changes or retirement becomes irreversible, require owner, compatibility matrix, single writer, retry identity, integrity tests, reconciliation, recovery point, hold mechanism and decommissioning evidence. | tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract |\n| A transition ends with an observed gate; after the no-return point failures use an approved forward-repair path. | tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract |\n| Every intermediate state needs explicit authority, API, security and failure/recovery contracts, including who may switch routing. | tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts |\n| A fenced cutover authorizes exactly one writer and must pass mixed-version reads, replay, authorization and invariant checks. | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle |\n| Retirement requires reader/writer inventory, completeness plus residual-unknown policy, verified restoration and replay, binary plans, retention obligations and authorized acceptance. | tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point |\n| Backfill acceptance covers identity, field semantics, concurrent writes, checkpoint durability, CDC offsets, history, authorization and code version, not row totals. | tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle |\n| Count equality conceals missing plus duplicate records; digests can hide shared bugs; the comparison boundary and repair authority must be pinned. | tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover |\n| The invariant must be named, and one gate cannot be generalized across mutable, batch, range and CDC migrations. | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete |\n| Refuse or hold when identity is undefined, writes are unrecoverable after rollback, snapshots differ unmeasured, audit context changes or only happy-path counts are compared. | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows |\n| Irreversible cleanup is refused unless backups and reverse transformations can restore newly accepted writes. | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests |\n| A restore gate covers discovery, retrieval, restore, consistency, business effects, dependents, availability and single-writer governance. | tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command |\n| An untested restore is a hypothesis, not a capability; record the restore owner and last successful drill. | tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes |\n| Live data/store migration needs source-of-truth rules, ID mapping, duplicate/delay policy, reconciliation tolerance, write-authority transition and rollback. | tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program |\n| Write authority switches only when rollback behavior and old/new client consistency are documented; destructive migration needs extra approval beyond code PRs. | tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification |\n| The historical cases are time-scoped first-party evidence and the playbooks are original synthetic analysis, not controlled benchmarks. | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#failure-analysis-and-evidence-provenance |\n\n## Unknowns and confidence\n\n- No numeric thresholds are established by the sources: observation windows, acceptable mismatch rates, maximum permissible loss and restore-time limits must be derived from the actual workload and approved by the accountable owner.\n- The sources do not define a universal migration state machine. Phase ordering must follow the system's write semantics, consumer contracts and failure modes; the Stripe-style read-before-write order does not transfer to streaming-ingestion job authority.\n- Tycho's own pages record that no cutover, restore or code-path compatibility test was executed, and that independent review is pending. Company cases are first-party, time-scoped reports, not controlled correctness measurements.\n- Confidence is high on the structure of the gate (authority, semantics, recovery, consumer closure, operational observation, authorization) because several independent pages converge on it. Confidence is moderate on any specific ordering or threshold, and a shared semantic bug in both implementations, a newly discovered hidden consumer, or a failed restore drill would invalidate an otherwise green gate.",
+  "citations": [
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+    "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+    "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#failure-analysis-and-evidence-provenance",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program",
+    "tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification"
+  ],
+  "evidence": [
+    {
+      "claim": "Irreversibility follows from durable state and external effects, not from the deployment mechanism; a code rollback is valid only under compatibility, consumer, effect-reconciliation, route and defect conditions.",
+      "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+      "note": "Lists five rollback preconditions and distinguishes reversible-before-write, conditional coexistence, and forward repair or restore after irreversible effects."
+    },
+    {
+      "claim": "Crossing into authoritative-state change or irreversible retirement requires a named owner, compatibility matrix, single writer, tested retry identity, integrity tests, reconciliation, recovery limits, a hold mechanism and decommissioning evidence.",
+      "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+      "note": "The go/no-go contract enumerates these as evidence required before the transition."
+    },
+    {
+      "claim": "The gate must be observed, not scheduled, and after the no-return point a failure must use an approved forward-repair path.",
+      "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+      "note": "States that a transition should end with an observed gate, not a calendar milestone."
+    },
+    {
+      "claim": "Each intermediate state must declare state authority, anti-double-write and reconciliation rules, client/API compatibility, who may switch routing, and the exact rollback/irreversible-effects boundary.",
+      "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+      "note": "Five contracts; state authority asks where entities are written, how double-writing is prevented and how to reconcile."
+    },
+    {
+      "claim": "A fenced cutover authorizes exactly one writer and passes only when mixed-version reads, old event replay, authorization and reservation invariants pass.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+      "note": "S4 guarded authority transfer table row; failure routes reads back or holds for forward repair."
+    },
+    {
+      "claim": "Retirement is safe only after recording reader/writer inventory, completeness and residual-unknown policy, verified restoration and replay, binary/deprecation plans, retention obligations and authorized acceptance.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+      "note": "Six-item contract list; deletion may destroy old clients' ability to read history or replay effects."
+    },
+    {
+      "claim": "Backfill acceptance must check identity, field semantics, concurrent writes, checkpoint durability, CDC offsets, history, authorization and migration code version, not just row totals.",
+      "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+      "note": "Explicitly says equal source and target counts can still corrupt meanings."
+    },
+    {
+      "claim": "Count equality conceals missing plus duplicated records, digests can hide a shared canonicalization bug, and the comparison boundary and repair authority must be pinned.",
+      "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+      "note": "A,B,C versus A,B,B counterexample; comparison table of detection limits."
+    },
+    {
+      "claim": "The business invariant must be named, because mutable OLTP authority, immutable batch output, historical ranges and streaming CDC need different gates.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+      "note": "Four meanings table; row counts and sample matches do not transfer across data shapes."
+    },
+    {
+      "claim": "Migration should be refused or held when identity is undefined, authoritative writes are unrecoverable after rollback, snapshots differ unmeasured, audit/authorization changes, or the oracle covers only happy-path counts.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+      "note": "Explicit refusal conditions; also requires an authority ledger and a rollback declaration naming the last safe phase."
+    },
+    {
+      "claim": "Irreversible cleanup should be refused unless backups and reverse transformations can restore newly accepted writes.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+      "note": "Test 6, irreversible cleanup, states the refusal condition."
+    },
+    {
+      "claim": "A restore drill must demonstrate discovery, retrieval, restore, consistency, business effects, dependents, availability and single-writer governance.",
+      "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+      "note": "Eight-gate drill table; a successful backup command is not demonstrated recovery."
+    },
+    {
+      "claim": "An untested restore is a hypothesis, not a capability; record the restore owner and last successful drill date.",
+      "section_key": "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+      "note": "Backup/PITR boundary note; backup completion is not evidence that restoration works."
+    },
+    {
+      "claim": "Live data/store migration requires source-of-truth rules, ID mapping, duplicate/delay policy, reconciliation tolerance, write-authority transition and rollback before write access.",
+      "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program",
+      "note": "Evidence matrix row; independent oracle is two-sided read comparison, shadow writes and an explicit cutover gate."
+    },
+    {
+      "claim": "Write authority switches only when rollback behavior and old/new client consistency are documented; destructive migration needs approval beyond successful code changes.",
+      "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification",
+      "note": "Stage 2 of the reversible experiment; sampling alone cannot prove total equality."
+    },
+    {
+      "claim": "The historical company cases are time-scoped first-party evidence and the decision playbooks are original synthetic analysis, not controlled benchmarks.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#failure-analysis-and-evidence-provenance",
+      "note": "States the cases differ in organizations, periods, versions, traffic and constraints; mechanisms are compared, not numerical results."
+    },
+    {
+      "claim": "A derived-read migration must compare semantics across deletions, revocations, cross-transaction updates, checkpoints, replay order, deduplication, freshness, query modes and pagination.",
+      "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+      "note": "Explicitly warns that a million indexed rows and a million source rows can still disagree on critical values or stale access decisions."
+    },
+    {
+      "claim": "A versioned transition sequence with explicit entry/exit gates keeps the old authority until client and query inventory proves retirement safe.",
+      "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+      "note": "S0-S4 table; removing the old read path requires no unsupported clients or queries, a recovery drill, and independent no-return approval."
+    },
+    {
+      "claim": "New-only persisted writes make image-only rollback unsafe; delay the no-return stage until old readers are removed or a compatible forward path exists.",
+      "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+      "note": "S4 row: no automatic image-only rollback; stop incompatible writes and forward-repair or restore with approved loss and reconciliation."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": 61000,
+    "estimated": true
+  }
+}
