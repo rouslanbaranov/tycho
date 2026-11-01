@@ -1,0 +1,465 @@
+{
+  "task_id": "Q339",
+  "answer": "# Q339 - capacity is a rate, not a server count\n\n## Short answer\n\nThe reviewer substituted a count for a rate. The model defines service capacity as the request rate the server pool can complete while busy, and computes it as the server count divided by the mean service time. On the declared Poisson workload of 20 requests per second, all three checkout candidates have a capacity of 24 requests per second: A and B because 12 / 0.5 = 24, and C because 18 / 0.75 = 24. C therefore does not run more capacity than A or B; it runs the same capacity on 50 percent more, 50 percent slower servers, at the same utilization of 20 / 24 = 0.833. Its 1.769-second p95 is not the price of extra parallelism: it is the measured latency of a candidate with 0.75-second mean service, a 1.5-second per-attempt timeout, two attempts with linear backoff (retry amplification 1.079) and a 120-request queue, under the same arrival process as the others. Most resilient is also not a property this model measures: the reported metrics contain no availability, failure or recovery measure, the checkout model has no dependency calls or storage, and its validity limits forbid a production claim without measurement. The record's own decision logic eliminates C on two hard ceilings declared before scoring - cost per 1000 successes 3.63 against 3.0, and p95 1.769 s against 1.5 s - both of which A and B pass.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence (section keys) |\n|---|---|---|\n| F1: capacity is a rate and its formula | service capacity; requests per second the server pool can complete; utilization rho lambda capacity | tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities |\n| F2: server count versus capacity, and comparability | server count capacity; average CPU utilization not comparable; service-time confusion | tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics; tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison |\n| F3: fixed-workload A/B/C design at constant capacity | same Poisson workload; checkout A B C capacity 24 | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule; tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison |\n| F4: what the 1.769 s p95 contains | p95 1.769 cost 3.63; retry amplification; waits longer before timing out | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results; tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification; tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison |\n| F5: elimination by declared hard constraints | cost ceiling 3.0; p95 ceiling 1.5; hard constraint eliminate | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes |\n| F6: reporting requirements before comparing counts | identical workload rule; required structure scenario; metric unit direction; input status assumed | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table |\n| F7: the resilience claim outside the model | resilience; no dependency calls or storage; gates do not establish | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment |\n\n## 1. Why a server count is not a capacity measure\n\nFour distinct reasons, each visible in the record:\n\n1. Capacity is a rate; a server count is a count of service positions. The book defines service capacity as requests per second the server pool can complete when busy, and utilization as offered load divided by capacity. A count of 18 has no requests-per-second content until it is divided by the time each request occupies a server.\n2. In this design the two factors move together and cancel. A has 12 servers at 0.5 s, C has 18 at 0.75 s; the server ratio is 1.5 and the service-time ratio is 1.5, so the capacity ratio is 1: 12 / 0.5 = 24 and 18 / 0.75 = 24. The model's comparison table records capacity 24 for every checkout candidate, which is the check that the count changed while capacity did not.\n3. The error has a name in the model's own failure modes: service-time confusion, where the mean service time is divided by servers in the wrong direction, producing a capacity that is too high or too low. Reading 18 against 12 as 1.5 times the capacity is that error: it compares the numerator and drops the denominator, which is exactly the variable the experiment changed.\n4. Even utilization is not comparable across server counts on its own. The scenario contract says average CPU utilization is not comparable across candidates with different server counts unless the cost and work units are also stated. The same reservation applies to the raw count: without the work unit (seconds of service per request) and the load (arrival rate), 18 and 12 describe pool shape, not capacity.\n\n## 2. How service capacity is computed from servers and mean service time\n\nCapacity in requests per second equals the number of identical servers divided by the mean service time in seconds per request. Utilization equals arrival rate divided by capacity, equivalently arrival rate times mean service time divided by servers. The worked checkout case states the arithmetic in one sentence: 12 / 0.5 = 24 requests per second, 20 / 24 = 0.833 utilization, and the measured server utilization in the run is 0.833, which confirms the arithmetic for the synthetic case.\n\nApplied to the three candidates (server counts and service times from the experiment; p95, cost and success from the results; retry amplification from the retry page):\n\n| Candidate | Servers | Mean service (s) | Capacity (req/s) | Arrival rate (req/s) | Utilization | p95 (s) | Cost per 1000 successes | Retry amplification |\n|---|---|---|---|---|---|---|---|---|\n| A | 12 | 0.5 | 24 | 20 | 0.833 | 0.870 | 1.81 | 1.000 |\n| B | 12 | 0.5 | 24 | 20 | 0.833 | 1.206 | 1.34 | 1.004 |\n| C | 18 | 0.75 | 24 | 20 | 0.833 | 1.769 | 3.63 | 1.079 |\n\nThree consequences follow. First, the candidate set is a constant-capacity comparison: the independent variable is pool shape (concurrency and service time) plus queue, timeout and retry policy, not capacity. Second, no candidate has more headroom than another: all three carry 4 requests per second of spare capacity at 0.833 utilization. Third, a p95 difference across this table cannot be read as the price of parallelism, because parallelism was not bought with extra capacity; it was bought by serving each request 50 percent more slowly at the same total capacity.\n\nThe formula has scope conditions. It assumes one class of identical servers; the queue and timeout convert capacity into achieved success and latency; and retries add work. C is the case where retries matter: two attempts with linear backoff produce retry amplification 1.079 and an 11.1% timeout rate, so effective offered work is about 21.6 attempts per second, roughly 0.90 of its 24 requests-per-second capacity. The extra servers are partly consumed by the candidate's own retries.\n\n## 3. What the 1.769-second p95 actually contains\n\nC's result line is success 0.9679, p95 1.769 s, cost 3.63, timeout 0.111. The book's own explanation of the table is that candidate B has a higher p95 than A because it waits longer before timing out - the page treats p95 as an outcome of queue, deadline and retry policy, not of server count. C is the same pattern pushed further: a 120-request queue, a 1.5-second per-attempt deadline, and a retry policy with linear backoff, whose amplification raises load and whose 11.1% timeout rate shows the deadline binding. A p95 of 1.769 s, above the 1.5 s per-attempt deadline, is consistent with successful requests that needed a second attempt; the record does not decompose the p95 by attempt count, so that last step is an inference from the declared policy, not a measured attribution (C15).\n\nWhat the record does support is the direction of the first-order effect: the sensitivity screen reports service mean at 0.536 first-order and 0.639 total-order against arrival rate at 0.361 and 0.464, says service time explains more of the fitted variance, and warns that the quadratic screen does not prove production dominance. Service time, not the server count, is the quantity the model itself points at first.\n\n## 4. Why most resilient is not something this record measures\n\n- The metric set is success rate, p95 latency, throughput, cost per 1000 successes, rejection rate and retry amplification. None of these is availability, failover, recovery time, saturation headroom or behaviour under injected faults.\n- The checkout model's validity limits are explicit: it has no dependency calls or storage, it is valid only for the synthetic workload in the scenario, and it makes no production claim without measurement.\n- The validation gates add that they do not establish that the models match a real system, nor CI, deployment or production behavior.\n- Consequently most resilient is an undeclared property with no declared metric, scenario or threshold. A resilience claim would need all three before any candidate could be ranked on it. Server count cannot substitute: at equal capacity and equal utilization the extra servers add no throughput and no spare capacity, so even the load-side reading of resilience (headroom) is unchanged (C16).\n\n## 5. The constraint arithmetic the reviewer inverted\n\nThe record declares C4 (cost per 1000 successes at most 3.0, hard) and C5 (p95 latency at most 1.5 seconds, hard) before the candidates are scored. Then: C4 eliminates C because 3.63 is above 3.0; C5 also eliminates C because 1.769 is above 1.5; A and B pass both. The decision contract is unambiguous that a hard constraint eliminates a candidate even when it has the highest success rate, and the scenario contract names the move that would rescue C anyway: constraint laundering, where a hard cost ceiling becomes a soft preference after a candidate fails it. Reading C's 1.769 s p95 as the price of running more parallel work, and therefore as a virtue, is that move: it keeps the candidate that failed two declared ceilings and relabels the failure. C does not even win on the success argument, since 0.9679 is below B's 0.9996.\n\n## 6. What a capacity claim must report before two server counts are compared\n\nA server count becomes a capacity statement only when the following are on the record, for both sides:\n\n1. The reference workload: arrival process and offered rate, time unit, horizon and warmup. The identical-workload rule fixes these at Poisson 20 requests per second over 1,800 seconds after a 300-second warmup, with the same metric identifiers and units, the same seed base and seed scheme, and the same hard constraints. A candidate that needs a different workload is recorded as such and compared under a declared workload family; otherwise the comparison is invalid.\n2. The capacity inputs: servers, mean service time and its distribution (B declares a lognormal with mean 0.5 s and coefficient of variation 0.6), queue capacity, timeout, attempts, backoff, bulkhead and unit cost. The scenario schema requires every one of these fields.\n3. The derived rate: the computed capacity in requests per second (servers divided by mean service time) and the utilization at the declared arrival rate (arrival rate divided by capacity), with units. It should also state the convention for mu, because the text labels mu as the pool's requests-per-second capacity while writing utilization as lambda / (c * mu); the worked example resolves the arithmetic as servers divided by mean service time, but a reader comparing counts should not have to infer that (C18).\n4. Metric definitions: identifier, unit, direction and business-comparable flag, and for any utilization comparison across different server counts, the cost and work units as well.\n5. The constraints and the decision rule: hard, soft and non-quantitative conditions with their thresholds, and a record of failures rather than a re-description of them.\n6. Run metadata: replications, seed base and seed scheme, measurement window, convergence and confidence intervals.\n7. Evidence status and validity limits: which inputs are assumed rather than measured, that the scope is the synthetic scenario, and that the model supports no production claim without measurement.\n\nOnly after those are stated can 18 be set beside 12. The comparison that is actually supported is 18 / 0.75 = 24 requests per second against 12 / 0.5 = 24 requests per second at the same 20 requests per second offered, that is 0.833 against 0.833 - a comparison of pool shape at constant capacity.\n\n## 7. Boundaries and validity limits\n\n- All of this is model arithmetic on a synthetic workload: arrival rate, service mean, service CV and servers are marked assumed, and the missing measurements are a measured arrival trace, a measured service-time sample and tail, a measured distribution, and a measured deployment capacity.\n- The model is a steady-state queue with fixed servers, a FIFO queue with capacity, a bulkhead, a per-attempt timeout and a bounded retry budget; it has no priority, preemption, dependency calls or storage.\n- Narrow confidence intervals do not make the inputs measured, and a sensitivity screen does not outrank a measurement.\n- The reversal triggers are concrete: a measured arrival rate above 22 requests per second or a mean service time above 0.65 seconds changes the utilization boundary.\n\n## 8. Evidence map\n\n- C1, C2, C18: tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities\n- C3, C8: tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison\n- C4: tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes\n- C5: tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics\n- C6, C13: tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment\n- C7, C15: tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results\n- C9: tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints\n- C10: tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes\n- C11: tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule\n- C12: tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure\n- C13: tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish\n- C14: tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation\n- C15, C16: tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification; tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities\n- C17: tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty\n\n## 9. Unknowns, tensions and what would change the answer\n\n1. The reviewer's definition of resilience and the evidence behind it are absent from the record. No availability, failure-injection or recovery metric is reported, so the ranking is unmeasured rather than merely overstated; it is an inference outside the model's stated validity limits.\n2. Whether C's p95 would fall under B's retry policy is untested. The record reports no C variant with three attempts and jittered backoff, so the retry contribution is inferred from the declared policy, the 1.079 amplification and the p95 above the per-attempt deadline, not decomposed.\n3. All capacity inputs are assumed: arrival rate, service mean, service CV and servers. The 24 requests per second equality is therefore a modeled equality, not a measured one, and the reversal triggers (above 22 requests per second, above 0.65 s mean service) are what measurement would test first.\n4. The 3.0 cost and 1.5 s p95 ceilings are declared constraints; the artifact does not derive them from a business case, so whether they are the right ceilings is outside what was read.\n5. The source has a notation tension: mu is labelled as the pool's requests-per-second capacity while utilization is written lambda / (c * mu). The worked example resolves the arithmetic (capacity = servers / mean service time), but a capacity claim should state the convention explicitly; this is the most likely place for a count-versus-rate error to enter.\n6. The pages read report per-candidate capacity only in the worked-comparison table; there is no separate capacity field per run in the pages read, and no surge or headroom scenario, so capacity has to be derived and burst behavior cannot be read from the record at all.\n7. The decision recommendation is conditional because the operability constraint (C3) is untested. The same non-quantitative gap would apply to any resilience claim: neither is verified, and the record says so.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Capacity is a rate the pool can complete when busy, and utilization is offered load divided by capacity; a server count by itself is neither.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "Service capacity (mu): requests per second the server pool can complete when busy.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "Utilization (rho): offered load divided by capacity, rho = lambda / mu for one server",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Service capacity equals servers divided by mean service time: the worked checkout case gives 12 / 0.5 = 24 requests per second and 20 / 24 = 0.833 utilization, confirmed by the run's measured server utilization.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "For the checkout baseline, lambda is 20 requests per second, c is 12 and the mean service\ntime is 0.5 seconds. The service capacity is 12 / 0.5 = 24 requests per second, so the\nutilization is 20 / 24 = 0.833.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "confirms the arithmetic for this synthetic case.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "All three checkout candidates have capacity 24 requests per second: the model's comparison table lists capacity 24 for A, B and C, so C's 18 servers at 0.75 s are the same capacity as 12 servers at 0.5 s.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+          "quote": "| Checkout A | 20 | 24 | 0.9218 | 0.870 | 0.0778 |",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+          "quote": "| Checkout B | 20 | 24 | 0.9996 | 1.206 | 0.0041 |",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+          "quote": "| Checkout C | 20 | 24 | 0.9679 | 1.769 | 0.111 |",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Treating a server count as capacity is the documented service-time-confusion failure mode: dividing the mean service time by servers in the wrong direction produces capacity that is too high or too low.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+          "quote": "**Service-time confusion.** The mean service time is divided by servers in the wrong\n  direction, producing a capacity that is too high or too low.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Utilization is not comparable across candidates with different server counts unless cost and work units are also stated, and every metric must carry a direction and a unit.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+          "quote": "Average\nCPU utilization is not comparable across candidates with different server counts unless the\ncost and work units are also stated.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+          "quote": "The scenario contract marks every metric with a direction and a unit.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The A/B/C experiment fixes the workload (Poisson 20 requests per second, 1,800 s horizon, 300 s warmup, 30 replications, seed base 20261029) and varies the configuration; C declares 18 servers, 0.75-second mean service, a 120-request queue, a 1.5-second timeout, two attempts, linear backoff and unit cost 14.0.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "quote": "Three candidates receive the same Poisson workload at 20 requests per second for 1,800\nseconds after a 300-second warmup. Each uses 30 replications with the seed base 20261029.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "quote": "C: 18 servers, 0.75-second mean service, 120-request queue, 1.5-second timeout, two\n  attempts, linear backoff, 160-request bulkhead, cost 14.0.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+          "quote": "The candidate configuration differs: server count, service-time distribution, queue\ncapacity, timeout, retry budget, bulkhead and unit cost. That is the intended experimental\nvariable.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Measured results are A p95 0.870 s at cost 1.81, B p95 1.206 s at cost 1.34, and C p95 1.769 s at cost 3.63 with success 0.9679; C's success rate is also below B's 0.9996.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "- A: success 0.9218 (95% CI 0.9211-0.9226), p95 0.870 s, cost 1.81, timeout 0.0778.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "- B: success 0.9996 (95% CI 0.9995-0.9997), p95 1.206 s, cost 1.34, timeout 0.0041.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "- C: success 0.9679 (95% CI 0.9595-0.9764), p95 1.769 s, cost 3.63, timeout 0.111.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "C's p95 is shaped by its timeout and retry policy, not by extra parallelism: C has two attempts with linear backoff, retry amplification 1.079 and an 11.1% timeout rate, retries raise service load above offered load, and the model attributes B's higher p95 than A to waiting longer before timing out.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "- C has two attempts with linear backoff: retry amplification 1.079, timeout rate 0.111,\n  success 0.9679.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "C's retries amplify load and do not prevent an 11.1% timeout rate.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "If every request is attempted 1.05 times on average, the service load is 5% higher than the\noffered load.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+          "quote": "Candidate B has a higher p95 than A because it waits longer before timing out,",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "C is eliminated by the hard constraints declared before scoring: cost per 1000 successes 3.63 is above the 3.0 ceiling and p95 1.769 s is above the 1.5 s ceiling, while A and B pass both.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "- C4: cost per 1000 successes at most 3.0 (hard);",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "- C5: p95 latency at most 1.5 seconds (hard).",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "C4 eliminates C: 3.63 is above 3.0. C5 also eliminates C: 1.769 is\nabove 1.5. A and B pass both constraints.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A hard constraint eliminates a candidate even if it has the highest success rate, and converting a failed hard ceiling into a soft preference is the documented constraint-laundering failure mode.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "A hard constraint is a condition a candidate must satisfy. If candidate C exceeds a declared\ncost ceiling, C is eliminated even if it has the highest success rate.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "C is eliminated by the cost and latency limits.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+          "quote": "- **Constraint laundering.** A hard cost ceiling becomes a soft preference after a candidate\n  fails it. The decision record must show the constraint and the failure.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A comparison requires the same arrival pattern, duration and warmup; the candidate configuration is the intended experimental variable, and a candidate that needs a different workload invalidates the comparison.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+          "quote": "A comparison is not a comparison if each candidate receives a different arrival pattern,\nduration or warmup.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+          "quote": "- a 1,800-second horizon and a 300-second warmup;",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+          "quote": "- a Poisson arrival process at 20 requests per second;",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+          "quote": "If a candidate needs a different workload to look good, the comparison is invalid. The\ncorrect response is to record the workload as part of the candidate and compare under a\ndeclared workload family, not to silently change the arrivals.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A scenario contract must declare workload (duration, warmup, time unit, arrival process), configuration (servers, service time, queue capacity, timeout, attempts, backoff, bulkhead, cost), metrics with identifier/unit/direction/business-comparable flag, constraints, and evidence status with validity limits.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "- workload: duration, warmup, time unit and arrival process;",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "- configuration: servers, service time, queue capacity, timeout, attempts, backoff,\n  bulkhead and cost;",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "- metrics: identifier, unit, direction and business-comparable flag;",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "- constraints: hard, soft and non-quantitative;",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "- evidence_status and validity_limits.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Resilience is outside what this model establishes: its metric set is success, p95, throughput, cost, rejection and retry amplification; the checkout model has no dependency calls or storage; it is valid only for the synthetic workload; and the validation gates do not establish that models match a real system or that production behavior follows.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "quote": "The\nmetrics are success rate, p95 latency, throughput, cost per 1000 successful requests,\nrejection rate and retry amplification.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+          "quote": "- no dependency calls or storage in the checkout model;",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+          "quote": "- no production claim without measurement.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "- They do not establish that the models match a real system.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "- They do not establish CI, deployment or production behavior.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The capacity inputs are assumed rather than measured (arrival rate, service mean, servers), and a measured arrival rate above 22 requests per second or a mean service time above 0.65 s would move the utilization boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Arrival rate | assumed | A measured arrival trace for the target workload |",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Service mean | assumed | A measured service-time sample and tail |",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Servers | assumed | A measured deployment capacity |",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "- A measured arrival rate above 22 requests per second or a mean service time above 0.65\n  seconds changes the utilization boundary.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "At 24 requests per second of capacity and retry amplification 1.079, C's effective offered work is about 21.6 attempts per second (roughly 0.90 utilization), so its extra servers are partly consumed by its own retries rather than adding parallel throughput; a p95 of 1.769 s above the 1.5 s per-attempt deadline is consistent with multi-attempt requests.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "- C has two attempts with linear backoff: retry amplification 1.079, timeout rate 0.111,\n  success 0.9679.",
+          "supports": "C15",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "For the checkout baseline, lambda is 20 requests per second, c is 12 and the mean service\ntime is 0.5 seconds. The service capacity is 12 / 0.5 = 24 requests per second, so the\nutilization is 20 / 24 = 0.833.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "- C: success 0.9679 (95% CI 0.9595-0.9764), p95 1.769 s, cost 3.63, timeout 0.111.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Because capacity and arrival rate are equal across A, B and C, all three have the same 4 requests-per-second spare capacity at 0.833 utilization, so C's extra servers add no capacity headroom that could justify a resilience claim.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "For the checkout baseline, lambda is 20 requests per second, c is 12 and the mean service\ntime is 0.5 seconds. The service capacity is 12 / 0.5 = 24 requests per second, so the\nutilization is 20 / 24 = 0.833.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+          "quote": "| Checkout C | 20 | 24 | 0.9679 | 1.769 | 0.111 |",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The service-mean sensitivity (first-order 0.536, total-order 0.639) exceeds the arrival-rate sensitivity (0.361, 0.464), so measured service time is the first quantity to measure; the screen is a quadratic approximation and does not prove production dominance.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+          "quote": "The candidate B sensitivity screen reports arrival rate first-order 0.361 and total-order\n0.464, service mean first-order 0.536 and total-order 0.639. The screen is a quadratic\napproximation over 48 rows.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+          "quote": "It says service time explains more of the fitted variance in the\nsampled range. It does not prove that service time is the dominant production factor.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+          "quote": "The decision record does not use the\nsensitivity ranking to support a production claim; it uses it to identify what to measure\nfirst.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The notation itself invites the error: mu is labelled as the pool's requests-per-second capacity while utilization is written lambda / (c * mu), so a capacity claim should state whether mu is per-server; the worked example resolves the arithmetic as capacity = servers / mean service time.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "Service capacity (mu): requests per second the server pool can complete when busy.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "Utilization (rho): offered load divided by capacity, rho = lambda / mu for one server",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "For the checkout baseline, lambda is 20 requests per second, c is 12 and the mean service\ntime is 0.5 seconds. The service capacity is 12 / 0.5 = 24 requests per second, so the\nutilization is 20 / 24 = 0.833.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
