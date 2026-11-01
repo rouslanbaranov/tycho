@@ -77,17 +77,18 @@ contracts cannot be versioned and owned.
 modular monolith for one ownership boundary. Reverse the choice when governance and
 mediation overhead exceeds the integration benefit.
 
-**Failure and recovery.** Contract drift, a centralized bus bottleneck and semantic
-mismatch are common. Microsoft reports that "large central brokers, central orchestrators
+**Failure and recovery.** **Tycho synthesis:** contract drift, a centralized bus bottleneck and
+semantic mismatch are possible. Microsoft reports that "large central brokers, central orchestrators
 at the organization level, and the Enterprise Service Bus (ESB)" are typical SOA
 features, and that "in most cases, these are anti-patterns in the microservice
 community"; Fowler and Lewis note that ESB products "often include sophisticated
 facilities for message routing, choreography, transformation, and applying business
-rules." Tycho synthesis: size, observe and fail over a shared mediation path. Recovery
-requires contract ownership and mediation observability; the linked owner section states
-the remaining limits.
+rules." **Tycho synthesis:** size, observe and fail over a shared mediation path. Recovery
+requires contract
+ownership and mediation observability; the linked owner section states the remaining limits.
 
-**Technical owner.** [Service-Oriented Architecture (SOA)](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#service-oriented-architecture-soa) — The section explicitly owns SOA and microservice boundary choices.
+**Technical owner.** [Service-Oriented Architecture (SOA)](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#service-oriented-architecture-soa) — SOA boundary choices.
+
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-article.2026-10-21: Microservices, all twenty-four

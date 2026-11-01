@@ -149,10 +149,11 @@ business rules." Tycho synthesis: a centralized bus is a shared bottleneck and s
 that must be sized and failed over. Keep an observed fallback path that does not depend on
 it. These sources do not state a timeout, a recovery-time bound or a failover procedure.
 
-**Alternative.** Microservices may be preferable when capabilities map to independent product
-teams; a modular monolith when one ownership boundary suffices. SOA is a fit when many
-independent owners must integrate through stable contracts and mediation is a real, owned
-capability.
+**Alternative (Tycho synthesis).** Fowler and Lewis note that some microservice advocates
+"reject the SOA label entirely" while others see microservices as one form of SOA.
+Microservices may be preferable when capabilities map to independent product teams; a modular
+monolith when one ownership boundary suffices. SOA is a fit when many independent owners must
+integrate through stable contracts and mediation is a real, owned capability.
 
 ## Integrated decision and reading route
 
