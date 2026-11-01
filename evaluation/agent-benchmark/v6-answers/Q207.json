@@ -1,0 +1,222 @@
+{
+  "task_id": "Q207",
+  "answer": "# Q207 — GOAWAY with last-stream ID 5: a possibly committed publish, stream 7, and the bounded drain record\n\n## Method and scope\n\n- Onboarding first: describe was run before any retrieval. Snapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a; coverage complete; 555 documents and 3,132 sections; ranker tycho-section-fts5-bm25-v5; citation scheme tycho.section-key.v2.\n- Layers needed: book only. This is a transport/effect-boundary, retry-identity and shutdown-procedure question. It needs canonical prose, not pattern-registry identity or a model/run/decision artifact; the atlas would only add navigation to the Idempotency Key and Idempotent Receiver patterns and would not change the mechanism.\n- Retrieval note: in this snapshot the CLI forwards --volume book as a volume code, and \"book\" matches no indexed volume (only atlas -> v11 and modeling-and-simulation -> v12 are aliased), so those calls return no-results. The same book-layer queries were issued without the flag; every response still reports layer \"book\". All citations come from sections read in full (page or section reads), not from snippets.\n- No corpus, qrels, labels, other answers or rankings were read. No book, atlas or index file was edited.\n\n## Facet matrix\n\n| # | Facet | Query formulations used | Evidence |\n|---|---|---|---|\n| F1 | Which identity does the error belong to? | \"request attempt logical operation identity\"; \"one connection is not one unit of work\"; \"HTTP/2 multiplexed streams\" | connections-draining#name-the-affected-layer; intent-identity#1-distinguish-five-identities; discovery-balancing#original-worked-design-one-connection-is-not-one-unit-of-work |\n| F2 | GOAWAY last-stream-ID semantics | \"last stream identifier\"; \"streams above the boundary not processed\"; \"initial GOAWAY maximum stream identifier\" | connections-draining#name-the-affected-layer; connections-draining#diagnose-before-changing-pool-settings |\n| F3 | Why a lost reply is not a failed effect | \"commit before response lost acknowledgment\"; \"ambiguous timeout requires outcome lookup\"; \"effect may already exist\" | retries-idempotency-and-ambiguous-effects#purpose-and-mission; intent-identity#2-http-method-idempotence-has-a-precise-scope; transactional-outbox-and-idempotency#4-failure-and-recovery-matrix |\n| F4 | The stream-7 boundary and its hop scope | \"streams above the boundary not processed\"; \"retry unprocessed stream new connection\"; \"connection close without GOAWAY\" | connections-draining#original-trace-graceful-shutdown-with-an-ambiguous-write; connections-draining#name-the-affected-layer |\n| F5 | Bounded drain: order and record point | \"drain deadline budget in-flight work\"; \"readiness removal before shutdown new work\"; \"forced termination\" | connections-draining#a-bounded-drain-procedure; routing-and-health#health-endpoint-monitoring |\n| F6 | Record contents and reconciliation authority | \"unresolved operation IDs reconciliation path\"; \"record unresolved operations before termination\"; \"state owner authoritative outcome\" | connections-draining#a-bounded-drain-procedure; retries-idempotency-and-ambiguous-effects#bounded-pattern-ownership-notes; dedup-authority#4-deduplication-is-only-as-strong-as-its-authority-boundary; coexistence-retirement#4-the-critical-lost-acknowledgment-problem |\n\n## Direct answer\n\n**Why the missing response does not prove the effect failed.** The GOAWAY boundary is a statement about which streams the sending endpoint might have processed, not about what the state owner committed. RFC 9113 sections 6.8 and 8.7, as the book reports them, divide the stream space at the last-stream ID: streams above it were not processed by the sending endpoint; streams at or below it may have been processed. Stream 5 is in the second class. The publish can therefore have committed at the state owner while the reply is lost during the shutdown; the client observes no answer, not necessarily no commit. A missing response is not evidence that the application rolled back, and an intermediary's boundary applies to that hop, not automatically to a downstream side effect. Only an authoritative outcome lookup bound to the same logical operation identity can settle it.\n\n**What the boundary says about stream 7.** Stream 7 is above the last-stream ID (7 > 5), so the peer that sent GOAWAY did not process it. The book's instruction is to treat stream 7 as not processed at that peer and establish a replacement connection. That is the mirror image of stream 5: 7 is protected from duplication at that peer, while 5 is indeterminate. The boundary gives no inference from 5 to 7 or from 7 to 5; they have different statuses, and a client that collapses them either loses a committed publish or duplicates it.\n\n**What a bounded drain must record before forced termination.** At minimum the unresolved operation IDs and a reconciliation path, plus the transport facts needed to interpret them: the GOAWAY code and last-stream boundary, close reasons, which streams and attempts carried which logical operations, the declared drain budget, and the fact that the deadline expired and forced termination followed. The record must be durable before the kill, must classify each operation as unknown, in-progress or committed rather than \"failed\", must name the owner and retention horizon, and must be resolvable through the state owner's authoritative lookup. A hard shutdown deadline may leave unknown effects; it cannot manufacture atomic cancellation.\n\n## Mechanism and justification\n\n### F1. Four identities are being collapsed: connection, stream, attempt, operation\n\nThe book opens the topic with a warning that a connection, an HTTP/2 stream, one request attempt and a logical business operation have different identities, and that the layer which emitted the error must be recorded before a client message such as GOAWAY is interpreted. The retry chapter states the same point as a table of five identities: logical operation ID, transport attempt ID, resource/business ID, event ID and consumer-effect key. The named dangers are creating a new logical ID for every retry and counting attempts as distinct successful effects.\n\nThe discovery page adds the operational version: one connection is not one unit of work. A connection multiplexes many requests, a selector that balances connections can concentrate work, and an already executing operation cannot be moved without a protocol for interruption. A connection-scoped shutdown event is therefore not a work-unit verdict.\n\nConsequence for this question: GOAWAY is emitted at the connection layer. It can tell the client about the fate of streams at that endpoint. It cannot tell the client what the state owner did with the command that the stream carried.\n\n### F2. The boundary is a two-part partition, not a verdict\n\nThe book's exact formulation is that streams above the boundary were not processed by the sending endpoint, while streams at or below it may have been processed. The frame therefore partitions the in-flight stream space into two classes: definitely not processed at that peer, and possibly processed at that peer. Neither class means failed. The partition exists so a client can tell which streams may be retried without duplication at that endpoint and which need resolution.\n\nThe class boundary is a statement by the peer, not an oracle about the application. If the connection closes without GOAWAY, the client has no boundary at all and every in-flight stream is unknown at the peer; the book's proposed tests include exactly that case. And the word processed belongs to the endpoint that sent the frame: the state owner is a separate authority, which is why the book's recovery path reads the authoritative result there.\n\n### F3. Why no response is not no commit\n\nFour independent supports:\n\n1. Commit-before-reply is a normal failure ordering. The retry chapter's purpose statement says a client can lose the response to a command after the server commits its effect; the client observes no answer, not necessarily no commit.\n2. The failure matrix names the row: after local commit, before reply, both may exist, the client sees a timeout, and the client cannot infer whether registration succeeded.\n3. The client-inference table is explicit: a network timeout or lost reply means the outcome may be unknown; concluding that the server did nothing is the unsafe inference.\n4. Turning ambiguity into failure is itself a defect: if an adapter converts a timeout into \"failed, safe to retry\", a second request may allocate again or trigger another notification.\n\nTwo further limits apply. Cancellation is not proof that a previously committed effect was undone, and a cancelled response does not retract committed state or emitted events. The chapter's counterexample is blunt: an HTTP/2 shutdown does not certify rollback. Symmetrically, a completed response proves an observed result for the attempt, not that every downstream side effect happened.\n\nThe only resolution the book offers is identity-bound: repeat with the same scoped idempotency identity and reconcile to the durable original outcome; or query a stable business identity where only a status read exists; or, if neither exists, surface unknown outcome and reconcile explicitly. A new connection does not resolve anything by itself, and a retry with a fresh identity is exactly what creates a duplicate.\n\n### F4. Stream 7: safe to replay, unsafe to generalize\n\nThe trace is explicit: a fictional client uses streams 3, 5 and 7; the server sends GOAWAY with last-stream ID 5; treat stream 7 as not processed at that peer and establish a replacement connection; stream 5, a command to publish an object, may already have committed; its correct recovery lookup uses the same logical operation identity.\n\nSo the boundary yields two different answers:\n\n- Stream 7: not processed at that peer. The old connection is shutting down, so the work belongs on a replacement connection. At that endpoint the replay is a first processing, not a duplicate.\n- Stream 5, and any in-flight stream at or below 5: indeterminate. It needs resolution by the logical operation identity, not a blind replay.\n\nThe hop-scope caveat is what stops this from becoming \"7 is free\". The book says an intermediary's boundary applies to that hop, not automatically to a downstream side effect. If a proxy sent the GOAWAY, its statement describes the proxy's processing of that stream. A client cannot audit whether an earlier forwarded copy of the same logical intent reached the state owner, and it cannot assume a replay with a fresh identity is harmless if the logical operation already had another attempt, for example on stream 3, which is also at or below the boundary. The retry rule is that retries bind to a stable logical intent; a new identity is exactly what makes a duplicate possible. The safe replay of stream 7 therefore keeps the logical operation identity for the same intent, and no replay of 7 is evidence about stream 5.\n\nA practical consequence, stated as inference: for the logical operation K carried by the ambiguous attempt, resolve K first. If the state owner returns a recorded outcome, that outcome answers the publish question. If the lookup is authoritative, within retention and returns nothing, no effect was recorded for K, which, under the contract that the outcome record commits with the effect, also confirms the unprocessed stream never created one. The book does not guarantee such a lookup exists; without a stable key or readback, the honest answer remains unknown.\n\n### F5. The bounded drain procedure and where the record sits\n\nThe book's five steps are: (1) mark the instance ineligible for new work through the actual selector; (2) start protocol-appropriate graceful shutdown and preserve enough time for route caches and active work; (3) allow admitted work to finish within its declared budget, cancelling only where cancellation semantics permit; (4) record unresolved operation IDs before forced termination and expose a reconciliation path; (5) remove the instance after the drain condition or an explicit bounded timeout.\n\nThe order is the argument. Step 1 stops the unknown set from growing at the selector. Step 3 bounds how long it can grow. Step 4 captures what remains before the process loses the in-memory link between stream, attempt and operation. Step 5 makes the boundary explicit rather than accidental. Readiness is separate from liveness and from draining; the health page warns that a cached \"healthy\" answer can keep sending traffic to a draining instance, and the guidance is to drain before removal.\n\nBounded matters twice. It bounds waiting, so the operator can finish a deployment. It also bounds the unknown set, because everything still admitted at the deadline becomes the reconciliation queue. The book is explicit that the deadline is not a rollback: a hard shutdown deadline may leave unknown effects; it cannot manufacture atomic cancellation. The procedure is labelled proposed, and the exact proxy or runtime decides signal ordering, propagation and stream behavior.\n\n### F6. What the record must contain, and why \"failed\" is the wrong word\n\nThe book's literal requirement is two things: record unresolved operation IDs before forced termination, and expose a reconciliation path. Everything else below follows from the idempotency contract and the diagnose list, and is marked as inference.\n\nRequired content, with support:\n\n- Operation identity and scope. An inspectable record carries the key, caller scope, fingerprint inputs, outcome and state; expired, in-progress and fingerprint-mismatch states are distinct answers, not one generic duplicate error. (observed)\n- State classification. The authority decides new, in-progress, committed, rejected or incompatible duplicate; the record must preserve that distinction. \"Failed\" is not one of them, and forced termination does not establish it. (observed states, inferred application)\n- Attempt and stream linkage. Because connection, stream and attempt are different identities, the record needs which attempt and stream carried which operation; after the process dies that mapping exists nowhere else. (inference)\n- Transport facts. The diagnose list asks for active streams, close reasons, GOAWAY code and boundary, retry volume and operation outcomes; those let a reconciler decide which attempts were even eligible to reach the state owner. (observed)\n- Budget and reason. The declared drain budget, the fact that the bounded timeout expired and forced termination followed, and the instance identity. Without these the record cannot be triaged. (inference)\n- Reconciliation route, owner and retention. Status lookup or reconciliation where an acknowledgment may be lost is part of the deduplication contract; the same page says to say unknown and design recovery rather than promising idempotence through an interface wrapper. Retention must outlive the retry window; after expiry, reconciliation falls back to durable business identity. (observed contract, inferred drain application)\n- Durability. A naive in-memory map fails after restart and can report false deduplication success; a record that does not survive the forced termination is not a record. (observed)\n\nFinally, the record is a reconciliation queue, not a certificate. It does not prove the publish failed; it preserves the question until the state owner can answer it. Recording \"failed\" would convert an unknown into a false negative and invite exactly the blind retry that duplicates a committed effect.\n\n## Boundaries and trade-offs\n\n- The boundary only constrains the peer that sent it. A proxy's GOAWAY says nothing directly about the origin; the recovery path must go through the service and the state owner, not through the proxy's frame.\n- No GOAWAY at all is worse. An abrupt close leaves no boundary and every in-flight stream indeterminate; the book's proposed tests include peer close without GOAWAY and forced drain expiration, which admits that these cases are not settled by the frame.\n- Authority gap. If the downstream system has no stable effect key and no readback, exactly-once business guarantees are not available; the correct output is unknown plus a recovery design, not an idempotence claim.\n- Retention. A key is useful only while its outcome record is retained; after expiry, deduplication memory is gone and reconciliation must use a durable business identity or a bounded retry window.\n- Waiting longer is not free. A longer drain reduces the unresolved set but delays replacement and can exceed the termination grace period; a shorter deadline enlarges the unknown set. The book gives the ordering, not a universal duration.\n- Rollback of traffic is not rollback of data. Switching traffic back does not reverse already committed new-format data; the same logic applies to a publish that committed before the shutdown.\n- When the answer does not apply. If the operation is read-only, or the client has an authenticated pre-admission rejection, the ambiguity collapses; those are the book's safe inferences. A successful response is also not proof that all downstream side effects happened, so the record should not treat success as exhaustive either.\n- The frame sequence itself. The book cites RFC 9113 sections 6.8 and 8.7 but does not develop the full GOAWAY exchange, for example whether a peer revises its boundary during an ongoing shutdown. Treat an observed last-stream ID as the peer's statement at that moment, not as a permanent property of the operation.\n\n## Evidence map\n\n| Claim | Section key | Type |\n|---|---|---|\n| Connection, stream, attempt and logical operation have different identities; record the layer before interpreting GOAWAY | tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer | observed |\n| Five identities: logical operation, transport attempt, resource, event, consumer effect; new ID per retry is the named danger | tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities | observed |\n| One connection is not one unit of work; an executing operation cannot be moved without an interruption protocol | tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work | observed |\n| Streams above the boundary were not processed; at or below may have been processed | tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer | observed |\n| A missing response is not evidence of rollback; an intermediary boundary is hop-scoped | tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer | observed |\n| Stream 7 is not processed at that peer and needs a replacement connection; stream 5 may have committed and resolves by the same logical identity | tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write | observed |\n| A client can lose the response after the server commits; no answer is not no commit | tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission | observed |\n| Lost reply means the outcome may be unknown; concluding the server did nothing is unsafe | tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope | observed |\n| After local commit before reply, both may exist and the client cannot infer success | tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix | observed |\n| Converting a timeout to \"failed, safe to retry\" may allocate again or notify again | tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem | observed |\n| Cancellation is not proof of undo; a cancelled response does not retract committed state or events | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets | observed |\n| An HTTP/2 shutdown does not certify rollback | tycho.chapter.8a86707018773def410689efbc79cf94#synthesis-and-counterexample | observed |\n| Drain steps: ineligible, graceful shutdown, admitted work within budget, record unresolved IDs and reconciliation path, remove after condition or timeout | tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure | observed |\n| Diagnose with GOAWAY code and boundary, close reasons, active streams, retry volume and operation outcomes | tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings | observed |\n| Record fields: key, caller scope, fingerprint, outcome, state; expired and in-progress are distinct answers | tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#bounded-pattern-ownership-notes | observed |\n| Dedup authority decides new, in-progress, committed, rejected or incompatible; expose status lookup; say unknown | tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary | observed |\n| Readiness answers whether an instance may receive new work; cached healthy answers can reach a draining instance; drain before removal | tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring | observed |\n| Retry resolves the same identity rather than creating a new effect; count unresolved outcomes separately | tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines; tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests | observed |\n| Persist intent and authoritative completion; expose unknown state and a manual reconciliation path | tycho.page.dd184f1c3947e0eab68938d31f51ec0e#2-stable-launch-identity-and-outcome-lookup | observed |\n| An in-memory map fails after restart and can report false deduplication success | tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication | observed |\n| Switching traffic back does not reverse already committed new-format data | tycho.page.1e89567050974052b13ba62b3b44484f#2-rolling-canary-and-blue-green-mechanisms-are-not-equivalent | observed |\n| Drain record schema in this answer (scope, fingerprint, stream linkage, owner, retention) | Inference from the drain step, the idempotency record fields, the diagnose list and the dedup states | inference |\n\n## Unknowns and confidence\n\n- Confidence is high on the three direct answers: the two boundary classes, the stream-7 disposition, and the record-before-termination requirement are stated in the book's owning page.\n- Confidence is medium on the record schema. The book names unresolved operation IDs and a reconciliation path; the key, scope, fingerprint, state, owner and retention fields are synthesis from the idempotency contract, the diagnose list and the deduplication steps. They are not an enumerated book schema.\n- The book's scenario is explicitly fictional and its drain procedure explicitly proposed; no network or client execution is claimed, and no production trace supports it. The evidence is design reasoning plus cited protocol semantics.\n- The book does not establish runtime specifics: signal ordering, whether the proxy or the origin sends the GOAWAY, whether the deployment tool honors the drain budget, or whether the state owner exposes an idempotent readback. Those deployment facts change the exact recovery path.\n- What would change the answer: a state owner with no readback (answer becomes unknown plus manual reconciliation), an operation with no stable identity (no safe replay), or a runtime that kills before the record is durable (the record requirement becomes unmeetable and the only honest state is unknown).\n- Snapshot scope: all section keys are from snapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a; a different snapshot may change section keys.",
+  "facets": [
+    {
+      "facet": "F1 Identity layers: connection vs stream vs attempt vs logical operation",
+      "queries": [
+        "request attempt logical operation identity",
+        "one connection is not one unit of work",
+        "HTTP/2 multiplexed streams"
+      ],
+      "evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work"
+      ]
+    },
+    {
+      "facet": "F2 GOAWAY last-stream-ID semantics",
+      "queries": [
+        "last stream identifier",
+        "streams above the boundary not processed",
+        "initial GOAWAY maximum stream identifier"
+      ],
+      "evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings"
+      ]
+    },
+    {
+      "facet": "F3 Lost reply vs failed effect: ambiguity and commit-before-response",
+      "queries": [
+        "commit before response lost acknowledgment",
+        "ambiguous timeout requires outcome lookup",
+        "effect may already exist"
+      ],
+      "evidence": [
+        "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix"
+      ]
+    },
+    {
+      "facet": "F4 Stream 7 boundary and hop scope",
+      "queries": [
+        "streams above the boundary not processed",
+        "retry unprocessed stream new connection",
+        "connection close without GOAWAY"
+      ],
+      "evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer"
+      ]
+    },
+    {
+      "facet": "F5 Bounded drain procedure and record point",
+      "queries": [
+        "drain deadline budget in-flight work",
+        "readiness removal before shutdown new work",
+        "forced termination"
+      ],
+      "evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring"
+      ]
+    },
+    {
+      "facet": "F6 Record contents and reconciliation authority",
+      "queries": [
+        "unresolved operation IDs reconciliation path",
+        "record unresolved operations before termination",
+        "state owner authoritative outcome"
+      ],
+      "evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+        "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#bounded-pattern-ownership-notes",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+        "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem"
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+    "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.chapter.8a86707018773def410689efbc79cf94#synthesis-and-counterexample",
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#bounded-pattern-ownership-notes",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+    "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+    "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#2-stable-launch-identity-and-outcome-lookup",
+    "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+    "tycho.page.1e89567050974052b13ba62b3b44484f#2-rolling-canary-and-blue-green-mechanisms-are-not-equivalent",
+    "tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests"
+  ],
+  "evidence": [
+    {
+      "claim": "Connection, stream, attempt and logical operation are distinct identities; record the emitting layer before interpreting GOAWAY.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+      "note": "Observed: \"A connection, an HTTP/2 stream, one request attempt and a logical business operation have different identities.\""
+    },
+    {
+      "claim": "Five identity classes and their dangerous confusions, including a new logical ID per retry and attempts counted as effects.",
+      "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+      "note": "Observed table: logical operation ID, transport attempt ID, resource/business ID, event ID, consumer-effect key."
+    },
+    {
+      "claim": "One connection is not one unit of work; an executing operation cannot be moved without an interruption protocol.",
+      "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+      "note": "Observed: a multiplexed connection can carry 90 requests; selection balances transports, not work units."
+    },
+    {
+      "claim": "RFC 9113 6.8/8.7 boundary: streams above the last-stream ID were not processed by the sending endpoint; streams at or below may have been processed.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+      "note": "Observed: the two-class partition is stated verbatim; no class means failed."
+    },
+    {
+      "claim": "A missing response is not evidence of rollback, and an intermediary's boundary applies only to its hop.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+      "note": "Observed: both sentences appear together in the boundary paragraph."
+    },
+    {
+      "claim": "Stream 7 is above boundary 5 and is treated as not processed at that peer; a replacement connection is required; stream 5 may have committed and resolves by the same logical identity.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+      "note": "Observed: the trace names streams 3, 5, 7, GOAWAY last-stream ID 5, and the identity-bound recovery lookup."
+    },
+    {
+      "claim": "A client can lose the response after the server commits; the observation is no answer, not necessarily no commit.",
+      "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission",
+      "note": "Observed purpose statement of the retry chapter."
+    },
+    {
+      "claim": "A lost reply means the outcome may be unknown; concluding the server did nothing is the unsafe inference.",
+      "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+      "note": "Observed client-observation table, row \"Network timeout or lost reply\"."
+    },
+    {
+      "claim": "After local commit and before reply, both may exist, the client sees a timeout, and it cannot infer whether the write succeeded.",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+      "note": "Observed failure-timing matrix row."
+    },
+    {
+      "claim": "Treating a timeout as failed and safe to retry can allocate again or trigger another notification.",
+      "section_key": "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+      "note": "Observed: the adapter failure mode, with the required alternatives (same key, status read, or unknown outcome)."
+    },
+    {
+      "claim": "Cancellation and cancelled responses do not undo or retract a committed effect.",
+      "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+      "note": "Observed: \"Cancellation is not proof that a previously committed effect was undone\"; \"Reject the assumption that a cancelled response retracts committed state\"."
+    },
+    {
+      "claim": "An HTTP/2 shutdown does not certify rollback.",
+      "section_key": "tycho.chapter.8a86707018773def410689efbc79cf94#synthesis-and-counterexample",
+      "note": "Observed chapter counterexample: a route update does not fence a writer and a TLS connection does not authorize a business object."
+    },
+    {
+      "claim": "The bounded drain sequence is: ineligible; graceful shutdown; admitted work within budget; record unresolved operation IDs and a reconciliation path; remove after condition or timeout.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+      "note": "Observed five numbered steps; the page adds that a hard deadline may leave unknown effects and cannot manufacture atomic cancellation."
+    },
+    {
+      "claim": "Diagnosis must compare active streams, close reasons, GOAWAY code and boundary, retry volume and operation outcomes.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings",
+      "note": "Observed list; it also says to separate name-resolution, connect, handshake, queue, first-byte, transfer and effect time."
+    },
+    {
+      "claim": "An inspectable idempotency record carries key, caller scope, fingerprint inputs, outcome and state; expired, in-progress and mismatch are distinct answers.",
+      "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#bounded-pattern-ownership-notes",
+      "note": "Observed Tycho rule in the pattern-ownership section."
+    },
+    {
+      "claim": "The durable authority decides new, in-progress, committed, rejected or incompatible, exposes status lookup, and says unknown when readback is missing.",
+      "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+      "note": "Observed seven-step minimal contract; step 6 is status lookup/reconciliation where an acknowledgment may be lost."
+    },
+    {
+      "claim": "Readiness answers whether an instance may receive new work; a cached healthy answer can keep traffic on a draining instance; drain before removal.",
+      "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+      "note": "Observed: startup, readiness, liveness and draining are separate signals."
+    },
+    {
+      "claim": "A retry of a committed operation resolves the same identity rather than creating a new effect, and unresolved outcomes are counted separately.",
+      "section_key": "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+      "note": "Observed race table: \"A commits R7 but its reply is lost | Retrying K42 resolves to R7, never creates R8\"; section 7 says count unresolved outcomes separately."
+    },
+    {
+      "claim": "Persist intent and authoritative completion, and expose an explicit unknown state plus a reconciliation path.",
+      "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#2-stable-launch-identity-and-outcome-lookup",
+      "note": "Observed: two synchronization points (intent, completion) and the unknown-state requirement when no key or lookup exists."
+    },
+    {
+      "claim": "A naive in-memory map fails after restart and can report false deduplication success.",
+      "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+      "note": "Observed in the crash-window discussion; supports durable recording before forced termination."
+    },
+    {
+      "claim": "Switching traffic back does not reverse already committed new-format data.",
+      "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#2-rolling-canary-and-blue-green-mechanisms-are-not-equivalent",
+      "note": "Observed in the blue/green comparison row; supports \"rollback is not undo\" for a committed publish."
+    },
+    {
+      "claim": "The record schema beyond operation IDs and a reconciliation path (scope, fingerprint, stream linkage, owner, retention) is a synthesis, not an enumerated book schema.",
+      "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+      "note": "Inference: composed from the drain step, the idempotency record fields, the diagnose list and the dedup contract states."
+    }
+  ],
+  "abstain": false,
+  "snapshot": "4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a",
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
