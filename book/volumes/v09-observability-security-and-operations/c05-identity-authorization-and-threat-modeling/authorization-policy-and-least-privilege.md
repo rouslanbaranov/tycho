@@ -75,10 +75,11 @@ validated claims; it does not prescribe this policy design.
 **Zero-trust mechanism.** Every request is authenticated and authorized at the resource
 boundary using principal identity, workload/device posture, policy and least privilege.
 Network location is not trust; a valid token is not object permission. Continuous
-verification applies to service-to-service and user-to-service paths alike.
+verification applies to service-to-service and user-to-service paths alike. **Tycho synthesis:**
+the every-request/resource-boundary rule extends the ASVS session controls.
 
 **Failure and recovery (Tycho analysis).** Policy gaps, legacy bypass paths and identity-provider
-outages are common. NIST warns that "If one vital component is disrupted or unreachable, there
+outages are possible. NIST warns that "If one vital component is disrupted or unreachable, there
 could be a cascade of failures that impact one or multiple business processes." Deny by default,
 test indirect and confused-deputy paths, keep a bounded break-glass path with audit, and fail
 closed when authority cannot be established; these responses are Tycho guidance.
@@ -96,8 +97,9 @@ not prove enforcement.
 ## Least Privilege
 
 Least privilege grants each principal only the permissions its task needs, limited in resource
-scope, action and time. Every credential must have a bounded scope, an owner and a revocation
-path that does not depend on the compromised principal.
+scope, action and time. Every credential must have a bounded scope, an owner and a revocation path that does not
+depend on the compromised principal. **Tycho analysis:** ASVS binds revocation mechanics, not
+this per-credential ownership rule.
 
 Permission creep and long-lived credentials widen the blast radius without any visible
 incident; review grants on a schedule and prefer short-lived scoped credentials.

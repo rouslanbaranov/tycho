@@ -35,9 +35,8 @@ content_review:
   proof_uri: "authoring/ai-reviews/2026-10-29-least-privilege-deepseek.md"
   content_verified_at: "2026-10-29"
 authored_at: "2026-10-27"
-updated_at: "2026-10-29"
+updated_at: "2026-11-01"
 source_inspection_date: "2026-10-29"
-content_verified_at: null
 ---
 # Least Privilege
 
