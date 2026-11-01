@@ -91,6 +91,31 @@ The reviewer must not run tests or write to the repository.
 A pass with minors is accepted. Majors and blocking findings require remediation and
 a delta review. Save the report verbatim and add its SHA-256 to the index.
 
+#### 4.4.1 Delta review
+
+A delta review is used only after a fail and remediation of the same entry. It is
+not a new full review and not a waiver of the gate.
+
+The delta packet must contain:
+
+- prior finding IDs, severity and the remediation for each;
+- only the changed artifacts: owner section, card, evidence JSON and hash proof;
+- old and new hashes for every rebind;
+- a statement of what was not changed;
+- the current HEAD.
+
+The reviewer must:
+
+- recheck each prior blocking and major finding;
+- check the changed artifacts for regressions;
+- mark every prior finding resolved or unresolved;
+- approve or reject each rebind;
+- return a verdict and explicit limits.
+
+A delta pass allows promotion with recorded minors. A delta fail returns the same
+entry to remediation: no promotion and no next entry. Save the delta report like a
+full report and index its SHA-256.
+
 ### 4.5 Promotion and rebind
 
 - append or update the promotion record with reviewed commit and exact hashes;
@@ -217,7 +242,31 @@ Verdict пока не получен.
 Delta review отправлен; promotion не выполнен.
 ```
 
-### 7.4 Promotion complete
+### 7.4 Delta review
+
+```text
+## B<n> <Entry>: delta review
+
+### Prior findings
+
+- <id>: <resolved/unresolved> — <evidence>
+
+### Changed artifacts
+
+- <path>: old/new hash
+
+### Delta verdict
+
+<pass/fail>; <minor findings>
+
+### Текущее
+
+<table as above>
+
+При delta pass → **<n+1>**.
+```
+
+### 7.5 Promotion complete
 
 ```text
 ## <n> — <Entry> промоутирован
