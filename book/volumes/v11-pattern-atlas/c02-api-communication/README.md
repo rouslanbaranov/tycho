@@ -88,16 +88,20 @@ pattern; priority core.
 an explicit contract rather than exposing every backend address to clients?
 
 **Good-fit conditions.** Multiple backends or versions exist; routing rules are stable
-enough to own; discovery and health signals are available; the gateway can resolve
-version and tenant routing without guessing.
+enough to own; route selection, service membership and backend endpoints are separable;
+discovery and health signals are available; the gateway can resolve version and tenant
+routing without guessing.
 
 **Hard contraindications.** Reject the claim when clients can resolve one stable
 backend; when routes are ad hoc and unversioned; when routing depends on unchecked
 client-supplied identifiers; when a route change cannot be rolled back.
 
-**Competing alternative.** Direct client-to-backend calls or a simpler reverse proxy.
-Reverse the choice when routing logic becomes domain logic or the gateway cannot observe
-backend health.
+**Competing alternative.** Direct client-to-backend calls, a simpler reverse proxy,
+client-side discovery or a BFF. Azure's pattern says gateway routing may not suit a simple
+application and warns that the gateway can become a single point of failure; Envoy
+describes edge reverse-proxy handling and a service-to-service mesh. Reverse the choice
+when routing logic becomes domain logic or the gateway cannot observe backend health. The
+choice rule is Tycho guidance.
 
 **Failure and recovery.** Stale routes, ambiguous matches, wrong-version selection, no-match
 behavior and bypass around the gateway are common. Recovery requires route versioning,
@@ -107,8 +111,12 @@ precedence tests and observability.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gateway-routing.2026-10-21: all eleven served headings read. Vendor
-pattern page, not a benchmark.
+read record read.microsoft-gateway-routing.2026-10-21: all eleven served headings read.
+Kubernetes "Ingress" (`read.k8s-ingress.2026-11-01`), Kubernetes "Gateway API"
+(`read.k8s-gateway-api.2026-11-01`) and Envoy "HTTP routing"
+(`read.envoy-http-routing.2026-11-01`) are bound for the invariant and alternative; exact
+quotes and revisions are in the owner section. Vendor and project documentation, not
+benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
