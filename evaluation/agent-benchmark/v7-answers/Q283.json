@@ -1,0 +1,549 @@
+{
+  "task_id": "Q283",
+  "answer": "# Q283 — Why a validation gatekeeper does not prove that a caller may act on a specific invoice\n\n**Scope and evidence basis.** The answer is derived only from the Tycho corpus (book snapshot `4445fa068e7a0392…`, atlas registry snapshot `0d37c65c…`, ranker `tycho-section-fts5-bm25-v5`). The corpus is synthetic design reasoning with public-source anchors: it contains no production deployment, penetration test or security assessment of the described billing system, and the scenario in the question is treated as a hypothetical. Claims below are marked `observed` when a quoted section states them and `inference` when they are my composition from several observed sections.\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence (section keys) |\n|---|---|---|\n| F1 — Decompose the claim: schema shape vs identity vs permission vs ownership | `input validation schema contract`, `object-level authorization ownership check`, `authentication authorization` | `tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#1-the-contract-has-multiple-layers`; `tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions`; `tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy` |\n| F2 — Path completeness: second ingress, legacy debug route, single-zone gatekeeper | `bypass path legacy endpoint`, `gateway bypass`, `availability zone failure` | `tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway`; `tycho.page.07904f22ca8249069cedc8c2e1140630#failure-and-recovery`; `tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation`; `tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview` |\n| F3 — Freshness, revocation and role caches | `authorization decision cache staleness revocation`, `policy cache invalidation`, `role ownership` | `tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities`; `tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization`; `tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization` |\n| F4 — What the gatekeeper must own to be a boundary | `gatekeeper validation gate`, `trust boundary gate enforcement` | `tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview`; `tycho.page.37a28a568f7e987941749e198c03439a#original-fictional-boundary-contract`; `tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading`; `tycho.page.31cda61d174248eaa326559d256ce352#bounded-pattern-ownership-notes` |\n| F5 — What the billing service must own | `object-level authorization`, `resource authority`, `confused deputy forwarded header` | `tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree`; `tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident`; `tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation` |\n| F6 — Backend-side validation vs an API gateway with a narrow policy | `api gateway contraindications`, `gateway offloading`, `single point of failure` | `tycho.page.a24f9c4b9fb94addaae978843412ffac#overview`; `tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview`; `tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway` |\n\nTwo consecutive passes over the facets (search plus reads of every cited section) added no new decision-relevant evidence, so the ledger below is the stopping point.\n\n## 2. Why the arrangement does not establish that a caller may act on a specific invoice\n\nThe question asks for one proposition: *principal P may now perform action A on invoice I for tenant T under current policy*. The described arrangement supports a different, weaker set of propositions. Each gap is independent, which is why adding any one control would not repair the others.\n\n### 2.1 Schema validation answers a different question\n\nPayload-schema checks prove shape: required fields exist, types match, unknown fields are handled. The book separates contract layers explicitly — operation/effect, identity and authorization, schema, transport, failure envelope, compatibility — and notes that a machine-readable interface does not prove authorization correctness (`tycho.page.e7e65b60…#1`). A request that parses is evidence about syntax, not about the caller's relationship to invoice I. The gatekeeper can reject malformed bodies and still admit a perfectly well-formed request from someone who does not own the invoice.\n\n### 2.2 Terminating the login flow establishes a subject, not an authority\n\nAuthentication establishes a claimed subject at some assurance level; authorization decides whether that subject may execute a specific action on a specific resource under current context and obligations. A signed token authenticating a subject is not an authorization decision for every business object, and it is not a promise that the subject's rights have not changed since issuance (`tycho.page.58c3c4e5…#1`). The same section states the concrete form: a valid login does not authorize reading someone else's registration. The gatekeeper that terminates login owns the first step only.\n\n### 2.3 A role is too coarse to name an invoice\n\nA single role string is frequently too coarse for resource ownership, delegated time windows and tenant boundaries (`tycho.page.58c3c4e5…#3`). \"Billing user\" or even \"finance approver\" describes a class of actions, not which invoices, in which tenant, for which period, under which delegation. The gatekeeper's output is therefore a class-level attribute, while the question needs an object-level decision over one invoice.\n\n### 2.4 The 30-minute role cache makes the answer stale by construction\n\nA cached authorization decision has to be bounded, keyed and invalidated. If a service caches an allow decision, it must define maximum stale permission, invalidation delivery and policy-service outage behavior (`tycho.page.43bf5d29…#key-rotation-revocation-and-unavailable-authorities`); a cached permit must not outlive a required revocation deadline, and decisions must be bound to subject, action, resource and tenant (`tycho.page.f077c7f1…#4`). A fixed 30-minute refresh is a refresh cadence, not a revocation deadline: for up to half an hour a revoked role remains usable, and the arrangement as described measures neither the stale window nor the revocation latency that the book requires an implementation to measure.\n\n### 2.5 The billing service does not decide anything\n\nBecause billing trusts a forwarded user-role header, the only authorization-relevant input at the effect boundary is caller-influenced text. The corpus names this as a failure mode several times: header spoofing and confused-deputy paths are common gateway failures (`tycho.page.99c509e1…#gateway-offloading`); a proxy that strips one identity header but leaves a second alternate header consumed by one backend still delivers a confused identity, so all accepted identity inputs must be enumerated and ambiguity rejected (`tycho.page.37a28a56…#normal-rotation-and-compromise-differ`); and trusting a caller-supplied identity header is listed as a boundary failure to reject (`tycho.page.37a28a56…#original-fictional-boundary-contract`). A role string parsed from a header is not evidence that the role was verified for this request, this audience or this invoice.\n\n### 2.6 The boundary is not on every path\n\nA gatekeeper counts only for the traffic it actually sees. Removing backend checks creates a privileged bypass path unless network and identity contracts actually exclude it (`tycho.page.99c509e1…#api-gateway`), and the book's boundary contract requires that internal policy cannot be bypassed by calling a backend directly (`tycho.page.37a28a56…#original-fictional-boundary-contract`). In the described system there are three ways past the gatekeeper:\n\n- **Two finance batch jobs through a second ingress.** Batch and asynchronous callers are separate principals — a service allowed to read a queue may not change records (`tycho.page.58c3c4e5…#1-model-assets-principals-and-actions`) — and a background job must bind authorized work intent at enqueue time and then make a new validity/replay/expiry decision when it executes, because a delayed job is not automatically authorized forever (`tycho.page.58c3c4e5…#2-trust-boundaries-policy-decisions-and-enforcement`). If these jobs reach billing without the gatekeeper, they inherit billing's trust in the header, not the gatekeeper's authentication.\n- **A legacy debug route.** Legacy bypass paths are a named zero-trust failure class, to be denied by default and tested as indirect paths (`tycho.page.99e04ece…#zero-trust-architecture`); the gatekeeper card says redundancy does not repair a stale policy or an undeclared direct path (`tycho.page.e709abf2…#overview`). A debug route that calls billing directly is exactly the direct call that skips the declared policy point (`tycho.page.07904f22…#failure-and-recovery`).\n- **Any path that can reach billing's network address.** Ingress/gateway authentication filters unauthenticated traffic and applies coarse policy; the book's control table says plainly that its intended protection does not prove every internal path or async consumer enforces business permissions (`tycho.page.43bf5d29…#5-boundaries-of-network-and-service-isolation`).\n\nObject-level authorization has to cover every alternative access path — exports, search, batch jobs and admin APIs (`tycho.page.43bf5d29…#3-object-level-authorization-and-multitenancy`) — and verification has to validate all access paths, not one positive API test (`tycho.page.58c3c4e5…#7-verification-evidence-hierarchy-and-negative-tests`).\n\n### 2.7 One zone makes the gatekeeper a shared failure domain, not a stronger boundary\n\nA single-zone gatekeeper is a single point of failure. The book's availability walkthrough shows three replicas spread across two zones still failing one user journey because identity/credentials were reachable only through a zone-A dependency chain; a zone-spread label did not eliminate the shared failure domain (`tycho.page.6b3725950…#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation`). Once the gatekeeper is the declared policy point, its zone loss forces one of two bad outcomes: all billing traffic is blocked (an availability failure dressed as security), or traffic fails open and the only check silently disappears. The gateway page treats a gateway outage that blocks every backend as a failure consequence that must be tested explicitly (`tycho.page.99c509e1…#api-gateway`). Neither outcome establishes authority over an invoice.\n\n### 2.8 What the arrangement actually establishes\n\nTaken together it establishes: a request arrived with a well-formed body; some session was established through the login flow; a role claim was refreshed within the last 30 minutes; and the billing service echoed a header it did not verify. That is consistent with \"P may act on invoice I\" but does not distinguish it from \"P may act on a different tenant's invoice\", \"a batch job is acting with a user's role\", or \"a debug caller set the header\". The corpus's architecture decision is blunt: a microservice split, gateway or service mesh is not an authorization strategy (`tycho.page.96c78f45…#7-verification-and-decision-gates`), and a gateway that validates a token but forwards an untrusted tenant header is not evidence for the gatekeeper or offloading cards (`tycho.chapter.9825cb82…#chapter-result-and-counterexample`).\n\n## 3. What the gatekeeper and the billing service must each own\n\n### 3.1 The gatekeeper (only then is it a trust boundary)\n\nThe zero-trust card states the outer condition: a trusted local boundary is accepted only when it is genuinely sufficient, the pattern is rejected when policy enforcement cannot reach the resource, and policy gaps, legacy bypasses and identity-provider outages are common enough that admission must deny by default, test indirect paths and keep a bounded audited break-glass path.\n\n1. **Authentication with an explicit assurance model** — verify credential or token issuer, audience, lifetime and applicable binding, and establish the subject; do not infer authority from the fact of login.\n2. **A narrow, versioned, edge-enforceable policy** — admission, quotas, route/method scope, request-shape checks, deny by default. It is a trusted intermediary only for the functions it actually enforces (`tycho.page.99c509e1…#api-gateway`).\n3. **The whole ingress path, or an enforced exclusion** — every caller (human, both batch jobs, debug tooling) is admitted only through it, with mTLS or equivalent peer authentication on the gatekeeper-to-billing hop, and direct backend calls rejected by network and identity contracts, not by convention.\n4. **One identity-input contract** — strip externally supplied identity headers, forward an integrity-protected principal/context (signed assertion with subject, audience, tenant, expiry), never a bare role. The boundary contract names this as \"forwarded identity comes only from an authenticated trusted intermediary; and internal policy cannot be bypassed by calling a backend directly\" (`tycho.page.37a28a56…#original-fictional-boundary-contract`).\n5. **Bounded freshness** — a decision cache keyed by subject, action, resource scope, tenant and policy revision, with a TTL no longer than the revocation deadline, delivered invalidation, and defined policy-service outage behavior (`tycho.page.f077c7f1…#4`; `tycho.page.43bf5d29…#key-rotation-revocation-and-unavailable-authorities`).\n6. **Availability and failure semantics** — multi-zone placement with a tested fail-closed path and a bounded, audited break-glass exception; the gatekeeper pattern lists high availability as a good-fit condition and an outage that blocks all access as a contraindication (`tycho.page.e709abf2…#overview`).\n7. **Evidence** — policy revision, identity assurance, reason code, enforcement point and denied-versus-unavailable outcome recorded, because a policy decision must be reproducible (`tycho.page.58c3c4e5…#2-trust-boundaries-policy-decisions-and-enforcement`).\n\nWhat the gatekeeper must **not** own: object-level authorization for invoices, or the status of being the only authorization check. Offloading changes the trust boundary only in the sense that downstream must receive an authenticated identity from a trusted intermediary and still enforce resource authorization (`tycho.page.99c509e1…#gateway-offloading`).\n\n### 3.2 The billing service\n\n1. **Object-level authorization at the resource authority** — resolve the invoice, then check subject, action, resource ownership, tenant and current policy on that exact object, including nested, batch, search and export paths. Object-level authorization needs server-side enforcement at the resource authority, not only at an API gateway (`tycho.page.461b24a5…#6-domain-ownership-and-authorization-must-agree`); a proper authorization gate must establish that the caller is permitted to see or change that resource under the current ownership policy, not trust a caller's claim that it belongs to their tenant (`tycho.page.43bf5d29…#3-object-level-authorization-and-multitenancy`).\n2. **Assertion validation instead of header trust** — verify the forwarded assertion's signature, issuer, audience and expiry; reject ambiguity; enumerate every accepted identity input. A gateway cannot certify object ownership or replace backend authorization (`tycho.page.99c509e1…#api-gateway`), and a gateway-level authentication check plus an internal network address cannot replace resource-level authorization (`tycho.page.96c78f45…#6-synthetic-architecture-and-incident`).\n3. **A default-deny decision with an explicit unavailable branch** — when authority cannot be established, deny; a failure or unavailable policy evaluator needs an explicit fail-closed or separately approved safe-degradation rule, because defaulting to allow in the name of availability violates the protected outcome (`tycho.page.96c78f45…#6-synthetic-architecture-and-incident`).\n4. **Data-plane scoping in depth** — repository queries, row/object permissions and least-privilege database roles as defense in depth, tested against actual query patterns; the book stresses these bound data operations at the authority but do not replace caller identity and current policy (`tycho.page.43bf5d29…#5-boundaries-of-network-and-service-isolation`).\n5. **Reauthorization for batch work and revocation** — bind intent at enqueue, recheck at execution, and recheck at the resource after revocation, since token signature alone does not restore permission and user, session, key and object revocation are separate scopes (`tycho.page.43bf5d29…#key-rotation-revocation-and-unavailable-authorities`).\n6. **Its own workload and caller model** — the two finance jobs should present their own workload identity with bounded scope, not a user's role; a service allowed to read a queue may not be permitted to change records (`tycho.page.58c3c4e5…#1-model-assets-principals-and-actions`).\n\n### 3.3 The trust-boundary test\n\nThe corpus states the core condition directly in the multitenancy page's bounded gatekeeper notes: a gatekeeper is a trust boundary only when it exposes a limited operation and credential surface, otherwise it is another proxy. The protected service must reject calls that bypass the gatekeeper or repeat the security-relevant checks, so the boundary cannot be sidestepped by an alternate route; and authorization is to be enforced inside the service at each effect boundary, with a gatekeeper used only when it centralizes a policy that every route must apply and the bypass surface is closed.\n\nRestated as a checklist (the numbering is my synthesis; the supporting evidence for that claim is marked inference): the gatekeeper becomes a trust boundary only when all five hold:\n\n1. **Totality** — every path to billing crosses it, or is excluded by an enforced network and identity contract, and the exclusion is tested.\n2. **Non-substitution** — billing still decides object-level authority; the gatekeeper is not the only check.\n3. **Integrity** — the forwarded context is authenticated and audience-bound; no externally supplied identity header is reachable.\n4. **Freshness** — the cached decision cannot outlive the revocation deadline, and invalidation delivery plus policy-outage behavior are defined.\n5. **Survivability** — a zone loss produces neither total blackout nor silent fail-open; redundancy is deployed and the failure path is tested.\nIf any one fails, the component is a screening proxy, not a boundary — which is exactly the state described in the question.\n\n## 4. When backend-side validation or a narrow API gateway is the better choice\n\n### 4.1 Prefer backend-side validation and authorization when\n\n- **The decision needs domain state.** Invoice ownership, amount, status, tenant and delegation live in billing's data; the gatekeeper cannot evaluate them. Validation logic that needs backend domain state is a hard contraindication for a gatekeeper (`tycho.page.e709abf2…#overview`), and a domain-state function at the edge is a contraindication for gateway offloading (`tycho.page.99c509e1…#gateway-offloading`).\n- **There are multiple ingress paths that cannot all be forced through one point.** With a second ingress and a debug route, the invariant has to live where the effect occurs; otherwise every new path is a new bypass.\n- **The bypass surface is open.** The corpus's rule is to enforce authorization inside the service at each effect boundary and to use a gatekeeper only when it centralizes a policy that every route must apply and the bypass surface is closed; a second ingress plus a debug route is exactly an open bypass surface.\n- **The gatekeeper would be the only authorization check, forward unchecked identity headers, or block all access when it fails** — the four named rejection conditions (`tycho.page.e709abf2…#overview`).\n- **The policy must hold regardless of caller type** — batch, debug, internal service, human — and the edge cannot attest the workload identity.\n\nIn these cases the correct shape is: keep a thin edge for transport and coarse admission, and make billing the authoritative decision point, with the gatekeeper explicitly demoted from \"security boundary\" to \"screening hop\".\n\n### 4.2 Prefer an API gateway with a narrow policy when\n\n- **The function is shared, cross-cutting and edge-enforceable** — TLS, authentication, token audience checks, request-shape validation, quotas and route-level allow/deny, with backend authority remaining explicit (`tycho.page.a24f9c4b…#overview`).\n- **Multiple clients or backends share edge concerns**, the gateway can be operated and observed as a critical component, and routing, TLS, authentication or rate policy must be consistent.\n- **The policy is coarse and stateless enough that the gateway can safely express it**, and the gateway is highly available with a versioned policy, an owner, a tested bypass path and a defined outage mode (`tycho.page.99c509e1…#api-gateway`).\n\nIt is the wrong choice when the gateway would mask the absence of domain authorization in the backend, become an unowned single point of failure, or when every request needs a unique policy the gateway cannot safely express (`tycho.page.a24f9c4b…#overview`). Concentration is useful only when the trust boundary is explicit and the backend still enforces the authority it owns (`tycho.page.99c509e1…#overview`).\n\nRelated alternatives the corpus records: a BFF, a service-mesh sidecar, a reverse proxy with a narrow edge contract, or direct backend exposure with an explicit identity contract (`tycho.page.99c509e1…#api-gateway`).\n\n## 5. What I would change in the described arrangement\n\n1. **Billing first, not last.** Implement invoice-level authorization in billing (subject, action, tenant, ownership, current policy, deny by default) and stop treating the role header as authority; accept only a verified assertion, and only as an input to billing's own decision.\n2. **Close the paths.** Route both finance batch jobs and the debug route through the same enforcement, or exclude them by an enforced network and identity contract that is tested; otherwise the debug route remains an undeclared direct path and the second ingress remains a second policy surface.\n3. **Make the injected identity unambiguous.** Strip external identity headers at the edge, sign the forwarded context with an audience and expiry, and enumerate every accepted identity input so a second header cannot reintroduce a forged identity.\n4. **Bound the cache by revocation, not by a timer.** Key decisions per subject/tenant/policy revision, keep the TTL at or below the revocation deadline, invalidate on grant and revoke, and define fail-closed behavior when the policy source is unavailable.\n5. **Make the gatekeeper survivable.** Deploy it across zones with a tested failure mode and a bounded break-glass path; otherwise the organization will eventually choose availability over the check.\n6. **Test the denials.** Negative tests for guessed invoice IDs, cross-tenant access, the second ingress, the debug route, stale cache after revocation, forged forwarded context and policy-service outage; record denied versus unavailable outcomes, not only handshake success.\n\n## 6. Evidence map\n\n| Claim | Section keys (all verifiable in citations) | Role in the argument |\n|---|---|---|\n| C1 | `tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#1-the-contract-has-multiple-layers` | schema is a separate contract layer from identity/authorization |\n| C2 | `tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions` | authentication establishes a subject; a token is not an object grant |\n| C3 | `tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy`; `tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement` | valid token does not authorize arbitrary IDs; ownership policy at the gate |\n| C4 | `tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading`; `tycho.page.37a28a568f7e987941749e198c03439a#original-fictional-boundary-contract` | header spoofing / confused deputy / proxy as sole authorization point |\n| C5 | `tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ` | alternate identity headers defeat a header-stripping proxy |\n| C6 | `tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization` | a single role string is too coarse for ownership/tenancy |\n| C7 | `tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization` | cached permit must not outlive the revocation deadline; decision keying |\n| C8 | `tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities` | cache staleness policy; revocation scopes; recheck at the resource |\n| C9 | `tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway`; `tycho.page.37a28a568f7e987941749e198c03439a#original-fictional-boundary-contract` | bypass path; gateway cannot certify ownership; authenticate then authorize |\n| C10 | `tycho.page.07904f22ca8249069cedc8c2e1140630#failure-and-recovery`; `tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy`; `tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture` | direct calls skip the policy point; legacy bypasses; alternative access paths |\n| C11 | `tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement`; `tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions`; `tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident` | async path reauthorizes at execution; workload identity is distinct |\n| C12 | `tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation`; `tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview` | single-zone identity is a shared failure domain |\n| C13 | `tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview`; `tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway`; `tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading` | gatekeeper good-fit: authn plus edge policy, backend keeps object authorization |\n| C14 | `tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree`; `tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident`; `tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation` | object authorization enforced server-side at the resource authority |\n| C15 | `tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview`; `tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading` | gatekeeper rejection conditions and its competing alternatives |\n| C16 | `tycho.page.a24f9c4b9fb94addaae978843412ffac#overview`; `tycho.page.99c509e133d9494fbb3080b6212b7ba7#overview` | gateway good-fit, rejection conditions, explicit backend authority |\n| C17 | `tycho.page.96c78f4525504257baf5861e2397dab8#7-verification-and-decision-gates`; `tycho.chapter.9825cb82eb2142754c638aea1ba8d845#chapter-result-and-counterexample` | gateway/tenant-header forwarding is not a boundary; topology is not strategy |\n| C18 | `tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers`; `tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture`; `tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident` | signed-session values do not establish object access; deny by default |\n| C19 | `tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests`; `tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance` | validate all access paths; exercise stale cache and forged context |\n| C20 | `tycho.page.e9524931fbcc4b4e833f6b0465a27698#1-start-with-protected-outcomes-and-an-explicit-threat-model`; `tycho.landing.3870e6370654489c949e098b9acd1840#purpose-and-mission` | trust boundary = untrusted input becoming privileged action; verify at effect |\n| C21 | `tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview` | gatekeeper may be an SPoF; redundancy does not repair stale policy or bypass |\n| C22 | `tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview`; `tycho.page.37a28a568f7e987941749e198c03439a#original-fictional-boundary-contract`; `tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization` | five-condition checklist is synthesis from separate corpus conditions |\n| C23 | `tycho.page.31cda61d174248eaa326559d256ce352#bounded-pattern-ownership-notes` | gatekeeper is a boundary only with a limited surface and a closed bypass |\n| C24 | `tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview` | zero-trust rejection conditions; legacy bypasses need deny-by-default |\n\n## 7. Unknowns, contradictions and limits\n\n- **No production evidence.** Every section cited is synthetic design reasoning anchored in public sources; the corpus explicitly states that no production access, penetration test or external authorization was performed. The conclusion is an application of invariants, not a measured finding about any real billing system.\n- **No numeric freshness value.** The corpus gives a rule — a cached permit must not outlive the revocation deadline — but no default interval. The 30 minutes in the question is therefore evaluated against the rule, not against a benchmark; whether 30 minutes is acceptable depends on the organization's defined revocation deadline, which the question does not state.\n- **Trust-boundary checklist is synthesis.** The five-condition test in section 3.3 is my composition from the gatekeeper card, the boundary contract, the cache guidance and the availability walkthrough; the corpus does not publish a formal \"trust boundary\" checklist. Evidence for that claim is marked `inference`.\n- **Atlas owner-link inconsistency (observed).** The Gatekeeper card points its technical owner at `authorization-boundaries-and-multitenancy.md#gatekeeper`, but that page exposes no `gatekeeper` heading; the anchor does not resolve. The card's decision content remains readable; the owner-section link is a defect in the atlas, not evidence about gatekeepers.\n- **Availability argument is architectural, not measured.** No section quantifies the downtime or blast radius of a single-zone gatekeeper; the claim that zone loss forces blackout-or-fail-open follows from the stated failure semantics, not from an experiment.\n- **Coverage limit.** Several relevant chapters (for example multi-region recovery and policy-administration tooling) were not searched to exhaustion; the facet loop stopped when two consecutive passes added no new evidence, which does not prove absence of further relevant sections.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A schema-valid payload says nothing about authorization: schema and identity/authorization are separate contract layers, and a machine-readable interface does not prove authorization correctness.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#1-the-contract-has-multiple-layers",
+          "quote": "A code generator or OpenAPI document makes an interface machine-readable; neither proves business idempotency, authorization correctness, or successful mixed-version operation.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#1-the-contract-has-multiple-layers",
+          "quote": "Schema | Required/optional fields, defaults, absent vs null, unknown fields, enum behavior | An older consumer misreads a new response",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Terminating the login flow establishes a subject, not an authority: a signed token is not an authorization decision for every business object and does not promise that current account rights still hold.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions",
+          "quote": "Authentication establishes a claimed subject according to a selected identity proof and assurance level. Authorization decides whether the subject can execute a specific action on a specific resource under current context and obligations. A signed token authenticating a subject is not an authorization decision for every business object, nor a promise that current account rights have not changed since issuance.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions",
+          "quote": "A valid login does not authorize reading someone else's registration",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Authorization for an invoice is an object-level decision: a valid token does not authorize the IDs in a path or body, and the gate must check the subject-resource-action-tenant relationship rather than trusting the caller's claim.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+          "quote": "The fact that an API endpoint requires a valid token does not authorize every ID presented in its path or body.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+          "quote": "A proper authorization gate must establish that U is permitted to see/change R under the current tenant/ownership policy, not trust a caller's claim that R belongs to their tenant.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+          "quote": "Service/API handler authorizes subject–resource–action pairs with authenticated context and explicit tenant ownership; check both parent collection and each addressed child object.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A backend that trusts a forwarded user-role header has no authorization evidence: header spoofing, confused-deputy paths and a proxy that becomes the only authorization point are named failure modes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+          "quote": "Header spoofing, confused-deputy paths and a proxy that becomes the only authorization point are common failures.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#original-fictional-boundary-contract",
+          "quote": "Trust a caller-supplied identity header",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Stripping one identity header is insufficient: a second alternate header consumed by one backend can reintroduce the confused identity, so all accepted identity inputs must be enumerated and ambiguity rejected.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ",
+          "quote": "a proxy strips an external header named principal but leaves a second alternate header consumed by one backend. Both hops use TLS; the confused identity still reaches the application. Enumerate all accepted identity inputs and reject ambiguity rather than adding another encryption layer.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A single role string is too coarse for invoice-level authority because it cannot express resource ownership, delegated time windows or tenant boundaries.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization",
+          "quote": "A single role string such as user or admin is frequently too coarse for resource ownership, delegated time windows and tenant boundaries.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A fixed 30-minute role refresh is a cadence, not a revocation bound: a cached permit must not outlive the revocation deadline, and decisions must be keyed to subject, action, resource, tenant and policy state.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+          "quote": "a cached permit must not outlive a required revocation deadline",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+          "quote": "Bind each decision to the authenticated subject, action, resource, tenant, and relevant context",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+          "quote": "Cache only for the same subject, action, resource scope, tenant, and relevant policy/input state, within the approved freshness limit",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Any cache of allow decisions needs a defined maximum stale permission, an invalidation path and an outage policy; revocation scopes for user, session, key and object are separate, and token validity does not restore object permission.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "If a service caches an allow decision, define maximum stale permission, invalidation delivery and policy-service outage behavior.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Revocation of a user, a session, a key and one object are separate scopes; their blast radii differ.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "quote": "Object permission revoked | Recheck at the resource; token signature alone does not restore permission",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A gatekeeper counts as a policy point only for traffic it sees: removing backend checks creates a privileged bypass path unless network and identity contracts exclude it, and a gateway cannot certify object ownership.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+          "quote": "Removing every backend check creates a privileged bypass path unless network and identity contracts actually exclude it.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+          "quote": "A gateway cannot certify object ownership or replace backend authorization.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#original-fictional-boundary-contract",
+          "quote": "forwarded identity comes only from an authenticated trusted intermediary; and internal policy cannot be bypassed by calling a backend directly.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The second ingress and the legacy debug route are concrete bypass paths: a direct call that skips the declared policy point is the book's gateway-bypass failure, and alternative access paths including batch jobs must be covered.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#failure-and-recovery",
+          "quote": "Gateway bypass | Keep backend authorization and test the bypass path | Direct calls that skip the declared policy point",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+          "quote": "alternative access path, including exports, search, batch jobs and admin APIs",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture",
+          "quote": "Policy gaps, legacy bypass paths and identity-provider outages are common. Deny by default, test indirect and confused-deputy paths, keep a bounded break-glass path with audit, and fail closed when authority cannot be established.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Batch and asynchronous callers need their own authorization: intent is bound at enqueue and a new validity decision is made at execution, because a delayed job is not authorized forever.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+          "quote": "Asynchronous path binds actor/context and authorized work intent at enqueue time, then performs a new validity/replay/expiry decision when execution occurs. A delayed job is not automatically authorized forever.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions",
+          "quote": "A service allowed to read a queue may not have permission to change registration records",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+          "quote": "A background export job uses service-level read authority beyond the user's original delegation.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A single-zone gatekeeper is a shared failure domain: when the zone is lost, the organization either blocks all billing or silently drops the check, and zone placement does not itself create a trust boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+          "quote": "All replicas use one identity endpoint and one database writer reachable only through a zone-A dependency chain.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+          "quote": "a zone-spread label did not eliminate the shared failure domain",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview",
+          "quote": "when its outage blocks all access",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "For the gatekeeper to be a boundary it must authenticate with issuer/audience checks, carry a narrow versioned edge policy, forward an integrity-protected principal context, and remain highly available while the backend retains object-level authorization.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview",
+          "quote": "A small validation surface can reject malformed or unauthorized requests; the gatekeeper can centralize authentication initiation and authorization checks; the backend retains object-level authorization; the gatekeeper is highly available.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+          "quote": "The gateway authenticates the caller or verifies a signed token from a trusted issuer, forwards an integrity-protected principal/context, and binds a central decision to the request's audience, action, resource and tenant.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+          "quote": "Offloading changes the trust boundary: downstream must receive an authenticated identity from a trusted intermediary and still enforce resource authorization.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Billing must own object-level authorization at the resource authority, independent of any gateway approval, and that decision must be enforceable on every path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree",
+          "quote": "Object-level authorization needs server-side enforcement at the resource authority, not only at an API gateway.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+          "quote": "In a distributed service, a gateway-level authentication check and an internal network address cannot replace resource-level authorization.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+          "quote": "Ingress/gateway authentication",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Backend-side validation or a narrow gateway policy is preferable when the decision needs domain state, the gatekeeper would be the only authorization check, it forwards unchecked identity headers, or its outage blocks all access.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview",
+          "quote": "Reject the claim when the gatekeeper would become the only authorization check; when it forwards unchecked identity or tenant headers; when its outage blocks all access; when validation logic needs backend domain state.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview",
+          "quote": "Backend-side validation and authorization, or an API gateway with a narrow policy.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+          "quote": "Only shared, cross-cutting and edge-enforceable functions belong here; a domain-state function or an edge that blocks every backend is a contraindication.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "A narrow gateway policy fits shared, cross-cutting, edge-enforceable functions with explicit backend authority, and is rejected when it masks missing domain authorization or must express per-request unique policy.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a24f9c4b9fb94addaae978843412ffac#overview",
+          "quote": "Multiple clients or backends share edge concerns; routing, TLS, authentication or rate policy must be consistent; the gateway can be operated and observed as a critical component; backend authority remains explicit.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a24f9c4b9fb94addaae978843412ffac#overview",
+          "quote": "Reject the claim when one simple client can call one backend directly; when the gateway would become an unowned single point of failure; when the gateway masks the absence of domain authorization in the backend; when every request needs a unique policy that the gateway cannot safely express.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#overview",
+          "quote": "That concentration is useful only when the trust boundary is explicit and the backend still enforces the authority it owns.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The arrangement as a whole is not an authorization strategy, and a gateway that validates a token but forwards an untrusted tenant header is not evidence of a gatekeeper boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.96c78f4525504257baf5861e2397dab8#7-verification-and-decision-gates",
+          "quote": "prefer the minimal topology that can actually enforce these business and trust boundaries with demonstrated denial paths. A microservice split, gateway or service mesh is not an authorization strategy.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.9825cb82eb2142754c638aea1ba8d845#chapter-result-and-counterexample",
+          "quote": "an API gateway that validates a token but forwards an untrusted tenant header to every backend is not evidence for the gatekeeper or offloading cards.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Even a tenant or identity value derived from a signed session does not establish access to an arbitrary object, so deny-by-default and fail-closed behavior are required when authority cannot be established.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+          "quote": "A tenant ID in a URL is untrusted input; deriving it from a signed session may help but still does not establish access to an arbitrary object.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture",
+          "quote": "Network location is not trust; a valid token is not object permission.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+          "quote": "A failure or unavailable policy evaluator must have an explicit fail-closed or separately approved safe-degradation rule; defaulting to allow in the name of availability violates the protected outcome.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Verification must exercise every access path and failure mode, including stale authorization caches, forged forwarded context and revoked object access, not only a successful handshake.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests",
+          "quote": "Validate at all access paths: API, background tasks, export, cache, search, data admin and internal service calls. One positive API test is insufficient.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests",
+          "quote": "Exercise failure: policy engine unavailable, stale authorization cache, credential renewal failure, transport outage, denied secret rotation and long-running transaction against revoked rights.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance",
+          "quote": "Proposed tests include an untrusted direct-backend request, stale certificate chain, wrong audience/issuer, forged forwarded context, revoked object access and policy distribution delay.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Trust boundaries are defined by where untrusted input becomes a privileged action, and controls must be verified at the authority where the protected effect occurs, not only at ingress.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e9524931fbcc4b4e833f6b0465a27698#1-start-with-protected-outcomes-and-an-explicit-threat-model",
+          "quote": "Trust boundary | Where does untrusted input become a privileged action or identity? | Entry/egress and middleware/service enforcement paths",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.landing.3870e6370654489c949e098b9acd1840#purpose-and-mission",
+          "quote": "Security controls must be verified at the authority where the protected effect occurs, not only at ingress.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Redundancy alone does not repair stale policy or an undeclared direct path, and a gatekeeper can become a single point of failure that requires redundant, autoscaled deployment.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview",
+          "quote": "The gatekeeper can be a single point of failure (SPoF); to minimize the impact, consider deploying redundant instances and using autoscaling to ensure capacity and availability.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview",
+          "quote": "Redundancy does not repair a stale policy or an undeclared direct path; stale-policy and bypass checks remain separate acceptance conditions.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "My five-condition trust-boundary test (totality, non-substitution, integrity, freshness, survivability) is a synthesis: the corpus supplies each condition separately but publishes no single formal checklist.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview",
+          "quote": "when the gatekeeper would become the only authorization check; when it forwards unchecked identity or tenant headers",
+          "supports": "C22",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#original-fictional-boundary-contract",
+          "quote": "forwarded identity comes only from an authenticated trusted intermediary; and internal policy cannot be bypassed by calling a backend directly.",
+          "supports": "C22",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+          "quote": "a cached permit must not outlive a required revocation deadline",
+          "supports": "C22",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "The corpus defines the trust-boundary condition directly: a gatekeeper is a boundary only with a limited operation and credential surface, the protected service must reject bypassing calls or repeat the security-relevant checks, and authorization belongs inside the service at each effect boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#bounded-pattern-ownership-notes",
+          "quote": "A gatekeeper is a trust boundary only when it exposes a limited operation and credential surface; otherwise it is another proxy.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#bounded-pattern-ownership-notes",
+          "quote": "The protected service must reject calls that bypass the gatekeeper, or repeat the security-relevant checks, so the boundary cannot be sidestepped by an alternate route.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#bounded-pattern-ownership-notes",
+          "quote": "Enforce authorization inside the service at each effect boundary; use a gatekeeper when it centralizes a policy that every route must apply and the bypass surface is closed.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "Zero-trust guidance rejects reliance on a trusted local boundary when policy enforcement cannot reach the resource, and treats legacy bypasses as common enough to require deny-by-default, tested indirect paths and a bounded audited break-glass exception.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview",
+          "quote": "Reject when a trusted local boundary is genuinely sufficient, when policy enforcement cannot reach the resource, or when the migration would break critical flows.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview",
+          "quote": "Policy gaps, legacy bypasses and identity-provider outages are common; deny by default, test indirect paths and keep a bounded audited break-glass path.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.9825cb82eb2142754c638aea1ba8d845#chapter-result-and-counterexample",
+    "tycho.landing.3870e6370654489c949e098b9acd1840#purpose-and-mission",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#failure-and-recovery",
+    "tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview",
+    "tycho.page.31cda61d174248eaa326559d256ce352#bounded-pattern-ownership-notes",
+    "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+    "tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance",
+    "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ",
+    "tycho.page.37a28a568f7e987941749e198c03439a#original-fictional-boundary-contract",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+    "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#7-verification-evidence-hierarchy-and-negative-tests",
+    "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation",
+    "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+    "tycho.page.96c78f4525504257baf5861e2397dab8#7-verification-and-decision-gates",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#overview",
+    "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture",
+    "tycho.page.a24f9c4b9fb94addaae978843412ffac#overview",
+    "tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview",
+    "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#1-the-contract-has-multiple-layers",
+    "tycho.page.e9524931fbcc4b4e833f6b0465a27698#1-start-with-protected-outcomes-and-an-explicit-threat-model",
+    "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
