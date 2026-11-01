@@ -207,3 +207,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | V12 semantic 89 minors delta | pass | `2026-11-01-v12-semantic-89-delta-deepseek.md` | `03de8e2f6bbbcf11cbd6d0ae374c998272022ff3de7b9fb08836a2c57629ab65` |
 | 2026-11-01 | DeepSeek Reviewer | Read Replicas + Multi-Leader rebind | pass | `2026-11-01-read-replicas-deepseek.md` | `cf756be9cd47324698660cfea70d7808ace3b7ea4d894e220fee9306d851d4cb` |
 | 2026-11-01 | DeepSeek Reviewer | Read Replicas + Multi-Leader rebind | pass | `2026-11-01-read-replicas-multi-leader-deepseek.md` | `b721d8199b77fee2cdfd038bbdd33843ad6716afda8d88b6b231d6ca2869e333` |
+| 2026-11-01 | DeepSeek Reviewer | Zero Trust + Least Privilege | pass | `2026-11-01-zero-trust-least-privilege-deepseek.md` | `ac6de657a9941316982a1525d6fca490efc70f44949491dd8c872b7365a25775` |
