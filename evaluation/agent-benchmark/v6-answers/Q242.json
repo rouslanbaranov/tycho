@@ -1,0 +1,154 @@
+{
+  "task_id": "Q242",
+  "answer": "## 1. Direct answer\n\nThe 0.1-second step sits in the model contract because in a fixed-step fluid model the\nstep is not a solver convenience; it is the declared resolution at which the model decides\nhow much can happen in one update. Every flow is computed per step, so the step scales\narrivals, admissions and completions, gives the per-step invariants their meaning, and\nchanges the metrics a decision would read. Left to the engine, the same model file could\nproduce different numbers under a different engine setting or engine version with no change\nto the model, its hash, its validity claim or its review record; a reader could not see the\nresolution choice without reading the engine; and nobody could challenge the assumption\nbefore it shaped a decision. Declared in the contract, the step is visible, reviewable and\nhash-bound, it invalidates stored runs when it changes, and it fails replay exactly as a\nchanged input should.\n\nA coarse step can manufacture behaviour because the discretisation is itself a mechanism. A\nwhole interval of arrivals is offered at once, so admission and rejection happen in\nstep-sized bursts; once one step's service capacity exceeds the admission buffer, the queue\nis emptied every step and the reported rejection rate and throughput become properties of\nthe step rather than of the modelled system; and an unguarded update can serve more work\nthan exists, producing negative stock or overshoot. The volume names the reporting failure\nexactly: \"A coarse step produces overshoot or negative stock, and the analyst reports the\nartifact as behavior\" (What the model fails section of the stock-and-flow page).\n\n## 2. Facet matrix (6 facets)\n\n| Facet | Query formulations | Evidence (section_key) |\n|---|---|---|\n| F1 Contract placement and required fields | \"model contract integration step\"; \"dynamics time step\"; \"abstraction resolution\" | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure; tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model |\n| F2 Step as a modelling choice, not an implementation detail | \"private implementation detail\"; \"units conservation\"; \"resolution\" | tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step; tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution |\n| F3 Why not the engine: visibility, hashes, replay | \"model hash\"; \"input hash\"; \"engine version\"; \"replay\" | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram; tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields; tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract |\n| F4 Coarse-step artefact mechanisms | \"step-size artifact\"; \"overshoot negative stock\"; \"admit a whole interval\" | tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step; tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails |\n| F5 Why the artefact survives verification | \"test matrix\"; \"conservation\"; \"what is not verified\"; \"replay proves\" | tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix; tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation; tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified; tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves |\n| F6 Adequacy and boundaries | \"validity limits\"; \"synthetic workload\"; \"finer resolution wrong\" | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits; tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope; tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution |\n\n## 3. Mechanism and justification: why the step is a declared model input\n\n**3.1 The step scales every flow, so it is part of the equations.** The stock-and-flow\nupdate is written per interval: the change in backlog over a small interval is the\ndifference between the two flows, and every flow term is a rate multiplied by the step.\nAt 30 requests per second, a 0.1-second step offers 3 requests and a 10-second step offers\n300; service is correspondingly capped at service rate times the step. Changing the step\ntherefore changes admitted, served and rejected amounts before any engine question arises.\nThe contract lists dynamics as \"model family, equations and integration step\", so the step\nis filed with the equations, not with the executor.\n\n**3.2 The step is the numeric form of the declared abstraction.** The contract requires an\nabstraction block covering \"time unit, state unit, boundary and resolution\", and the\norder-intake model states its resolution as fixed-step fluid integration in which\nindividual requests are not represented. The step is what that sentence means in numbers:\nit says what the model can and cannot resolve. A resolution that exists only as an engine\ndefault is an abstraction claim the reader cannot inspect, which defeats the stated purpose\nof the contract: a reader should be able to see state, units, assumptions and verification\nevidence \"without reading the engine\". The contract exists because a diagram, or an engine\nsetting, can leave every decision hidden; a contract \"forces those choices into named\nfields that a validator can check and a reader can challenge\".\n\n**3.3 The invariants are per-step, so the step defines what they test.** Conservation and\nnon-negativity are asserted at every step and after every update, and the model refuses a\nnegative backlog. A per-step invariant is only meaningful relative to a step: at 10 seconds\nthe check tests a different update than at 0.1 seconds. Declaring the step makes the scope\nof the invariant explicit instead of inheriting it from whatever the engine happened to do.\n\n**3.4 Declaring it is the only way to bind the number to the provenance chain.** A run\nrecord binds the run to the model and scenario hashes, an input hash over model, scenario\nand engine version, and a result hash; the model and scenario files are the canonical\ninputs, and a change to either invalidates the run until it is regenerated. If the step\nlived in the engine, a step change would be either invisible (a runtime setting that no\nhash covers) or an engine version bump in which an execution detail stands in for a\nmodelling assumption, with no edit to the model hash and no update to the model's validity\nclaim. Declared in the model, a step change moves the model hash, invalidates stored runs\nand fails replay, which is the correct behaviour for a changed assumption.\n\n**3.5 It keeps the engine substitutable and the assumption owned by the model.** The\nengine's scope rule is that a model family needing a new mechanism \"gets a new explicit\ncontract, not an unrecorded engine extension\". A step chosen inside the engine is such an\nextension: it lets the executor refine or coarsen the model without a contract change, so\ntwo engines, or two versions of one engine, could disagree about the same model file and\nneither would be wrong by its own lights.\n\n**3.6 Declaration buys reviewability, not adequacy.** The validator checks the schema, the\nidentifier, scenario references and parameter evidence; it \"cannot check that a source\nactually supports a parameter\", and it certainly cannot judge whether 0.1 seconds is fine\nenough. Declaring the step converts an invisible default into a claim that a person can\nchallenge, with a resolution sentence and a validity limit next to it.\n\n## 4. How a coarse step produces behaviour that is only an artefact\n\n**4.1 Batched admission.** Offerings arrive as one lump per step. Admission is the minimum\nof the offered lump and the room left in the buffer, so at a coarse step the buffer is\ntested once per interval rather than continuously. Rejection therefore happens in\nstep-sized bursts at step boundaries, and peak backlog and time-to-drain are quantised.\n\n**4.2 Over-service, negative stock and overshoot.** The volume states the mechanism: \"A\nlarge step can admit a whole interval of arrivals at once, serve more than the available\nbacklog, and produce a negative stock.\" The shipped order-intake model caps service at\navailable work, so it cannot literally go negative; but the cap converts the arithmetic\nerror into a different artefact: service per step becomes the step's capacity rather than\nthe system's work, and any feedback path acquires a synthetic one-step delay, which is\nenough to create overshoot or oscillation that no part of the modelled system contains. The\nvolume notes separately that a real delay can produce oscillation \"even when every\nindividual decision is locally reasonable\"; a step adds a delay the model never declared.\n\n**4.3 A hand trace of the declared rule, using the documented saturation workload.** The\ndocumented saturation case is 30 requests per second offered against 24 per second of\nservice capacity with an admission bound of 80 requests over a 3,600-second horizon after\na 300-second warmup. Applying the declared update rule (offered equals arrival rate times\nstep; admitted equals the minimum of offered and remaining room; served equals the minimum\nof available work and service rate times step) gives:\n\n| Step (s) | Rejection rate | Throughput (req/s) | Mean backlog (req) |\n|---|---|---|---|\n| 0.01 | 0.200 | 24.0 | 79.8 |\n| 0.1 | 0.200 | 24.0 | 77.6 |\n| 1 | 0.200 | 24.0 | 56.0 |\n| 5 | 0.467 | 16.0 | 0.0 |\n| 10 | 0.733 | 8.0 | 0.0 |\n\nThis is my arithmetic on the documented equations and the documented workload, not a\nrecorded V12 run; the 0.1 row reproduces the published 77.6-request backlog, which is\nitself the capacity minus service rate times the step (80 minus 2.4). The table shows two\ndistinct artefact regimes. Below the buffer's drain time (capacity divided by service\ncapacity, about 3.3 seconds) rejection and throughput are stable but the reported mean\nbacklog is literally a function of the step: 77.6 requests at 0.1 seconds against 56 at\n1 second, a 28 per cent difference in a metric a decision record could read. Above that\nthreshold one step can serve the entire buffer, so the queue empties every step and the\nreported rejection rate and throughput become properties of the step, not of the system:\n0.2 rejection and 24 requests per second at 0.1 seconds against 0.73 and 8 at 10 seconds.\nAn analyst who reported either row as intake behaviour would be reporting the\ndiscretisation.\n\n**4.4 Conservation does not detect it.** In the trace above, offered requests equal\ncompleted plus rejected plus backlog to floating-point tolerance in every row. The\nper-step identity, the non-negativity assertion and a deterministic replay all pass at a\ncoarse step, because they test the implemented arithmetic, not the adequacy of the\nresolution. The verification matrix covers conservation, boundary cases, event ordering,\ntimeouts, retries and replay; it contains no step-refinement case, and the page listing\nwhat is not verified names calibration and operational validity but not resolution. This\nis the precise sense in which the behaviour is \"only an artefact\": it is reproducible,\ninvariant-preserving, hash-stable and wrong. Reproducibility is not validity. The same\nclass of error is documented for another modelling choice: a model with an unbounded queue\n\"never rejects; it accumulates backlog and reports a latency that is an artifact of the\nhorizon\". A step-selected rejection burst is the same error with a clock instead of a\nhorizon.\n\n## 5. Boundaries and trade-offs\n\n- **Declared is not adequate.** The contract fixes the value and exposes it; nothing in\n  V12 tests that 0.1 seconds is fine enough, and no recorded run compares step sizes. The\n  defensible statement is \"declared, fixed and challengeable\", not \"validated\".\n- **Finer is not automatically truer.** A discrete-event model \"is not automatically more\n  accurate; it can be wrong at a finer resolution\", and a very small step costs runtime and\n  can create false precision. The fluid model still ignores individual latency, retries\n  and timeout ordering, as its validity limits say.\n- **The engine must honour the declaration.** The shipped engine reads the step from the\n  model parameters and falls back to a default when the value is absent (repository\n  inspection of the engine module, not a book claim). That fallback is exactly the private\n  default the contract removes for this model; the required schema field is what keeps the\n  declaration from being decorative.\n- **Null is a legitimate value.** The event-driven checkout model declares a null step\n  because time advances from event to event. The field must be present so that \"not\n  applicable\" is distinguishable from \"unstated\"; the order-intake model is the case where\n  a numeric step is mandatory in practice.\n- **The step matters only through decision-relevant metrics.** The scope checklist asks\n  whether added detail \"can change a metric that can reverse the decision\". If peak\n  backlog, rejection or throughput can reverse a comparison, the step is decision-relevant\n  and deserves a refinement or sensitivity check; if not, a coarse step is a documented\n  cost saving rather than a defect.\n- **The step is not a calibration claim.** Every V12 input is assumed, the model is\n  uncalibrated, and its validity is limited to a synthetic workload. A well-chosen step\n  makes the fluid approximation numerically stable; it says nothing about a real intake\n  system.\n- **A small step is not a substitute for structure.** It cannot recover individual request\n  latency, retry amplification or timeout ordering that the model family does not contain,\n  and it does not repair an omitted boundary.\n\n## 6. Evidence map\n\n| Claim | section_key |\n|---|---|\n| The contract's required structure files the integration step under dynamics and resolution under abstraction | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure |\n| The order-intake model declares a fixed-step fluid model with a 0.1-second step | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model |\n| A contract exists to expose choices a validator can check and a reader can challenge | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram |\n| A contract should let a reader see state, units, assumptions and verification without reading the engine | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview |\n| The validator checks structure and parameter evidence, not whether a value is adequate | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated |\n| A large step admits an interval of arrivals at once, over-serves and produces negative stock; the step is part of the model contract, not a private implementation detail | tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step |\n| A step-size artefact is reported as behaviour | tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails |\n| Stock change over an interval is the difference of flows, so rates multiply the step | tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters |\n| Conservation is asserted at every step and a persistent gap is a modelling defect | tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step |\n| Resolution is a modelling choice, and a finer model can still be wrong | tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution |\n| Resolution choices are screened by whether they can reverse a decision metric | tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail |\n| A new mechanism requires a new explicit contract, not an unrecorded engine extension | tycho.page.687d2196433c3b076d00c73144dad431#scope |\n| The run record binds model hash, scenario hash, input hash and engine version | tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields |\n| The model and scenario files are the canonical inputs; a change invalidates the run | tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract |\n| Replay proves reproducibility, not model validity | tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves |\n| The verification matrix covers conservation, boundaries, ordering, retries and replay but not step refinement | tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix |\n| The conservation check runs after every replication | tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation |\n| Calibration and operational validity are the listed gaps, not resolution | tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified |\n| Validity is limited to the synthetic workload in a scenario | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits |\n| A latency that is an artefact of the horizon is the same class of error | tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure |\n\n## 7. Unknowns and confidence\n\n- **No step-refinement evidence exists in the accessed pages.** No recorded run compares\n  0.1 seconds with a finer or coarser step, and the verification matrix has no such case.\n  The adequacy of 0.1 seconds is therefore asserted, declared and reviewable, not\n  demonstrated. A refinement run showing decision-relevant metrics stable across steps\n  would strengthen it; one showing drift would weaken the published saturation numbers.\n- **No selection rule is given.** The sources describe the trade-off (large step, arithmetic\n  failure; small step, runtime cost) but do not state a rule such as a maximum step relative\n  to the smallest time constant or the buffer drain time. The threshold in section 4.3 is my\n  derivation from the equations.\n- **The shipped guard changes the failure mode.** Because service is capped at available\n  work, literal negative stock is prevented in the implemented model; the residual risks are\n  batched admission, resolution floors and any feedback added later. The volume's negative\n  stock example describes the unguarded form.\n- **Confidence.** High on why the step is declared (direct statements, schema requirements,\n  hash and replay rules, and the equations). High on the artefact mechanism for batched\n  admission and step-dependent reported metrics (derived arithmetically and consistent with\n  the published 77.6 figure). Medium on the wider taxonomy (overshoot, oscillation,\n  quantised latency): those follow from the fixed-step update and the feedback discussion,\n  but the volume does not run that experiment.\n- **Not established here.** That any real intake system behaves like any step size; that the\n  model is calibrated; that the decision records are accepted; that independent review or CI\n  occurred.\n\n## 8. Search and saturation notes\n\nDescribe was run first; the question needs the modeling-and-simulation layer (models,\ncontracts, verification, limits) and limited book-layer support for the stock/flow and\nresolution vocabulary. Fourteen search calls used several formulations per facet (exact\nterms, synonyms, layer aliases, conceptual queries) with volume modeling-and-simulation and\nbook; search has no offset and responses were truncated by the character budget, so I\nrefined queries and read each cited page in full with page/read, paginating where needed.\nThe last two search rounds returned only sections already read plus unrelated pages, so I\ntook the facet space as saturated. Repository artifacts (model JSON, schema, engine module)\nwere inspected for context only; they are not cited as section evidence. No file was\nedited, no run was recorded and no commit was made.",
+  "citations": [
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+    "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+    "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+    "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+    "tycho.page.687d2196433c3b076d00c73144dad431#scope",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+    "tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example"
+  ],
+  "evidence": [
+    {
+      "claim": "The model contract requires dynamics to name the model family, the equations and the integration step.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+      "note": "Observed: bullet list under Required structure reads 'dynamics: model family, equations and integration step.'"
+    },
+    {
+      "claim": "The abstraction block must declare time unit, state unit, boundary and resolution.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+      "note": "Observed: 'abstraction: time unit, state unit, boundary and resolution.'"
+    },
+    {
+      "claim": "The V12 order-intake model uses a fixed-step fluid model with a 0.1-second step.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model",
+      "note": "Observed: 'The dynamics are a fixed-step fluid model with a 0.1-second step'; the excerpt shows time_step 0.1."
+    },
+    {
+      "claim": "The contract exists so a reader can see state, units, assumptions and verification evidence without reading the engine.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview",
+      "note": "Observed: the page question states this purpose verbatim."
+    },
+    {
+      "claim": "A contract forces hidden choices into named fields that a validator can check and a reader can challenge.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+      "note": "Observed: 'A contract forces those choices into named fields that a validator can check and a reader can challenge.'"
+    },
+    {
+      "claim": "The validator checks schema conformance and parameter evidence but cannot judge whether a value is adequate.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+      "note": "Observed: 'The validator cannot check that a source actually supports a parameter.' Inference: the same boundary applies to step adequacy."
+    },
+    {
+      "claim": "A large step can admit a whole interval of arrivals at once, serve more than the available backlog and produce a negative stock.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+      "note": "Observed: quoted sentence."
+    },
+    {
+      "claim": "The step is part of the model contract, not a private implementation detail.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+      "note": "Observed: final sentence of the section."
+    },
+    {
+      "claim": "A coarse step produces overshoot or negative stock, and the analyst reports the artefact as behaviour.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+      "note": "Observed: failure-mode bullet 'Step-size artifact'. This is the volume's own definition of an artefact reported as behaviour."
+    },
+    {
+      "claim": "Stock changes over an interval are the difference of flows, so every flow term is a rate multiplied by the step.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+      "note": "Observed: update equation backlog(t + dt) = backlog(t) + arrivals(dt) - completions(dt); unit rules require per-time rates."
+    },
+    {
+      "claim": "The model checks the accounting identity at every step and refuses a negative backlog.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+      "note": "Observed: 'The V12 order-intake model checks the identity at every step and refuses a negative backlog.'"
+    },
+    {
+      "claim": "Resolution is a modelling choice and a finer model is not automatically more accurate.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+      "note": "Observed: 'A discrete-event model is not automatically more accurate; it can be wrong at a finer resolution.'"
+    },
+    {
+      "claim": "Resolution choices should be screened by whether they can change a metric that reverses the decision.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail",
+      "note": "Observed: first checklist question; inference: applies to step size as a resolution parameter."
+    },
+    {
+      "claim": "A model family that needs a new mechanism gets a new explicit contract, not an unrecorded engine extension.",
+      "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#scope",
+      "note": "Observed: closing sentence of the engine Scope section."
+    },
+    {
+      "claim": "A run record binds model hash, scenario hash, input hash (model, scenario, engine version) and a result hash.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+      "note": "Observed: required-fields list."
+    },
+    {
+      "claim": "The model and scenario files are the canonical inputs, and a change to either invalidates the run.",
+      "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+      "note": "Observed: 'The model and scenario files are the canonical inputs... A change to either input invalidates the run.'"
+    },
+    {
+      "claim": "Replay proves that stored inputs and engine version reproduce stored metrics, not that the model is valid.",
+      "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+      "note": "Observed: replay-proves list includes 'does not prove that the model is valid'."
+    },
+    {
+      "claim": "The verification matrix has no step-refinement case; it covers conservation, boundaries, ordering, timeouts, retries and replay.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+      "note": "Observed: 14-row table contains no step-size check."
+    },
+    {
+      "claim": "The conservation check runs after every replication and a failure aborts the run.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+      "note": "Observed: 'The check runs after every replication.'"
+    },
+    {
+      "claim": "The declared unverified gaps are calibration, production traces, discipline and dependency coverage, not resolution.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+      "note": "Observed: bullet list; inference: step refinement is absent from the declared gaps."
+    },
+    {
+      "claim": "Validity is limited to the synthetic workload recorded in a scenario.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+      "note": "Observed: 'valid only for the synthetic workload in a scenario' and related limits."
+    },
+    {
+      "claim": "A latent artefact of a modelling choice is documented for the unbounded queue: latency as an artefact of the horizon.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+      "note": "Observed: 'A model with an unbounded queue never rejects; it accumulates backlog and reports a latency that is an artifact of the horizon.' Inference: same class as a step-selected rejection burst."
+    },
+    {
+      "claim": "Worked saturation figures (0.2 rejection, 77.6 average backlog) are consistent with a step-dependent steady state.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example",
+      "note": "Observed: published figures. Inference: 77.6 equals capacity 80 minus service rate 24 times step 0.1, a hand trace of the declared rule (not a recorded run)."
+    },
+    {
+      "claim": "Small steps cost runtime while keeping the fluid approximation stable; the model uses 0.1 seconds and asserts non-negativity after every update.",
+      "section_key": "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+      "note": "Observed: quoted sentence; supports the trade-off statement, not an adequacy proof."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
