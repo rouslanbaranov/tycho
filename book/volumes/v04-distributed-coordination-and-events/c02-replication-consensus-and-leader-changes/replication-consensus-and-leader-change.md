@@ -163,15 +163,29 @@ SHA-256 7a5bc0622dd4ff65ca5e13a3b449c0e7d2855f3ad875305d1f7df1569d2604f9.
 
 ### Read Replicas
 
-Read replicas serve read-only traffic from followers, reducing load on the leader while accepting
-that a replica can lag behind the latest committed write. A read must state the freshness it
-requires, and read-your-writes or monotonic guarantees must be enforced by routing, a position wait
-or an authority read.
+Read replicas serve read-only traffic from followers, reducing load on the leader. PostgreSQL
+documents that "A standby server can also be used for read-only queries, in which case it is
+called a hot standby server." Load reduction and tolerance for bounded lag are Tycho analysis,
+not claims in that sentence.
 
-A lag spike serves stale data even though replication is healthy; monitor applied position and lag,
-and route freshness-critical reads away from a lagging replica. Read from the leader or use a quorum
-read when freshness dominates; add replicas when read volume and tolerance for bounded staleness
-justify the extra copies.
+**Invariant (Tycho synthesis).** A read must state the freshness it requires, and read-your-writes
+or monotonic guarantees must be enforced by routing, a position wait or an authority read.
+PostgreSQL's synchronous-replication section supports the wait mechanism: "In the case that
+synchronous_commit is set to remote_apply, the standby sends reply messages when the commit record
+is replayed, making the transaction visible." The freshness contract and routing rule are Tycho
+guidance; the source binds synchronous replay and visibility only.
+
+**Failure and recovery (Tycho guidance).** A lag spike serves stale data even though replication
+is healthy. PostgreSQL defines lag as "the amount of WAL records generated in the primary, but not yet
+applied in the standby" and gives the comparison of write and receive locations. Monitor lag and route freshness-critical reads away from a lagging replica; the
+routing response is Tycho guidance, while the lag definition is source-bound.
+
+**Alternative (Tycho guidance).** Read from the leader or use a quorum read when freshness
+dominates; add replicas when read volume and tolerance for bounded staleness justify the extra
+copies. PostgreSQL documents that "Read-only database servers can be combined relatively easily"
+and that asynchronous solutions can return "slightly stale results". The source supports
+read-only server combination and staleness; the leader/quorum preference and cost-benefit rule
+are Tycho guidance.
 
 **Limits.** Replica count and lag budgets must be owned; a failover to a stale replica can
 violate read-your-writes even when the replication stream is healthy.

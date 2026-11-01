@@ -20,7 +20,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.22fa23c6c7a6b0c29a52137bc67a00c9"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "multi-leader replication"
@@ -34,11 +34,11 @@ evidence_scope:
   notes: "Dedicated card page; source bindings remain in the owner unit."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-29"
+  reviewed_at: "2026-11-01"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-29"
-updated_at: "2026-10-29"
+updated_at: "2026-11-01"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -54,7 +54,8 @@ replication-pattern; priority advanced.
 policy is explicit; versioning and reconciliation are owned.
 
 **Hard contraindications.** Reject when one leader meets availability, when conflicts
-cannot be resolved, or when monotonic writes are mandatory.
+cannot be resolved, when monotonic writes are mandatory, or when the resolver cannot preserve
+causal order; the conflict contract must name the resolver and its audit trail.
 
 **Competing alternative.** Leader-follower (primary/standby) replication or quorum/consensus
 writes. PostgreSQL's comparison notes that synchronous multi-master lets any server accept
@@ -76,6 +77,7 @@ Alternative comparison: [PostgreSQL 18, section 26.1 Comparison of Different
 Solutions](https://www.postgresql.org/docs/current/different-replication-solutions.html),
 served 2026-10-29, SHA-256
 7a5bc0622dd4ff65ca5e13a3b449c0e7d2855f3ad875305d1f7df1569d2604f9.
+Read record read.postgresql-replication-solutions.2026-10-29, section 26.1.
 The comparison is documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
