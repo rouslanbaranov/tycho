@@ -62,7 +62,9 @@ bounded degraded result is more useful than no result.
 **Failure and recovery.** Fallback can mask failures and drift; a stale or partial result
 must be labelled, and an explicit failure is safer than a plausible but wrong value.
 
-**Technical owner.** [Fallback](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#fallback) — fallback selection is bounded to the overload path, not a universal degradation strategy.
+**Technical owner.**
+[Fallback](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#fallback)
+— fallback selection is bounded to the overload path, not a universal degradation strategy.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: all forty-four served

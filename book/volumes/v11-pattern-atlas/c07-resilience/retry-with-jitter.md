@@ -64,7 +64,10 @@ delays complicate tracing more than they reduce synchronization.
 or make a non-idempotent retry safe; bound the sampled delay and total attempts, and verify the
 retry budget.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-jitter) — jitter and budget are bounded; PRNG quality is implementation-specific.
+**Technical owner.**
+[Deadlines, cancellation and retry
+budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-jitter)
+— jitter and budget are bounded; PRNG quality is implementation-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-retry.2026-10-21: all six served headings read. The source is a public

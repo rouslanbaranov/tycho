@@ -61,7 +61,10 @@ acceptable and capacity can expand.
 **Failure and recovery.** Shedding the wrong work, unfair tenant impact and synchronized
 retry storms are common; declare quotas and retry hints, and protect essential outcomes.
 
-**Technical owner.** [Load Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#load-shedding) — load shedding is bounded to the overload path, not a universal admission policy.
+**Technical owner.**
+[Load
+Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#load-shedding)
+— load shedding is bounded to the overload path, not a universal admission policy.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: all eleven served headings read.

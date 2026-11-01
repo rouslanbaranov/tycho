@@ -63,7 +63,10 @@ synchronous waiting blocks capacity that could serve other work.
 effect stopped. Look up the durable outcome and clean up resources; do not blind-retry
 non-idempotent work.
 
-**Technical owner.** [Timeout](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#timeout) — timeout values and cancellation are bounded; transport timeout behavior is implementation-specific.
+**Technical owner.**
+[Timeout](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#timeout)
+— timeout values and cancellation are bounded; transport timeout behavior is
+implementation-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-timelimiter.2026-10-21: all four served headings read.

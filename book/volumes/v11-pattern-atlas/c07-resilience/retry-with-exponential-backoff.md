@@ -61,7 +61,10 @@ retry latency and load exceed transient-failure benefit.
 **Failure and recovery.** Retry storms, duplicate effects and synchronized clients are
 common; jitter the delay, cap attempts and total delay, and stop on server pushback.
 
-**Technical owner.** [Retry with Exponential Backoff](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-exponential-backoff) — retry budget and backoff are bounded; permanent-failure classification is caller-specific.
+**Technical owner.**
+[Retry with Exponential
+Backoff](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-exponential-backoff)
+— retry budget and backoff are bounded; permanent-failure classification is caller-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-retry.2026-10-21: all six served headings read. The source is a public

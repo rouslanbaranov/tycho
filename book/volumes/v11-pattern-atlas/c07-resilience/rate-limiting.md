@@ -60,7 +60,10 @@ per-client fairness is not required.
 **Failure and recovery.** Bypass through many keys, burst doubling and unfair quotas are
 common; bind limits to the scarce resource and declare retry guidance.
 
-**Technical owner.** [Rate Limiting](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#rate-limiting) — rate limiting is bounded to request admission, not a universal overload policy.
+**Technical owner.**
+[Rate
+Limiting](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#rate-limiting)
+— rate limiting is bounded to request admission, not a universal overload policy.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: all eleven served headings read.
