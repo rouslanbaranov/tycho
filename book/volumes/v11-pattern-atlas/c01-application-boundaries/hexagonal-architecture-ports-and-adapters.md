@@ -26,8 +26,7 @@ route_hints:
     - "tycho.chapter.e996607f707421ca388796732547cafd"
   excludes:
     - >-
-      No sufficient coverage, promotion or owner acceptance is claimed for this
-      moved page.
+      No owner acceptance is claimed for this card.
   keywords:
     - "pattern atlas"
     - "hexagonal architecture"
@@ -49,7 +48,7 @@ content_review:
 authored_at: "2026-11-01"
 updated_at: "2026-11-01"
 source_inspection_date: "2026-10-21"
-content_verified_at: null
+content_verified_at: "2026-11-01"
 ---
 # Hexagonal Architecture / Ports and Adapters
 
@@ -72,9 +71,9 @@ operational need.
 with direct adapters. Reverse the choice when adapter variability disappears or the
 abstraction cost exceeds the isolation benefit.
 
-**Failure and recovery.** Ports can leak technology types, adapter errors can be mapped
-inconsistently, and mapping layers can hide latency. Recovery requires contract tests,
-explicit error translation and a review of the adapter boundary in the technical owner.
+**Failure and recovery.** Mapping layers add latency overhead and can translate adapter errors
+inconsistently; **Tycho guidance:** contract tests and explicit error translation keep the
+boundary honest. Ports can leak technology types; that is a review finding, not a source claim.
 
 **Technical owner.** [Hexagonal Architecture / Ports and Adapters](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#hexagonal-architecture-and-ports-and-adapters).
 
