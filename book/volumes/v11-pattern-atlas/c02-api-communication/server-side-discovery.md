@@ -20,7 +20,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.9825cb82eb2142754c638aea1ba8d845"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "server-side discovery"
@@ -33,14 +33,14 @@ evidence_scope:
   status: "source-linked"
   notes: "Moved card page; source binding remains in the owner unit."
 content_review:
-  status: "self-checked"
-  reviewed_at: "2026-10-29"
-  reviewer: "Automated authoring agent"
-  proof_uri: null
+  status: "independent-reviewed"
+  reviewed_at: "2026-11-01"
+  reviewer: "DeepSeek Reviewer"
+  proof_uri: "https://github.com/rouslanbaranov/tycho/blob/5649803b/authoring/ai-reviews/2026-10-30-server-side-deepseek.md"
 authored_at: "2026-10-29"
 updated_at: "2026-10-29"
 source_inspection_date: "2026-10-29"
-content_verified_at: null
+content_verified_at: "2026-11-01"
 ---
 
 # Server-Side Discovery

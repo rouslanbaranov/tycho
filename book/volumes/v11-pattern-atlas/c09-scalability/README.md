@@ -85,35 +85,8 @@ none claims sufficient technical or decision coverage.
 
 ### Load Balancing
 
-**Identity.** Load Balancing; family Scalability and load distribution; kind
-scalability-pattern; priority core.
+See [Load Balancing](load-balancing.md).
 
-**Decision question.** Should requests be distributed across equivalent backends by a
-resolver or proxy?
-
-**Good-fit conditions.** Multiple eligible backends exist; health/selection signals are
-available; the client or proxy can retry safely.
-
-**Hard contraindications.** Reject when one backend can serve the load, when backends are
-not equivalent, or when selection would amplify a hot spot.
-
-**Competing alternative.** Client-side selection or a single backend. Reverse the choice
-when balancing complexity and stale membership exceed availability benefit.
-
-**Failure and recovery.** Stale membership and fast-error attraction are common; verify
-selection in the owner section.
-
-**Technical owner.** [Load Balancing](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#load-balancing) — load balancing is bounded, not a product-specific algorithm survey.
-
-**Sources.**
-[src.sre-frontend-enrichment](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-sre-frontend.2026-10-21: all four headings read; DNS,
-VIP and anycast are not literal headings. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Horizontal Scaling; Autoscaling; Service Discovery; Read Replicas.
 
 ### Horizontal Scaling
 

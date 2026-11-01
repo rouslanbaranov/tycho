@@ -2480,7 +2480,7 @@
         "invariant": {
           "state": "supported",
           "quote": "Stale membership can keep a removed backend in the selection set even when the proxy is healthy.",
-          "reason": "Envoy documents that a host absent from discovery data can still receive traffic while its health check passes, so a healthy proxy can hold a stale selection set; active health checking is the documented mitigation.",
+          "reason": "Envoy documents eventual consistency: a host absent from discovery can still pass health checks and receive traffic. Active health checking removes unhealthy hosts, not a healthy host already removed from discovery; convergence, drain or explicit removal is required.",
           "binding": {
             "source_id": "src.envoy",
             "ledger_record": "read.envoy-service-discovery-consistency.2026-10-29",
@@ -2535,10 +2535,10 @@
           }
         ]
       },
-      "review_state": "self-checked",
+      "review_state": "independent-reviewed",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Invariant bound 2026-10-29 to Envoy's 'On eventually consistent service discovery' section: a host absent from discovery data can still receive traffic while its health check passes. Coverage partial-bounded; no promotion. Propagation bounds, drain procedures and health-check intervals remain Tycho guidance."
+      "notes": "Promoted and frozen: technical and decision coverage sufficient. Section-scoped page rebind; invariant reason corrected to distinguish unhealthy hosts from removed healthy hosts."
     },
     {
       "pattern_id": "tycho.pattern.asynchronous-request-reply",
@@ -13400,8 +13400,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Load balancing chooses among eligible backends. The invariant is that no request reaches an ineligible backend and no retry loop is unbounded; it needs fresh health/selection signals and retry-safe callers.",
-          "reason": "Explains selection signals as the basis for distributing requests and that they are not equivalent.",
+          "quote": "Load balancing chooses among eligible backends.",
+          "reason": "Defines selection among eligible backends; signal non-equivalence is discussed later in the section.",
           "binding": {
             "source_id": "src.sre-frontend-enrichment",
             "ledger_record": "read.batch5-sre-frontend.2026-10-21",
@@ -13411,32 +13411,39 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Cap request cost at the interface where one request can dominate a backend, and test the selector under the real cost distribution.",
-          "reason": "SRE page has no per-request cost cap or selector test under real distribution."
-        },
-        "failure_recovery": {
           "state": "supported",
-          "quote": "A least-loaded or active-request selector assumes that a backend with spare capacity will do useful work. A seriously unhealthy backend can instead return an error in milliseconds, so its active-request count falls and the selector sends it more traffic. The backend becomes a sinkhole.",
-          "reason": "Describes fast-error attraction and the sinkhole failure it produces.",
+          "quote": "a request goes to a backend with capacity and healthy connectivity",
+          "reason": "SRE binds capacity and connectivity as the selection goal; sinkhole is the documented violation.",
           "binding": {
             "source_id": "src.sre-frontend-enrichment",
             "ledger_record": "read.batch5-sre-frontend.2026-10-21",
-            "section": "Load Balancing at the Virtual IP Address",
-            "quote": "What happens if one backend fails and needs to be removed from the backend list? Suddenly N becomes N-1 and then, id(packet) mod N becomes id(packet) mod N-1 . Almost every packet suddenly maps to a different backend! If backends don’t share any state between themselves, this remapping forces a reset of almost all of the existing connections. This scenario is definitely not the best user experience, even if such events are infrequent. Fortunately, there is an alternate solution that doesn’t require keeping the state of every connection in memory, but won’t force all connections to reset when a single machine goes down: consistent hashing .",
+            "section": "Load Balancing Using DNS",
+            "quote": "The DNS load balancer needs to make sure that the datacenter it selects has enough capacity to serve requests from users that are likely to receive its reply. It also needs to know that the selected datacenter and its network connectivity are in good shape.",
             "revision": "18a223169690f9df2ccd534337c28de4ea54c2e45e4a72f14bf3042072d2918f"
+          }
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "quote": "A seriously unhealthy backend can instead return an error in milliseconds",
+          "reason": "Datacenter SRE binds fast-error attraction, low latency and sinkholing.",
+          "binding": {
+            "source_id": "src.sre-balancing-enrichment",
+            "ledger_record": "read.sre-balancing.2026-10-23",
+            "section": "Least-Loaded Round Robin",
+            "quote": "if a task is seriously unhealthy, it might start serving 100% errors. Depending on the nature of those errors, they may have very low latency; it’s frequently significantly faster to just return an “I’m unhealthy!” error than to actually process a request. As a result, clients might start sending a very large amount of traffic to the unhealthy task, erroneously thinking that the task is available, as opposed to fast-failing them! We say that the unhealthy task is now sinkholing traffic.",
+            "revision": "4f35f553a8f72ddd1345e71f2bc9139117d21891113f6d518c7e85c14605748f"
           }
         },
         "alternative": {
           "state": "supported",
-          "quote": "Compare round-robin, random choice, least-active requests and affinity against request cost, stale load signals and state placement.",
-          "reason": "Names competing selection policies but gives no condition that reverses the choice.",
+          "quote": "Compare round-robin, random choice, least-active requests and affinity",
+          "reason": "Datacenter SRE binds simple/least-loaded/weighted policies; affinity and the reversal condition are Tycho guidance.",
           "binding": {
-            "source_id": "src.sre-frontend-enrichment",
-            "ledger_record": "read.batch5-sre-frontend.2026-10-21",
-            "section": "Load Balancing at the Virtual IP Address",
-            "quote": "There are several possible approaches the balancer can take in deciding which backend should receive the request. The first (and perhaps most intuitive) approach is to always prefer the least loaded backend. In theory, this approach should result in the best end-user experience because requests are always routed to the least busy machine. Unfortunately, this logic breaks down quickly in the case of stateful protocols, which must use the same backend for the duration of a request.",
-            "revision": "18a223169690f9df2ccd534337c28de4ea54c2e45e4a72f14bf3042072d2918f"
+            "source_id": "src.sre-balancing-enrichment",
+            "ledger_record": "read.sre-balancing.2026-10-23",
+            "section": "Load Balancing Policies",
+            "quote": "Load balancing policies can be very simple and not take into account any information about the state of the backends (e.g., Round Robin) or can act with more information about the backends (e.g., Least-Loaded Round Robin or Weighted Round Robin).",
+            "revision": "4f35f553a8f72ddd1345e71f2bc9139117d21891113f6d518c7e85c14605748f"
           }
         }
       },
@@ -13452,12 +13459,19 @@
         "source_id": "src.sre-frontend-enrichment",
         "unit_type": "book-chapter",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.sre-balancing-enrichment",
+            "ledger_record": "read.sre-balancing.2026-10-23",
+            "revision": "4f35f553a8f72ddd1345e71f2bc9139117d21891113f6d518c7e85c14605748f"
+          }
+        ]
       },
-      "review_state": "self-checked",
-      "technical_coverage": "partial",
-      "decision_coverage": "partial-bounded",
-      "notes": "The worked design and its subsections own selection signals, fast-error attraction and bounded subsets; alternative choice sits later."
+      "review_state": "independent-reviewed",
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Technical and decision coverage sufficient. Frontend SRE binds DNS capacity; datacenter SRE binds sinkholing and policy alternatives; consistent hashing, affinity and lame-duck draining are Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.horizontal-scaling",
