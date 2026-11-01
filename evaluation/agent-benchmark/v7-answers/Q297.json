@@ -1,0 +1,545 @@
+{
+  "task_id": "Q297",
+  "answer": "# Q297 — A decision-supported checkout record with unverified operability: why it is not a contradiction, and what completeness requires\n\n## Scope and layers\n\nPrimary layer: modeling-and-simulation. The checklist, the decision-record contract and the checkout comparison are V12 pages, and the question is about a V12 decision record. Cross-check layer: book, which returns the same canonical pages. Atlas is not needed: the question is about decision-record classification, not pattern identity, coverage or owner pages.\n\nSnapshot 4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a; coverage complete; 555 documents and 3,132 sections. Every section cited below was read through the CLI; snippets were not treated as sections.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. What the checklist requires, and whether the hard-constraint line is absolute | \"decision-supported operability unverified hard constraint checklist\"; \"conditional outcome recommendation hard constraint model cannot evaluate\"; \"conditional decision record\" | tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence |\n| F2. Constraint kinds and what was actually evaluated | \"checkout record\"; \"C3 operability unverified\"; \"operability constraint\" | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints |\n| F3. Status axes and what decision-supported means | \"decision-supported conditional result\"; \"decision-supported outcome\"; \"unverified constraint status not-tested\" | tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records; tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers |\n| F4. The canonical branch for an unverified non-quantitative constraint | \"reversal trigger conditional recommendation\"; \"non-quantitative constraint unverified\"; \"conditional decision\" | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree |\n| F5. What a complete conditional outcome must state | \"what would reverse the recommendation\"; \"next review trigger owner measurement\"; \"reversal trigger\" | tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation; tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome; tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance |\n| F6. Boundaries: when insufficient evidence is correct, and what would make the record defective | \"recommendation none insufficient evidence status\"; \"decision record not deployment approval\"; \"decision record proposal owner acceptance\" | tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes; tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences; tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation; tycho.volume.fd0c1a798f9968eed4a679b048deea14#evidence-and-limits |\n\n## Short answer\n\nThe classification is not a contradiction because the checklist line and the record's labels answer different questions, and the checklist contains its own exception. The hard-constraint line is one trigger for the default insufficient-evidence outcome. The next paragraph in the same section is the exception: return a conditional decision when the missing evidence is explicitly non-quantitative and the decision record can state the condition. The checkout record is the section's named example. C3 is declared non-quantitative, not a hard quantitative constraint; the hard constraints C1, C2, C4 and C5 were evaluated (C1 and C2 hold, C4 and C5 eliminate C, A and B pass), and C3 was not tested rather than failed.\n\nThe two labels describe different objects. decision-supported is the outcome status: the recommendation follows from the declared assumptions and constraints. unverified or not-tested is the evaluation status of one constraint: C3 operability has not been established. The record separates three statuses (model verification, calibration, outcome), and the book explicitly allows a decision-supported record to coexist with an uncalibrated model as long as the record states the condition. It also explicitly forbids the inference that recommending B means B is safe to deploy. A decision-supported record therefore does not assert that operability is verified, that the assumptions are true, that the result is production-validated or that an owner has accepted it.\n\nFor the conditional outcome to be complete, the record must state the condition and the measurements that would reverse it. For the checkout record the condition is: B is recommended under the declared quantitative constraints, while C3 operability remains unverified and requires an explicit operational review. The measurements that would reverse it are the reversal triggers: a measured arrival rate above 22 requests per second, a measured mean service time above 0.65 seconds, a measured p95 service time whose tail pushes B above 1.5 seconds, a cost weight under which B no longer beats A per successful request, a failure of the operability review, and a measured retry rate materially above the modeled 1.003. The record must also say what would not reverse it (a narrower confidence interval on the synthetic workload) and must carry the limitations and the status decomposition. On the stronger actionable-record anatomy the record should also name the measurement, its range, its owner, the consequence of staying in the current state and the next review trigger. The indexed prose supplies the condition, the review, the triggers, what would not reverse them and the limitations, but it does not name a review owner or the consequence of staying in the current state; those are gaps to record, not coverage to assume.\n\n## 1. The checklist is a default rule with an exception, and the checkout record is the exception's named example\n\nThe checklist section is introduced by a general rule: \"Return insufficient evidence when any of the following holds\". One bullet is \"a hard constraint cannot be evaluated by the model\". Read alone, that bullet appears to decide the checkout case against any recommendation. But the section continues immediately: \"Return a conditional decision when the missing evidence is explicitly non-quantitative and the decision record can state the condition. The checkout record does this for operability: it recommends B under the quantitative constraints and marks C3 unverified.\"\n\nThis is not an accidental juxtaposition. It is the rule and its exception, and the checkout record is the exception's worked example. The reviewer's question comes from reading the bullet without the next paragraph. The section itself, the worked example and the volume synthesis all classify the record the same way: B is recommended for the synthetic workload, the non-quantitative operability constraint is recorded as unverified, and the measurements that would reverse the choice are listed.\n\nTwo readings of \"hard\" are possible, and neither yields a contradiction. On the contract's kind taxonomy, hard, soft and non-quantitative are separate declared kinds. A hard constraint is a condition a candidate must satisfy; a soft constraint can be traded; a non-quantitative constraint is a condition the model cannot measure, such as operability by the existing team or a regulatory approval. The checkout record declares C4 (cost) and C5 (p95 latency) as the hard quantitative constraints and C3 (operability) as the non-quantitative constraint; C1 (conservation) and C2 (no silent drop) are also hard and hold for all three runs. On the broader colloquial reading, in which any must-satisfy condition the model cannot evaluate counts as hard, the same section's exception still governs, because the missing evidence is explicitly non-quantitative and the record states the condition. The conditional route is not an escape from the checklist; it is the checklist's specified outcome for this case.\n\nWhat would make the case insufficient evidence is equally clear. If the missing evidence were quantitative — for example, an assumed input whose range spans the decision boundary — or if the record could not state the condition, the exception would not apply and insufficient evidence, recommendation none, would be correct. The modernization record is that contrast: the dual-write lag and reconciliation capacity are assumed over wide ranges and negatively correlated, so the record returns insufficient evidence, recommendation none, rather than a conditional recommendation. The difference between the two records is the character of the missing evidence and the statability of the condition, not the existence of an unevaluated constraint.\n\n## 2. Two different axes, not two verdicts\n\nThe reviewer is comparing a label about the outcome with a label about one constraint and treating them as contradictory predicates on the same object. The book separates the axes explicitly:\n\n| Label | What it describes | In the checkout record | What it does not mean |\n|---|---|---|---|\n| decision-supported | the outcome: does the recommendation follow from the declared assumptions and constraints? | decision-supported, with a conditional recommendation of B | not \"every constraint is verified\"; not \"B is safe to deploy\"; not owner acceptance |\n| model-verified | the engine and model: is the model implemented as specified? | model-verified | not calibrated; not operationally valid |\n| uncalibrated | the inputs: do the parameters match measured reality? | uncalibrated | not a reason to withhold a conditional decision |\n| not-tested / unverified | one constraint evaluation: has C3 been established? | C3 not tested; operability remains unverified | not \"C3 failed\"; not \"B is eliminated\" |\n\nThe vocabulary page states the three-status separation directly: model-verified, partially-verified or unverified for the engine and model; calibrated, partially-calibrated or uncalibrated for the inputs; decision-supported or insufficient-evidence for the outcome. It then defines the outcome status: \"A decision-supported outcome with an uncalibrated model is a conditional result. It says the decision follows from the declared assumptions and constraints. It does not say the assumptions are true. The record must state the condition and the measurements that would reverse it.\"\n\nThe evidence-vocabulary page makes the same point in its five-layers discussion: a decision-supported record can coexist with an uncalibrated model as long as the record states the condition. That is exactly the checkout configuration: a model-verified engine, uncalibrated synthetic inputs, a decision-supported outcome, and one non-quantitative constraint left to an operational review.\n\nThe status field has four values and no \"conditional\" value. The contract says the status is one of proposed, decision-supported, insufficient-evidence or rejected. Conditionality is carried by the outcome's non-quantitative constraints, by the rationale and by the reversal triggers. A reviewer looking for the word \"conditional\" in a status enum will not find it; the correct place to look is the condition and the trigger list.\n\n## 3. Why this is not a contradiction, and what would make it one\n\n1. The checklist is a rule with an exception in the same section, and the checkout record is the exception's named example. Reading the hard-constraint bullet without the conditional-decision paragraph truncates the rule.\n2. C3 is declared non-quantitative; the hard quantitative constraints C4 and C5, and the hard invariants C1 and C2, were evaluated. The only unevaluated constraint is the kind the model cannot measure by construction.\n3. Even on the colloquial reading in which C3 is \"hard\" because it must be satisfied, the exception applies: the missing evidence is explicitly non-quantitative and the record can state the condition. If either condition failed, insufficient evidence would be correct.\n4. decision-supported and unverified are on different axes. The first says the recommendation follows from the declared assumptions and constraints; the second says C3 has not been established. The book explicitly allows the coexistence and explicitly forbids the inference from a recommendation to deployment safety.\n5. C3 is not tested, not failed. Failure of the operability review is a reversal trigger, not a present violation. The candidate that is eliminated is C, by the hard cost and latency constraints.\n6. Conditionality is expressed in the outcome, non-quantitative-constraint and reversal-trigger fields, not as a fifth status. The status enum has four values.\n\nA contradiction would arise in one of three ways. First, if decision-supported were defined as \"all constraints verified\" or \"safe to deploy\", the record would contradict C3's unverified status. The book defines it otherwise and lists the safe-to-deploy inference as forbidden. Second, if C3 were a hard constraint that the model attempted to evaluate and failed while the record still recommended unconditionally, the checklist would require insufficient evidence. That is not the record: C3 is declared non-quantitative, no hard constraint failed for B, and the recommendation is explicitly conditional. Third, if the record omitted the condition or the reversal triggers, it would be defective — the missing-reversal-trigger failure mode — and the conditional claim would be unsupported. The record states them.\n\n## 4. What the record must state for the conditional outcome to be complete\n\nAt the book's stated minimum, the conditional outcome is complete when the record states the condition and the measurements that would reverse it. For the checkout record that means:\n\n1. The condition. B is recommended under the declared quantitative constraints C1, C2, C4 and C5. C3, operability by the existing team, remains unverified and requires an explicit operational review. The recommendation is conditional on that review.\n2. The non-quantitative character of the missing evidence. The record must make clear that C3 is a condition the model cannot measure, not a quantitative input that was skipped. The record's C3 statement says the candidate must remain operable without a new platform dependency and that simulation cannot establish the condition.\n3. The measurements that would reverse the decision. The record must list the specific triggers: a measured arrival rate above 22 requests per second, or a mean service time above 0.65 seconds; a measured p95 service time whose tail pushes B above 1.5 seconds; a cost weight under which B no longer beats A per successful request; a failure of the operability review; a measured retry rate materially above the modeled 1.003.\n4. What would not reverse it. The record must say that a narrower confidence interval on the synthetic workload would make the estimate more precise but not more representative. This blocks the sensitivity-as-evidence and precision-as-representativeness errors.\n5. The limitations. The record must carry the synthetic and uncalibrated status of the inputs, the normal-approximation confidence intervals, the model-scope limits recorded in the V12 verification page (unfitted service-time distribution, arrival process not tested against a production trace, FIFO-only queueing, no representation of dependency calls, network transport or storage, a sensitivity screen that is not a full Sobol estimator, and confidence-interval coverage not tested over many synthetic samples), and the absence of operational validation.\n6. The status decomposition. The record must keep model-verified, uncalibrated, decision-supported and C3 not-tested distinct, so that decision-supported cannot be read as operational verification, production validation or owner acceptance.\n7. The rationale and the declared prioritization. B beats A on success and cost; A wins on p95 latency inside the 1.5-second ceiling; the choice to prioritize success and cost over that latency difference is a decision, not a simulation fact; no undeclared success threshold is applied.\n8. The resolution path and actionability. The condition is resolved by an explicit operational review. On the book's actionable-record anatomy, the record should also name the measurement, the range that would support or reject the decision, the owner of the measurement, the consequence of staying in the current state and the next review trigger. The checkout-specific trigger is a measured arrival rate, service time or retry rate outside the declared range. The indexed prose gives the measurement, the range and the trigger, and it names the operational review, but it does not name the review owner or the consequence of staying in the current state. If completeness is judged by that stronger anatomy, those are the remaining gaps.\n\nThe first, third, fourth, fifth, sixth and seventh items are not optional decoration. They are what keeps decision-supported from becoming an unqualified recommendation. The contract's required structure carries the outcome (recommendation, rationale and non-quantitative constraints), reversal triggers and limitations as separate fields; the status is one of the four declared values. The conditional outcome is complete when those fields state a checkable condition and a checkable reversal surface, not merely when the word \"conditional\" appears somewhere in the prose.\n\n## 5. Boundaries and counterfactuals\n\n- Quantitative missing evidence is the insufficient-evidence route. The modernization record returns insufficient evidence, recommendation none, because the dual-write lag and reconciliation capacity are assumed over wide ranges that span the decision boundary. The checkout record is different because C3 is explicitly non-quantitative and the condition is statable.\n- If the record could not state the condition, the conditional route would be unavailable and insufficient evidence would be correct. The checklist's exception is conditional on that statability.\n- A failed hard constraint eliminates a candidate. C is eliminated by C4 (3.63 above 3.0) and C5 (1.769 above 1.5). A and B pass. C3's non-test is not an elimination.\n- A failed operability review is a reversal trigger. It would remove the condition under which B is recommended; it is not evidence that C3 was verified or that B is currently unsafe.\n- A record without a condition under which it should be revisited has the missing-reversal-trigger defect. A record that forces a recommendation while hiding missing evidence is the error the book warns against. Either way, the correct outcome is insufficient evidence, not an invented recommendation.\n- decision-supported is not production validation, operational readiness, independent review, owner acceptance or pattern promotion. The volume says it does not replace security, compliance, legal or operational review, and it says independent review and owner acceptance remain separate decisions. A reader who wants to deploy B still needs a measured pilot, a cost review and an operational readiness check.\n- The reviewer's surface tension is real only if \"hard\" is read colloquially and the exception is ignored, or if decision-supported is read as \"all constraints verified\". The book's own reading avoids both: the kind taxonomy and the exception handle the first, and the three-status separation plus the forbidden-inference list handle the second.\n\n## 6. Evidence map\n\n| Claim | What it establishes | Evidence |\n|---|---|---|\n| C1 | The checklist is a default rule with a conditional-decision exception in the same section | tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence |\n| C2 | The checkout record is the named example of the exception | tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences; tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis |\n| C3 | C3 is declared non-quantitative, while C1, C2, C4 and C5 are hard | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints |\n| C4 | The hard constraints were evaluated: C1/C2 hold, C4/C5 eliminate C, A and B pass | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints |\n| C5 | C3 was not tested; operability remains unverified and requires an operational review | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences |\n| C6 | The record separates model, calibration and outcome statuses | tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records |\n| C7 | decision-supported means the decision follows from the declared assumptions and constraints, not that they are true | tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records |\n| C8 | A record can be decision-supported while the model is uncalibrated, if the condition is stated | tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers |\n| C9 | The decision tree sends hard failures to elimination and unverified non-quantitative constraints to a conditional recommendation with reversal triggers | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree |\n| C10 | Recommending B does not mean B is safe to deploy; the record is a bounded conditional result | tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences |\n| C11 | Completeness requires stating the condition and the measurements that would reverse it | tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records; tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence |\n| C12 | The checkout reversal triggers are the measured arrival rate, service time, p95 tail, cost weight, operability review and retry rate; a narrower synthetic CI would not reverse it | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation |\n| C13 | The contract requires the outcome fields, reversal triggers, limitations and a four-value status | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure |\n| C14 | An actionable record names measurement, range, owner, consequence and next review trigger; the checkout trigger is a measured arrival rate, service time or retry rate outside the declared range | tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome |\n| C15 | Missing reversal triggers are a failure mode, and forcing a recommendation hides missing evidence | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes; tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure |\n| C16 | The checkout record states decision-supported for B and that operability and production behavior are not established; deployment still needs a pilot, cost review and readiness check | tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation; tycho.volume.fd0c1a798f9968eed4a679b048deea14#evidence-and-limits |\n| C17 | The volume does not replace operational review; independent review and owner acceptance are separate | tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do; tycho.volume.fd0c1a798f9968eed4a679b048deea14#evidence-and-limits |\n| C18 | B beats A on success and cost; the prioritization over A's latency advantage is a declaration, not a simulation fact; no undeclared threshold | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences |\n| C19 | The modernization record, with quantitative missing inputs, returns insufficient evidence, recommendation none | tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example |\n| C20 | Adjacent operating-capability guidance: unknown critical evidence blocks unconditional approval; a provisional record is legitimate; an operational acceptance record must name owners, evidence and revisit triggers | tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance |\n| C21 | The status field has four values; conditional is not one of them; conditionality is carried by the outcome fields | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences |\n| C22 | The checkout model's verification page records its scope limits as limits, not completed checks | tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified |\n\n## 7. Unknowns and limits\n\n- The V12 pages are self-checked, not independently reviewed. The CLI page metadata reports content_review.status = self-checked, and the page frontmatter's evidence_scope note says the page-local source records are not independent review. This is metadata, not a section claim; the answer therefore does not treat the pages as owner acceptance or external review.\n- The volume asserts no production measurement, independent review, owner acceptance or pattern promotion. The checkout result is synthetic; nothing here establishes real checkout behavior or a real operational review.\n- The linked decision artifact edition/v12/decisions/checkout-candidate.json is not a Markdown section and is outside the CLI's citation scheme. The indexed prose used here describes the same status, C3 non-test and reversal triggers; no core claim depends on the artifact alone.\n- The indexed prose does not name the owner of the operational review or the consequence of staying in the current state for the checkout record. The actionable-record anatomy and the adjacent operational-acceptance checklist require those elements; if the judge applies that stronger completeness test, the record has a gap even though its classification is coherent.\n- The contract page's phrase \"two hard quantitative constraints (cost and p95 latency)\" counts C4 and C5; the worked example also declares C1 and C2 hard. This is a wording nuance about how many hard constraints are counted, not a change to C3's non-quantitative kind or to the conditional classification.\n- The reviewer's phrase \"a hard constraint the model cannot evaluate\" uses \"hard\" colloquially. The book's kind taxonomy and the conditional-decision exception both resolve the case, but the record's own kind declaration is what makes the classification auditable. If the kind were left implicit, the reviewer's objection would be reasonable.\n- No claim is made about whether an operational review has occurred, whether C3 would pass it, or whether an owner would accept the recommendation. Those remain open by design.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The checklist's default outcome is insufficient evidence when a hard constraint cannot be evaluated by the model, but the same section immediately provides an exception: a conditional decision when the missing evidence is explicitly non-quantitative and the record can state the condition.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "Return insufficient evidence when any of the following holds:",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "a hard constraint cannot be evaluated by the model;",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "Return a conditional decision when the missing evidence is explicitly non-quantitative and\nthe decision record can state the condition.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The checkout record is the checklist section's named example of the conditional exception: it recommends B under the quantitative constraints and marks C3 unverified.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "The checkout record does this for operability:",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "it recommends B under the quantitative constraints and marks C3 unverified.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "operability constraint remains unverified, so the recommendation is conditional.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis",
+          "quote": "The decision record recommends B for the synthetic workload, records the non-quantitative operability\nconstraint as unverified and lists the measurements that would reverse the choice.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The decision-record contract distinguishes hard, soft and non-quantitative constraints; the checkout record's C3 is declared non-quantitative, while C1, C2, C4 and C5 are hard.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "A non-quantitative constraint is a condition the model cannot\nmeasure, such as operability by the existing team or a regulatory approval.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "C3: operable by the existing team (non-quantitative);",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "C1: every offered request is accounted for (hard);",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "C4: cost per 1000 successes at most 3.0 (hard);",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The model evaluated the hard constraints: C1 and C2 hold for all three runs, C4 and C5 eliminate C, and A and B pass.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "C1 and C2 hold for all three runs",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "C4 eliminates C: 3.63 is above 3.0.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "A and B pass both constraints.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "C3 was not tested; the record says operability remains unverified and requires an operational review, so the recommendation is conditional.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "C3 is not tested.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "an operational review. The recommendation is therefore conditional.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "B and A both pass.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The decision record separates three statuses: model verification, calibration and outcome; decision-supported is the outcome status.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision record separates three statuses:",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "decision-supported or insufficient-evidence for the outcome.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A decision-supported outcome with an uncalibrated model is a conditional result: the decision follows from the declared assumptions and constraints, not from the truth of the assumptions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision-supported outcome with an uncalibrated model is a conditional result.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "the decision follows from the declared assumptions and constraints. It does not say the\nassumptions are true.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A record can be decision-supported while the model remains uncalibrated, as long as the record states the condition.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+          "quote": "while the underlying pattern remains unchanged and while the model remains uncalibrated, as\nlong as the record states the condition.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The decision tree sends a candidate that fails a hard constraint to elimination, but sends an unverified non-quantitative constraint to a conditional recommendation with reversal triggers.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree",
+          "quote": "candidates that fail a hard constraint are eliminated.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree",
+          "quote": "An unverified non-quantitative constraint keeps the recommendation\nconditional. Reversal triggers are recorded either way.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The book forbids reading the recommendation as proof that B is safe to deploy and calls the record a bounded, conditional result, not a certificate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "The decision record recommends B, so B is safe to deploy.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "it is useful as a bounded, conditional result, not as a certificate.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Completeness requires the record to state the condition and the measurements that would reverse it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "The record must state the condition and the measurements that would\nreverse it.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "the decision record can state the condition.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The checkout reversal triggers are a measured arrival rate above 22 requests per second, a mean service time above 0.65 seconds, a p95 service time that pushes B above 1.5 seconds, a cost weight under which B no longer beats A, a failure of the operability review, and a measured retry rate materially above 1.003; a narrower synthetic confidence interval would not reverse it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "A measured arrival rate above 22 requests per second",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "A measured p95 service time whose tail pushes B above 1.5 seconds.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "A cost weight under which B no longer beats A per successful request.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "A failure of the operability review.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "A measured retry rate materially above the modeled 1.003.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "The record also says what would not reverse it:",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "The contract requires the outcome to carry the recommendation, rationale and non-quantitative constraints, plus reversal triggers and limitations, and the status is one of proposed, decision-supported, insufficient-evidence or rejected.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "outcome: recommendation, rationale and non-quantitative constraints;",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "reversal triggers, limitations and pattern links.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "The status is one of proposed, decision-supported, insufficient-evidence or rejected.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "An actionable record names the measurement, the range that would support or reject the decision, the owner of the measurement, the consequence of staying in the current state and the next review trigger; for the checkout record the trigger is a measured arrival rate, service time or retry rate outside the declared range.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "quote": "A useful insufficient-evidence record is actionable. It names:",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "quote": "the owner of the measurement;",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "quote": "the consequence of staying in the current state;",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "quote": "For the checkout record, the trigger is a measured arrival rate, service time or\nretry rate outside the declared range.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "A record without a condition under which it should be revisited has the missing-reversal-trigger defect, and forcing a recommendation while hiding missing evidence is the error the book warns against; the correct outcome there is insufficient evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+          "quote": "Missing reversal trigger.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+          "quote": "A decision record that forces a recommendation in these conditions hides the missing\nevidence.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+          "quote": "The correct outcome is insufficient evidence plus a list of what would change it.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The checkout comparison has a decision-supported outcome for B under the declared constraints, explicitly states that the operability constraint and production behavior are not established, and still requires a measured pilot, a cost review and an operational readiness check.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+          "quote": "a decision-supported outcome for candidate B under the declared constraints;",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+          "quote": "an explicit statement that the operability constraint and production behavior are not\nestablished.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+          "quote": "A reader who wants to deploy B still needs a measured pilot, a cost review and an operational\nreadiness check.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#evidence-and-limits",
+          "quote": "Independent review and owner acceptance remain separate decisions.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The volume states that it does not replace operational review, and independent review and owner acceptance remain separate decisions.",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do",
+          "quote": "replace security, compliance, legal or operational review;",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#evidence-and-limits",
+          "quote": "Independent review and owner acceptance remain separate decisions.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "B beats A on success and cost, A wins on p95 latency inside the ceiling, and the prioritization of success and cost over that latency difference is a declared decision, not a simulation fact; no undeclared success threshold is applied.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "B has higher success (0.9996 versus 0.9218)",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "That prioritization is a decision, not a fact\nproduced by the simulation.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "No undeclared success threshold is applied.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The modernization record, whose missing inputs are quantitative and assumed over wide ranges, returns insufficient evidence with recommendation none, which marks the boundary of the conditional route.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+          "quote": "The decision record returns insufficient evidence, recommendation none.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+          "quote": "reconciliation capacity are assumed over wide ranges and are negatively correlated.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Adjacent operating-capability guidance agrees that unknown critical evidence blocks unconditional approval, that tests inform a provisional record rather than automatic deployment, and that an operational acceptance record must name owners, runbook or recovery evidence, access restrictions, version support, budget and revisit triggers.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance",
+          "quote": "Unknown critical evidence blocks unconditional approval.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance",
+          "quote": "Tests and cost sensitivity inform a provisional record, not an automatic deployment.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance",
+          "quote": "An operational acceptance record should name actual owners, runbook/recovery evidence, access restrictions, version support, budget and revisit triggers.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "The contract's status field has four values and conditional is not one of them; conditionality is carried by the outcome's non-quantitative constraints and the reversal triggers rather than by a separate status.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "The status is one of proposed, decision-supported, insufficient-evidence or rejected.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "operability constraint remains unverified, so the recommendation is conditional.",
+          "supports": "C21",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The V12 verification page records the model's scope limits: the service-time distribution is not fitted to a real sample, the arrival process is not tested against a production trace, the queue is FIFO only, the model does not represent dependency calls, network transport or storage, the sensitivity screen is not a full Sobol estimator, and confidence-interval coverage is not tested over many synthetic samples; these are limits, not completed checks.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "The service-time distribution is not fitted to a real sample.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "The model does not represent dependency calls, network transport or storage.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "The sensitivity screen is not a full Sobol' estimator.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "These are recorded as limits, not as completed checks.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#evidence-and-limits",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+    "tycho.page.f3b4041502a7403bbc63bb2611eb5c0f#6-operational-readiness-belongs-in-architecture-acceptance",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
