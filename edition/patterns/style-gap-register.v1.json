@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "register_date": "2026-11-01",
+  "issue": 943,
+  "taxonomy": {
+    "name": "Tycho architecture-style scope v1",
+    "basis": "A style is in scope when it names a structural organization of an application or system, has a technical owner section, admitted public sources and a decision card. Platform products, deployment topologies and single design patterns are not styles unless they change the structural organization.",
+    "note": "This is the project taxonomy for scope decisions, not a claim to enumerate every published style."
+  },
+  "catalog_denominator": {
+    "current": 145,
+    "planned_after_event_driven_architecture": 146,
+    "reason": "Event-Driven Architecture is the only candidate admitted as a new catalog entry in this decision; the denominator changes only after that entry lands."
+  },
+  "candidates": [
+    {
+      "style": "Event-Driven Architecture",
+      "current_state": "absent",
+      "disposition": "accepted",
+      "action": "add catalog entry, owner section, dedicated card and admitted public sources",
+      "rationale": "Structural style-level gap; events currently appear only as messaging and consistency mechanisms. Isolated new page avoids editing promoted owner pages."
+    },
+    {
+      "style": "Serverless / FaaS",
+      "current_state": "chapter-only",
+      "disposition": "chapter-only",
+      "action": "no catalog entry now",
+      "rationale": "V08/C03 already carries the chapter treatment; a separate style entry would duplicate it without a structural decision boundary."
+    },
+    {
+      "style": "Pipeline",
+      "current_state": "pattern-covered",
+      "disposition": "pattern-covered",
+      "action": "no separate style entry",
+      "rationale": "Pipes and Filters already owns the structural pattern; a style-level Pipeline entry would duplicate its identity."
+    },
+    {
+      "style": "Service Mesh",
+      "current_state": "chapter and pattern mentions",
+      "disposition": "out-of-scope",
+      "action": "no catalog entry",
+      "rationale": "Platform and infrastructure concern rather than an application architecture style; covered by Sidecar, Reverse Proxy and API Gateway entries."
+    },
+    {
+      "style": "Microkernel / Plug-in",
+      "current_state": "absent",
+      "disposition": "deferred-out-of-scope",
+      "action": "no catalog entry until a public source base and owner demand exist",
+      "rationale": "No volume corpus and no admitted style-level source; adding a name now would be catalogued-only, not coverage."
+    },
+    {
+      "style": "Space-Based Architecture",
+      "current_state": "absent",
+      "disposition": "deferred-out-of-scope",
+      "action": "no catalog entry until a public source base and owner demand exist",
+      "rationale": "Historical, narrow niche with no volume corpus or admitted source; a name-only entry would violate the evidence gate."
+    }
+  ],
+  "non_goals": [
+    "No exhaustive claim over all published architecture styles.",
+    "No style entry without an owner section, admitted public sources and a decision card.",
+    "No duplicate style entry for Pipeline while Pipes and Filters owns the pattern.",
+    "No platform-product entry for Service Mesh as a style."
+  ]
+}
