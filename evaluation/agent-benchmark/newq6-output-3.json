@@ -1,0 +1,126 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "A tool catalogue stores one asset_code that means a shared model in one business area and a single physical unit in another. The migration copies the old code into new model_id and unit_id columns, reports equal source and target row counts, and starts serving reads from the new columns. Why can this additive change corrupt reservations, and what must the migration do with identities it cannot prove and with writes that arrive during the backfill?",
+      "required_evidence": [
+        "tycho.page.d00c6081ca664f619308712e245ef523#1-distinguish-syntactic-change-from-semantic-change",
+        "tycho.page.d00c6081ca664f619308712e245ef523#2-original-synthetic-scenario-two-equipment-identities",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.page.357c2d162bd44f3aa06a995a1e691551#purpose-and-mission"
+      ],
+      "core_claims": [
+        "An additive schema change can still break domain meaning: copying a code that conflates a shared model and a physical unit into model_id and unit_id can make one model look like one reservable unit and create collisions, incorrect reservations and misleading history.",
+        "The migration needs a totality analysis that classifies which old values identify a unique unit, which identify a model or type, which mappings are many-to-one, one-to-many or unknown, and how historical reservations convert; mappings it cannot prove must be marked unresolved for domain review rather than silently defaulted.",
+        "Because the backfill can run for hours while new writes arrive, the transition requires one authoritative writer, a versioned identity mapping, bounded resumable batches with durable checkpoints, and semantic reconciliation of post-snapshot changes before authority moves."
+      ],
+      "optional_claims": [
+        "A delete-and-recreate event applied by receipt order while an older snapshot is processed can resurrect a deleted unit unless ordering or full identity reconciliation precedes authority transfer.",
+        "Retiring the old column requires proof that replays, archives and historical restorations no longer depend on it."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A server shutting down sends GOAWAY with last-stream ID 5 while one client connection still carries stream 5 (a publish whose response was lost) and stream 7 (which the peer never processed). Why is it wrong to retry both streams the same way, and what must the client and the draining instance do before the instance is removed?",
+      "required_evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings"
+      ],
+      "core_claims": [
+        "A connection, an HTTP/2 stream, a request attempt and a logical business operation are different identities, so a shutdown error must be attributed to the layer that emitted it before it is interpreted.",
+        "Streams above GOAWAY's last-stream identifier were not processed and may be retried on a replacement connection, while streams at or below the boundary may already have been processed, so their missing responses are not evidence of rollback.",
+        "The ambiguous publish must be resolved by its logical operation identity against authoritative state, and the draining instance must record unresolved operation identifiers before its bounded deadline, because cancellation cannot manufacture atomic rollback."
+      ],
+      "optional_claims": [
+        "A hard drain deadline can leave unknown effects that need an explicit reconciliation path rather than a blind retry.",
+        "Raising keepalive, idle timeout and maximum connection lifetime together can hide leaked resources or retain endpoints through maintenance instead of fixing the drain."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "During an orchestration control-plane outage, already-running containers keep answering requests, and the team concludes that the platform has high availability. Why is that conclusion incomplete, and what must the availability claim and its failure test separate?",
+      "required_evidence": [
+        "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+        "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome",
+        "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs",
+        "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope"
+      ],
+      "core_claims": [
+        "With the control plane unavailable, already-running instances can keep serving through existing routes, but new deployment, rescheduling and configuration change may not proceed, and losing nodes degrades capacity over time.",
+        "The availability claim must separate steady-state survival from the ability to create or recover resources, because a container or orchestrator label does not establish fault isolation, spare capacity or recoverable state.",
+        "A topology decision requires the dominant failure class, transaction owner, placement domain, control-plane availability, workload shape and measured RPO/RTO; without them the honest outcome is insufficient evidence."
+      ],
+      "optional_claims": [
+        "A managed service is not proof of business-state correctness, and serverless autoscaling cannot create authoritative consistency.",
+        "An isolated control-plane test should keep workers and the database reachable, then kill a node to measure degradation and recovery instead of inferring repairability from steady-state service."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A device-status stream drops after the server sends sequence 41 but before the consumer acknowledges it, and the client reconnects with the last sequence it durably processed. Why can the resumed stream still contain duplicates or a gap, and what must the stream contract define before resume is a supported guarantee?",
+      "required_evidence": [
+        "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay",
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#6-proposed-negative-experiments",
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#5-which-architecture-is-justified"
+      ],
+      "core_claims": [
+        "Transport flow control and a received sequence do not create a durable log: after the disconnect, sequence 41 may be missing or duplicated, and only a subscription that resumes from the last durably processed sequence with deduplication and replay can close that gap.",
+        "A resumable stream must define a cursor or stable event identifier, the ordering scope, the delivery mode with gap and duplicate handling, a retention or expiry bound, and whether an acknowledgment means transport receipt, consumer processing or a committed business effect.",
+        "Cancellation of a receive loop cannot roll back a posting another system committed, so reconnect is not replay and consumer effects must be idempotent; recovery tests must cover duplicates, gaps and cursor expiry at message boundaries."
+      ],
+      "optional_claims": [
+        "Whether intermediate samples may be dropped is a product policy: current temperature tolerates loss, while irrevocable financial postings do not.",
+        "Streaming is not automatically the right interface; a unary bounded API, server streaming, bidirectional RPC, reactive demand or a durable job each fits a different continuity requirement."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A read projector is rebuilt from the beginning of the event log after a mapping change, and the same projector also sends confirmation email for every event it applies. Why must the rebuild suppress those side effects and commit the view and cursor together, and when may the rebuilt view serve queries as current?",
+      "required_evidence": [
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#6-sufficient-evidence-and-pattern-contraindications",
+        "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview"
+      ],
+      "core_claims": [
+        "A projector that applies an event and crashes before recording its cursor can consume the same event again, so the read-side update must be idempotent or commit the view change and the event version atomically.",
+        "Replaying authoritative events must not resend real money, email or notifications unless that is an explicitly isolated new business workflow, so a rebuild needs an explicit checkpoint and external side effects disabled.",
+        "A projection is a derived read that records its source version or offset, refresh trigger and freshness contract; a query needing current state must use the authority path, and the rebuilt view may serve as current only within the declared freshness bound."
+      ],
+      "optional_claims": [
+        "CQRS is contraindicated when every read requires immediate consistency with no version-wait or authority-read path, or when projection maintenance has no owner.",
+        "Rebuild capability does not make event sourcing mandatory: CQRS and event sourcing are separate choices, and a CRUD store with an outbox is not automatically event sourcing."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A service reports 99.98% availability for the month with most of its error budget unspent, so the team treats a canary that occasionally double-books a seat as acceptable until the budget is exhausted. Why is that reading wrong, and what must a budget-triggered release decision check before treating the canary as safe?",
+      "required_evidence": [
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision"
+      ],
+      "core_claims": [
+        "An error budget accounts for permitted bad events under the chosen SLO; it is not permission to violate a non-negotiable invariant, so one duplicate committed allocation remains forbidden even while availability looks green and budget remains.",
+        "The percentage is meaningful only with a fixed eligible population and outcome classification, and retries, pending or unknown outcomes or a changed denominator can manufacture an apparent improvement, so the decision must first verify the event population and sampling.",
+        "A hard correctness gate stops a rollout even with budget remaining, and a burn-rate alert is a decision trigger whose short windows are noisy and long windows slow, while zero observed errors at idle demand cannot support a 100% availability claim."
+      ],
+      "optional_claims": [
+        "An SLO revision must keep numerator, denominator, units, target, data-source revision and effective date together, because retries or a new API version can change which outcomes count as good.",
+        "Disaggregating by meaningful route or workload can expose a region or worst-user regression hidden by aggregates, but requires avoiding dangerous high-cardinality labels and data leakage."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

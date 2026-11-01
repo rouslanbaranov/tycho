@@ -1,0 +1,127 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "modeling-and-simulation",
+  "items": [
+    {
+      "question": "The V12 sensitivity screen reports arrival rate first-order 0.361 and total-order 0.464, and service mean 0.536 and 0.639. Both total-minus-first gaps are 0.103, and the two first-order shares sum to 0.897. Why is the repeated 0.103 not a coincidence, and what does it represent?",
+      "required_evidence": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty"
+      ],
+      "core_claims": [
+        "In a two-input variance decomposition, the output variance is partitioned into two main effects and one interaction term, so each input's total-order share contains the same interaction share.",
+        "With 0.897 explained by the two first-order shares, the remaining 0.103 is that shared interaction share, which is why both total-minus-first gaps are 0.103.",
+        "The equality is an accounting identity of the fitted quadratic surface, not a measured interaction effect or a precision estimate."
+      ],
+      "optional_claims": [
+        "A total-order index below its first-order index would fail the screen's coherence check.",
+        "The screen assumes independent inputs, so the same decomposition is not applied to the correlated modernization inputs."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A V12 discrete-event run satisfies offered = completed + rejected + failed + in_system after every replication. Why does that identity still not prove each request was assigned the correct outcome, and which checks cover the outcome path instead?",
+      "required_evidence": [
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation"
+      ],
+      "core_claims": [
+        "The conservation identity is a balance over outcome counts, so swapping a completed request with a failed one leaves it satisfied.",
+        "Correct outcome attribution is checked by the timeout, retry and event-order tests, not by the conservation check.",
+        "A conservation failure aborts the run, which makes a pass necessary but not sufficient for a correct outcome model."
+      ],
+      "optional_claims": [
+        "A model can conserve every request and still be invalid for the decision if its structure omits a material mechanism.",
+        "The stock-flow identity has three outcome terms, while the discrete-event identity also includes failed and in-system."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A dual-write lag input for the modernization model has no defensible measured value. Why does substituting zero yield a precise but meaningless result, and what must the decision record do instead?",
+      "required_evidence": [
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix"
+      ],
+      "core_claims": [
+        "The unknown status means no defensible value exists and the model must not invent one, so zero is an assumption rather than a neutral placeholder.",
+        "Setting the lag to zero removes the divergence mechanism, since the zero-lag case produces no divergence, so the run answers a different model.",
+        "That run still reports precise metrics, and the defensible outcome is an insufficient-evidence record that names the missing lag measurement and the range that would change the decision."
+      ],
+      "optional_claims": [
+        "Repeating an assumed value in a decision record does not change its calibration status.",
+        "The record should also name the measurement owner and the review trigger."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A whitespace-only reformat of a model file makes V12 replay fail, while a whitespace-only reformat of the stored run record leaves its result hash unchanged. Why does V12 treat the two artifacts differently, and what does each hash identify?",
+      "required_evidence": [
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract"
+      ],
+      "core_claims": [
+        "The model and scenario hashes are file digests checked before the rerun, so any byte change to either input fails replay.",
+        "The result hash covers the run record's substantive fields rather than its file bytes, so reformatting the record leaves it unchanged.",
+        "The asymmetry follows from roles: the inputs are canonical entities identified by their files, while the run record is a derived entity identified by its declared content."
+      ],
+      "optional_claims": [
+        "A result hash over metrics alone would miss a changed limitation or convergence status.",
+        "A matching replay on one platform does not guarantee bit-identical floats on another."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Candidate A times out on 7.78% of offered requests, yet the checkout decision does not eliminate it, while candidate C is eliminated for cost and p95. Why is a poor success rate not a constraint failure here, and what would have to be declared to make it one?",
+      "required_evidence": [
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure"
+      ],
+      "core_claims": [
+        "Only a declared hard constraint eliminates a candidate, and the checkout record declares no success-rate or timeout-rate constraint.",
+        "A satisfies the four declared hard constraints despite its 7.78% timeout rate, so B's higher success and lower cost make B preferred without making A a failed candidate.",
+        "Declaring a hard minimum success rate or a maximum timeout rate would make A a failed candidate and remove it from the survivor comparison."
+      ],
+      "optional_claims": [
+        "C is eliminated twice, by cost 3.63 above 3.0 and p95 1.769 above 1.5.",
+        "A's lower p95 remains a tradeoff inside the declared latency ceiling rather than a constraint failure."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "The V12 order-intake model fixes a 0.1-second integration step in its model contract instead of leaving it to the engine. Why must the step be a declared model input, and how can a coarse step produce behavior that is only an artifact?",
+      "required_evidence": [
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model"
+      ],
+      "core_claims": [
+        "The step determines how much arrival and service volume each update applies, so a coarse step can overshoot, serve more than the available backlog, or drive the stock negative.",
+        "The step is declared with the dynamics and non-negativity is asserted after every update, which makes the step part of the model's resolution rather than an engine setting.",
+        "A different step produces a different discrete approximation, so reporting a coarse-step overshoot as system behavior is a step-size artifact."
+      ],
+      "optional_claims": [
+        "A smaller step reduces the artifact at additional runtime cost.",
+        "The stock-flow family cannot produce individual request latency even with a fine step."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

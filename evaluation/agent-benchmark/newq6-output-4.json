@@ -1,0 +1,122 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "atlas",
+  "items": [
+    {
+      "question": "A catalogue serves each item from a local in-process cache in front of a shared cache, and the shared tier uses stale-while-revalidate with a 60-second stale window. A writer commits a new version and invalidates only the shared key, while a reader that began before the write repopulates that key from its older snapshot. Why can a later reader still see a value older than either tier's declared freshness bound, and what must each tier and each fill record before the design may claim that bound?",
+      "required_evidence": [
+        "tycho.page.9019c073a9804c5c99b236cd7752e78f#overview",
+        "tycho.page.37ee8969c224c7b336487c02aff9149c#overview",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "Multi-level caching is admissible only when each tier has a distinct role and a named freshness bound, promotion and invalidation are owned, and a missed invalidation is detected or bounded; a local tier duplicates data, so a lost invalidation or disconnect flush leaves a stale copy that a later shared-cache read does not repair.",
+        "A fill that began before a write can complete after the invalidation and restore the older value, and a TTL is not a monotonic-version or consistency guarantee, so a fill must carry a source version and must not overwrite a newer committed value.",
+        "Stale-while-revalidate is rejected when read-after-write is mandatory: its stale window must be explicit and bounded, refresh must run in the background with a blocking fallback, and after the bound the next request must block rather than keep serving the stale entry."
+      ],
+      "optional_claims": [
+        "A successful local invalidation is not global freshness: a replica that missed the invalidation serves its old copy until its own bound, so worst-case age must be measured under clock skew, write burst and restart.",
+        "Cached tenant permissions and exclusive availability are not harmlessly stale without the security or domain owner's approval, and a direct authoritative query may be the lower-risk alternative when the freshness requirement is user-visible."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A three-stage pipeline validates an order, writes an audit record, and publishes a confirmation. After the audit record commits, the confirmation stage fails before publishing, and the broker redelivers the original message a day later. Why does the pipeline's non-transactional filter fail to preserve the completed stage, and what must the stage identity, ordering scope and recovery checkpoint record so the redelivery neither duplicates the audit record nor loses the confirmation?",
+      "required_evidence": [
+        "tycho.page.7082c6b84e0f4d04bec339b06fe600fc#overview",
+        "tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+        "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview"
+      ],
+      "core_claims": [
+        "A simple filter is not transactional: an error before the message reaches the output channel loses it, and a failed middle stage leaves earlier effects already applied, so the pipeline must own ordering, partial completion and recovery rather than any one stage.",
+        "A stage must commit its deduplication marker with its local effect in one transaction, scope the identity to the consumer and message, and retain the marker through the maximum broker redelivery, dead-letter replay and historical replay horizon, because an expired identity turns a redelivery into a new message.",
+        "A parallel or multi-instance stage can reorder messages unless the pipeline declares an ordering scope and a resequencer, and per-stage idempotency, backpressure and a completion checkpoint are Tycho guidance rather than a source guarantee, so a pipeline without a checkpoint owner becomes an unowned distributed workflow."
+      ],
+      "optional_claims": [
+        "One cohesive consumer with internal functions is the alternative when the stages are small or cannot be operated independently, and the slowest stage bounds pipeline throughput while repeated message conversion lowers it.",
+        "An in-memory queue is a lighter pipe when all components share one machine, and the source calls a comprehensive incoming-message module inflexible and difficult to test, so a pipeline pays only when independent development, scaling or replacement justifies its message contract."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A program labels every integration a service, routes all calls through one central bus that applies transformations and business rules, and cannot name a contract version or a consumer for any capability. Why does the atlas reject this use of SOA, what must a governed service contract declare, and when are microservices or a modular monolith the better comparison?",
+      "required_evidence": [
+        "tycho.page.1a22dabeec74779dfeb28fadc98ade4a#overview",
+        "tycho.page.acb452608a8b42898aae7482c27f5f04#bounded-pattern-ownership-notes",
+        "tycho.page.acb452608a8b42898aae7482c27f5f04#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "SOA publishes capabilities as governed service contracts and routes consumers through a mediation layer, and the mediation layer implements ownership rather than creating it; the card rejects the claim for one team and one deployable, absent service governance, SOA used as a synonym for an enterprise bus, and contracts that cannot be versioned and owned.",
+        "A service contract must declare its capability, message semantics, version and consumer obligations with a maintained consumer inventory, and Microsoft adds that each service is maintained, deployed and versioned independently and that services share contracts and schemas rather than internal classes.",
+        "A centralized bus is a shared bottleneck and single point that must be sized, monitored and failed over with a fallback path that does not depend on it, while microservices fit independent product capabilities and a modular monolith fits one ownership boundary; the choice reverses when governance and mediation overhead exceeds the integration benefit."
+      ],
+      "optional_claims": [
+        "The OASIS SOA Reference Model is technology-neutral and does not prescribe an interface language, registry protocol, bus topology or service size, so a bus is one mediation implementation rather than the definition of SOA.",
+        "Separate containers can still require synchronized releases and share one fragile datastore, so a deployment count does not demonstrate the independence that a remote boundary is supposed to buy."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Two regions accept writes to the same customer record and replicate asynchronously; a profile edit and an address deletion arrive in either order, the system resolves by last-write timestamp, and reconciliation later restores the deleted address. Why is timestamp resolution not a sufficient conflict contract, why does synchronous multi-master not escape the conflict cost, and when must multi-leader be rejected?",
+      "required_evidence": [
+        "tycho.page.1f0f0984036746779cc0bc96826db1e9#overview",
+        "tycho.page.1b2657011d454460856103419095031b#bounded-pattern-ownership-notes",
+        "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview"
+      ],
+      "core_claims": [
+        "Every accepted multi-leader write must eventually converge to one declared outcome, and the conflict contract must name the resolver, record the conflicting versions and expose an audit trail; silent last-writer-wins is not sufficient because a concurrent write that it discards was still acknowledged.",
+        "Synchronous multi-master lets any server accept writes but PostgreSQL rates it best for mostly read workloads and notes that heavy write activity can cause excessive locking and commit delays, while asynchronous multi-master identifies conflicting transactions for users or resolution rules, so neither mode removes the conflict policy.",
+        "Multi-leader is rejected when monotonic writes are mandatory or the resolver cannot preserve causal order, and quorum writes or single-leader replication are the alternatives; a quorum still needs an application-defined version selector and repair path when concurrent versions surface."
+      ],
+      "optional_claims": [
+        "Conflict metadata, per-key convergence and operator reconciliation are costs, and a multi-leader topology does not remove the need for one authoritative outcome.",
+        "Leader-follower replication partitions write work to one leader and is the simpler comparison when accepting writes on more than one server does not outweigh the conflict and write-throughput contract."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team doubles its largest instance size after a 3x traffic forecast, sees throughput rise by less than half, schedules a restart for the resize, and plans to repeat the doubling next year. Why is that not a capacity plan, what must be measured and bounded before the next resize, and when does the card reverse to horizontal scaling?",
+      "required_evidence": [
+        "tycho.page.71f864d85c3e4213ad053e42e2976add#overview",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "Vertical scaling changes the resources available to existing replicas and can raise per-replica throughput without adding partition or routing complexity, but one larger node is still one node, so it changes the failure domain rather than removing it.",
+        "Serial or externally fixed bottlenecks can cap throughput regardless of node size, the resize may require restart or migration that leaves the old capacity unavailable during the change, the provider must allow the larger size, and cost must not grow superlinearly, so the resource that actually saturates must be measured and the maintenance window bounded with a fallback.",
+        "The card reverses to horizontal scaling when the workload can be partitioned and a single node is an unacceptable failure domain."
+      ],
+      "optional_claims": [
+        "The operating system, runtime and dependency must be able to use the larger allocation, and provider limits bound the size that is actually available.",
+        "Capacity that arrives after a short burst cannot prevent that burst's initial overload, so reserved headroom or admission control still matters even when horizontal scaling is the chosen path."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team replicates its full stack into six regional stamps and routes tenants through a directory; the stamps share one identity service and one primary database, and each stamp is upgraded by hand. Why does the replication not satisfy the stamp invariant, what must be enumerated and owned before isolation is claimed, and when is a cell-based design the better comparison?",
+      "required_evidence": [
+        "tycho.page.30d7c7363ec26491f644977876c16ea4#overview",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph"
+      ],
+      "core_claims": [
+        "A stamp is an independently operated deployment unit for scale, isolation or locality, and its routing key and state authority are one ownership decision: state follows the split, so the tenant-to-stamp routing map and the data's authoritative home must be designed together.",
+        "Each stamp needs a versioned definition, an ordered rollout and a tested rollback path, and every shared global dependency must be enumerated with the failures that cross the stamp boundary, because an unowned shared dependency that dominates the isolation benefit defeats the design.",
+        "A cell-based design is the alternative when isolation is the primary goal and scale is secondary, but a cell is a boundary in the dependency graph: naming a group of stateless workers a cell does not isolate a shared database, queue, cache or configuration publisher, and every dependency a tenant can exhaust must be traced."
+      ],
+      "optional_claims": [
+        "Stamp duplication, routing-key changes and global dependencies are costs, and a stamp without a data authority or upgrade owner becomes a snowflake; cell-based design need not multiply infrastructure because its purpose is isolation rather than scale.",
+        "The failure path is configuration drift or split state across stamps, so the stamp definition must be versioned, routing must use an explicit key, and state must be reconciled at the authority."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

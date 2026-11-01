@@ -1,0 +1,148 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "modeling-and-simulation",
+  "items": [
+    {
+      "question": "A reviewer treats an uncalibrated V12 model as an incomplete contract and demands a calibration number before the run may be cited. Why is 'uncalibrated' a complete declared status, and what does that run remain licensed to support?",
+      "required_evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified"
+      ],
+      "core_claims": [
+        "The model contract treats a calibration status of uncalibrated as a complete value, and the order-intake contract records that no production data were used.",
+        "A validity limit is a condition on the result's use, so an uncalibrated model is outside its domain for a production claim rather than merely annotated as incomplete.",
+        "A model can be verified, converged and executable and still fail to support a decision, so the run supports the synthetic-workload comparison while the demand for a measured calibration remains the correct response."
+      ],
+      "optional_claims": [
+        "The verification record leaves the service-time distribution unfitted and the arrival process untested against a production trace.",
+        "A passing verification matrix does not repair the missing calibration, because the matrix records the unfitted inputs as limits rather than completed checks."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A V12 model declares its state variable in requests while its dynamics equation uses a rate, and the contract still passes the strict schema and the structural checks. Why do the required unit fields not prevent that mismatch, and what does the contract claim to provide instead?",
+      "required_evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram"
+      ],
+      "core_claims": [
+        "The validator checks schema conformance, identifier uniqueness, scenario resolution and measured-source records, not dimensional consistency between state variables and equations.",
+        "The unit fields make a request-versus-rate mismatch visible to a reader, but the contract does not compute dimensional analysis, so a schema pass cannot reject the mismatch.",
+        "The contract makes the model's claims inspectable; it is a guardrail, not a reviewer, so unit coherence remains an editorial and review responsibility."
+      ],
+      "optional_claims": [
+        "A validator pass is therefore not proof that the model is dimensionally coherent.",
+        "The same limit applies to a cited source: the validator cannot check that the source actually supports the parameter."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A model file has a unique tycho.model identifier and passes the strict schema, but no scenario or decision references it. Why does structural validation still accept the file, and why is the file not evidence?",
+      "required_evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#a-provenance-chain",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural"
+      ],
+      "core_claims": [
+        "The referential check runs from scenarios to models: every scenario that names a model must resolve, but a model that no scenario names is not rejected.",
+        "The orphan model is treated as an unused artifact rather than evidence, because evidence runs through a scenario, an engine run and a run record to a decision.",
+        "V12-A establishes structure, identifiers, links and hashes, not that an artifact supports any decision."
+      ],
+      "optional_claims": [
+        "A model without a scenario produces no run record, so it cannot enter the provenance chain that leads to a decision.",
+        "Artifact presence is not coverage; a schema-valid model can remain entirely unused."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A scenario overrides the server count declared by its model, and the model's calibration note still records the original assumed value. The run executes and the structural checks pass. Why is the run's evidence status ambiguous rather than invalid?",
+      "required_evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses"
+      ],
+      "core_claims": [
+        "The model contract carries parameter values with evidence status, the scenario contract carries configuration values, and a scenario override is executable without changing the model file.",
+        "The unupdated calibration note continues to describe the model's value, so the run's metrics and the recorded status no longer clearly refer to the same input.",
+        "The failure is ambiguity rather than invalidity: the validator sees schema-valid files while a reader cannot tell which declared status belongs to the value used."
+      ],
+      "optional_claims": [
+        "The override neither upgrades nor downgrades the recorded status, because a parameter can change status only with new evidence.",
+        "The run remains executable rather than rejected, so the ambiguity travels with an apparently valid run record."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A scenario contract omits constraints entirely and still validates. Why can it be a valid scenario while being unable to support a decision record that claims to respect hard constraints?",
+      "required_evidence": [
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+      ],
+      "core_claims": [
+        "The scenario schema requires every field, but a scenario with no constraints is still a scenario, so the omission is schema-valid.",
+        "A hard constraint is a condition a candidate must satisfy, and a decision record must declare hard, soft and non-quantitative constraints to eliminate candidates and state the outcome.",
+        "V12-E requires the decision record to declare candidates, constraints and business-comparable metrics, so a record claiming hard constraints without declared scenario constraints has no basis for the claim."
+      ],
+      "optional_claims": [
+        "A record with recommendation none can still be insufficient-evidence; the absent constraints do not make the record invalid.",
+        "The decision record cannot invent a hard constraint that the scenario never declared, so the missing constraint is an evidence gap rather than a formatting detail."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A V12 decision record has status insufficient-evidence and recommendation none, and an analyst adds the least-bad recommendation so the record looks complete. Why is that a contract failure rather than an improvement?",
+      "required_evidence": [
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome"
+      ],
+      "core_claims": [
+        "A record with recommendation none can still be insufficient-evidence; it is a valid outcome, not an incomplete record.",
+        "Forcing a recommendation hides missing evidence about the world, which is the listed failure mode of recommendation by default.",
+        "The actionable record names the measurement, the range that would support or reject the decision, the owner, the consequence of staying put and the next review trigger."
+      ],
+      "optional_claims": [
+        "The modernization record is the worked case: synthetic divergence, rollback completing in only 10% of replications, and assumed dual-write inputs.",
+        "The record's recommendation none is not a schema defect, because the contract explicitly permits a no-recommendation outcome."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A zero-server boundary case runs to completion without raising an error and is recorded as pass. Why is that record not a verification result, and what must distinguish a boundary test from a smoke test?",
+      "required_evidence": [
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure"
+      ],
+      "core_claims": [
+        "Boundary cases exist to expose division by zero, negative stock or an unbounded loop, so termination alone does not exercise the intended failure.",
+        "The tests assert the outcome, not merely that the run terminates, and a case record needs an expected result, an observed result, a status and a test path.",
+        "A case marked pass without an observed result is a claim rather than evidence, and the test matrix records intended checks whose execution still depends on the named test file."
+      ],
+      "optional_claims": [
+        "Zero arrivals must produce no completions and no fabricated success, while zero queue capacity must reject a request that cannot start service immediately.",
+        "A renamed test must update the model contract's verification case path, so the test path is part of the evidence rather than a label."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

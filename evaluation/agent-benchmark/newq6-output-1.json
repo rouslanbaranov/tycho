@@ -1,0 +1,122 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "A server sends HTTP/2 GOAWAY with last-stream ID 5 while stream 5 carried a publish that may already have committed at the state owner. Why does the missing response not prove the effect failed, what does the boundary say about stream 7, and what must a bounded drain record before forced termination?",
+      "required_evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings"
+      ],
+      "core_claims": [
+        "The GOAWAY last-stream identifier is a per-hop boundary: streams above it were not processed by the sending endpoint, while streams at or below it may already have been processed, so a missing response is not evidence that the application rolled back.",
+        "Recovery for the ambiguous publish resolves the same logical operation identity against authoritative state; retrying blindly on a healthy replacement connection can create a second effect.",
+        "A bounded drain removes the instance from the actual traffic selector first, lets admitted work finish within a declared budget, and records unresolved operation IDs before any forced deadline."
+      ],
+      "optional_claims": [
+        "Connection pooling and HTTP/2 multiplexing reduce setup cost but couple many requests to one transport failure, and transport flow-control windows do not bound application buffering.",
+        "Keepalive, idle timeout and maximum connection lifetime govern different contracts, so raising them all can hide leaked resources or retain endpoints through maintenance."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A 99.9% monthly target still has error budget left when a release starts timing out, and no single sustained-window alert has fired. Why can the remaining budget and the quiet alert both fail to stop the release, and how should short and long burn windows be used instead?",
+      "required_evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling"
+      ],
+      "core_claims": [
+        "A burn rate compares observed bad-event consumption with the budget's expected consumption rate, and because short windows are noisy while long windows detect severe faults slowly, one window cannot serve both early detection and confirmation.",
+        "A mandatory correctness gate stops a rollout even with budget remaining, while confirmed burn and measured impact choose between mitigation, investigation and reversible rollback.",
+        "The event population, sampling sufficiency and logical operation outcomes must be validated before the burn signal is trusted, and recovery must show correct booked state rather than merely fewer HTTP errors."
+      ],
+      "optional_claims": [
+        "A zero-error observation at idle shows insufficient demand, so it cannot support a 100% availability claim or an objective revision.",
+        "An objective can stop representing users when an API version changes which outcomes count as good, retries are introduced or the monitoring boundary shifts, so numerator, denominator, target, source revision and effective date stay together."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team edits an accepted architecture decision record in place so it describes the option it eventually chose, and cites a closed documentation issue as approval. Why does that destroy the decision trail, and what must the record and any superseding record state instead?",
+      "required_evidence": [
+        "tycho.page.a5285941dcba43d5a6a7c091cb4c99f9#5-adrs-document-consequences-and-update-history",
+        "tycho.page.a5285941dcba43d5a6a7c091cb4c99f9#6-a-decision-is-also-a-stopping-rule",
+        "tycho.page.f05854fcc406435bbf38a192bc7ab2f1#engineering-walkthrough-a-hard-requirement-reverses-a-previously-preferred-adr"
+      ],
+      "core_claims": [
+        "An accepted decision is superseded rather than silently rewritten: a later record must state which earlier reasoning was superseded and by which changed facts, and carry an explicit status with a review trigger and a pointer to its successor.",
+        "The record must carry its stable identity, scope and change trigger, known inputs and unknowns with source revision, alternatives including the retained design, a hard-gate table, observed versus hypothesized findings, positive, negative and neutral consequences, and transition or irreversible-effect gates.",
+        "A closed documentation issue is not business approval, and a decision may legitimately end as no feasible candidate, deferral or insufficient evidence instead of a fabricated recommendation."
+      ],
+      "optional_claims": [
+        "A later-confirmed hard constraint can reverse a previously preferred option, because no weighted preference for lower complexity can override a failed gate.",
+        "A record left in PROPOSED status with no approving person or production team shows that status separation is part of the decision record, not a formality."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Two offline replicas each approve a different person for the last remaining seat and merge by last-writer timestamp. Why can the merged state converge while the capacity invariant is already broken, and what must happen to an authority-dependent approval instead?",
+      "required_evidence": [
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#start-with-the-invariant-then-choose-the-merge",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#three-original-workload-decisions",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#normal-operation-failure-and-recovery"
+      ],
+      "core_claims": [
+        "Convergence is not preservation of an application invariant: a last-writer selection hides one of two concurrent approvals after the fact but cannot undo an external action already performed on it.",
+        "A last-writer register chooses one value by a deterministic total order, yet clock order is not evidence of user intent, and a timestamp tie needs a documented tie-breaker that a clock adjustment cannot make permanently dominant.",
+        "Finite-resource assignment, publication and permissions must be held as pending commands, revalidated against the authority on reconnect, and exposed as completion or visible rejection rather than merged locally."
+      ],
+      "optional_claims": [
+        "A per-device counter remains mergeable by maximum-then-sum only while device identity is not reused and a reset receives a new identity with an explicit retention policy.",
+        "An observed-remove label merge is deterministic but can retain a concurrent unseen addition, so the product meaning of removal must be chosen before the data type."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A change-data-capture connector completes its initial snapshot and streams row changes, then its replication slot falls behind retention and is dropped. Why did the snapshot not prove the derived state was complete, and what must be recorded so that a rebuild stays bounded?",
+      "required_evidence": [
+        "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input",
+        "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview"
+      ],
+      "core_claims": [
+        "The initial snapshot reads a log position and then streams from it, and a snapshot that fails before completion restarts as a new snapshot, so a running stream does not by itself establish that the earlier snapshot was complete.",
+        "Slot retention bounds recoverability: a restart position behind the configured WAL keep limit invalidates the slot, dropping it loses changes that cannot be reconstructed, and a slot left behind prevents removal of required resources and can fill storage.",
+        "Delivery is at least once and duplicates can be emitted on a fault, so consumers apply changes idempotently by row key and log position, while DDL is absent from the logical stream and schema changes stay governed outside it."
+      ],
+      "optional_claims": [
+        "Transaction metadata and a key policy that keeps one row's changes on one partition are fit conditions, and cross-table or global ordering remains outside the guarantee.",
+        "When log access or slot retention is unavailable, a transactional outbox relay or scheduled extraction is the competing alternative, while dual-write with reconciliation remains an unbound heuristic."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A capacity plan divides 3,050 operations from one hour into 0.85 operations per second, while a 15-second claim window actually receives 1,800 attempts on a few keys. Why does the hour average mis-size that service, and which demand quantities must stay distinct?",
+      "required_evidence": [
+        "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#1-workload-nouns-that-must-not-be-interchanged",
+        "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#2-arrival-shape-is-part-of-the-architecture-requirement",
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs"
+      ],
+      "core_claims": [
+        "Registered accounts, active users, sessions, logical operations, attempts, offered, admitted and completed rates and in-flight concurrency are different quantities at a declared boundary, and retries are attempts rather than new business demand.",
+        "A one-hour mean conceals a short surge: the same 12,000-account population yields about 0.85 operations per second across the quiet hour but 120 attempts per second inside the 15-second window, and key contention and duplicate retries can keep completed unique claims far below the attempt rate.",
+        "Every demand quantity must record units, observation interval, measurement point, data source and confidence, and arrival shape must separate baseline from bursts, independent arrivals from clients waiting on responses, and skewed keys from broad distributions."
+      ],
+      "optional_claims": [
+        "A stationary rate supports bounded arithmetic but is not an empirical forecast of bursts, and a model without key skew understates exclusive-lock cost even when total attempts match.",
+        "Rejected work still existed as offered demand, so an observed rejection count is not evidence that the demand disappeared."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "A team shortens a DNS record's TTL to 30 seconds before removing a failed endpoint, yet some clients keep sending requests to that endpoint for several minutes. Why does the TTL not bound how long clients use the old endpoint, and what must the cutover plan establish before the endpoint is retired?",
+      "required_evidence": [
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes",
+        "tycho.chapter.8a86707018773def410689efbc79cf94#a-worked-boundary-decision"
+      ],
+      "core_claims": [
+        "A DNS TTL bounds caching of the DNS record, not the lifetime of addresses already resolved by a runtime or of established connections.",
+        "A DNS change is neither a drain procedure nor a failover protocol, so it does not by itself stop existing work or transfer write authority.",
+        "Before retirement, the cutover must publish and validate the replacement endpoint and account for old route and connection lifetimes."
+      ],
+      "optional_claims": [
+        "A last-known endpoint set may support reads but cannot by itself establish write authority.",
+        "When discovery is unavailable, the team must decide whether a bounded cached answer remains usable and measure its cache age.",
+        "Retiring the old endpoint requires accounting for old route and connection lifetimes, which a readiness check on the replacement does not cover."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "An alerting policy pages on a five-minute error-budget burn-rate window during normal traffic noise, but a one-hour window misses a slow and severe budget drain. Why can neither window alone support the alert, and what must the policy establish before its threshold is treated as evidence?",
+      "required_evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target"
+      ],
+      "core_claims": [
+        "Short burn-rate windows are noisy while long windows delay detection of severe faults, so one window trades false alarms against detection delay.",
+        "A burn-rate threshold is not portable without enough valid eligible events, especially for intermittent traffic or operations whose single error is intolerable.",
+        "Before acting, the policy must confirm the event population and observation window, and a hard correctness failure can stop a rollout even while budget remains."
+      ],
+      "optional_claims": [
+        "Zero observed errors during idle time is not evidence of availability because the eligible population may be empty.",
+        "A release can improve an average while degrading the worst users, so aggregate SLOs may need disaggregation.",
+        "An SLO must be revised when an API version, retry behavior, or monitoring boundary changes which outcomes count as good."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A dashboard computes each instance's p99 for a day and then averages those daily p99 values into a monthly figure. Why can the result understate the latency most requests experience, and what must be kept so the latency distributions can be merged correctly?",
+      "required_evidence": [
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#7-original-synthetic-architectural-choice",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level"
+      ],
+      "core_claims": [
+        "A percentile is not an additive statistic, so averaging per-instance or per-day p99 values generally does not yield the p99 of the combined population.",
+        "Deleting or coarsening histogram buckets removes resolution needed to estimate quantiles from the retained data.",
+        "Merging distributions requires compatible bucket boundaries and counts, and the pipeline must verify the histogram and quantile math rather than trust the plotted p99."
+      ],
+      "optional_claims": [
+        "A daily series average can hide a ten-minute queue crisis.",
+        "Retention and resolution should be chosen from the question the metric must answer, not from raw-data convenience.",
+        "An audit obligation cannot be satisfied by sampled telemetry alone."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A team doubles a topic's partition count and changes the key encoding during a migration, expecting per-customer ordering to survive because every event still carries a customer key. Why can ordering break even though each event is keyed, and what must the migration define before consumers rely on the new layout?",
+      "required_evidence": [
+        "tycho.chapter.24729e8d9b7247b298956ab144c15225#decision-and-worked-result",
+        "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+        "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#1-command-query-notification-and-durable-event-are-distinct-contracts"
+      ],
+      "core_claims": [
+        "Kafka orders records within a partition; it does not establish a total order across all partitions of a topic.",
+        "Changing the partition count or key encoding can move later records for a customer to a different partition from older records, so their relative order is no longer defined by one partition sequence.",
+        "An application that needs continuity across the change must define a transition or ordering contract rather than assuming that key presence preserves order."
+      ],
+      "optional_claims": [
+        "A single hot key remains confined to one partition, so adding partitions does not split that key's load.",
+        "A consumer group with more instances than assignable partitions cannot increase per-partition concurrent ownership without changing the consumer architecture."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A booking service replaces its limited-seat approval rule with a mergeable set so disconnected approvers can synchronize automatically. Why can the replicas converge on the same state while the approval limit is still violated, and what must happen to authority-dependent approvals?",
+      "required_evidence": [
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#start-with-the-invariant-then-choose-the-merge",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#three-original-workload-decisions",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#normal-operation-failure-and-recovery"
+      ],
+      "core_claims": [
+        "Convergence means replicas reach the same state, not that the application invariant survived: the union of two locally valid offline approvals can exceed the capacity limit.",
+        "A mergeable data type does not remove transport, deduplication, or ordering obligations, and it cannot by itself enforce a finite-resource invariant.",
+        "Authority-dependent approvals must stay pending and be revalidated against an authority; a last-writer rule can conceal an over-allocation but cannot undo an external action already performed."
+      ],
+      "optional_claims": [
+        "A client-controlled wall-clock timestamp cannot establish that an offline edit predates a revocation.",
+        "A last-writer register's clock order is not evidence of user intent, and a timestamp tie needs a documented deterministic tie-breaker.",
+        "If a replica disappears, its metadata may still be needed to distinguish old from new operations, so tombstone compaction needs an argument."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team replaces an in-process reservation repository adapter with a remote service behind the same application port, and the port's contract tests still pass. Why is interface conformance insufficient to prove the substitution safe, and what must the adapter contract and tests add?",
+      "required_evidence": [
+        "tycho.chapter.c5f8456752f34dd6a5b6b5c7e3e14715#decision-and-worked-result",
+        "tycho.page.f375bfcea48045d2a5d1f46014ca7758#2-a-port-is-an-application-contract-not-automatically-a-network-port",
+        "tycho.page.f375bfcea48045d2a5d1f46014ca7758#4-choose-the-correct-core-boundary",
+        "tycho.page.65f9616c034643f9bf5f297037f027e4#3-original-fictional-example-a-shared-workshop-equipment-scheduler",
+        "tycho.page.65f9616c034643f9bf5f297037f027e4#6-failure-and-test-matrix"
+      ],
+      "core_claims": [
+        "A port inverts source dependencies; it does not make a multi-resource transaction atomic or remove the runtime dependency and its independent failures.",
+        "A remote substitution introduces deadlines and ambiguous outcomes, so the contract needs a stable logical operation identity, error classification, and retry or reconciliation rules.",
+        "Tests must exercise the actual backend's locking, isolation, and failure behavior; an in-memory adapter cannot prove those properties."
+      ],
+      "optional_claims": [
+        "A mocked repository test cannot prove database recovery behavior.",
+        "Changing a repository implementation requires checking contract, transactional, and failure behavior rather than assuming identical durability by interface.",
+        "A driver with a new latency profile changes end-to-end capacity even when source dependencies are inverted."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

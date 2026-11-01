@@ -1,0 +1,147 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "An operations team replaces every SLO alert with a single five-minute burn-rate threshold and pauses releases whenever it fires. Why can that rule both page on noise and miss a slow budget leak, and what must the decision establish before any burn-rate threshold is trusted?",
+      "required_evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target"
+      ],
+      "core_claims": [
+        "A burn rate compares observed bad-event consumption with the rate the error budget permits, and a short window can be noisy while a long window detects a severe fault slowly, so one window does not settle both false paging and detection delay.",
+        "Before a threshold is trusted, the eligible event population, measurement boundary, outcome classes and sample size must be fixed, because a target without a specified population is meaningless and too few valid events cannot support the same burn conclusion.",
+        "A hard correctness failure must stop or reverse a release even when budget remains, because the error budget is an accounting of permitted bad events, not permission to violate an invariant."
+      ],
+      "optional_claims": [
+        "The alert record should name the response and owner and verify restored correct durable state, not merely a fall in HTTP error counts.",
+        "The SLO record must keep numerator, denominator, units, target, data-source revision and effective date together, and be revised when retries, an API version or the monitoring boundary change."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A capacity review computes a fleet p99 by averaging each instance's p99, keeps only hourly rollups after seven days, and then reports that a ten-minute queue crisis did not affect the tail. Why can each step produce a false improvement, and what must be retained or recomputed before that claim is made?",
+      "required_evidence": [
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level"
+      ],
+      "core_claims": [
+        "Averaging percentiles across groups is generally invalid: sums and counts can reconstruct a mean over compatible populations, but an arbitrary high percentile cannot be recovered that way, and merged histograms require compatible bucket boundaries.",
+        "Downsampling deletes resolution, so an hourly mean can hide a short queue crisis and a p99 computed from coarse buckets cannot be averaged into the day's p99; a p99 that appears improved after misconfigured downsampling is a measurement artifact.",
+        "Retention must be chosen from the question being answered, and missing or expired samples must be recorded as unknown rather than read as clean, because sampled telemetry cannot satisfy an audit obligation."
+      ],
+      "optional_claims": [
+        "Summary quantiles from different instances are not one global quantile, and a histogram supports estimable quantiles only under known bucket boundaries.",
+        "Aggregating tenants can hide fairness and authorization failures even when the combined distribution looks healthy.",
+        "A p99 recorded without the rejected, timed-out or unknown populations cannot prove the user experience it is used to represent."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "After a rolling restart, a dashboard that differences cumulative request counters shows a brief negative rate and then a traffic collapse, and the team concludes that capacity was lost. Why is the counter reading not a business event, and what must the pipeline and query preserve to make the interval usable?",
+      "required_evidence": [
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write"
+      ],
+      "core_claims": [
+        "A cumulative monotonic counter changes its start time on restart or stream reset, so a decrease across that boundary is not a negative operation; rate calculation needs reset handling and a valid observation window.",
+        "Delta and cumulative temporality are not interchangeable: conversion needs state for overlapping intervals, missing intervals and multiple writers, and a reset or temporality mismatch must not be read as genuine work.",
+        "A series name, value and timestamp are insufficient to interpret a measurement, and a metric stream can double-count retries without establishing the authorized business outcome."
+      ],
+      "optional_claims": [
+        "A pull-based collection gap or dropped telemetry makes an interval unobservable, so sample freshness and explicit unknown data must be tracked.",
+        "Push batching and retries can duplicate or delay data, so writer identity and temporality-aware deduplication belong to the pipeline contract."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "During a rolling deploy, the platform removes an instance from the load balancer and sends the shutdown signal immediately. Clients on long-lived HTTP/2 connections see resets, and one publish is reported as failed even though it may have committed. Why is removal from discovery not a drain, and what sequence and record must the operator require?",
+      "required_evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries"
+      ],
+      "core_claims": [
+        "Removing an instance from the selector stops new selection, but resolvers, route caches and established connections can keep using it, and a DNS TTL bounds record caching rather than the life of a connection or an application deadline.",
+        "A bounded drain must allow route propagation, let admitted work finish within its budget, and record unresolved operation IDs before forced termination, because a hard deadline can leave effects unknown rather than atomically cancelled.",
+        "Readiness and liveness answer different questions, so a cached healthy answer can keep sending traffic to a draining instance, and losing a response after a commit requires reconciliation by the same logical operation identity."
+      ],
+      "optional_claims": [
+        "Diagnosis should separate name resolution, connect, handshake, queue, first byte, transfer and application-effect time before connection lifetime or keepalive values are changed.",
+        "Raising keepalive and maximum connection lifetime can hide leaked resources or retain endpoints through maintenance, while excessively short lifetimes create setup storms."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A platform sells a tenant 100 requests per second but enforces it with a 100-token-per-second bucket in each of six replicas. Under uneven routing the tenant exceeds the sold rate, and during a quota-store outage the replicas keep admitting. Why is the sold limit not enforced, and what must the limiter contract state about scope, accounting failure and the difference between rate and concurrency?",
+      "required_evidence": [
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation"
+      ],
+      "core_claims": [
+        "A per-instance bucket grants each replica its own allowance, so the aggregate approaches the replica count and changes with routing; a global quota needs atomic shared accounting, coordinated budget leases or an explicitly bounded approximation.",
+        "The failure contract must say what happens when shared accounting is unavailable: a hard external limit requires rejecting new work or spending only a known unused local allocation, and a limiter timeout must not become permission to spend an unlimited budget.",
+        "A token bucket bounds admitted cost over an interval while a concurrency semaphore bounds resident work, and neither controls the other dimension without deadlines; one shared FIFO also lets a tenant fill the queue when average capacity is sufficient."
+      ],
+      "optional_claims": [
+        "Rejection is not free, because parsing, authorization, logging and network work on the rejection path can consume the capacity being protected.",
+        "A retry hint that every client follows immediately recreates the overload, so guidance must be consistent with the remaining budget and deadline."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "To cut server connections, a team switches a long-lived application from session pooling to PgBouncer transaction pooling. Prepared statements and session-scoped commands then fail intermittently under concurrency. Why does the pool mode change semantics rather than only connection reuse, and what must be pinned and tested before the switch?",
+      "required_evidence": [
+        "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics",
+        "tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use",
+        "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+        "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery"
+      ],
+      "core_claims": [
+        "In transaction mode a server connection can be reassigned after each transaction, so session-specific state must not be presumed across transactions and later statements need not reach the same backend, while session mode preserves that state at lower multiplexing gains.",
+        "Prepared-statement support is version- and configuration-scoped: since PgBouncer 1.21.0 protocol-level named statements can be tracked when max_prepared_statements is nonzero, but SQL-level PREPARE/EXECUTE and other session-affine state are not thereby made safe, so versions and the setting must be pinned and prepare/execute tested across different backend leases.",
+        "max_client_conn bounds accepted client sessions while default_pool_size caps server connections per user and database pool, so total server connections can exceed one pool size and must be bounded with file descriptors, memory and database capacity."
+      ],
+      "optional_claims": [
+        "Statement mode forbids multi-statement transactions, so it changes transaction semantics as well as reuse.",
+        "A pool limit is not throughput: an idealized lease bound is not a p99 guarantee, and holding a connection across a slow remote call shifts the queue into the database."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A team resharding from 16 to 17 modulo buckets finds that nearly every key remaps, so it adopts a consistent-hashing ring and raises virtual nodes per node from 64 to 512. Why does the ring bound movement, and why can more tokens still worsen failure and repair outcomes rather than making ownership safer?",
+      "required_evidence": [
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes",
+        "tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition"
+      ],
+      "core_claims": [
+        "Modulo hashing assigns a key to hash(key) mod N, so adding a node can invalidate almost all mappings; a consistent-hashing ring places keys and nodes in one circular space and a membership change should move about the departing or joining node's share, an expectation that random tokens, unequal vnode counts and hot keys can exceed.",
+        "Each token adds failure combinations and raises outage probability, uneven token ranges produce uneven request load, and hinted handoff spreads a lost node's load only as temporary protection until anti-entropy repair, so token counts must be bounded against repair and outage cost.",
+        "A membership change must record an ownership epoch and fence stale ownership, because a ring without epoch fencing can route one key to two owners during the change, and the actual moved fraction should be measured rather than assumed."
+      ],
+      "optional_claims": [
+        "Consistent hashing is contraindicated when ring hotspots cannot be mitigated, rebalancing cannot be observed, or no one can fence stale ownership during a membership change.",
+        "Explicit range assignment gives an operator direct control over hot ranges and split points, while rendezvous hashing avoids a shared ring."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

@@ -9,7 +9,9 @@ independent external-agent runs.
 - `corpus-v2.json` — heuristic core/optional claims and 50/50 split.
 - `corpus-v3.json` — AI-curated dev claims; v2 holdout is consumed.
 - `AGENT-PROMPT.md` — v2 checklist prompt.
-- `AGENT-PROMPT-V3.md` — onboarding, facet/evidence matrix and detailed answer.
+- `AGENT-PROMPT-V3.md` — full v3 prompt for the next holdout.
+- `AGENT-PROMPT-V3-CONCISE.md` — concise v3 used by v5.
+- `corpus-v6.json` — frozen new holdout; full v3; not executed.
 - `telemetry-schema.json` — per-session telemetry and token accounting.
 - `logs/` — one JSONL file per agent session (created by the harness).
 - `results.json` — harness output after a run.
