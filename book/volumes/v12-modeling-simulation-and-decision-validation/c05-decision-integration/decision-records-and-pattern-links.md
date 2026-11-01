@@ -61,8 +61,8 @@ The binding rule for this volume is:
 
 > V12 references existing patterns. Existing patterns do not reference V12.
 
-The rule protects the evidence layer. Only a sufficient, promotion-bound card or owner page has a promotion hash; all entries
-retain their source ledgers and review records. Adding a V12
+The rule protects the evidence layer. Only a sufficient, promotion-bound card or owner page
+has a promotion hash; all entries retain their source ledgers and review records. Adding a V12
 backlink would change a canonical file, stale review and source records, and can invalidate a
 promotion where one exists. The protection is not a matter of style; it is a requirement for
 keeping existing evidence reproducible.
