@@ -1,0 +1,208 @@
+{
+  "task_id": "Q239",
+  "answer": "## Direct answer\n\nSubstituting zero does not leave a hole in the model. It fills the hole with a specific physical claim: that the\nsecond write becomes visible to reconciliation with no delay at all, so the two paths behave as one synchronous\nwrite. In the V12 accounting the lag is a multiplier on the backlog inflow (backlog += target_served *\ndual_write_lag). A zero lag deletes that inflow, so the backlog never leaves zero, divergence never accumulates,\nand a rollback has nothing to drain. The run still converges, the standard error collapses, the confidence\ninterval degenerates to a point, the result hash replays, and every evidence label the toolchain can print looks\nstrong. But the reported numbers now describe the substituted constant, not the migration: the model has been\nasked to price a risk after the risk mechanism was removed. No parameter value can repair that, because the\nrecord's own hard constraint M1 - a cutover must not proceed without a measured dual-write lag and reconciliation\ncapacity for the target environment - is a precondition on evidence about the world, not a threshold the\nsimulation can pass. The defensible outcome is status insufficient-evidence with recommendation none, plus the\nmeasurements that would reverse it.\n\nThe decision record must therefore keep the missing value missing, not replace it: carry the input as assumed\n(or unknown) with an empty source list and the missing distribution named in unknowns; run the declared range\nand correlation rather than a point; evaluate M1 as not-tested; keep model verification, calibration and\nsimulation evidence in separate fields; carry the validity limits; and make the reversal triggers name the\nmeasurement, the range that would support or reject the decision, the measurement owner, the consequence of\nstaying in the current state, and the next review trigger.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| 1. Where the lag sits in the dynamics (units, multiplier) | \"dual-write lag\"; backlog/reconciliation accounting; model contract fields | coexistence-and-rollback#the-accounting; model-specification#required-structure; modernization-path.json (dynamics, parameters) |\n| 2. Why zero is a structural claim, not a neutral default | \"zero default assumption\"; zero lag boundary; verification cases | model-verification#the-test-matrix; model-verification#boundary-cases; modernization-path.json (verification, calibration) |\n| 3. Why zero is outside the declared input domain | \"assumed range\"; correlation; scenario inputs | scenario-specification#seeds-and-replications; uncertainty-and-sensitivity#correlated-inputs; modernization-staged.json (uncertainty) |\n| 4. Why the result still looks precise | convergence; standard error; replay/provenance | convergence-and-error#what-convergence-does-not-mean; run-and-result-provenance#what-replay-proves; modernization-staged run artifact |\n| 5. Why precision cannot reach the decision | insufficient evidence; measurement agenda; hard constraint M1 | insufficient-evidence-outcomes#the-modernization-example; coexistence-and-rollback#what-would-support-a-cutover; modernization-path-experiment#failure-modes |\n| 6. What the record must do instead | decision-record fields; reversal triggers; \"unknown as zero\" | decision-record#why-a-decision-record-is-not-a-score; decision-record#required-structure; insufficient-evidence-outcomes#a-checklist-for-insufficient-evidence; insufficient-evidence-outcomes#what-would-change-the-outcome; calibration-and-validity-limits#the-four-statuses |\n\n## Mechanism and justification\n\n### 1. The lag is a multiplier, not an offset\n\nAt every step the model serves up to each path's capacity and then charges the target path's served traffic\nagainst the declared lag: backlog += target_served * dual_write_lag, drained by min(backlog,\nreconciliation_capacity * dt). The lag is in seconds and target_served is in records per second, so the lag is\nthe conversion factor that turns throughput into unreconciled work. Setting it to zero does not make the lag\n\"small\"; it removes the only inflow to the stock. Divergence grows only while the backlog exceeds the drain\ncapacity, so with an empty backlog the divergence stock cannot rise even though reconciliation capacity\n(4 records per second) is well below target throughput (10 requests per second). The model then simulates two\nidentical writers, which is exactly the architecture the decision is not choosing.\n\n### 2. Zero is the model's boundary test, not a measurement\n\nThe model contract's verification case V12-B-MIG-01 is literally \"a full stage shift with zero lag has no\ndivergence and no rollback delay\", expected max_divergence == 0, exercised by test_zero_lag_has_no_divergence.\nThe verification matrix lists it beside the zero-arrival and zero-queue-capacity boundaries, and the\nboundary-case list adds zero servers; their purpose is to show that the engine does not fabricate divergence\nor success. Passing those cases is evidence\nabout the code. Using the same value as the input to a decision is a category error: the record would present a\npassed boundary test as a measured parameter.\n\n### 3. Zero is outside the declared input domain and deletes the correlation\n\nThe staged scenario declares a uniform 0.5-2.5 second lag and a 2-8 records-per-second reconciliation capacity\nwith a -0.4 correlation; the model's own default is 0.5 seconds and the scenario overrides it to 1.5 seconds.\nZero is none of those three values and lies outside the declared range. The model's validity limits cover only\n\"the synthetic stage schedule and capacities recorded in a scenario\", so a zero-lag run is outside the domain\nthe contract claims. A constant also has no covariance: substituting a point deletes the declared -0.4\ncorrelation, and the volume is explicit that a model ignoring a known correlation produces an output\ndistribution that is too narrow and a decision that looks more certain than it is.\n\n### 4. Why the result is precise\n\nPrecision here is manufactured by the computation, not discovered about the world. With a point input the 20\nreplications vary only by sampling noise; for bounded metrics the standard error is zero, the relative error is\n0.0 against the 0.02 threshold, the run is marked converged, and the interval collapses to a point. Convergence\nmeans only that the sampling error of the reported metric is small under the declared model, and explicitly does\nnot mean the model is valid, the inputs are measured, the decision is correct, or the interval contains the\nproduction value. The interval is a sampling interval, not a metrological coverage interval for the input\nparameter. The run record is hash-bound and replays to the same result, which is a reproducibility check rather\nthan a truth check. Every property that makes the artifact look authoritative - verified engine, converged run,\nnarrow interval, replayable hash - is a property of the calculation, and none of them is a property of the\nmigration. The corpus names this failure mode directly: precision without accuracy, a value reported to four\ndecimals from a one-significant-figure assumption.\n\n### 5. Why the result is meaningless for this decision\n\nThe entire difference between the staged candidate and the no-cutover baseline is divergence and rollback. The\ndeclared run already reports maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3) and rollback\ncompletion in 10% of replications, so the assumed range already straddles any plausible business threshold.\nA zero-lag run instead reports zero divergence, immediate rollback and success rate 1.0: the one mechanism the\ndecision turns on is switched off, and the record flips from insufficient evidence to \"the staged path is safe\"\non the strength of the substitution. That is the experiment page's named failure mode - single-input optimism,\nrunning the best-case lag and capacity only and ignoring the upper tail - and it is also why the experiment\nestablishes a measurement agenda rather than a cutover decision.\n\n### 6. No parameter value can satisfy a constraint about the world\n\nM1 is a hard constraint and states that a cutover must not proceed without a measured lag and measured capacity\nfor the target environment. That is not a threshold the simulation can pass; it is a precondition on evidence.\nThe record must therefore evaluate M1 as not-tested whatever lag it runs with. If the lag were set to zero, the\nrecord would show a green divergence and a green rollback next to a not-tested M1 - a shape that invites the\nreader to treat the greens as support. The contract separates constraints, evidence statuses and unknowns into\ndifferent fields precisely to block that trade: a hard constraint eliminates a candidate and is not converted\ninto a preference because the numbers look better.\n\n## What the decision record must do instead\n\n1. Keep the status in a status field. The parameter stays evidence_status assumed with an empty source list and\n   the note \"Synthetic dual-write lag; not measured\"; the model's unknowns name the real lag distribution; the\n   calibration block says \"No measured dual-write lag exists\". Only a measurement record with method, sample\n   size and period can flip the status, and repeating an assumed value inside a decision record does not make it\n   measured.\n2. Do not invent the number. The vocabulary is explicit: unknown means no defensible value exists and the model\n   must not invent one. If a run is unavoidable, run the declared range and correlation and label the result\n   conditional on an assumed input range, not on a point.\n3. Return insufficient evidence as the outcome, with recommendation none. Both are complete outcomes; a record\n   that forces a recommendation to look complete hides the missing evidence.\n4. Evaluate the constraints honestly and separately: M1 not-tested (no measurement), M2 fail (rollback completes\n   in 10% of replications), M3 not-tested (non-quantitative continuity and runbook, outside the model).\n5. Keep the evidence layers apart in the evidence block: model-verified, uncalibrated, simulation\n   insufficient-evidence. A later layer never upgrades an earlier one, and a decision-supported outcome over an\n   uncalibrated model is only ever a conditional result that states its condition.\n6. Make the reversal triggers actionable. Each names the measurement, the range that would support or reject the\n   decision, the owner of the measurement, the consequence of staying in the current state, and the next review\n   trigger - measured lag with a bounded upper confidence limit, measured reconciliation capacity, a rehearsed\n   rollback, and measured divergence below the business threshold over a sustained period.\n7. Carry the limitations with the record: synthetic inputs, no migration performed, no record-level\n   reconciliation or schema compatibility, divergence is a synthetic proxy rather than a data-quality measure.\n8. Keep non-quantitative constraints in their own field so they cannot be mistaken for modelled results.\n9. Refuse the three substitutes: a sensitivity ranking is not a measurement, a weighted score is not a decision,\n   and a default recommendation is not evidence.\n10. Treat the record as a measurement agenda. The model can show what to measure and how the decision depends on\n    it; it cannot create the measurement.\n\n## Boundaries and trade-offs\n\n- Zero is legitimate in three narrow situations. First, as a verification fixture: the boundary case exists to\n  prove the engine does not fabricate divergence. Second, as structural absence: the no-cutover baseline keeps\n  dual_write_lag at 1.5 seconds and sets target_share to 0, so the dual-write mechanism never runs and zero\n  backlog is a consequence of the state, not a value substituted for an unknown. Third, as the declared lower\n  bound of an explicitly carried range, with the range and its provenance stated in the same record.\n- A conditional decision is allowed only when the missing evidence is explicitly non-quantitative and the record\n  can state the condition; the checkout record recommends B while marking the operability constraint unverified.\n  It is not allowed when a hard quantitative input is assumed and its range spans the decision boundary, which\n  is the modernization case.\n- If the decision is genuinely invariant to the lag across the declared range, the right move is to demonstrate\n  that invariance and say the measurement is not decision-relevant. That is a sensitivity result about assumed\n  inputs; it is still not evidence that the lag is zero, and a first-order index near zero does not prove an\n  input is irrelevant because it may act only through an interaction.\n- Worst-case or bounds analysis is a legitimate way to make a run without a measurement, provided it is labelled\n  as a sweep over assumed values and the record states whether the decision flips inside the swept range.\n- What the corpus does not establish: there is no production measurement anywhere in V12, no calibration, no\n  owner acceptance, and no independent review of this answer. JCGM 100 supplies the value-plus-uncertainty\n  vocabulary but V12 performs no metrological uncertainty budget; Sargent separates verification, data validity\n  and operational validity but does not validate this model. Pattern links from the record are one-way and do\n  not promote a pattern or establish production applicability.\n\n## Evidence map\n\n| Claim | Section key | Note |\n|---|---|---|\n| The lag is a multiplier on backlog inflow, so zero removes the only inflow | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting | \"backlog += target_served * dual_write_lag\"; drained by reconciliation capacity |\n| Divergence grows only when backlog exceeds drain capacity, so an empty backlog cannot diverge | edition/v12/models/modernization-path.json | dynamics equation uses max(0, ... (backlog - reconciliation_capacity*dt) ...); artifact read directly |\n| Lag is in seconds and multiplies a records-per-second flow | edition/v12/models/modernization-path.json | parameter unit second, backlog unit record |\n| Zero lag is a verified boundary case, expected max_divergence == 0 | tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix | row \"Modernization zero lag / test_zero_lag_has_no_divergence / pass\" |\n| Boundary cases prove the engine does not fabricate outcomes | tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases | \"zero arrivals: no requests, no completions, no fabricated success\" |\n| The declared lag range is 0.5-2.5 s with -0.4 correlation; the default is 0.5 s, the scenario 1.5 s | edition/v12/scenarios/modernization-staged.json | uncertainty.parameter_draws and correlations; model default in modernization-path.json |\n| Validity limits cover only the declared configuration | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits | a validity limit is a condition on the result's use |\n| Ignoring the declared correlation narrows the distribution and overstates certainty | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs | \"too narrow and a decision that looks more certain than it is\" |\n| Convergence says nothing about input validity or decision correctness | tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean | five explicit non-meanings, including \"the confidence interval contains the production value\" |\n| The replication interval is a sampling interval, not a coverage interval | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language | \"a sampling interval, not a metrological coverage interval\" |\n| Replay is reproducibility, not truth | tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves | \"a reproducibility check, not a truth check\" |\n| More replications make an assumed input more precise, not more true | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications | sampling error versus input uncertainty |\n| A point input yields a degenerate interval and a converged run | edition/v12/runs/modernization-staged.json | convergence relative_error 0.0, success_rate ci 1.0/1.0, sensitivity [] |\n| The declared run already shows divergence 8,925.5 (CI 5,561.6-12,289.3) and rollback 0.1 | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result | the assumed range already crosses plausible thresholds |\n| Divergence is a synthetic proxy, not a data-quality measurement | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting | stated immediately after the accumulation rule |\n| What would support a cutover is measurement, not model parameters | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover | \"The model can show what to measure ... it cannot create the measurement\" |\n| Unknown means no defensible value; the model must not invent one | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses | the fourth status is explicit |\n| The failure mode is named: unknown set to zero gives a precise but meaningless result | tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes | \"Unknown as zero\" and \"Sensitivity as evidence\" |\n| The record keeps constraints, evidence statuses and unknowns in separate fields | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score | \"a missing measurement can be replaced by a plausible value and forgotten\" |\n| Required record fields include evidence statuses, limitations and reversal triggers | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure | plus status enum proposed/decision-supported/insufficient-evidence/rejected |\n| Insufficient evidence is a complete result, not a failed record | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result | the modernization record does exactly that |\n| A hard input whose range spans the decision boundary forces insufficient evidence | tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence | conditional decisions reserved for non-quantitative gaps |\n| Reversal triggers must name measurement, range, owner, consequence and review trigger | tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome | a useful record is actionable |\n| Hard constraints eliminate candidates and are not traded for better averages | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences | undeclared thresholds are not applied |\n| Layers never upgrade each other; uncalibrated plus decision-supported is conditional | tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records | five layers, no automatic upgrade |\n| Forbidden inference: simulation success implies production success | tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences | same list forbids reading a CI as proof of the business case |\n| The baseline's zero divergence is structural, not a substituted measurement | edition/v12/scenarios/modernization-no-cutover.json | target_share 0.0 while dual_write_lag stays 1.5 |\n| Single-input optimism and baseline-as-winner are the named failure modes | tycho.page.7732cad079d3148dd26b24cc1fdef318#failure-modes | also horizon censorship and correlation omission |\n| The experiment establishes a measurement agenda, not a cutover decision | tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence | the five-step next step is measurement and re-run |\n| The modernisation record is insufficient-evidence with M1 not-tested | edition/v12/decisions/modernization-cutover.json | recommendation none, calibration uncalibrated, constraint_evaluation M1 not-tested, M2 fail, M3 not-tested |\n| Precision without accuracy is a recorded failure mode | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes | \"four decimals from a one-significant-figure assumption\" |\n| A gate is an observed observation, not a calendar milestone | tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract | no-return evidence before authoritative state changes |\n| Pattern links do not promote or establish production applicability | tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean | one-way links; simulation never promotes a pattern |\n\n## Unknowns and confidence\n\n- High confidence in the mechanics and in the record obligations: the accounting, the boundary test, the range\n  and correlation, the convergence and replay caveats, and the record's required fields are all stated directly\n  in the sections cited above, and the artifacts agree with the prose.\n- Unresolved: whether any measured dual-write lag exists outside this corpus. The model's calibration block says\n  none does, and no measurement record appears in the artifacts, but absence of evidence inside the snapshot is\n  not proof of absence in the field.\n- Unresolved: the business divergence threshold. The input table calls it assumed and business-defined; no value\n  appears in the model, scenario, run or decision artifacts I read, so the claim that the modeled divergence\n  crosses it is the corpus's statement rather than a computed comparison.\n- Unresolved: owner acceptance and independent review. The layer contract treats decision records as proposals\n  unless accepted, and the validation page separates a review pass from owner acceptance; neither is claimed\n  here.\n- What would change the answer: a measurement record with method, sample size and period, which flips the\n  parameter to measured and could make the record conditional or decision-supported; or a model change that\n  removes the multiplicative coupling between lag and backlog; or a demonstrated invariance of the decision to\n  lag across the declared range, which would make the measurement non-decision-relevant without ever making\n  zero an acceptable substitute.\n- Retrieval boundary: searches covered modeling-and-simulation primarily, plus book and atlas for the decision\n  and pattern vocabulary; both final rounds returned only already-read pages, and the snapshot was\n  4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a.",
+  "citations": [
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#failure-modes",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+    "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean"
+  ],
+  "evidence": [
+    {
+      "claim": "The dual-write lag enters the accounting as a multiplier on target throughput, so zero removes the only backlog inflow.",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+      "note": "OBSERVED: 'backlog += target_served * dual_write_lag'; 'backlog -= min(backlog, reconciliation_capacity * dt)'. The paragraph also states divergence accumulates when the backlog exceeds drain capacity and that divergence is a synthetic proxy, not a measured data-quality metric."
+    },
+    {
+      "claim": "With an empty backlog the divergence stock cannot leave zero, because its growth term is the backlog minus drain capacity.",
+      "section_key": "edition/v12/models/modernization-path.json",
+      "note": "OBSERVED artifact: dynamics.divergence(t+1) = max(0, divergence(t) + (backlog(t) - reconciliation_capacity * dt) * dt * 0.001). Read directly from the model file, not from an index section."
+    },
+    {
+      "claim": "The lag is a duration that converts a records-per-second flow into unreconciled records per step.",
+      "section_key": "edition/v12/models/modernization-path.json",
+      "note": "OBSERVED artifact: parameter dual_write_lag has unit 'second', default 0.5, evidence_status 'assumed', empty source_ids, note 'Synthetic dual-write lag; not measured.'; state variable dual_write_backlog has unit 'record'."
+    },
+    {
+      "claim": "Zero lag is one of the model's verification cases, with expected maximum divergence exactly zero.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+      "note": "OBSERVED: test matrix row 'Modernization zero lag | test_zero_lag_has_no_divergence | pass'. The model contract's verification case V12-B-MIG-01 states the same expectation. INFERENCE: passing it is evidence about the engine, not about a migration."
+    },
+    {
+      "claim": "Boundary cases exist to show that the engine does not fabricate outcomes.",
+      "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+      "note": "OBSERVED: 'zero arrivals: no requests, no completions, no fabricated success'; the page also says boundary cases assert the outcome rather than mere termination."
+    },
+    {
+      "claim": "The staged scenario declares an assumed 0.5-2.5 second lag with a -0.4 correlation to reconciliation capacity, while the model default is 0.5 s and the scenario value is 1.5 s.",
+      "section_key": "edition/v12/scenarios/modernization-staged.json",
+      "note": "OBSERVED artifact: uncertainty.parameter_draws uniform 0.5-2.5 and 2-8, correlations coefficient -0.4, replications 20, seed base 20261029, evidence_status 'assumed'. Zero lies outside the declared range."
+    },
+    {
+      "claim": "A validity limit is a condition on the result's use, so a value outside the declared configuration is outside the model's domain.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+      "note": "OBSERVED: 'A validity limit is not a disclaimer appended to a result. It is a condition on the result's use.' The model lists 'Valid only for the synthetic stage schedule and capacities recorded in a scenario.'"
+    },
+    {
+      "claim": "Ignoring a declared correlation narrows the output distribution and makes the decision look more certain than it is.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+      "note": "OBSERVED: 'A model that ignores a known correlation produces an output distribution that is too narrow and a decision that looks more certain than it is.' A constant input has no covariance, so a zero substitution deletes the declared -0.4 relationship."
+    },
+    {
+      "claim": "Convergence concerns sampling error only and does not validate the model, measure the inputs or establish the decision.",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+      "note": "OBSERVED: the five non-meanings include 'the inputs are measured', 'the decision is correct' and 'the confidence interval contains the production value'."
+    },
+    {
+      "claim": "The replication interval is a sampling interval, not a metrological coverage interval for an input parameter.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+      "note": "OBSERVED: 'A confidence interval across replications is a sampling interval, not a metrological coverage interval.' JCGM 100 supplies vocabulary, not a V12 uncertainty budget."
+    },
+    {
+      "claim": "Replay proves reproducibility of stored inputs, not truth.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+      "note": "OBSERVED: 'A replay that matches is a reproducibility check, not a truth check.' The run record stores result_sha256, model_sha256 and scenario_sha256."
+    },
+    {
+      "claim": "More replications make an assumed input more precise, not more true.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+      "note": "OBSERVED: 'If the input distribution is assumed, more replications make the assumption more precise, not more true.'"
+    },
+    {
+      "claim": "The staged run is marked converged with a zero relative error and degenerate intervals for bounded metrics.",
+      "section_key": "edition/v12/runs/modernization-staged.json",
+      "note": "OBSERVED artifact: convergence status 'converged', relative_error 0.0, threshold 0.02; success_rate ci_low 1.0 ci_high 1.0 standard_error 0.0; 'sensitivity': [] so this run carries no variance decomposition."
+    },
+    {
+      "claim": "The declared run already reports a divergence that crosses plausible thresholds and a rollback that usually fails.",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+      "note": "OBSERVED: maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3); rollback completed 0.1; rollback seconds mean 1,080 with censoring at 1,200 s."
+    },
+    {
+      "claim": "Divergence is a synthetic proxy, not a measured data-quality metric.",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+      "note": "OBSERVED: 'It is a synthetic proxy, not a measured data-quality metric.' The decision record repeats this as a limitation."
+    },
+    {
+      "claim": "A supported cutover needs measurements and operational evidence, not fitted parameters.",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+      "note": "OBSERVED: the five conditions include a measured lag with a bounded upper confidence limit and a measured reconciliation capacity; 'The model can show what to measure and how the decision depends on it; it cannot create the measurement.'"
+    },
+    {
+      "claim": "The vocabulary defines unknown as having no defensible value, which the model must not invent.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+      "note": "OBSERVED: 'Unknown: no defensible value; the model must not invent one.' The same page says repeating an assumed value in a decision record does not make it measured."
+    },
+    {
+      "claim": "The corpus names the exact failure mode as unknown set to zero producing a precise but meaningless result.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+      "note": "OBSERVED: 'Unknown as zero. A missing input is set to zero and the model reports a precise but meaningless result.' Adjacent entries cover sensitivity as evidence and perpetual insufficient evidence."
+    },
+    {
+      "claim": "The record is designed to stop a missing measurement from being replaced by a plausible value and forgotten.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+      "note": "OBSERVED: 'A missing measurement can be replaced by a plausible value and forgotten. The decision record prevents those moves by keeping constraints, evidence statuses and unknowns in separate fields.'"
+    },
+    {
+      "claim": "The required record structure carries evidence statuses, limitations and reversal triggers as first-class fields.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+      "note": "OBSERVED: fields include constraints (hard, soft, non-quantitative), metrics with units, evidence identifiers, outcome, reversal triggers, limitations; status enum is proposed, decision-supported, insufficient-evidence, rejected."
+    },
+    {
+      "claim": "Insufficient evidence with no recommendation is a complete outcome.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+      "note": "OBSERVED: the modernization record does exactly that and lists measured lag, measured capacity, a rehearsed rollback and a measured divergence as what would change the outcome."
+    },
+    {
+      "claim": "A hard quantitative input whose assumed range spans the decision boundary forces insufficient evidence, not a conditional recommendation.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+      "note": "OBSERVED: first checklist item is 'a hard input is assumed and its range spans the decision boundary'; conditional decisions are reserved for explicitly non-quantitative gaps, as in the checkout operability constraint."
+    },
+    {
+      "claim": "An actionable insufficient-evidence record names the measurement, the decisive range, its owner, the cost of staying and the next trigger.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+      "note": "OBSERVED: those five items are listed verbatim; for the modernization record the trigger is measured lag and capacity plus a rehearsed rollback."
+    },
+    {
+      "claim": "Hard constraints eliminate candidates and are not traded for better averages.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+      "note": "OBSERVED: candidate C is eliminated by cost and latency ceilings even though it scores well; no undeclared success threshold is applied."
+    },
+    {
+      "claim": "Evidence layers never upgrade each other, and decision-supported over uncalibrated inputs is only conditional.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+      "note": "OBSERVED: five layers, 'The labels are not a ladder, and a later layer never upgrades an earlier one automatically'; the record must state the condition and the measurements that would reverse it."
+    },
+    {
+      "claim": "Reading a simulation success or a confidence interval as production evidence is a forbidden inference.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+      "note": "OBSERVED: the list includes 'The simulation succeeded, so production will succeed' and 'The confidence interval excludes zero, so the business case is proven.'"
+    },
+    {
+      "claim": "The no-cutover baseline reaches zero divergence structurally, keeping the lag at 1.5 seconds and setting target share to zero.",
+      "section_key": "edition/v12/scenarios/modernization-no-cutover.json",
+      "note": "OBSERVED artifact: target_share 0.0, dual_write_lag 1.5, empty parameter_draws and correlations, 10 replications. INFERENCE: this is the legitimate zero - the mechanism is absent, not the value substituted."
+    },
+    {
+      "claim": "Single-input optimism and treating the baseline as the winner are the named failure modes of this comparison.",
+      "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#failure-modes",
+      "note": "OBSERVED: 'Single-input optimism. The staged path is run with the best-case lag and capacity only.' Also correlation omission and horizon censorship."
+    },
+    {
+      "claim": "The experiment establishes a measurement agenda, not a cutover decision.",
+      "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+      "note": "OBSERVED: the five-step next step is instrument the lag, measure reconciliation throughput, rehearse a rollback, measure divergence in shadow, then re-run with measured inputs."
+    },
+    {
+      "claim": "The modernisation record already encodes the honest shape: insufficient evidence, no recommendation, M1 not tested.",
+      "section_key": "edition/v12/decisions/modernization-cutover.json",
+      "note": "OBSERVED artifact: status insufficient-evidence; recommendation none; evidence model-verified / uncalibrated / insufficient-evidence; constraint_evaluation M1 not-tested, M2 fail, M3 not-tested; five reversal triggers; four limitations."
+    },
+    {
+      "claim": "Precision without accuracy is a recorded failure mode.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+      "note": "OBSERVED: 'Precision without accuracy. A value is reported to four decimals from a one-significant-figure assumption.' Also 'Uncertainty theater' for intervals presented as input budgets."
+    },
+    {
+      "claim": "A transition gate is an observed observation rather than a calendar milestone.",
+      "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+      "note": "OBSERVED: the no-return contract requires evidence such as source-to-target reconciliation and residual unknowns before authoritative state changes."
+    },
+    {
+      "claim": "Pattern links neither promote a pattern nor establish production applicability.",
+      "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+      "note": "OBSERVED: simulation evidence never promotes a pattern to sufficient; the owner page stays canonical."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
