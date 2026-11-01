@@ -1,0 +1,497 @@
+{
+  "task_id": "Q282",
+  "answer": "# Coexisting code is not yet branch by abstraction: what the seam, the switch and the removal contract must preserve\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence (section_key) |\n|---|---|---|\n| F1 - Definition boundary: when does old/new coexistence become branch by abstraction (BBA)? | \"branch by abstraction\"; \"old/new implementations coexist in one deployable\"; \"switch by configuration\" | tycho.page.3950620546fc4c09a829132bd19bb69a#overview; tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes |\n| F2 - Seam: what the internal interface must preserve | \"internal interface between callers\"; \"bypass around the abstraction\"; \"same contract and observable effects\"; \"rounding value semantics\" | tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications; tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping |\n| F3 - Switch: what the runtime or configuration decision must preserve | \"feature flag default fails safe\"; \"configuration change is a distributed transition\"; \"share of processes on the intended revision\" | tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview; tycho.page.9681d7dd04749125f5749d0c83f96d9b#a-configuration-change-is-a-distributed-transition; tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract |\n| F4 - Removal contract: owner, date, evidence and gate | \"removal owner date\"; \"decommissioning evidence\"; \"no-return approval\"; \"remove switching flag\" | tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes; tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract; tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states; tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#synthetic-acceptance-and-rollback-contract |\n| F5 - Equivalence evidence: what a staging-only comparison can prove | \"parallel run comparable outputs\"; \"production comparison both code paths\"; \"normalization contract numeric difference\" | tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview; tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard; tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0#chapter-result-and-counterexample |\n| F6 - Alternative selection: version-control branching vs strangler facade vs parallel run | \"version-control branching\"; \"strangler facade intercept\"; \"parallel run side-effect-free\" | tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes; tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview; tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview; tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes |\n\n## 2. Direct answer\n\nThe team has the *setting* for branch by abstraction - two implementations that can coexist in one deployable - but not the *pattern*. Branch by abstraction is defined by a set of obligations, not by the presence of two code paths: an owned internal interface that is the only route from callers to implementations, two implementations that preserve the same contract and observable effects, a switch that stays reversible until the old path is removed, and a named owner and date for that removal. Each of the reported facts below breaks at least one of those obligations.\n\n- The module that constructs the old implementation directly means the interface is not the seam that callers actually traverse.\n- The different rounding of totals means the two implementations do not preserve the same contract, so the \"switch\" is a behavior change, not a substitution.\n- Defaulting to the new path during rollout inverts the safe-default direction exactly while equivalence is unproven.\n- Absence of a removal owner means the coexistence has no end, which is the definition of configuration debt rather than a migration technique.\n- A comparison that only ever runs in staging produces no evidence at the point where authority changes.\n\nThe seam must preserve the caller-facing contract and observable effects (including value semantics such as rounding), route every caller including the direct constructor, and be genuinely owned. The switch must preserve reversibility to the old path, a safe default on missing or failed evaluation, whole-snapshot consistency with an observable revision, and the distinction between routing and semantics. The removal contract must preserve the proof that no caller remains, a named owner and date, decommissioning evidence, an approved no-return gate, and the deletion of both the old path and the switching flag.\n\nVersion-control branching is the source's explicit alternative, and by inversion of the fit clause it applies where the switch cannot stay inside one deployable or the interface is not genuinely owned; a strangler facade fits an external request boundary that can be intercepted and routed capability by capability; a parallel run fits side-effect-free, comparable logic such as a pricing calculation and is the better instrument for the rounding question - provided it runs on production work with an explicit normalization policy, not on a staging diff.\n\n## 3. Why coexisting code is not yet branch by abstraction\n\nThe card's decision question is exactly the team's situation - \"Should an internal abstraction seam allow old/new implementations to coexist in one deployable?\" - but the affirmative answer is conditioned on three things at once: \"The seam can be introduced without breaking callers; a reversible switch and removal owner/date are defined\", plus the review condition that \"both implementations preserve the same contract\". The owner section adds the definitional split: the mechanism \"inserts an internal interface between callers and the old/new implementations\" and \"The switch is a runtime or configuration decision, not a long-lived source branch\". In other words, the pattern is the discipline of routing all callers through an owned abstraction and then deleting the old path; the deployable and the configuration knob are only its preconditions.\n\nThat distinction is not academic. The sources name the exact confusion at work here: \"The branch by abstraction pattern is often confused with feature toggles\", and while branch by abstraction \"can be combined with feature toggles to switch between the old and new implementation\", the same guidance says to \"remove any switching feature flag that you might have implemented\". A flag that selects between two divergent implementations, with no owner and no end, is the confusion the source names, not the pattern.\n\nMapping the reported facts:\n\n| Reported fact | Obligation it breaks | Consequence |\n|---|---|---|\n| Two implementations shipped in one deployable, switched by configuration | None by itself; this is the precondition | It proves the setting, not the pattern |\n| One module still constructs the old implementation directly | The seam is not the only route from callers; \"a bypass around the abstraction\" can break the contract | Part of production traffic never exercises the abstraction; the two paths cannot be compared or retired as one unit |\n| The new implementation rounds totals differently | \"old and new implementations should preserve the same contract and observable effects\" | The switch changes results; consumers see a semantic change disguised as a routing decision |\n| The switch defaults to the new path during rollout | Reversibility is decayed precisely while equivalence is unproven; every safe-default rule in the flag material points the other way | A missing, stale or mistyped configuration silently enables the unproven path |\n| No one owns removing the old path | \"give the seam a removal date and owner\"; the flag card rejects toggles \"when no owner removes it\" | Coexistence becomes permanent; the old path becomes untested and the switch becomes permanent configuration |\n| Comparison only in staging | Parallel run needs comparable outputs and a meaningful comparison; authority evidence must exist where authority changes | No evidence that the rounding difference is acceptable on real totals |\n\nA useful way to put it: the team has built the *mechanics* of branch by abstraction (an interface, two implementations, a flag) without its *guarantees* (single route, equal contract, reversible default, terminating ownership). The card's hard contraindications confirm the reading: \"Reject when no internal seam exists, when the abstraction adds no substitution value, or when the old implementation cannot coexist.\" Here a seam exists but is not authoritative, and the substitution value is defeated by the contract change.\n\n## 4. What the seam must preserve\n\n1. **The caller route.** The internal interface must be the path every caller takes, not one of several. The migration mechanism table lists \"Internal branch by abstraction\" as fitting when \"An internal interface can route old/new implementations with one deployable\", and the invariant paragraph names \"a bypass around the abstraction\" as one of the ways the contract breaks. A module that news up the old implementation is that bypass. Until it is routed through the seam (constructor injection, a factory, or an equivalent indirection), the abstraction is a partial facade, and partial facades are precisely what the strangler material warns about: \"internal callers may bypass the façade\". Detection is a contract-test and instrumentation obligation, not a code-review hope.\n\n2. **The contract and observable effects.** The owner section is explicit: \"old and new implementations should preserve the same contract and observable effects\". Rounding of totals is an observable effect and a value-semantics decision. The adapter material lists as an unsafe shortcut exactly this: \"Round or default without a recorded business decision\". Two implementations that round differently do not implement the same interface in the sense the pattern requires; they implement two behaviors behind one name. Either the new rounding is a deliberate, recorded business rule (in which case it is a behavior change that needs its own decision, communication and probably versioned semantics, not a silent default flip), or it is a defect to fix before any traffic moves.\n\n3. **Invariants and explicit refusals.** Where the implementations cannot be made equivalent, the honest seam marks the difference rather than hiding it: an adapter \"should either preserve a required invariant or explicitly mark a conversion *partial/unsupported*\", and \"Unknown is not success\". For pricing this means stating which totals are guaranteed identical, which are allowed to differ and by how much, and which inputs the seam refuses rather than silently rounding.\n\n4. **Substitution value and ownership.** The card rejects an abstraction that \"adds no substitution value\". An interface with one permanent implementation plus a flag is not an abstraction with substitution value; it is indirection. The seam must carry a real contract that both implementations satisfy and that the owning team can change deliberately.\n\n5. **Always runnable.** The owner note requires that \"The system must build and run correctly at all times while the replacement proceeds\". A direct constructor that only works with the old implementation breaks that property the moment the old implementation is deleted.\n\n## 5. What the switch must preserve\n\n1. **Reversibility until removal.** \"the switch remains reversible until the old path is removed\" is the invariant, and the card asks for \"an easily flipped switch\" so the team can return to old functionality if problems appear. Reversibility is not only a code capability; it is a property of the data and the default. If a flip can strand results computed under the new rounding, the switch is not reversible in the sense that matters.\n\n2. **A safe default.** The flag material's good-fit condition is that \"the default fails safe\", and the configuration page's failure policy for optional interface behavior is a documented local default. Defaulting to the unproven implementation means the *absence* of a correct configuration selects the riskier branch. During rollout the safe branch is the incumbent; the new path should be opt-in per cohort until evidence exists, then become the default as a deliberate, recorded step. This is an inference from the safe-default rule rather than a sentence the sources write about this scenario.\n\n3. **One decision point and one snapshot.** A configuration change \"is a distributed transition\": processes fetch at different times and disconnected workers retain old snapshots; each snapshot has \"a monotonically increasing revision\" and \"It never assembles a request's limits from several revisions.\" A switch that can be observed half-applied, or that is read once at startup in some processes and per request in others, has no single authority.\n\n4. **Observability of the actual exposure.** The rollout gate must report \"the share of processes actually on the intended revision\", plus error rate, latency, correctness signals and cohort size. Without that, \"the switch is on\" is a claim about configuration, not about behavior.\n\n5. **Routing, not semantics.** The five transition contracts separate functional ownership (\"Whether old or new implementation receives each client/version\") from API/event semantics (\"Old/new versions simultaneously supported, unknown outcomes and replay horizon\"). A flag may choose who computes the total; it may not silently choose which rounding is correct. That second decision belongs to the owner of the semantics and needs its own record.\n\n6. **Audit, scope and expiry.** The flag material requires a stable key, scope, version, default and observable reason per evaluation, an attributable audit trail, and bounded snapshot age. The same metadata is what makes a removal date enforceable.\n\n## 6. What the removal contract must preserve\n\nThe removal contract is the part the scenario is missing outright, and it is not optional decoration: the good-fit condition pairs the reversible switch with a \"removal owner/date\", and the owner note repeats \"give the seam a removal date and owner\". What it must preserve:\n\n1. **Ownership and a date.** A named owner, a target date and a review cadence. The source does not assign this ownership; it is a Tycho review condition, and its absence is a hard contraindication for the flag variant (\"when no owner removes it\").\n\n2. **A complete caller inventory.** \"All callers and consumers requiring old fields, errors or ordering\" must be enumerated, with tests for absent, invalid and legacy values. Removal is gated on the inventory being empty, not on the team's belief that it is.\n\n3. **Decommissioning evidence.** The no-return checklist requires \"decommissioning evidence for all old callers/subscriptions\", and the acceptance route says to \"block obsolete-field use only after monitoring confirms no remaining consumers\". The atlas state table encodes the same rule: \"Removal requires independent no-return approval\".\n\n4. **A recorded reversibility boundary.** Before removal, record the last safe rollback point and a forward-repair path; after removal, the only honest recovery is forward repair. The acceptance contract is explicit that \"before the old model is retired, a cohort may be directed back if both models remain synchronized\" and that later, \"merely switching readers back could lose semantics\".\n\n5. **Deletion of the switch and the seam.** \"remove the toggle after the rollout because a permanent switch otherwise becomes an untested interface\"; \"remove any switching feature flag that you might have implemented\"; \"remove the seam once the old path is gone\". A seam that outlives its second implementation must justify itself as a stable contract with substitution value, or it goes too.\n\n6. **The proof obligations that justified coexistence.** Contract tests, bypass detection and equivalence evidence are not one-off migration chores; they are the evidence the removal gate consumes. Deleting them with the old path deletes the basis on which removal was approved.\n\nWithout an owner, the removal contract is empty, and that emptiness is what turns \"coexistence\" into \"configuration debt\": the flag card rejects a toggle \"when a toggle would become permanent configuration debt, when no owner removes it\".\n\n## 7. Why a staging-only comparison is the weakest link\n\nParallel run is the right family of evidence for a pricing change - the card asks \"Should old and new implementations process the same work concurrently for comparison?\", and the owner note says to \"Use it for side-effect-free logic when output equality can be checked\". Pricing is exactly that kind of logic. But the card's good-fit conditions are demanding: \"Outputs are side-effect-free and comparable\", and it rejects the pattern \"when comparison is meaningless\". A staging comparison is a smoke test: it exercises the data the team thought to stage, not the production distribution of customers, currencies, discounts and total magnitudes where a rounding difference actually surfaces. The atlas is candid about this class of error: \"a canary that receives no meaningful traffic is not evidence for the canary card's analysis conditions\". A comparison that never sees real totals is the same defect.\n\nThe stronger instrument is production comparison with the incumbent authoritative. The migration case describes evaluating \"both the incumbent and candidate code paths in production while exposing the incumbent response\", with served versus experimental results kept distinct so a broken candidate \"cannot be allowed to corrupt an otherwise healthy production request\". Its most relevant warning for this scenario is that a numeric field may differ for legitimate reasons, and \"a bare equality assertion cannot make that policy decision\" - a comparison needs a normalization contract covering identity, ordering, null/default semantics, authorization and temporal freshness. For rounding, that contract has to state the tolerance class, the direction of rounding, the inputs where divergence is permitted, and the business owner of that decision; then mismatch counters must carry the cohort denominator and the observation interval.\n\nTwo honesty limits compound this. First, the sources say explicitly that mismatch thresholds, sampling and cost bounds are synthetic: \"Mismatch thresholds, sampling and cost bounds are synthetic\", and the parallel-run note \"gives no mismatch threshold, sample size or cost measurement\". A team cannot borrow a tolerance from the corpus; it must measure and record its own. Second, the comparison harness is itself code with a lifecycle - the MinimumCD-derived note supports \"harness removal\", so the comparison cannot become a third permanent path.\n\n## 8. When version-control branching, a strangler facade or a parallel run fit better\n\n| Mechanism | Fits when | Fails when | In this scenario |\n|---|---|---|---|\n| Version-control branching | The source's explicit alternative to branch by abstraction; by inversion of the fit clause it applies when the switch cannot stay inside one deployable, when there is no internal seam, or when the interface is not genuinely owned (the card rejects \"when no internal seam exists ... or when the abstraction adds no substitution value\"). The change is then integrated as source, not routed at runtime. | Integration is deferred and the two states cannot be exercised side by side on live work; there is no runtime rollback lever while the branch is unmerged. (Inference from the owner note's contrast, not a source sentence about branching costs.) | Weak fit: an internal seam already exists in shape, and the whole difficulty is that one module bypasses it - a source branch would not route that module any better. It becomes the fallback only if the seam cannot be made authoritative at acceptable cost. |\n| Strangler facade | \"Requests can be intercepted and routed by capability\" at a boundary; the legacy capability can be replaced incrementally while the old system stays authoritative for the rest. | \"Cannot be used in systems where requests to the backend system cannot be intercepted\", \"internal callers may bypass the façade\", and \"The proxy or facade layer can become a single point of failure\" bottleneck. | Poor fit as the primary mechanism: the boundary is an internal interface, not a request edge, and the observed bypass is the facade's named failure mode. A facade would add a hop without fixing the direct constructor. |\n| Parallel run | Outputs are side-effect-free and comparable, the old path stays authoritative until cutover, and the risk to retire is a behavioral difference. | Rejected for side-effecting operations, meaningless comparisons or prohibitive cost; \"a comparison that ignores nondeterminism or side effects produces false confidence\". | Best fit for the rounding question, but only in production: run both computations on the same live inputs, serve the incumbent, compare with an explicit numeric policy, and count mismatches against the cohort denominator. |\n| Branch by abstraction (fixed) | The seam is made authoritative, both implementations preserve the same contract, the switch fails safe and stays reversible, and a removal owner and date exist. | Same as today: bypass, contract divergence, unowned removal. | This is the target state; it is not achieved by adding more configuration. |\n\nTwo adjacent mechanisms matter for completeness. Dark launching is the traffic-mirroring variant that lets new code \"receive real or shadow traffic before it is authoritative\" with responses discarded and the old path authoritative - a practical way to obtain production comparison without exposure. A controlled cutover is for switching authority in a planned window with writes paused and replication drained; it is unnecessary for a pure calculation unless totals are persisted and the old code cannot read them.\n\nThe selection rule the sources support is narrow: branch by abstraction when the real work is replacing an internal implementation behind a stable interface; a canary or staged exposure when the residual risk is exposing a deployment to a cohort; the strangler when the boundary is a request edge and migration proceeds capability by capability; the parallel run when the outputs are comparable and the question is behavioral equality. None of these alternatives repairs the missing seam, the divergent contract or the unowned removal - they only relocate the switch and change how equivalence is proven.\n\n## 9. The route that would make this branch by abstraction\n\n1. **Make the seam authoritative.** Route the direct constructor through the interface; add a static check plus a runtime counter for constructions outside the seam, and treat a non-zero bypass count as a release blocker.\n2. **Resolve the contract.** Decide whether the new rounding is the intended business rule or a defect. If intended, record the decision, version the semantics and notify consumers; if not, fix it before any traffic moves.\n3. **Re-point the switch.** Default to the incumbent, opt the new path in per cohort, give the flag an owner, a scope and an expiry, and make the evaluation observable with a revision and snapshot age.\n4. **Replace the staging diff with production evidence.** Shadow or parallel-run both computations on live work, serve the incumbent, keep candidate failures isolated, and encode the rounding policy in the comparison rather than in a bare equality assertion.\n5. **Write the removal contract before switching anything.** Owner, date, caller inventory, gate criteria, decommissioning evidence, independent no-return approval, last safe rollback point and forward-repair plan.\n6. **Remove on the gate, not on the calendar.** Delete the old implementation, the switching flag and the seam once the inventory is empty and the gate is approved; keep the interface only if it still carries a real contract with substitution value.\n\n## 10. Boundaries, contradictions and unknowns\n\n- **Evidence class.** All cited cards are atlas/decision-support pages with draft registry status and partial-bounded coverage; sources are public documentation and articles, not benchmarks, and no production observation, measurement or review is claimed here. The absence of a finding in the corpus is not proof of the opposite.\n- **Tycho versus source.** The removal owner and date are Tycho review conditions, not source claims; the strangler/parallel-run comparison is labelled Tycho guidance. The \"safe default must be the incumbent during rollout\" reading is an inference from the generic safe-default rules, not a sentence about this scenario.\n- **Unknown: is the rounding difference deliberate?** If it is a business rule, the task is a semantic cutover with communication and versioning; if it is a defect, the task is a bug fix before rollout. The sources cannot decide this.\n- **Unknown: are totals persisted?** If they are, rollback limits and reconciliation apply, and a flip may leave durable differences that no binary rollback can undo. If totals are computed on read only, the reversibility boundary is simpler.\n- **Unknown: what the direct construction is.** Production code, a test fixture, a bootstrap path or a batch job changes the blast radius and the migration order.\n- **Unknown: how the configuration is read.** Once at startup or per request, cached or pushed, matters for snapshot consistency, kill-switch latency and whether \"default\" is a code default or an absent key.\n- **Unknown: what the staging comparison actually covered.** Without the data distribution, sample size and tolerance, the comparison's evidentiary value cannot be assessed; the sources give no threshold.\n- **Partial contradiction to record.** The branch-by-abstraction card's own decision question makes coexistence sound like the decision, while its good-fit conditions and owner note make coexistence only the precondition. The scenario is a live instance of that gap: the shape is present, the guarantees are not.\n\n## 11. Evidence map\n\n- C1 - definition of the mechanism and its switch: tycho.page.3950620546fc4c09a829132bd19bb69a#overview; tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes\n- C2 - three good-fit conditions plus the contract review condition: tycho.page.3950620546fc4c09a829132bd19bb69a#overview; tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes\n- C3 - bypass and absent seam: tycho.page.3950620546fc4c09a829132bd19bb69a#overview; tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications; tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview\n- C4 - contract and value semantics: tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes; tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications; tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping\n- C5 - reversibility and safe default: tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes; tycho.page.3950620546fc4c09a829132bd19bb69a#overview; tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview; tycho.page.9681d7dd04749125f5749d0c83f96d9b#a-configuration-change-is-a-distributed-transition\n- C6 - configuration as a distributed transition: tycho.page.9681d7dd04749125f5749d0c83f96d9b#a-configuration-change-is-a-distributed-transition; tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract\n- C7 - removal evidence and gate: tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes; tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract; tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states; tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#synthetic-acceptance-and-rollback-contract\n- C8 - switch and seam removal: tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview; tycho.page.9681d7dd04749125f5749d0c83f96d9b#bounded-pattern-ownership-notes; tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes\n- C9 - limits of comparison: tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview; tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes\n- C10 - production comparison and numeric policy: tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard; tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview\n- C11 - incumbent authority during comparison: tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes\n- C12 - alternative framing: tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes; tycho.page.3950620546fc4c09a829132bd19bb69a#overview\n- C13 - strangler fit and failure: tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview\n- C14 - parallel run fit: tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview; tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes\n- C15 - five transition contracts: tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts\n- C16 - no-traffic counterexample: tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0#chapter-result-and-counterexample\n- C17 - synthetic thresholds: tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview; tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes\n- C18 - dark launching as production traffic evidence: tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview\n- C19 - controlled cutover boundary: tycho.page.4a302aa608d645288756076e9fcdd6b0#overview\n- C20 - conditional selection rule: tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Branch by abstraction is an owned internal interface placed between callers and both the old and new implementations inside one deployable; the switch is a runtime or configuration decision, not a long-lived source branch, and the system must keep building and running while the replacement proceeds.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+          "quote": "Should an internal abstraction seam allow old/new implementations to\ncoexist in one deployable?",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+          "quote": "Branch by abstraction inserts an internal interface between callers and the old/new\nimplementations",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+          "quote": "The switch is a\nruntime or configuration decision, not a long-lived source branch",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The card's good-fit conditions require three things together: a seam that can be introduced without breaking callers, a reversible switch, and a defined removal owner and date, with both implementations preserving the same contract. Coexistence in one deployable satisfies only the setting, not the conditions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+          "quote": "The seam can be introduced without breaking callers; a reversible switch\nand removal owner/date are defined.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+          "quote": "both implementations preserve\nthe same contract",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+          "quote": "give the seam a removal date and owner",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A module that constructs the old implementation directly bypasses the abstraction, so the interface is not the caller-facing seam; a bypass around the abstraction can break the contract, and bypass by internal callers is a named failure mode for the related routing patterns.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+          "quote": "Reject when no internal seam exists",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+          "quote": "a bypass around the\nabstraction",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview",
+          "quote": "internal callers may bypass the façade",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Different rounding of totals is a contract change, not a substitution: both implementations must preserve the same contract and observable effects, and rounding an amount or defaulting a value without a recorded business decision is an explicitly unsafe adapter shortcut.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+          "quote": "old and new implementations should preserve the same contract and\nobservable effects",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+          "quote": "Old and new implementations behind the internal\ninterface must preserve the same contract and observable effects",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping",
+          "quote": "Round or default without a recorded business decision",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The switch must remain reversible until the old path is removed, must be easy to flip, and must fail to a safe default; defaulting to the unproven implementation during rollout is an inference-level defect because the safe branch at that moment is still the incumbent.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+          "quote": "the switch remains reversible until the old path is removed",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+          "quote": "use an\neasily flipped switch",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview",
+          "quote": "the\ndefault fails safe",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#a-configuration-change-is-a-distributed-transition",
+          "quote": "Use a documented local default",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A configuration switch is a distributed transition: processes install whole versioned snapshots at different times, never assemble a request from several revisions, and the rollout gate must report which revision each process actually runs.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#a-configuration-change-is-a-distributed-transition",
+          "quote": "Every snapshot has a monotonically increasing revision",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#a-configuration-change-is-a-distributed-transition",
+          "quote": "It never assembles a request's limits from several revisions.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract",
+          "quote": "the share of processes actually on the intended revision",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "The removal contract must name an owner and a date, enumerate every remaining caller and subscription, require decommissioning evidence, and cross the removal gate only with independent no-return approval after an approved rollback horizon.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+          "quote": "give the seam a removal date and owner",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "decommissioning evidence for all old callers/subscriptions",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+          "quote": "Removal requires independent no-return approval",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#synthetic-acceptance-and-rollback-contract",
+          "quote": "block obsolete-field use only after monitoring confirms no remaining consumers",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Removing the switch is part of the same contract: a permanent toggle is rejected as configuration debt, the switching flag is removed after rollout, and the seam is removed once the old path is gone; the sources explicitly warn that branch by abstraction is often confused with feature toggles.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview",
+          "quote": "Reject when a toggle would become permanent configuration debt,\nwhen no owner removes it",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#bounded-pattern-ownership-notes",
+          "quote": "remove the toggle after the rollout because a permanent switch\notherwise becomes an untested interface",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#bounded-pattern-ownership-notes",
+          "quote": "remove any switching feature flag that you might have implemented",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+          "quote": "remove the seam once the old path is gone",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#bounded-pattern-ownership-notes",
+          "quote": "The branch by abstraction pattern is often confused with\nfeature toggles",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A staging-only comparison is weak equivalence evidence: parallel run requires outputs that are comparable and a comparison that is meaningful, and a comparison that ignores nondeterminism or side effects produces false confidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+          "quote": "Outputs are side-effect-free and comparable",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+          "quote": "Reject for side-effecting operations, when comparison is\nmeaningless",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+          "quote": "a comparison that ignores\nnondeterminism or side effects produces false confidence",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Production comparison is the stronger evidence: both paths evaluate real work while the incumbent response is served, and a numeric difference must be resolved by a normalization policy rather than by a bare equality assertion.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+          "quote": "evaluate both the incumbent and candidate code paths in production while exposing the incumbent response",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+          "quote": "a bare equality assertion cannot make that policy decision",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+          "quote": "the old path remains authoritative",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "During coexistence the old path stays authoritative and a candidate failure must never affect the served response.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+          "quote": "A candidate failure must never affect the response. Keep the old authority until cutover.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The source presents branch by abstraction as the alternative to version-control branching; it fits when the switch can stay inside one deployable and the interface is genuinely owned, while a strangler facade or parallel run may fit an external boundary as Tycho guidance.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+          "quote": "The source presents branch by abstraction as an alternative to version-control branching",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+          "quote": "It\nfits when the switch can stay inside one deployable and the interface is genuinely owned",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+          "quote": "Version-control branching (the source's explicit alternative)",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+          "quote": "a\nstrangler facade or parallel run may fit an external boundary, but that comparison is Tycho\nguidance",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A strangler facade fits request interception at an external boundary and fails when internal callers bypass the facade, when interception is impossible, or when the facade becomes a single point of failure or bottleneck.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview",
+          "quote": "Interception may be impossible, internal callers may bypass the façade",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview",
+          "quote": "The proxy or facade layer can become a single point of failure",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview",
+          "quote": "Reject when the legacy has no seam, when dual-running data\ncannot be reconciled",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A parallel run fits side-effect-free logic whose output equality can be checked, keeps the old path authoritative, and is the comparable alternative to a branch-by-abstraction rollout with a smaller monitored scope.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+          "quote": "Should old and new implementations process the same work\nconcurrently for comparison?",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+          "quote": "Use it for side-effect-free logic when output equality can be checked.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+          "quote": "Branch by abstraction with a smaller, monitored rollout",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "The transition contracts separate functional routing ownership, API and event semantics, and state authority, so deciding which implementation receives a client version is a different decision from deciding which semantics is authoritative.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Whether old or new implementation receives each client/version",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Old/new versions simultaneously supported, unknown outcomes and replay horizon",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "How double-writing is prevented, which source is current, and how to reconcile",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The atlas itself states that a rollout mechanism which receives no meaningful traffic is not evidence for that mechanism's analysis conditions; by analogy, a comparison that never runs on production work has the same defect.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0#chapter-result-and-counterexample",
+          "quote": "a canary that receives no meaningful traffic is not evidence",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Mismatch thresholds, sampling and cost bounds for parallel run remain synthetic and unmeasured, so the team cannot claim a bounded equivalence from an ad hoc staging diff.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+          "quote": "Mismatch thresholds, sampling and cost bounds are synthetic.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+          "quote": "It gives no\nmismatch threshold, sample size or cost measurement",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Dark launching is the production-traffic variant of the same evidence idea: new code can receive real or shadow traffic before it is authoritative, responses are discarded, the old path stays authoritative, and a worrying impact can be switched off with a feature flag.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+          "quote": "Should new code receive real or shadow traffic before it is\nauthoritative?",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+          "quote": "Traffic can be mirrored to a shadow service; responses are discarded;\nthe old path remains authoritative.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+          "quote": "A worrying performance impact can be switched off with a feature\nflag before users notice",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Controlled cutover switches authority only in a planned downtime after writes pause, replication drains and freshness reaches zero; treating it as the instrument for a pure in-memory calculation would be an inference-level mismatch.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+          "quote": "Should authority switch during a planned downtime only after writes pause,\nreplication drains and data freshness reaches zero?",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+          "quote": "A downtime window is available",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+          "quote": "Reject when writes cannot be paused or replication completeness cannot\nbe verified.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The selection rule is conditional rather than a ranking: canary release when the residual risk is exposure of a deployment to a cohort, branch by abstraction when an internal implementation is being replaced behind a stable interface.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview",
+          "quote": "Canary release when the residual risk is exposure of a deployment\nto a cohort; branch by abstraction when an internal implementation is being replaced behind a\nstable interface",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+    "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview",
+    "tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping",
+    "tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview",
+    "tycho.page.9681d7dd04749125f5749d0c83f96d9b#a-configuration-change-is-a-distributed-transition",
+    "tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#synthetic-acceptance-and-rollback-contract",
+    "tycho.page.9681d7dd04749125f5749d0c83f96d9b#bounded-pattern-ownership-notes",
+    "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+    "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+    "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0#chapter-result-and-counterexample",
+    "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
