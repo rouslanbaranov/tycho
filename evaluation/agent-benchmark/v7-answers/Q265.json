@@ -1,0 +1,588 @@
+{
+  "task_id": "Q265",
+  "answer": "# Scope and layer choice\n\n`describe` exposes three canonical layers: `book`, `atlas` and\n`modeling-and-simulation`. This question is a conceptual recovery-contract and\ndrill-design question, so it needs the `book` layer only: V05/C07 (replication, backups\nand restore drills), V08/C07 (multi-region recovery and reconciliation), the deployment\nmulti-region DR contract page, and V05/C02 (replication and restore boundaries). The\n`atlas` layer would add only pattern identity and coverage metadata, and\n`modeling-and-simulation` would add only model/run/decision artifacts; neither supplies\nthe mechanism asked for, and no model run, measurement or decision record is claimed here.\nThe cited pages mark their evidence status `unknown` or `source-linked`, describe their\nscenarios as fictional or proposed, and state that no restore, failover or disaster\nexercise was executed.\n\n# Direct answer\n\nThe described exercise establishes one narrow fact: some physical backup chain can be made\nto start and replay to a reachable point on a fresh target. It does not establish RPO=0 or\nRTO=30 minutes for a regional failure.\n\nIt does not establish RPO=0 because the recovered point is bounded by the WAL that happened\nto be archived, readable and outside the failed region, and because the exercise never\ncompares the set of acknowledged commits with the recovered state. Restoring \"the latest\nbase backup and WAL\" restores to the end of the available archive, not to the instant of the\nfailure and not to \"every write the application acknowledged\". Archive lag, unarchived tail\nWAL, a gap, a lost encryption key, or an archive stored in the failed region can all truncate\nthe reachable point. A successful startup says nothing about how many acknowledged\noperations lie beyond that point, which acknowledgment boundary the application used, or\nwhether the replication mode could ever guarantee zero loss. Those are exactly the facts an\nRPO=0 claim must demonstrate.\n\nIt does not establish RTO=30 minutes because 25 minutes of a healthy database process is not\n25 minutes of correct user-visible service. RTO is measured from a named impact or injection\nboundary until a specified user journey is restored correctly, under the conditions of the\ndeclared failure. The described run is an isolated restore into a fresh database: it does not\nfence the old region, transfer write authority, route traffic, restore identities, secrets,\nconfiguration and dependent services, rebuild projections and caches, verify authorization\nand business invariants, or serve the user journey under production load. It also does not\nsay whether the 25-minute clock started at impact, at detection, at the restore decision or\nat replay start. If detection and decision consumed time before the restore, or if\nvalidation and cutover happened after the \"healthy\" observation, the real interval is longer\nthan 25 minutes. A process can be green while returning semantically wrong answers, and a\nsingle lab run is not a distribution of regional-failure recovery times.\n\nA latest-point restore can lose acknowledged writes after the last archived or accessible\nWAL segment, can lose legitimate writes made after an earlier restore point chosen to escape\ncorruption, and can lose the database record of external effects that were already delivered.\nIt can resurrect rows and documents that later operations deleted or retired, stale values\nand authorizations that later writes had removed, expired reservations or leases, and old\ndata replayed through lagging consumers or an unfenced old primary. It can also preserve the\nvery corruption or destructive transaction it is supposed to recover from, because \"latest\"\nincludes the bad state when the incident is logical.\n\nWhat must be measured and reconciled is therefore not \"did the process start and look\nhealthy\" but: the full impact-to-correct-service timeline with raw timestamps; the exact\nrecovered point and the acknowledged-operation set that is missing, ambiguous or duplicated;\nthe invariants and external side effects that must agree; the rebuild of dependent state; the\nfencing and authority evidence; and the remaining irreconcilable loss, which must be\ndisclosed rather than relabelled as success.\n\n# Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. What RPO and RTO mean, for which failure, and where the clock starts and stops | \"recovery point objective recovery time objective\", \"RPO zero acknowledged commit boundary\", \"RTO impact start tested user journey\" | `tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock`; `tycho.page.4b654b81026f4d8b8909563bcffc01e4#1-define-objectives-by-meaningful-clocks-and-outcomes`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries` |\n| F2. What a base-backup-plus-WAL restore can actually reach | \"base backup WAL point-in-time recovery\", \"archive lag data loss\", \"missing WAL segment reachable point\" | `tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ`; `tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies`; `tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes` |\n| F3. Why a fresh-database restore is not a regional failover | \"regional failure disaster recovery\", \"restore into fresh database\", \"fencing old writer authority\" | `tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey`; `tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#purpose-and-mission`; `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario` |\n| F4. What a latest-point restore loses or resurrects | \"latest point restore acknowledged writes\", \"restore deleted data resurrection\", \"retirement tombstone backup\", \"failback stale writes\" | `tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties`; `tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture` |\n| F5. What the drill must measure | \"restore drill measurement\", \"timestamped recovery evidence\", \"correct user capability\" | `tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#6-falsifiable-drill-protocol` |\n| F6. What the drill must reconcile | \"reconcile accepted operation ledger\", \"external side effects after restore\", \"row counts insufficient\" | `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator` |\n\n# Mechanism\n\n## 1. The objectives are contracts, not properties of the restored database\n\nThe book defines RPO as the maximum acceptable loss of acknowledged business state for a\nspecified failure and measurement basis, and RTO as the allowed time from a defined\ndisruption or start marker until a tested user journey is restored, not just until a\ndatabase process starts. It is explicit that RPO/RTO values are requirements or observed\ndrill results, not inherent database settings, and that an intended RPO=0 is not evidence\nthat the implementation can acknowledge writes with no possible loss under the declared\nregion failure. A target is not an observed result until a performed and timed drill\nprovides evidence for that exact failure scenario.\n\nThat has three consequences for the described exercise. First, \"regional failure\" must be\nthe declared failure class; a restore that assumes the backup, WAL, credentials, DNS,\ncontrol plane and replacement capacity are all available may be testing a different class.\nSecond, the commit acknowledgment boundary must be stated: what did the application tell a\nclient before the region failed, and was that acknowledgment backed by a durable copy\noutside the failed domain? Third, the measurement basis must be stated: which operation IDs\ncount as accepted, which timestamps bound the loss window, and which user journey defines\n\"service restored\". Without those three declarations the numbers 0 and 30 are labels, not\nmeasurements.\n\n## 2. A base-backup-plus-WAL restore reaches the end of the archived chain, not the failure point\n\nA physical backup plus continuous WAL coverage restores to a permitted point after the base\nbackup, subject to missing or corrupted segments, archive lag, storage and replay time. The\nreachable point is limited to what the available WAL segments permit; a gap makes later\ntargets unreachable, and recent WAL that was never archived is simply not part of the\nreconstructed state. Archive lag increases potential data loss, and configuration files are\nnot automatically protected by WAL replay. The restore contract must therefore record the\narchive completeness, timeline, expected replay duration and whether recent unarchived WAL\nis accessible.\n\n\"Latest base backup and WAL\" therefore means \"latest point the archive can reach\", not\n\"latest committed state before the failure\". If the last WAL segment was still in the failed\nregion, or the archive pipeline was behind, the restored point is earlier than the failure.\nEven a perfect restore to the last archived segment does not show that every acknowledged\nwrite is inside that segment. And a successful replay into a fresh database does not show\nthat the chain would be available at the moment of a real regional failure, when the source\nregion, its credentials and possibly its archive endpoint are gone.\n\n## 3. \"Latest\" is not \"correct\": the newest state may contain the incident\n\nThe book separates three incidents: one instance lost, an entire region lost, and bad\ndeletion or data corruption. In the third case, live replicas may faithfully copy the bad\ntransaction, so a historical restore point and business-effect reconciliation are needed. A\ncorruption replicated to a secondary requires a verified good backup before the corruption,\nindependently readable checksums and semantic business recovery. Corruption is not always a\nsingle visible event; a bug can delete or corrupt records over days or weeks while the\ndamage propagates into derived data and later writes. That is why the recovery design needs\na detection window, a retention window that covers detection plus investigation and repair,\nand a repair window.\n\nFor such an incident, \"latest\" is precisely the wrong recovery point: it includes the bad\ntransaction that caused the incident. For an accidental deletion, the latest point restores\nthe deletion; an earlier point escapes the deletion but may erase legitimate later writes.\nThe drill must therefore justify the selected point against evidence, not against recency.\nThe described exercise never states which incident it is rehearsing. If the declared\nregional failure also involved a logical error or a destructive operator action, the\n\"latest\" restore can reproduce the damage and still look healthy.\n\n## 4. A fresh database is a restorability test, not a regional recovery\n\nA regional failover can recover a process and still fail its business obligations: an\nasynchronous secondary may lack a recently accepted write, old clients may repeat an\noperation, and two primaries may accept divergent state. Recovery requires an explicit\nfailure class, authority transfer, acceptable data loss, reconciliation and verified restart\nof user journeys. Recovering serving capability alone includes detection, authorized\ndecision, routing, secrets and configuration, compute, state-owner election, warm-up and\nclient-contract tests; recovering business truth includes the backup or replica timeline,\ncommit IDs, replay boundary, external side effects, event IDs, reconciliation and audit\nevidence; recovering safely includes avoiding two active primaries and preventing stale\nclients from issuing duplicate business effects.\n\nA restore into a fresh database exercises the retrieve/restore gate of that chain. It does\nnot exercise the authority transfer. The old region may still be alive and accepting writes;\na missing heartbeat is not proof of death, and fencing prevents future split-brain but\ncannot retroactively put a missing commit into the restored database. A DNS-only failback\ncan resurrect stale writes and split authority. The book's failure matrix asks for incident\nstart time, lag, write-role ownership, traffic switch and read/write checks before a region\nfailure is called recovered, and it names \"original write authority cannot be fenced,\nbusiness reconciliation unknown\" as a do-not-proceed condition. None of that is present in\n\"restore into a fresh database and see it healthy\".\n\nThis is also why a drill in one failure class cannot certify all disaster classes. A\ndatabase-restore drill is evidence about a backup chain and a target environment; it is not\nevidence that the region-level recovery path works when the control plane, DNS, identity\nprovider, secrets store, artifact registry or replacement capacity are affected. A bounded\ndrill is not a disaster simulator.\n\n## 5. What a latest-point restore can lose\n\nThe obvious loss is the tail: acknowledged commits that were never archived, were archived\nonly in the failed region, or sit after a gap or a corrupt segment. The book's synthetic\nasynchronous-standby timeline has a command commit and return success at t=0, then the\nprimary becomes unrecoverable before the standby receives the last few WAL records;\npromotion restores service while excluding some acknowledged writes. The text is explicit\nthat no exact seconds or bytes of loss can be inferred without capturing actual commit and\nWAL positions, synchronous mode and replica lag. A backup/PITR chain does not automatically\nprovide \"no acknowledged data loss\" or immediate failover.\n\nTwo less obvious losses matter for the drill. First, if the team chooses a point before a\ndestructive transaction to escape corruption, it can erase valid post-point bookings or\nother legitimate writes. The book's worked restore paradox makes exactly this point:\nrecovering to T may remove the deletion and erase valid post-T bookings. Returning to\nyesterday's backup can also conflict with notifications that were already delivered.\n\nSecond, external effects can survive the database while their records do not. Notifications,\nemails, payments, events or third-party side effects already committed outside the database\nare not rolled back by restoring the database. A separate reconciliation strategy is\nrequired for outward notifications already delivered, retries after lost responses and\nauthoritative counts. Comparing row counts alone cannot detect this; the comparison must use\noperation IDs, valid post-point writes and their dependencies.\n\n## 6. What a latest-point restore can resurrect\n\nRestoring an older state can reintroduce data that later legitimate operations removed. A\nselective restore can reintroduce data that was legitimately deleted later, or omit a\ndependent record outside the selected scope. A tombstone discarded before every possible\nreplay horizon can allow old data to return, and if the retirement knowledge is lost with\nthe same backup, the architecture cannot claim that restored data respects later\nretirements. The retirement page's safe protocol restores into an isolated boundary,\ninformed by retirement knowledge that survived independently, and reapplies retirement\nbefore exposure; restored content and authorization must be checked against later\nretirements before reopening.\n\nThe same logic applies beyond explicit deletion records. A restore point can bring back old\nvalues that later writes had corrected, old authorization grants that later reviews had\nremoved, expired reservations or leases that later expired, and old documents that a\nretention process had retired. After the restore, lagging consumers, search indexes, caches,\nexports and replay of older events can republish those older representations. If a consumer\nprocesses an older revision after a newer retirement, it must not recreate the visible\nrecord.\n\nThere is also authority-level resurrection, which is not caused by the backup content but\nby how the recovered state is put back into service. A failback that merely points DNS back\ncan resurrect stale writes and split authority. An old region that returns with divergent,\npreviously acknowledged writes must be quarantined and reconciled under one selected source\nof truth before it receives traffic. A restored database that is exposed while the old\nprimary still accepts writes has the same problem in a different shape: two writable\nauthorities, with stale writes able to reappear on either side.\n\n## 7. Why 25 minutes of health does not prove a 30-minute RTO\n\nRTO starts at a named disruption or impact boundary and ends when the specified user journey\nreturns correct usable service. Starting the clock after human detection hides part of the\noutage, and an operational measurement must say whether the clock starts at user impact, at\na confirmed failover decision or at injection, and what verified user-visible state counts\nas restored. The book's synthetic arithmetic makes the trap concrete: with a 15-minute\ntarget, detection 4, operator decision 5, traffic reconfiguration 3 and validation 4 already\nsum to 16 minutes. The numbers are invented, but the accounting rule is not: the whole\nsequence counts.\n\nThe described observation is compatible with at least three different measurements, and\nnone of them establishes 30 minutes for a regional failure. If 25 minutes runs from replay\nstart to a healthy database process, it excludes detection, declaration, authorization,\nbackup retrieval, and all validation and cutover. If it runs from impact to a healthy\nprocess, it still stops too early: health is not the tested user journey, and the book lists\n\"service healthy while requests are semantically wrong\" as a negative outcome. If it was\nmeasured in an isolated environment with no production traffic, no dependent services, no\nidentity and secret restoration, no cache and index rebuild, no cold-start capacity\nconstraint and no operator pressure, it is not a measurement of the declared regional\nrecovery at all. It is a restore-time sample for one component. At best the run is a\nlower-bound data point for that one path under those conditions, not an upper bound on\nthe time a regional recovery can take.\n\nA single run also cannot establish a bound. The book requires repeating drills across\ndifferent failure classes and recording windows, and observing actual time to valid user\noutcomes, the RPO gap and the failure budget. A best-case 25-minute run may coexist with\nmuch longer recovery under a real regional failure, a larger data volume, a cold cache, a\ndegraded control plane or an on-call team that has never performed the runbook.\n\n# What the drill must measure\n\nThe drill should be designed as a falsifiable experiment, not a demonstration. The book's\nbounded-drill protocol names the prerequisites: source snapshot, two regions or zones with\ntheir actual services, writer and reader roles, the allowed failure class, sample rate,\nbackup version and authoritative event identity. It also insists on a stable known workload\nand time zone, with offered, admitted and completed logical operations, p95/p99/error and\nreplication lag measured separately, and with live resources, control-plane changes and\nsecret/certificate dependencies included.\n\nAt minimum, measure and retain:\n\n| Measurement | What must be recorded | Why it matters |\n|---|---|---|\n| Impact boundary | Injection or user-impact timestamp, failure class, affected region and services | The RTO clock must not start at detection or at restore start |\n| Detection and decision | Time to detect, declare, authorize and choose the failure/restore strategy | These phases are part of the outage and are often the largest hidden cost |\n| Fencing and authority | Time to isolate or fence the old writer, authority epoch/lease evidence, proof that no second writer accepted writes | Prevents a green restore from hiding split-brain or stale-write resurrection |\n| Recovery source | Base-backup identity and hash, WAL sequence and completeness, timeline, last durable replication location at both regions, selected stop point and its evidence | A restored process does not prove the chain or the point was correct |\n| Restore and replay | Retrieval time, replay start/end, bytes/segments read, throughput, errors, total replay duration | Restore time is part of RTO and varies with data volume and archive accessibility |\n| Integrity and business truth | Referential and uniqueness/exclusivity invariants, authorization ownership, accepted/rejected/unknown operation IDs, external side effects | A database that starts is not necessarily a correct business state |\n| Dependent state | Projection/index/cache rebuild time and correctness, outbox/inbox and consumer offsets, delayed or redelivered messages | Stale derived state can serve wrong answers after a correct restore |\n| Correct user journey | End-to-end synthetic or admitted journey under expected load, with correct outcomes, not just HTTP 200 or process health | Defines the RTO endpoint |\n| Actual loss | Count and identity of acknowledged operations missing, ambiguous or duplicated; loss window against the declared acknowledgment boundary; commit/WAL positions, synchronous mode and replica lag | Defines the achieved RPO, not the intended one |\n| Conditions | Data volume, hardware/capacity, cold vs warm cache, concurrent load, DNS TTL, credentials/secrets availability, operator experience | A lab result is not transferable without the conditions |\n| Repetition | Multiple runs across failure classes and recording windows, distribution and worst case, not one best run | A single sample cannot bound an objective |\n| Evidence quality | Raw start/end timestamps, selected point, actual restored version, errors, accepted/rejected checks and deviations from the runbook | Makes the claim auditable and exposes drift |\n\nThe RTO endpoint is the first sustained time at which the specified user journey is correct\nunder the declared load, including authentication, authorization, reads, writes, dependent\nservices and client contract. The RPO result is the measured gap between the last\nacknowledged operation and the recovered state, expressed in operation identities and time,\nwith ambiguous acknowledgments classified rather than ignored. \"The process was healthy at\n25 minutes\" is a component observation, not either endpoint.\n\nThe drill should also inject the failure modes the book lists: a region link partition with\nthe old primary returning late, missing replica data and delayed WAL, corrupted historical\nstate copied to a standby, a lost client acknowledgment after commit, an old message\nredelivered after promotion, credential or artifact unavailability, incomplete recovery\nconfiguration, and an attempted rollback after incompatible writes. Those injections turn\nthe run from a happy-path restore into evidence about the declared failure class.\n\n# What the drill must reconcile\n\nMeasurement without reconciliation can still certify a wrong state. The drill must reconcile\nat least the following:\n\n1. **Operation ledger.** For every operation the application acknowledged, classify it as\n   present in the recovered state, absent but within the permitted RPO loss, absent and not\n   permitted, ambiguous because the acknowledgment was lost, or duplicated. Reconcile\n   accepted, rejected and unknown operation IDs with externally committed effects. The book\n   is explicit that accepted reservation IDs and required authority states must be\n   reconciled, not just row counts, and that duplicate or missing acknowledged operations are\n   a negative outcome.\n2. **External side effects.** Notifications, payments, emails, published events and other\n   effects that already left the database must be compared with the recovered records.\n   Replay or compensation must be idempotent and authorized; a blind replay can duplicate a\n   side effect that already happened.\n3. **Derived state.** Projections, indexes, caches, materialized views, search and analytics\n   stores must be rebuilt from the recovered truth, not from stale incremental state. The\n   drill must show that the rebuild time is inside the RTO and that retired or stale content\n   does not reappear.\n4. **Invariants.** Referential integrity, uniqueness and exclusivity (for example one seat\n   or one reservation per capacity unit), authorization ownership, balances and tenant\n   boundaries must be checked. The book's invariant is that no double allocation occurs and\n   every acknowledged registration is either visible in the recovered state or accounted\n   for as permitted loss with explicit compensating handling.\n5. **Retirements and deletions.** Reapply retirement knowledge and tombstones before\n   exposure, and verify through the actual access paths (UI, direct object access, cache,\n   search, export) that older content cannot be read. Tombstone retention must be coordinated\n   with backup age, offline-consumer windows and log retention.\n6. **Authority and divergence.** Quarantine the old authority, record the authority epoch and\n   fencing evidence, and reconcile any divergent writes under one selected source of truth\n   before routing traffic. A DNS switch is not a split-brain prevention protocol, and a\n   failback is a new migration, not the inverse of failover.\n7. **Idempotency and duplicates.** Retries after lost responses, redelivered messages and\n   replayed operations must not create duplicate business effects. The drill should test\n   consumer idempotence and retry ambiguity explicitly.\n8. **Capacity and client contract.** The recovered service must handle the expected load and\n   the current client/schema version. The book's strategy table warns that pilot-light and\n   warm-standby options depend on cold capacity, dependent services, cutover and fencing\n   being ready within the required time, and that backup-and-restore needs actual restoration\n   time, not just an accessible backup.\n9. **Reporting.** Publish the actual measured recovery interval and the actual known loss,\n   not the desired target. If fencing, historical-state evidence or reconciliation is\n   missing, hold writes and report insufficient evidence rather than claim recovery. If valid\n   operations cannot be reconciled, keep the affected workflow paused and disclose the\n   bounded loss.\n\n# Boundaries, contradictions and unknowns\n\nThis answer is based on the book's design reasoning, not on an executed drill. The cited\npages repeatedly state that their scenarios are fictional or proposed and that no restore,\nfailover or disaster exercise was performed; one page says an untested restore is a\nhypothesis, not a capability, and that merely starting a database from the backup is not\nequivalent to recovering a correct current business history. I therefore cannot claim what\nthe team actually lost, whether its 25-minute observation started at impact, or whether its\nWAL archive was complete. Those are unknowns that the drill itself must resolve.\n\nSeveral tensions are real rather than contradictions to hide. A \"latest\" restore minimizes\nlost recent writes but preserves a logical corruption; an earlier restore escapes the\ncorruption but loses legitimate later writes. The correct point must be justified by evidence\nand reconciled, not chosen by recency. A restore into isolation is the safe way to inspect\nstate, but isolation is exactly why it cannot prove production RTO; it is a necessary gate,\nnot the whole drill. RPO=0 may be achievable only with an acknowledgment/replication\nprotocol that explicitly handles region partitions, with a corresponding availability and\nlatency trade-off; asynchronous replication, standby promotion and PITR protect different\nfailures and cannot be treated as interchangeable. If the system cannot make that trade-off,\nthe honest objective is a measured non-zero RPO, not a declared zero. A green health check is\ncompatible with a broken global invariant: health and readiness are useful signals, but they\nare not the RTO endpoint and they are not reconciliation. A bounded drill is not a disaster\nsimulator; it can provide evidence for one declared failure class and one set of conditions,\nbut it cannot certify all disaster classes.\n\nThe main unknowns to record in the drill report are: the archive lag and location at the\nmoment of failure; whether the WAL tail was accessible outside the failed region; the\nsynchronous/asynchronous mode and the actual acknowledgment boundary; whether the old region\nwas fenced and whether any divergent writes were accepted; whether traffic was actually cut\nover and what DNS/connection-pool/client behavior occurred; whether the specified user\njourneys were validated under load; the set of acknowledged operations missing, ambiguous or\nduplicated; whether retirements and external side effects were reconciled; the data volume,\nhardware, capacity and cache state; whether the 25 minutes measured impact-to-health,\nrestore-start-to-health or something else; and whether the drill was repeated across failure\nclasses and recording windows. Until those are known, neither 0 nor 30 is an observed result.\n\n# Evidence map\n\n| Claim | Short form | Section keys |\n|---|---|---|\n| C1 | RPO/RTO are requirements tied to a named failure, acknowledgment boundary and measurement basis; a target is not an observed result | `tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock`; `tycho.page.4b654b81026f4d8b8909563bcffc01e4#1-define-objectives-by-meaningful-clocks-and-outcomes`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries` |\n| C2 | A base-backup-plus-WAL restore is bounded by the archived chain and its gaps, lag and replay cost | `tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ`; `tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies`; `tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes` |\n| C3 | A restore or standby promotion can exclude acknowledged writes, and exact loss requires commit/WAL, sync-mode and lag evidence | `tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline`; `tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties`; `tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock` |\n| C4 | Latest is not correct for logical corruption or deletion; a good backup before the corruption and a detection/retention/repair window are needed | `tycho.page.4b654b81026f4d8b8909563bcffc01e4#2-replication-is-not-historical-recovery`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture` |\n| C5 | A fresh-database restore is a restorability test; regional recovery also needs authority, routing, dependencies and verified user journeys | `tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#purpose-and-mission`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#6-falsifiable-drill-protocol` |\n| C6 | Fencing and recovering acknowledged effects are separate; an unfenced old writer or DNS-only failback can create divergent or stale writes | `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey` |\n| C7 | The 25-minute health interval is not the impact-to-correct-service RTO interval | `tycho.page.4b654b81026f4d8b8909563bcffc01e4#1-define-objectives-by-meaningful-clocks-and-outcomes`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario` |\n| C8 | A drill in one failure class cannot certify all disaster classes; regional recovery has its own readiness gates and failure-domain requirements | `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey`; `tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture`; `tycho.page.4b654b81026f4d8b8909563bcffc01e4#2-replication-is-not-historical-recovery` |\n| C9 | A latest-point restore can lose the archived tail, post-point legitimate writes and externally delivered effects | `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations`; `tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline` |\n| C10 | A latest-point or earlier restore can resurrect deleted, retired, stale or divergent state | `tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture`; `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario` |\n| C11 | Zero-loss claims need a partition-aware acknowledgment/replication protocol; async replication and PITR do not give zero loss automatically | `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario`; `tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries` |\n| C12 | The drill must time the whole impact-to-correct-service sequence and preserve raw timestamped evidence | `tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#5-recovery-is-a-state-machine-with-abort-conditions` |\n| C13 | RPO must be measured as committed-operation loss against the acknowledgment boundary, using commit/WAL positions, sync mode and lag | `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario`; `tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command` |\n| C14 | Reconciliation must cover the accepted/rejected/unknown operation ledger, external effects, invariants, dependents, retirements and old-authority divergence | `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator` |\n| C15 | If fencing, evidence or reconciliation is missing, hold writes and disclose the bounded loss instead of claiming success | `tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator` |\n| C16 | The drill must run under representative conditions and be repeated across failure classes and windows | `tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator`; `tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks`; `tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command` |\n| C17 | A restore is a hypothesis until rehearsed end-to-end; starting a database is not recovering business history | `tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes`; `tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command`; `tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies` |\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "RPO and RTO are requirements for a named failure and acknowledgment boundary, not database settings; a declared zero or a target is not an observed drill result.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock",
+          "quote": "**RPO (recovery point objective):** maximum acceptable loss of acknowledged business state, defined for a specified failure and measurement basis.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock",
+          "quote": "**RTO (recovery time objective):** allowed time from a defined disruption/start marker until a tested user journey is restored, not just until a database process starts.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock",
+          "quote": "RPO/RTO values are **requirements or observed drill results**, not inherent database settings.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4b654b81026f4d8b8909563bcffc01e4#1-define-objectives-by-meaningful-clocks-and-outcomes",
+          "quote": "An intended RPO=0 is not evidence the implementation can acknowledge writes with no possible loss under the declared region failure.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+          "quote": "An RTO number or RPO number is a **target, not an observed result** until a performed and timed drill provides evidence of the declared failure scenario.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "A base-backup-plus-WAL restore can reach only a permitted point covered by a continuous, available WAL chain; gaps, archive lag, missing recent WAL and replay cost bound it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+          "quote": "| Physical backup + WAL archive | Restore to permitted point after base backup under continuous WAL coverage | Missing/corrupted segments, archive lag, storage and replay time |",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+          "quote": "It notes that archive lag can increase potential data loss and create local WAL-disk pressure; configuration files are not automatically protected by WAL replay.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+          "quote": "as close as possible given the available WAL segments",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+          "quote": "expected replay duration and whether recent unarchived WAL is accessible",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A successful restore or standby promotion can still exclude acknowledged writes, so RPO cannot be inferred from availability; exact loss requires commit/WAL positions, synchronous mode and replica lag.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline",
+          "quote": "Promotion of the standby can restore service while excluding some acknowledged writes.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline",
+          "quote": "No exact seconds/bytes of data loss can be inferred without capturing actual commit, WAL positions, synchronous mode and replica lag.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+          "quote": "| Historical backup and PITR | Recovery to a supported prior state if chain intact | Immediate failover or no acknowledged data loss |",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock",
+          "quote": "an asynchronously replicated system cannot simply assume no data loss on primary loss.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "For logical corruption or destructive deletion, the newest state can contain the incident; a good recovery point is before the corruption, supported by checksums and a detection/retention/repair window.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4b654b81026f4d8b8909563bcffc01e4#2-replication-is-not-historical-recovery",
+          "quote": "**Bad deletion or data corruption:** live replicas may faithfully copy the bad transaction; a historical restore point and business-effect reconciliation are needed.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+          "quote": "Verified good backup before corruption, independently readable checksums, semantic business recovery",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture",
+          "quote": "**Data corruption discovered late:** backup retention and historical correctness window matter more than newest timestamp.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture",
+          "quote": "**Detection window:** how long corruption can remain unnoticed.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A fresh-database restore tests restorability, not regional service recovery; regional recovery also needs authority transfer, routing, secrets/config, compute, dependencies, warm-up and verified user journeys.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#purpose-and-mission",
+          "quote": "A regional failover can recover a process and still fail its business obligations: an asynchronous secondary may lack a recently accepted write, old clients may repeat an operation, and two primaries may accept divergent state.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+          "quote": "**Recovering serving capability**: detection, authorized decision, routing, secrets/config, compute, state owner election, warm-up and client contract tests.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "| Availability | Exact user journey reaches acceptable correct outcomes in time | Service “healthy” while requests are semantically wrong |",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#6-falsifiable-drill-protocol",
+          "quote": "A green health endpoint or replica process alone does not prove a recovered booking journey and restored authoritative truth.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Fencing old writes and recovering acknowledged effects are separate conditions; without fencing, the old region or a DNS-only failback can accept divergent or stale writes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "Fencing prevents future split-brain; it cannot retroactively make B contain the missing commit.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "Do **not** declare A dead solely because a heartbeat is missing",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+          "quote": "Both sides may independently confirm mutually exclusive business actions",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "failback that merely points DNS back can resurrect stale writes and split authority.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A 25-minute healthy-process observation is not the RTO interval: RTO starts at impact and ends at correct user service, so detection, decision, validation and cutover all count.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4b654b81026f4d8b8909563bcffc01e4#1-define-objectives-by-meaningful-clocks-and-outcomes",
+          "quote": "Starting the clock after human detection hides part of the outage.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+          "quote": "Do not start the timer only after the slow detection or approval phase.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+          "quote": "An operational measurement must say when the incident timer starts (user impact, confirmed failover decision or injection) and what verified user-visible state counts as restored.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "Declare RPO/RTO met when PostgreSQL process is merely healthy",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "Measure RTO from impact to *correct* user capability; measure RPO against the declared acknowledged-operation boundary.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A drill in one failure class cannot certify another; a database restore does not exercise the region-level path, whose gates include incident start, lag, write-role ownership, traffic switch and read/write checks.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "**A drill in one failure class cannot certify all disaster classes.**",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+          "quote": "| Region A unavailable | Restore/promote Region B using tested role/fencing and recovery state | Incident start time, lag, write-role ownership, traffic switch and read/write checks | Original write authority cannot be fenced, business reconciliation unknown |",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks",
+          "quote": "| Backup and restore | Economical protected historical state where delay is acceptable | Accessible valid backups, keys/config, data integrity, actual restoration time |",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture",
+          "quote": "**Region/archive loss:** failure-domain separation and independent backup accessibility become central.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4b654b81026f4d8b8909563bcffc01e4#2-replication-is-not-historical-recovery",
+          "quote": "**Entire region lost:** recover in an independent failure domain, maybe from replicas or retained backups depending on actual loss.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A latest-point restore can lose acknowledged post-archive commits, legitimate writes that a pre-corruption point would discard, and externally delivered effects whose database record is rolled back.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "Recovering to T may remove the deletion **and** erase valid post-T bookings.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+          "quote": "Another bad assumption: returning to yesterday's backup is harmless; it may discard more recent legitimate reservations and create conflict with notifications that have already been delivered.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline",
+          "quote": "A separate reconciliation strategy may be required for outward notifications already delivered, retries after lost responses and authoritative registration counts.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "| Compare user outcomes | Deleted/restored records, operation IDs, valid post-point writes and their dependencies | Compare row counts alone |",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A latest-point or earlier restore can resurrect data deleted or retired later, stale values and authorizations, and divergent/stale writes reintroduced through an unfenced old authority or DNS-only failback.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture",
+          "quote": "reintroduce data that was legitimately deleted later",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "A tombstone discarded before every possible replay horizon can allow old data to return.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "If that knowledge is lost with the same backup, the architecture cannot claim restored data respects later retirements.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "Restored content and authorization were checked against later retirements before reopening",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "failback that merely points DNS back can resurrect stale writes and split authority.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "RPO=0 requires a partition-aware acknowledgment/replication protocol with a corresponding availability trade-off; asynchronous replication, standby promotion and PITR do not automatically provide zero acknowledged loss.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "A zero-loss promise would require a suitable acknowledgment/replication protocol with explicit behavior under region partitions and the corresponding availability trade-off.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+          "quote": "| Asynchronous replication | Durable-copy pipeline with bounded/observed lag under policy | Zero loss at primary failure |",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+          "quote": "Zero RPO cannot be inferred from a replica or a vendor's generic marketing wording.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The drill must timestamp and measure the whole sequence, from the declared boundary through detection, decision, fencing, restore, validation and cutover, and preserve raw evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+          "quote": "Start recovery clocks at the declared boundary and preserve timestamped evidence.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+          "quote": "observe actual time to valid user outcomes, RPO gap and failure budget; restore normal topology and exercise failback separately.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "For each drill retain raw start/end timestamps, selected point, actual restored version, errors, accepted/rejected checks and deviations from the runbook.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#5-recovery-is-a-state-machine-with-abort-conditions",
+          "quote": "actual timestamped RTO/RPO observation;",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+          "quote": "with a business RTO target of 15 minutes, if detection consumes 4, operator decision 5, traffic reconfiguration 3 and validation 4 minutes, total is **16 minutes**, already beyond the target.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "RPO must be measured as committed-operation loss against the acknowledgment boundary, using commit/WAL positions, synchronous mode, replication lag and ambiguous-acknowledgment classification, not restore success.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "record the last durable replication location at both regions",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline",
+          "quote": "No exact seconds/bytes of data loss can be inferred without capturing actual commit, WAL positions, synchronous mode and replica lag.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+          "quote": "Incident start time, lag, write-role ownership, traffic switch and read/write checks",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "Use measured impact-to-correct-service time and committed-operation loss to evaluate RTO/RPO; neither a configured target nor an archived WAL name establishes an observed result.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "Measure RTO from impact to *correct* user capability; measure RPO against the declared acknowledged-operation boundary.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The drill must reconcile the accepted/rejected/unknown operation ledger with external effects, invariants, dependent rebuilds, retirements and old-authority divergence before traffic is returned.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "Reconcile accepted/rejected/unknown operation IDs with any externally committed effects.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "Verify authorization, exclusive reservations, idempotent retries and current client contract.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "| Dependents | Projections/indexes and consumers rebuild from correct recovered truth | Stale index or replayed notification side effects |",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+          "quote": "Reapply retirement and validate access before exposure",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+          "quote": "reconcile events/rows by business keys—not just record counts.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "Quarantine old authority; reconcile under one selected source of truth before returning traffic",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "| Business effects | Accepted reservation IDs and required authority states reconciled | Duplicate or missing acknowledged operations |",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "If fencing, historical evidence or reconciliation is missing, the correct result is to hold writes, keep the workflow paused and disclose the bounded loss, not to declare the objective met.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "If fencing or historical-state evidence is unavailable, **hold writes** rather than claim successful recovery.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "If valid operations cannot be reconciled, the correct result may be to keep the affected workflow paused and disclose the bounded loss, rather than assert full recovery.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+          "quote": "if evidence is missing, write **insufficient evidence / do not cut over**, not a green check.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "Publish the actual measured recovery interval and actual known loss, not just the desired target.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The drill must use representative conditions and be repeated across failure classes and recording windows; one isolated lab run cannot bound the objective.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+          "quote": "**Review:** repeat across different failure classes and recording windows",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks",
+          "quote": "Cold capacity and dependent services become ready within required time",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+          "quote": "restore location, target disk size, network/archive throughput and access permissions;",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+          "quote": "Include live resources, control-plane changes and secret/certificate dependencies.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "A reproducible drill should use safe isolated environments and synthetic/admitted data:",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "An untested restore is a hypothesis; starting a database from a backup is not equivalent to recovering correct business history, and only a rehearsed restore of an admitted backup set shows the implementation meets its contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+          "quote": "an untested restore is a hypothesis, not a capability.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+          "quote": "Simply starting a database from the backup is not equivalent to recovering a correct current business history.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+          "quote": "only a **rehearsed restore of an admitted backup set** can show that the local implementation meets them.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock",
+    "tycho.page.4b654b81026f4d8b8909563bcffc01e4#1-define-objectives-by-meaningful-clocks-and-outcomes",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+    "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+    "tycho.page.4b654b81026f4d8b8909563bcffc01e4#2-replication-is-not-historical-recovery",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture",
+    "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#purpose-and-mission",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#6-falsifiable-drill-protocol",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+    "tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#a-bounded-drill-is-not-a-disaster-simulator",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#5-recovery-is-a-state-machine-with-abort-conditions"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
