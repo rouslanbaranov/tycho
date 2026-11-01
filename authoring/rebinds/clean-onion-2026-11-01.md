@@ -8,3 +8,7 @@
 - Clean-Onion card: 18a81ec3b6ca80f04d6c0c5584833562460612e2301bd48d1f51cc8370fe2cd6 -> bacb87d0f03fe8b7af9c186fb13d0dc613851e55fea866f3003244c15d811904; the decision body is unchanged, metadata/excludes updated.
 - Second read-only verifier: subagent 82e20f26-3352-4642-b3e4-3b4fd23fd00a, 0 writes.
 - Content-reviewed rebind, not format-only.
+
+## Byte-count proof
+
+At artifact 5e860219, `wc -c` returns 14,864 and `sha256sum` returns 26d04c12...; the packet fence is 26 bytes shorter because fenced-block extraction drops the surrounding blank lines, not because the file is 14,838 bytes.
