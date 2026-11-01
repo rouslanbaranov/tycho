@@ -1,0 +1,209 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q110",
+      "question": "Why can a CPU-utilization autoscaler reduce replica count while request latency is rising, and what should be examined instead?",
+      "answer": "A CPU-utilization autoscaler regulates CPU busyness, not whether requests are making progress. When requests wait on a slow downstream (a database lock, remote I/O, a connection pool, a broker quota), they consume little or no application CPU while their latency and the pending backlog grow. The autoscaler therefore observes low utilization and, especially with a scale-in stabilization window or tolerance, removes replicas. That is backwards: fewer replicas supply less concurrency and admission capacity for work that is already waiting, so queue age and latency rise further. The controller is scaling a resource that is not the bottleneck. A replica-average utilization can also hide one hot replica, and a short or smoothed measurement window can treat a transient as spare capacity.\n\nExamine the scarce resource and the user-visible outcome instead:\n- Latency: p95/p99 end-to-end latency against an SLO, separated into queue/wait time and service/downstream spans, not only mean app CPU.\n- Queue and concurrency: queue depth and age, pending/in-flight requests, per-replica concurrency, and counts of offered versus admitted, completed, rejected and timed-out work.\n- Errors and retries: rejection and timeout ratios, retry amplification, duplicate side effects, and successful completion rate rather than attempts.\n- Downstream saturation: backend CPU and connections, database lock waiting, pool hold times and wait counts, broker quota, cache hit/miss and external quotas. Instrument the named downstream wait; unchanged application CPU elsewhere is a clue, not proof of spare capacity.\n- The control loop: when the autoscaler observed the metric, when it decided, what it requested, and when the units became usefully ready; plus measurement-window staleness, scale-in stabilization, in-flight drain, min/max limits and missing metrics.\n\nThen choose the matching action. If a shared downstream is the bottleneck, bounded admission/backpressure, query or lock repair, or a downstream budget change may be correct, and adding application replicas can increase contention and retries. Use CPU as the scaling signal only when the work is genuinely CPU-bound and partitionable; otherwise target queue age, latency or concurrency, or a custom downstream-budget signal, paired with an independent guardrail. Evaluate the policy end-to-end with a replayable offered-demand trace so scale-in is tested against rising latency.",
+      "citations": [
+        "tycho.page.d2a71d85f3144ba395303b8432b38d37#4-controller-stability-scale-out-and-scale-in-are-asymmetric",
+        "tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst"
+      ],
+      "core_claims": [
+        "When requests wait on a slow database rather than consume CPU, application CPU utilization can stay low while latency and pending work rise.",
+        "A CPU-driven controller can interpret that low utilization as excess capacity and scale in, increasing pressure and the fraction of pending requests.",
+        "Replica count is not a direct measure of useful capacity because a replica can be limited by a shared downstream budget it does not control.",
+        "Controller design separates scale-up urgency from scale-down conservatism because reacting to every spike causes oscillation while excessive smoothing underreacts to sustained overload.",
+        "The remedy may be upstream admission limits, query or lock repair, or a database budget change rather than additional application instances."
+      ],
+      "optional_claims": [
+        "Scale-out response time decomposes into metric, decision, provisioning, warm-up and routing stages that can overlap, so summing their averages is not an empirical estimate.",
+        "A deferred queue operation is not equivalent to a completed synchronous operation when the user contract requires an answer within a deadline."
+      ],
+      "judge_a": {
+        "task_id": "Q110",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Explains CPU-blind scale-in and the alternative remedies, but does not cover the asymmetric scale-up urgency versus scale-down conservatism rationale."
+      },
+      "judge_b": {
+        "task_id": "Q110",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "The answer covers CPU-blind scaling, scale-in feedback, shared-downstream capacity, controller asymmetry and the remedy, matching every core claim."
+      }
+    },
+    {
+      "task_id": "Q137",
+      "question": "When is it acceptable for a V12 model to omit a dependency such as the payment network or the database, and what must the scope statement record so the omission is reviewable rather than hidden?",
+      "answer": "V12 accepts omitting a dependency such as the payment network or the database only as a bounded simplification: when the omitted parts cannot change the comparison under the declared conditions. The test is decision-relative \u2014 the omission must not be able to reverse the choice on the observable metric inside the declared validity domain; otherwise the dependency must be modeled. Omitting it is not acceptable when a boundary that starts after admission hides caller-visible behavior and can reverse the result, or when externalizing a downstream timeout as a constant service time hides the failure that motivates the decision. Detail is added when it can change a decision-reversing metric, and the new validity limit is then recorded. The scope statement must make omissions explicit rather than unstated assumptions and must record: purpose (which decision the model informs, plus the decision owner); the alternatives compared; the observable metric that distinguishes them; the excluded actors, dependencies and failures; and validity (the ranges and conditions under which the result is intended to hold). A reviewable statement also records the boundary, the resolution (time/state units, request class, priorities), the workload and constraints, and whether any production claim is made (the example ends 'no production claim'). It must be short enough for a reader to challenge whether the omitted dependency is material, whether the resolution is enough, and whether the workload is representative. The record must also state which validity condition holds \u2014 conceptually reasonable but operationally validated or unvalidated. The V12 model contract mirrors this in its scope field (what is included and what is explicitly excluded), its abstraction field (boundary and resolution), and validity_limits, assumptions and unknowns; a model that cannot answer purpose, alternatives, observable, excluded and validity is not ready for a scenario.",
+      "citations": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#overview"
+      ],
+      "core_claims": [
+        "A model boundary is the line between the model's state and the rest of the world, not a service boundary or a team boundary.",
+        "Omitting the payment network, the database or the deployment platform is acceptable only if the omitted parts cannot change the comparison under the declared conditions.",
+        "A reviewable boundary statement names the purpose, the compared alternatives, the observable that distinguishes them, the excluded actors and dependencies, and the validity ranges and conditions.",
+        "Everything outside the declared validity domain is an explicit omission, not an unstated assumption, and the scope example records excluded dependency calls, storage, network and deployment.",
+        "Fixing a constant service time in place of a downstream timeout is a listed scope failure mode because the model then cannot show the failure that motivates the decision."
+      ],
+      "optional_claims": [
+        "The model contract carries scope, abstraction and validity limits as explicit fields, so a reader can see the boundary without reading the engine.",
+        "Added detail is justified only when it can change a metric that could reverse the decision."
+      ],
+      "judge_a": {
+        "task_id": "Q137",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "States the decision-relative omission test and the reviewable scope fields and validity ranges, but it never defines the model boundary as distinct from service or team boundaries and lists the recorded exclusions only generically."
+      },
+      "judge_b": {
+        "task_id": "Q137",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "The decision-relative omission test, reviewable scope contents, explicit-omission rule and constant-service-time failure mode are all present, leaving only the model-world boundary definition implicit."
+      }
+    },
+    {
+      "task_id": "Q139",
+      "question": "Why does candidate C, with two attempts and linear backoff, show higher retry amplification and a higher timeout rate than candidate B?",
+      "answer": "C is not retrying more per request than B: far more of C's first attempts miss their deadline, and every miss re-queues the request. That one fact drives both metrics, because the extra attempts raise retry amplification and add load that produces still more timeouts.\n\nMeasured on the same 20 requests/s Poisson workload for 1,800 s after a 300 s warmup with 30 replications: B has retry amplification 1.004, timeout rate 0.0041 and success 0.9996; C has 1.079, 0.111 and 0.9679. Both offer 20 requests/s to 24 requests/s of capacity (12/0.5 s and 18/0.75 s), so nominal capacity and offered-load utilization (0.833) are identical; the difference is resilience headroom, not capacity.\n\n1. Amplification counts realized attempts, not the allowed budget. Retry amplification is total attempts divided by offered requests, so 1.004 means about 0.4% of B's requests made a second attempt even though B may make three, and 1.079 means about 7.9% of C's requests made a second attempt even though C may make only two. B's third attempt is unused headroom; C's second attempt is a routine fallback. Raising the attempt ceiling does not raise amplification unless attempts fail.\n\n2. The deadline-to-service-time ratio sets the first-attempt timeout rate. B's per-attempt timeout is 2.0 s against a 0.5 s lognormal mean (CV 0.6), a 4x ratio; C's is 1.5 s against 0.75 s, a 2x ratio. The deadline starts at arrival and afresh at each retry, and it fires whenever queueing delay plus service exceeds it. Halving the ratio pushes much more of the queueing tail past the deadline. C's p95 of 1.769 s already exceeds its own 1.5 s deadline, which a single attempt cannot do, so C's tail is made of requests that waited through a first attempt plus a backoff; B's p95 of 1.206 s stays well inside its 2.0 s deadline.\n\n3. Retries feed back into load, and timeouts are counted per attempt. C's 7.9% extra attempts raise effective offered load from 20 to about 21.6 requests/s against 24, i.e. utilization from 0.833 to about 0.90, where waiting time rises steeply; B's 0.4% raises it only to about 0.84. C's 11.1% timeout rate is consistent with per-attempt counting: about 7.9% first-attempt timeouts plus about 3.2% second-attempt timeouts that ended the request (success 0.9679 means about 3.2% ended unsuccessfully after at most two attempts), which sums to 11.1%. Each retried-and-failed request therefore contributes two timeout events, so one request population inflates both metrics.\n\n4. Backoff and jitter decide whether retries arrive as a trickle or a synchronized wave. B's exponential backoff (base 0.2 s) uses full jitter; jitter reduces synchronized retry waves, and without it clients that failed together retry together. The comparison records full jitter for B and records no jitter for C, whose declared policy is linear backoff, so C's retries are correlated and arrive as a burst, the documented retry-storm failure mode where a load spike hits the service when it can least absorb it. Those bursts lengthen waits and make the retried attempts themselves likely to miss their deadline.\n\nNet: C's higher amplification and higher timeout rate are two views of one feedback loop. A tight per-attempt deadline turns queueing variance into timeouts; the timeouts become correlated retries that add about 8% load and push utilization toward 0.9; the added load produces more timeouts. B escapes the loop because its few retries are jittered and given twice the deadline headroom, so its three-attempt budget is almost never consumed.\n\nLimits: these are synthetic discrete-event results, not production measurements. The pages read do not state C's service-time coefficient of variation or its linear-backoff base, and the split of C's 11.1% timeout rate into first-attempt and retry components is inferred from the stated definitions rather than reported separately.",
+      "citations": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b"
+      ],
+      "core_claims": [
+        "Retry amplification is total attempts divided by offered requests, and V12 reports it for every discrete-event run.",
+        "Candidate A has amplification 1.000 and a 0.0778 timeout rate, B has 1.004 and 0.0041, and C has 1.079 and 0.111.",
+        "B's three attempts with exponential backoff and full jitter absorb transient service-time variation without materially increasing offered load.",
+        "C's two attempts with linear backoff raise attempts per request while still timing out 11.1% of requests, so its retry budget adds load without meeting the deadline.",
+        "Jitter reduces synchronized retry waves, without which many clients that failed at the same time retry at the same time."
+      ],
+      "optional_claims": [
+        "C's success rate of 0.9679 is below B's 0.9996 even though C has the largest server pool of the three candidates.",
+        "All three candidates receive the same Poisson workload at 20 requests per second, so the amplification difference comes from the retry policy rather than from arrivals."
+      ],
+      "judge_a": {
+        "task_id": "Q139",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Answer correctly explains C's higher amplification and timeout rate using the reported B and C metrics, the deadline ratio, and the retry feedback loop, substantively addressing the core claims while leaving the A baseline and V12 attribution unmentioned."
+      },
+      "judge_b": {
+        "task_id": "Q139",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Matches the B and C measurements and the jitter and deadline feedback loop but omits candidate A's metrics and the per-run V12 reporting requirement."
+      }
+    },
+    {
+      "task_id": "Q141",
+      "question": "Why can a success rate near 1.0 make the V12 sensitivity shares unstable even when the modeled effect is real?",
+      "answer": "The V12 sensitivity shares are normalised ratios, not effect sizes. The first-order Sobol' index is the share of output variance V explained by one input alone, and the total-order index adds every interaction involving that input, so each reported share is a fraction whose denominator is V. A success rate near 1.0 is a bounded metric: near the ceiling there is little room left to vary, and the book records the resulting ceiling effect - when success is near 1.0 the variance is small and the interval is narrow. Dividing a small numerator by a small denominator amplifies error, and V12 does not use a full pick-freeze analysis here: it fits a quadratic response surface to only 48 input rows and decomposes the fitted variance into shares. The page calls that screen an approximation, not a full Sobol' analysis, and notes that sensitivity estimators are noisy at small sample sizes and are a screen, not a precision estimate. The corpus does not give a numeric formula for share error versus V, but the mechanism follows from the definitions: when V is thin, the screen's own approximation and sampling error are no longer negligible relative to the denominator, so the same real effect can produce shares that move or even reorder between samples. The stated failure mode is exactly this bounded-output distortion: a success rate near 1.0 has little variance, so a variance decomposition can look unstable even when the underlying effect is real. A share also cannot be read as a causal claim, and a first-order index near zero does not mean the input is irrelevant because the input may act only through an interaction. To read such a run safely, keep the shares next to the absolute variance contributions and the total V, report the sample size and a convergence or error check (reported indices without them are a listed failure mode), keep the 48-row screen labelled as a screen, repeat it across seeds or wider samples before trusting a ranking, and preserve an insufficient-sample marking instead of smoothing it - the page's own stressed two-replication run is marked insufficient-sample and its ranking is acknowledged as reversible. In short, near a ceiling the shares are dominated by how little the output varies, not by whether the modeled effect exists.",
+      "citations": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity"
+      ],
+      "core_claims": [
+        "The V12 screen fits a quadratic surface to 48 sampled rows and decomposes the fitted variance into first-order and total-order shares.",
+        "Bounded-output distortion is a recorded failure mode: a success rate near 1.0 has little variance, so a variance decomposition can look unstable even when the underlying effect is real.",
+        "Candidate B's success rate is 0.9996, and a bounded metric near its ceiling has little variance, which is the condition the page names bounded-output distortion.",
+        "The screen assumes a quadratic surface is adequate over the sampled range and that input standardization is meaningful, so its shares are an approximation rather than a precision estimate.",
+        "The page calls the indices a screen and notes the 48-row sample is small, so they identify what to measure first rather than what dominates in production."
+      ],
+      "optional_claims": [
+        "The candidate B shares are arrival 0.361 first-order and 0.464 total-order, and service mean 0.536 and 0.639, with the first-order values summing to 0.897.",
+        "A bounded success rate also cannot reveal failures the model does not represent, because the metric is compressed near its ceiling."
+      ],
+      "judge_a": {
+        "task_id": "Q141",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Answer explains ceiling effects, thin-variance amplification, the 48-row quadratic screen, and screening limits, though it omits the exact 0.9996 value and the standardization assumption."
+      },
+      "judge_b": {
+        "task_id": "Q141",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Answer explains normalized variance shares and bounded-output distortion, but omits the Candidate B 0.9996 datum and the input-standardization assumption, so coverage is partial."
+      }
+    },
+    {
+      "task_id": "Q144",
+      "question": "Why is an omitted dependency acceptable in a model boundary only when it cannot change the comparison under the declared conditions?",
+      "answer": "Because a model boundary is a decision instrument, not a replica of the system. The book starts from the decision: name the purpose, the alternatives being compared, the observable that would distinguish them, the exclusions and the validity conditions, then keep the smallest model that can distinguish those alternatives inside that declared domain. The test for an omission is therefore not whether the dependency exists in reality, but whether it can alter the comparison the model is asked to support.\n\nIf the omitted actor, dependency or failure cannot change the decision-relevant metric, the ranking, or a hard-constraint pass/fail under the declared conditions, the omission is decision-invariant: the model still preserves every distinction the decision uses. Including the detail would add state, parameters and verification burden without changing the answer, and could obscure the original question through scope creep. That is the positive reason to leave it out.\n\nIf the omitted dependency can change the comparison, the model can return a different answer than the alternatives warrant. The book names the failure modes: a boundary mismatch, where missing admission behavior can reverse the result, and an omitted dependency, where a downstream timeout is replaced by a constant service time and the model can no longer show the failure that motivates the decision. The comparison then ranks a model artifact rather than the real candidates, so its result cannot justify the choice.\n\nThe declared conditions turn \"cannot change\" into a bounded, reviewable claim. They fix workload, metrics, constraints and the validity range; the identical-workload rule makes the comparison like-for-like, and hard constraints define elimination. Without them, the invariance claim has no scope and cannot be challenged. The model contract records exclusions explicitly, and a validity limit is a condition on the result's use, not a disclaimer: if the decision later needs the omitted mechanism, the model is outside its domain. Reversal triggers name the conditions under which the recommendation would change.\n\nSo the operative test is materiality to the comparison, not completeness: does the omitted or added detail change a metric that can reverse the decision? If yes, it belongs inside the boundary or the comparison is invalid; if no, it may be omitted and must be declared. When the conditions change, the claim must be re-established, or the omission becomes validity drift.",
+      "citations": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#overview",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+      ],
+      "core_claims": [
+        "A model boundary separates the model's own state from the rest of the world and is not the same as a service boundary or a team boundary.",
+        "An omitted actor, dependency or failure is acceptable only if the omitted part cannot change the comparison under the declared conditions.",
+        "Replacing a downstream timeout with a constant service time removes the failure that motivates the decision, so the model can no longer show the effect being compared.",
+        "A boundary placed after request admission can reverse a result when the decision concerns a caller-visible outcome.",
+        "A reviewable scope statement records purpose, alternatives, deciding observable, excluded items and validity range so a reader can challenge whether each exclusion is material."
+      ],
+      "optional_claims": [
+        "A stock-and-flow model can show utilization and backlog growth at 20 requests per second against 24 per second but cannot report the p95 latency of successful requests.",
+        "Sargent separates conceptual-model validity from operational validity, and a scope statement addresses only the conceptual side."
+      ],
+      "judge_a": {
+        "task_id": "Q144",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Materiality, the constant-service-time and admission-boundary failure modes, and the reviewable scope statement are covered with all required anchors cited, but the core distinction between a model boundary and service or team boundaries is omitted."
+      },
+      "judge_b": {
+        "task_id": "Q144",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "The materiality test, boundary-mismatch and constant-service-time failure modes and the reviewable scope statement are all present with the required anchors, leaving only the model-versus-service-boundary definition implicit."
+      }
+    }
+  ]
+}

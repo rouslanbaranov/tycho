@@ -1,0 +1,209 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q100",
+      "question": "Under PostgreSQL repeatable read, why can two transactions that both find no conflicting reservation still commit overlapping accepted bookings?",
+      "core_claims": [
+        "Repeatable Read gives each transaction a stable snapshot beginning at its first non-transaction-control statement, not necessarily at BEGIN, and PostgreSQL disallows phantom reads at that level while serialization anomalies remain possible.",
+        "Two transactions can both read the same interval as free and then insert different reservation rows, so no row-level write-write conflict necessarily forces either one to abort.",
+        "A pre-insert application SELECT does not enforce a cross-row overlap rule; the invariant needs an exclusion constraint over tool identity and overlapping ranges, a Serializable transaction with retries, or a single-owner conditional state model.",
+        "A serialization failure must be retried from the complete read-and-decision state under a bounded retry policy, not by resending only the final INSERT with stale reads.",
+        "A failed transaction is not an accepted booking, while a committed booking whose reply was lost is a different condition that requires a durable operation ID and a status lookup."
+      ],
+      "optional_claims": [
+        "A mutex inside one application instance does not protect a deployment with multiple replicas.",
+        "A general CHECK constraint that refers to other rows cannot guarantee ongoing consistency of a cross-row overlap invariant."
+      ],
+      "required_evidence": [
+        "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#2-a-snapshot-is-not-an-invariant",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#3-a-synthetic-two-transaction-anomaly",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#4-serializable-still-needs-a-retry-protocol",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#5-correctness-and-query-performance-must-be-evaluated-together"
+      ]
+    },
+    {
+      "task_id": "Q101",
+      "question": "Why can a virtual thread blocked inside a synchronized block pin a carrier on JDK 21 but not on JDK 24, and which blocking paths can still pin?",
+      "core_claims": [
+        "On JDK 21 through 23, JEP 444 documents a virtual thread pinning its carrier when it blocks inside a synchronized region or a native or foreign method, and long frequent pinned waits can exhaust carriers.",
+        "A signaled virtual thread that was unmounted needs a free carrier before it can run, so a process can appear stuck behind an already released lock when every carrier is pinned.",
+        "JDK 24's JEP 491 changes monitor handling so a virtual thread can unmount while owning or entering a monitor and during Object.wait(), superseding the blanket JDK 21 warning about blocking under synchronized.",
+        "Native and foreign calls, exceptional VM paths, and the legacy LM_LEGACY locking mode are outside that monitor fix and still require diagnosis of the exact build and flags.",
+        "Virtual threads make tasks cheap but create no downstream capacity; a semaphore bounds database calls, not the number of virtual threads waiting for permits."
+      ],
+      "optional_claims": [
+        "JDK 24 does not make a Java monitor stop serializing the logic it protects, nor does it remove database and backpressure limits.",
+        "The case page's diagnostic framing is Tycho synthesis, and the publisher incident report behind it remains an unresolved citation."
+      ],
+      "required_evidence": [
+        "tycho.page.c880ba1a0a594ad38d6713d198e46436#pinning-depends-on-the-jdk-release",
+        "tycho.page.c880ba1a0a594ad38d6713d198e46436#virtual-threads-tasks-are-cheap-operations-are-not",
+        "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem"
+      ]
+    },
+    {
+      "task_id": "Q102",
+      "question": "Why does reciprocal rank fusion add only rank reciprocals rather than the underlying lexical and semantic scores, and what does the k constant control?",
+      "core_claims": [
+        "BM25 scores, cosine distances and model reranker logits have different numerical scales, so adding them directly is unsafe unless they are calibrated against real relevance data.",
+        "Reciprocal rank fusion gives each document the sum over ranked lists of one divided by k plus its rank in that list, and a document missing from a list contributes zero.",
+        "The k constant is a ranking hyperparameter that damps the influence of top ranks, not the number of documents in the corpus or in any list.",
+        "A document ranked first and second across two lists can outrank a document ranked first in only one list; with k=60 the page's example ranks A above C despite C's single first place.",
+        "Rank fusion guarantees neither top-k recall nor freshness, access-control safety or correctness, because candidate generation and filters still decide which documents can be fused at all."
+      ],
+      "optional_claims": [
+        "Exact nearest-neighbor search supplies a recall reference within one embedding model, metric, filter and corpus version, but it does not establish that the ranking matches human relevance labels."
+      ],
+      "required_evidence": [
+        "tycho.page.b919c3c84861491c82334b6e00bf443e#2-reciprocal-rank-fusion-handles-incompatible-score-scales",
+        "tycho.page.b919c3c84861491c82334b6e00bf443e#1-retrieval-has-multiple-independent-signals",
+        "tycho.page.66d2977575264168a8616e09d0900af6#1-the-retrieval-contract-begins-before-embeddings"
+      ]
+    },
+    {
+      "task_id": "Q103",
+      "question": "Why does a parent that waits for ten independent dependency calls exceed its latency threshold far more often than any single child's p99 suggests?",
+      "core_claims": [
+        "A percentile is a property of a distribution rather than a per-request maximum, so the observation window, sampling method and treatment of timed-out requests must be named before comparing values.",
+        "When a parent waits for all N calls with independent latency CDF F, the maximum is at most t with probability F(t)^N; at 0.99 per call, ten calls finish within the threshold about 90.4 percent of the time, leaving about 9.6 percent with a slow dependency.",
+        "Percentiles do not add: the parent's p99 is not the sum of the children's p99 values, and serial stages add elapsed time or hard limits rather than quantiles.",
+        "Whether the slowest child sits on the critical path depends on the correctness policy: all results required, quorum, first successful response, optional enrichment, or sequential dependencies.",
+        "Shared databases, GC events, network congestion or a regional fault correlate child latencies, so the F-to-the-N arithmetic is a model rather than a guarantee for a real service graph."
+      ],
+      "optional_claims": [
+        "Fan-out can become effectively serial through a shared connection pool, global lock or constrained executor, so launching asynchronous calls does not by itself prove parallelism.",
+        "Hedging can reduce an independent slow-replica tail but doubles work when a shared dependency is saturated, and speculative duplicate writes are unsafe because replicas may accept divergent effects."
+      ],
+      "required_evidence": [
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+        "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#4-hedging-replication-and-selective-degradation"
+      ]
+    },
+    {
+      "task_id": "Q104",
+      "question": "Why can twelve routes, five outcome classes, three regions and forty instances produce 7,200 metric series, and why does that series count not determine ingest volume?",
+      "core_claims": [
+        "Metric series identity combines the metric name with distinct label or attribute value sets, so additional label dimensions multiply the series count rather than adding to it.",
+        "The page's hypothetical product of 12 routes, 5 method-and-outcome groupings, 3 regions and 40 instances yields 7,200 series before per-instance process recycling, tenant or URL labels and histogram buckets are counted.",
+        "Cardinality is not volume: the same 7,200 series scraped every 15 seconds and every minute incur different ingest and storage cost, and metric type, compression, retention, index overhead and query fan-out change the budget.",
+        "Request, trace, customer or ephemeral resource identifiers used as labels can create unbounded series, saturate ingestion and time-series indexing, drop samples and leak sensitive data.",
+        "Aggregation loses information by design: averaging percentiles across groups is generally invalid, deleted buckets remove resolution for later quantiles, and a daily average can hide a ten-minute queue crisis."
+      ],
+      "optional_claims": [
+        "An empty or stale series can look like zero errors, so pipeline health needs sample freshness, target health and explicit unknown-data handling.",
+        "Detailed per-entity investigation belongs in access-controlled logs or traces rather than in unlimited metric labels."
+      ],
+      "required_evidence": [
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#4-cardinality-is-multiplicative-and-architectural",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics"
+      ]
+    },
+    {
+      "task_id": "Q105",
+      "question": "When object bytes are stored outside the metadata database, why is a successfully verified upload not yet safe to expose to readers?",
+      "core_claims": [
+        "Object storage and the metadata database do not share a transaction, so object existence alone does not authorize exposure, and committing a metadata row does not atomically commit the remote bytes.",
+        "The visible-state protocol uses a pending operation, a nonpublic candidate identity, verification of that exact object version, and then an atomic metadata publish that records the exact version and any outbox event.",
+        "Each crash window leaves different persisted evidence and needs a different recovery: before upload, after upload before completion, during validation, after publish commit before response, and after publication before event delivery.",
+        "Conditional writes such as create-if-absent or ETag preconditions protect one scoped object operation but cannot commit a separate database row, and a mutable key lets another writer replace the bytes between verification and later use.",
+        "A collector must not delete every object it observed unreferenced at one instant, because publication can establish a reference afterward; retirement needs a metadata-owned grace and state protocol over immutable object identities."
+      ],
+      "optional_claims": [
+        "An object-created notification is a wake-up signal that may arrive before validation or more than once, so the worker must consult current metadata and handle duplicate notices idempotently.",
+        "A completed multipart object's ETag is not necessarily the MD5 of its bytes, so a documented checksum algorithm must be verified instead."
+      ],
+      "required_evidence": [
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#crash-windows",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#garbage-collection-races",
+        "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again"
+      ]
+    },
+    {
+      "task_id": "Q106",
+      "question": "Why is a valid signature over build provenance for one artifact digest insufficient to authorize promoting an image that currently has the same tag?",
+      "core_claims": [
+        "Authenticity and authorization are different questions: a signature can verify while the signing identity, builder, source revision or target environment is absent from the release allowlist, and the correct outcome is rejection.",
+        "The subject is the exact artifact digest, so an attestation bound to digest A is not evidence for digest B even when both carry the same image name or tag.",
+        "A signature or attestation envelope binds a statement to an authenticated key or identity, but it does not establish that the signer was authorized or that the statement is true.",
+        "A release gate must bind the subject digest, trust root, allowed issuer and identity, approved immutable source revision, build parameters, SBOM coverage and target eligibility, and a missing required proof should fail closed.",
+        "Passing verification makes an artifact eligible for controlled promotion, not proof of runtime correctness or operational safety, so post-build runtime and data gates still apply."
+      ],
+      "optional_claims": [
+        "SLSA 1.2 separates Source and Build tracks and Build levels L1 through L3, and a level is not attained merely because an attestation exists or a custom script writes a JSON file.",
+        "Transparency-log inclusion can support accountability or inclusion verification but does not approve the publisher's authority."
+      ],
+      "required_evidence": [
+        "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#4-authenticity-is-not-authorization",
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#5-missing-evidence-must-fail-the-gate-appropriately",
+        "tycho.page.56bd7133980b4b1992816a98308be676#2-slsa-1-2-levels-and-provenance-have-explicit-scopes"
+      ]
+    },
+    {
+      "task_id": "Q107",
+      "question": "Why does restoring a consistent stream-processing checkpoint not prove that an external side effect happened exactly once?",
+      "core_claims": [
+        "A checkpoint stores operator state and source positions consistently so that recovery can resume from a defined input position.",
+        "An arbitrary external sink remains outside that guarantee unless a compatible sink commit protocol and recovery semantics are demonstrated.",
+        "If the sink is outside the checkpoint commit protocol, restoring the input position can process the event again after its external effect already occurred, so the sink needs its own idempotency or compensation contract.",
+        "Snapshotting state cannot retroactively cancel an external effect such as an email send, which has its own acknowledgment and idempotency contract.",
+        "Recovery tests must verify restored state, emitted output and input position, and must test a real external effect separately instead of inferring correctness from internal guarantees."
+      ],
+      "optional_claims": [
+        "A checkpoint is not automatically a migration artifact because a version upgrade can change state serialization, operator identity and restore compatibility.",
+        "Event-time watermarks and late-data handling remain business policies rather than properties proven by checkpointing."
+      ],
+      "required_evidence": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints",
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#6-failure-recovery-experiments"
+      ]
+    },
+    {
+      "task_id": "Q108",
+      "question": "Why does committing an update fail to make the replaced row version immediately reclaimable, and what keeps vacuum from reusing its space?",
+      "core_claims": [
+        "Under MVCC each statement reads from a snapshot, so a committed update does not automatically become every concurrent reader's current view.",
+        "A replaced or deleted row version cannot be removed while another transaction may still need to see it under its snapshot.",
+        "Vacuum can make an obsolete version's space reusable only after the version is no longer needed.",
+        "A long-lived read transaction keeps an old visibility horizon open, so the writer's commit is not the event that makes the old version reclaimable.",
+        "Reuse of space inside a relation is not the same as shrinking the relation's file, and VACUUM FULL adds a different lock and rewrite contract."
+      ],
+      "optional_claims": [
+        "Snapshot visibility and WAL durability answer different questions, so snapshot consistency does not prove that a committed write survives a crash.",
+        "Repeatable Read keeps a stable transaction view but does not exclude every serialization anomaly, so a serializable transaction can still need a retry protocol."
+      ],
+      "required_evidence": [
+        "tycho.page.021b06125a5c46d488493b87d384509f#visibility-is-a-question-about-a-reader",
+        "tycho.page.021b06125a5c46d488493b87d384509f#old-versions-consume-a-lifecycle-budget",
+        "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+        "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work"
+      ]
+    },
+    {
+      "task_id": "Q109",
+      "question": "Why does a single-flight guard inside each replica fail to bound origin load when one hot cache key expires, and what would bound it?",
+      "core_claims": [
+        "A synchronized cache expiry can make many readers miss at once and issue redundant expensive loads against the origin.",
+        "In-process single-flight deduplicates only loads triggered inside one process, so other replicas can still load the same key in parallel.",
+        "Jittered TTLs desynchronize expiry across different keys but do not protect one extremely hot key from a stampede.",
+        "Bounding origin load requires per-key coalescing plus a total source-admission budget with an explicit wait, reject or degrade response when that budget is exhausted.",
+        "A refresh lease is not a correctness lock because an expired lease can allow a second refresh while the first writer is still active, so a monotonic cache property needs source revision, fencing or a conditional update."
+      ],
+      "optional_claims": [
+        "Stale-while-revalidate is valid only when the operation accepts a stale value; an authoritative reservation or access grant may require an explicit rejection instead.",
+        "Cache loss is a load event as well as a latency event, so a capacity cache cannot fall back to unbounded database traffic without admission control."
+      ],
+      "required_evidence": [
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#2-stampede-at-a-synchronized-expiry",
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#3-a-refresh-lock-is-not-automatically-a-correctness-lock"
+      ]
+    }
+  ]
+}
