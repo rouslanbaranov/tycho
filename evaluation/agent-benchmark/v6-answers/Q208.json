@@ -1,0 +1,214 @@
+{
+  "task_id": "Q208",
+  "answer": "# Q208 — Why a remaining error budget and a quiet sustained-window alert both fail to stop a timing-out release\n\n## 1. Direct answer\n\nA 99.9% monthly objective is a **consumption allowance**, not a release control. It says how much badness the month can still absorb; it does not say how fast badness is arriving, which users or which version produces it, or whether the badness is state-correct. A release that starts timing out is usually inside that allowance by design, because the allowance exists to absorb incidents of that size. The policy attached to the budget is also an exhaustion/near-exhaustion trigger that names human actions, so it acts late, after the burn has happened, not at the moment a rollout should have been paused.\n\nA single sustained-window alert is quiet for the mirror-image reason: the window that suppresses noise also suppresses the incident. One threshold over one long window averages a short, severe burst away; a persistence clause requires the condition to hold continuously; a fleet-wide SLO average dilutes a failure confined to a canary, a route or a version; and one rule cannot be both fast enough to page on a ten-minute regression and stable enough not to page on noise. \"No alert fired\" therefore means \"no single rule's average crossed its single line\", not \"the release is safe\".\n\nUse **paired long and short windows with burn-rate thresholds** instead. The long window decides whether the burn is significant against the budget; the short window, about one twelfth as long, confirms the burn is still happening now and lets the alert clear quickly. Require both. Route by burn tier: fast burn pages and stops the rollout, medium burn opens a ticket, slow burn feeds review. Add release-scoped gates on the candidate cohort and hard correctness gates that stop the release regardless of remaining budget.\n\n## 2. Mechanism and justification\n\n### Facet 1 — The budget is an allowance, not a rate\n\nA 99.9% monthly target permits 0.1% badness: in the book's synthetic example, 10 bad outcomes among 10,000 eligible intents, or 500 among 500,000. In time terms a 30-day month allows 0.1% of 43,200 minutes, about 43 minutes 12 seconds, but the book explicitly warns that a \"theoretical monthly time-equivalent budget is not a measured downtime allowance for an event-count-based SLI\".\n\nMy arithmetic, offered as illustration and not as a book claim: a ten-minute total outage consumes 10/43,200 = 0.023% of the month, which is about 23% of the 0.1% allowance, leaving roughly 77% untouched. A 30-minute episode in which 20% of requests fail consumes 0.2 x 30/43,200 = 0.014%, about 14% of the allowance. A two-hour episode at a 10% failure rate consumes about 28%. In event terms, 200 failed events out of a 500-event allowance leaves 300.\n\nThe consequence is not a paradox. For any incident materially smaller than the full monthly allowance, \"budget remains\" is the expected output of the accounting. It is a residual stock, and a stock carries no information about the current flow, the affected cohort, or correctness. The book also insists that an error budget is an accounting expression, \"not permission to violate a non-negotiable state invariant, authorization rule or contractual data-loss constraint\": one duplicate committed allocation remains forbidden even while availability looks green.\n\n### Facet 2 — The policy trigger is exhaustion, not burn\n\nThe Workbook, as quoted in the book, says that \"once you exhaust your error budget (or come close to exhausting it), you should do something in order to restore stability to your system\", and that the policy must \"cover the specific actions that must be taken when a service has consumed its entire error budget for a given period of time, and specify who will take them\". The book's runbook executes exactly that on budget exhaustion: prioritize reliability work, freeze risky changes, allow reviewed security exceptions.\n\nAll three are post-hoc governance actions taken by people. While 60-80% of the budget remains, the written policy has nothing to say, and nothing in it is wired to a deployment controller. The only place the book puts a stop before exhaustion is a different gate: \"Stop rollout if a mandatory correctness gate fails, **even with budget remaining**\". That sentence concedes the point: the stop has to come from something other than the budget.\n\nBudget policy is also sensitive to position inside the window rather than to the incident. Full budget on day two and 2% left on day twenty-nine produce opposite decisions for the same burn and the same user harm.\n\n### Facet 3 — Scope, dilution and correctness blind spots\n\nThe SLO is defined over an owner-chosen eligible population, boundary and window. The same 99.9% can be measured over events or over time, and the book warns these \"measure different effects\" and that neither automatically captures incorrect durable writes.\n\nA release usually affects a slice. A canary at 5% exposure that fails every request is at most a 5% fleet error ratio before any monthly averaging, and less if the cohort is smaller or if only some of its routes fail. The book warns that \"an unrelated region may hide under aggregate metrics\" and recommends disaggregating by meaningful route and workload where needed.\n\nCounting can also be green while users are wrong: a design that counts only admitted 2xx responses can report misleading health, and a metric may improve \"after dropping all costly requests\" while \"business success has not necessarily improved\". Timeouts are especially ambiguous outcomes: \"timeout after DB commit is success or uncertain\", and cancellation cannot undo committed state. A timeout can therefore be a failed user journey and a committed write at the same time; the SLI may record the first and miss the second.\n\nSo \"budget remains\" can coexist with a release that is materially harming a subgroup, and it can do so by construction rather than by misconfiguration.\n\n### Facet 4 — Why one sustained window stays silent\n\nThe book states the trade-off directly: \"short windows can be noisy and long windows slow to detect severe faults\". A single threshold over a long window compares an average, not a burst. A ten- or twenty-minute timeout spike inside a one-hour or one-day average is diluted; inside a monthly average it almost disappears. Long-window detection lag is added to that: the average can cross only after enough of the window is bad, which is after the harm has been done.\n\nA persistence clause makes this stricter. Prometheus \"waits for a condition to persist\" with its for clause, so a burst that ends before the persistence duration never fires, and a rule that dips and re-crosses restarts its clock. keep_firing_for prevents \"flapping alerts, false resolutions due to lack of data loss\", but it adds state stability, not sensitivity.\n\nShortening the window is not a fix by itself. The book's own trap is an \"alert threshold selected without enough valid event samples\", and its alert-design checklist requires \"enough observations / confidence to distinguish low traffic\". At low or intermittent traffic a five-minute error ratio is noise, so the practical response is to lengthen the window or raise the threshold, which returns to silence.\n\nFleet aggregation is a second dilution axis, and a single rule has a single severity: tuned to avoid noise it pages late; tuned to catch the burst it pages often. Missing data can imitate quiet too: the book notes that a skipped evaluation is \"a real blind spot\" and that rule_group_iterations_missed_total increments, so an alerting gap looks exactly like a healthy service from the alert's point of view.\n\n### Facet 5 — Burn rate and the two-window construction\n\nThe book defines burn rate as \"how fast, relative to the SLO, the service consumes the error budget\": observed bad-event consumption compared with the budget's expected consumption rate. Because it is a ratio, it is comparable across traffic levels and can be computed over any window, which is what a raw percentage of remaining budget cannot do.\n\nThe book's signal table separates two different decisions. \"Fast error-budget burn\" maps to \"investigate impact and consider protecting capacity/halting rollout\". \"Sustained slow burn\" maps to \"review problem history and release/quality trade-offs\", with the trap \"ignoring long-term harm because there is no loud incident\". The Workbook, quoted by the book, recommends \"the multiwindow, multi-burn-rate alerting technique\" as \"the most appropriate approach to defending your application's SLOs\", and the book's runbook says to use multiwindow burn-rate rules with bounded for and keep_firing_for.\n\nHow to use the pair — my inference from the method, since the book states no universal thresholds:\n\n- **Long window = significance.** Pick a window and a burn multiple so that burn x (window / SLO window) is a meaningful slice of the budget. For a 30-day window: 14.4x over one hour consumes 2% of the month's budget; 6x over six hours consumes 5%; 1x over three days consumes 10%.\n- **Short window = currency.** About one twelfth of the long window, for example five minutes against one hour or thirty minutes against six hours. It confirms the burn is still active and lets the alert resolve minutes after recovery instead of waiting for the long window to decay.\n- **Require both.** Long only is late and slow to reset; short only is noisy; long AND short gives significance with a fast reset.\n- **Tier the response.** Highest burn pages and automatically pauses or stops the rollout, rolling back only if state is compatible; medium burn opens a ticket for the next working period; slow burn feeds a reliability review. This turns the book's fast-burn/slow-burn split into an executable routing rule.\n- **Scope the evaluation to the release.** Compute burn on the candidate cohort against the baseline during the canary rather than on the fleet's monthly average, and freeze promotion on candidate error. The canary gate table does exactly this: \"Candidate error or cross-version invariant break freezes promotion\". The rolling-deployment note says to \"gate each batch on readiness and error signals and keep a tested stop condition\".\n- **Keep hard gates independent.** A correctness or invariant failure stops the release regardless of budget and regardless of burn windows; the budget is not permission to violate the invariant.\n- **Bound the rule.** Use a for duration shorter than the burst you must catch, use keep_firing_for only against flapping, and treat missed evaluations as an alerting incident of their own.\n\n### Facet 6 — Gating and rollback boundaries\n\nStopping a rollout is containment, not recovery. The incident model separates containment, mitigation and recovery, and warns that a redeployed healthy process can leave divergent state untouched. Rollback is conditional: \"Roll back deployable version — undo a code/config regression if state compatible\", and \"an 'undo' control that reverses only application code is not a safe data rollback\". The canary page shows why: a 5% canary can write state that old versions cannot read, so switching the binary back can increase failures, and the correct move may be forward repair.\n\nA working gate therefore needs authority and a named decision, not just a number: who may pause, who may roll back, what evidence proves state compatibility, and what verification follows. Neither a budget percentage nor an alert authorizes action by itself.\n\n## 3. Boundaries and trade-offs\n\n- **Low or intermittent traffic.** Error ratios are unstable when the denominator is small. Multiwindow rules still need minimum event counts; the book explicitly declines \"universal thresholds, especially for services with intermittent traffic or where one incorrect operation is intolerable\".\n- **Time-based versus event-based budget.** The 43-minute figure is a time-equivalent, not a measured downtime allowance for an event-count SLI. Mixing the two makes the budget look larger or smaller than the user experience it represents.\n- **Window reset.** A calendar-aligned month refills the budget at the boundary, so \"remaining\" jumps without any change in reliability; a rolling window avoids the cliff but changes what \"this month\" means. The book permits \"a rolling window or a calendar-aligned window\", so either is defensible, but it must be declared and versioned with the SLO.\n- **The SLI is not the whole promise.** Multiwindow burn alerting monitors the indicator, not durable correctness. A duplicate booking, a committed-but-unacknowledged write or a policy violation can leave the ratio green; those need separate hard gates.\n- **Alerting is detection, not restitution.** Budget is consumed whether or not an alert fires, and a multiwindow rule improves detection and reset time, not recovery.\n- **Alert-to-action gaps.** Every alert needs an owner, escalation path, runbook and explicit falsification; suppression during maintenance can hide a real incident, and missing metrics are themselves an incident.\n- **Rollback safety.** A binary rollback is not a data rollback, and the safe action may be forward repair, a feature flag or a write freeze; the gate must not assume reversibility.\n- **What the book does not establish.** No alert rule, recording rule, SLO policy or rollout gate was created or executed, and no budget, burn rate or alert latency was measured. Thresholds, the 300% example and the fictional booking incident are synthetic teaching material; the SRE recommendation is cited, not verified here.\n\n## 4. Evidence map\n\n| Claim | Section key | Type |\n|---|---|---|\n| 99.9% over 30 days permits 0.1%: 10 bad in 10,000, 500 in 500,000; monthly time-equivalent is not a downtime allowance for an event SLI | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target | observed quote + inference |\n| Error budget is accounting, not permission to violate an invariant | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target | observed |\n| Eligible population, boundary and window must be fixed before measurement | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population | observed |\n| Monthly time-equivalent budget is not a measured downtime allowance for event-count SLIs | tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection | observed |\n| Budget policy acts on exhaustion or near-exhaustion, names human actions, and specifies who takes them | tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes | observed quote |\n| On exhaustion: prioritize reliability work, freeze risky changes, allow reviewed security exceptions | tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes | observed quote |\n| Stop the rollout on a correctness gate even with budget remaining; confirmed burn and impact choose mitigation, investigation or reversible rollback | tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision | observed |\n| Fast burn vs sustained slow burn map to different actions; traps are missing samples and ignoring quiet long-term harm | tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations | observed |\n| Short windows are noisy, long windows are slow; the method implies no universal thresholds | tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations | observed quote |\n| Multiwindow, multi-burn-rate alerting is the recommended defence of an SLO; use bounded for and keep_firing_for; skipped evaluations are blind spots | tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes | observed quote + Tycho reading |\n| Alerts need a window, enough observations for low traffic, an owner and a falsification rule | tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety | observed |\n| A metric may improve while business success does not; recovery must check correctness and durable state | tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure | observed |\n| Rollback is safe only if state is compatible; code rollback is not data rollback | tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices | observed quote |\n| Retries after timeouts multiply offered load while completed useful work falls | tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract | observed |\n| A canary needs measurable gates, a tested stop condition and a rollback versus forward-repair decision | tycho.page.b938ff1a06264492a425f2eff555ae7d#purpose-and-mission | observed |\n| Gate each batch on readiness and error signals; keep a tested stop condition | tycho.page.b938ff1a06264492a425f2eff555ae7d#bounded-pattern-ownership-notes | observed |\n| Candidate error or cross-version invariant break freezes promotion | tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure | observed |\n| A green SLO can hide rejected operations behind a success-only denominator | tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations | observed |\n| Aggregates can hide a region or route; disaggregate by meaningful workload | tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling | observed |\n| The SLO should make an explicit promise about user experience and the evaluation window | tycho.page.c987c475cc5340bcb967f4b6f963b295#purpose-and-mission | observed |\n\n## 5. Unknowns and confidence\n\n**Unresolved gaps.** The question does not state the SLO's denominator (events versus time), the release's traffic share, the exact alert rule and its window, or whether the budget policy pre-authorizes an automatic pause; the answer assumes a fleet-level event-based SLI plus one long-window rule without short-window confirmation, which is exactly the configuration the evidence describes as fragile. The book gives no measured detection latency, false-positive rate or parameter set, so the 14.4x/6x/1x ladder is arithmetic illustration, not an established recommendation. It is also unknown whether the release's failure is confined to a cohort, which changes dilution but not the conclusion.\n\n**Confidence.** High that a residual monthly budget and a single long-window alert are structurally unable to stop a short, cohort-scoped, in-budget timeout regression: the book's budget semantics, policy trigger and window trade-off independently support it. Medium on specific window and threshold values, which the book explicitly refuses to universalize. Low on whether any particular organization's rollout controller can act on a burn signal automatically, since that is an implementation and authority question the sources do not settle.",
+  "citations": [
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#purpose-and-mission",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+    "tycho.page.b938ff1a06264492a425f2eff555ae7d#purpose-and-mission",
+    "tycho.page.b938ff1a06264492a425f2eff555ae7d#bounded-pattern-ownership-notes",
+    "tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure",
+    "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+    "tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices",
+    "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract"
+  ],
+  "evidence": [
+    {
+      "claim": "A 99.9% monthly target permits 0.1% bad events (10 of 10,000; 500 of 500,000) and the budget is an accounting expression, not permission to violate a structural invariant.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+      "note": "Observed: synthetic arithmetic and explicit 'not permission' wording. Inference: the residual stock has no rate information."
+    },
+    {
+      "claim": "A theoretical monthly time-equivalent budget is not a measured downtime allowance for an event-count-based SLI.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+      "note": "Observed quote."
+    },
+    {
+      "claim": "Budget policy acts only on exhaustion or near-exhaustion and must specify the actions and who takes them.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+      "note": "Observed quotes from the SRE Workbook as reproduced in the book."
+    },
+    {
+      "claim": "On exhaustion the written policy prioritizes reliability work, freezes risky changes and allows reviewed security exceptions.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+      "note": "Observed Tycho runbook sentence."
+    },
+    {
+      "claim": "A rollout is stopped by a mandatory correctness gate even with budget remaining, and confirmed burn plus impact selects mitigation, investigation or reversible rollback.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+      "note": "Observed safe-rule steps; the page states thresholds are hypothetical."
+    },
+    {
+      "claim": "Fast burn suggests investigating and protecting capacity or halting rollout; sustained slow burn suggests reviewing history and release trade-offs; traps are insufficient samples and ignoring quiet long-term harm.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "Observed signal table."
+    },
+    {
+      "claim": "Short windows can be noisy and long windows slow to detect severe faults, and the method implies no universal thresholds.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "Observed quote."
+    },
+    {
+      "claim": "The SRE Workbook recommends multiwindow, multi-burn-rate alerting as the most appropriate defence of an SLO, and Prometheus persistence and keep-firing semantics shape alert behaviour.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+      "note": "Observed quotes plus Tycho reading about skipped evaluations."
+    },
+    {
+      "claim": "Alerts require an evaluation window, enough observations to distinguish low traffic, an owner and a falsification rule.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+      "note": "Observed checklist."
+    },
+    {
+      "claim": "A metric may improve while business success does not, and recovery must be checked against user-visible correctness and durable state.",
+      "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+      "note": "Observed."
+    },
+    {
+      "claim": "Rollback is safe only if persisted state stays compatible, and code rollback is not data rollback.",
+      "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices",
+      "note": "Observed table and inferential sentence."
+    },
+    {
+      "claim": "Timeouts followed by retries at several layers can raise offered load while completed useful work falls.",
+      "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+      "note": "Observed failure example."
+    },
+    {
+      "claim": "A canary needs exposure control, a representative cohort, measurable gates and a rollback or forward-repair decision; small samples hide rare errors.",
+      "section_key": "tycho.page.b938ff1a06264492a425f2eff555ae7d#purpose-and-mission",
+      "note": "Observed."
+    },
+    {
+      "claim": "Each rollout batch should be gated on readiness and error signals with a tested stop condition.",
+      "section_key": "tycho.page.b938ff1a06264492a425f2eff555ae7d#bounded-pattern-ownership-notes",
+      "note": "Observed rolling-deployment note."
+    },
+    {
+      "claim": "Candidate error or a cross-version invariant break freezes promotion before exposure expands.",
+      "section_key": "tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure",
+      "note": "Observed phase table (P3)."
+    },
+    {
+      "claim": "A success-only denominator can hide rejected user operations behind a green SLO.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+      "note": "Observed."
+    },
+    {
+      "claim": "An unrelated region or route can hide under aggregate metrics and should be disaggregated where meaningful.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+      "note": "Observed."
+    },
+    {
+      "claim": "An SLO should state the user experience it preserves and the window over which it is evaluated.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#purpose-and-mission",
+      "note": "Observed."
+    }
+  ],
+  "facets": [
+    {
+      "facet": "F1 — What '99.9% monthly with budget remaining' actually measures",
+      "queries": [
+        "error budget burn rate alerting",
+        "99.9 monthly error budget arithmetic",
+        "rolling window versus calendar window SLO"
+      ],
+      "evidence": [
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling"
+      ],
+      "finding": "Budget remaining is a residual stock over a long window, not a rate; a small fraction of it is consumed by any incident shorter than the full allowance."
+    },
+    {
+      "facet": "F2 — Why budget policy does not stop the release",
+      "queries": [
+        "error budget policy freeze risky changes",
+        "error budget exhaustion release gate",
+        "SLO error budget deployment release gate"
+      ],
+      "evidence": [
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision"
+      ],
+      "finding": "Policy triggers at exhaustion or near-exhaustion and names human actions; a healthy budget leaves it silent, and the book's stop condition is a correctness gate, not the budget."
+    },
+    {
+      "facet": "F3 — Scope, dilution and correctness blind spots",
+      "queries": [
+        "SLO aggregate hides region route",
+        "timeout after commit uncertain outcome",
+        "green SLO rejected operations"
+      ],
+      "evidence": [
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+        "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract"
+      ],
+      "finding": "A canary-, route- or state-scoped failure can stay invisible to a fleet-level monthly ratio, and a timeout can be both a failed journey and a committed write."
+    },
+    {
+      "facet": "F4 — Why a single sustained-window alert stays silent",
+      "queries": [
+        "alerting window sustained threshold error rate",
+        "sustained window alert threshold average",
+        "multi-window burn rate short long window"
+      ],
+      "evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes"
+      ],
+      "finding": "Long windows are slow and average the burst away; persistence clauses need continuous violation; short windows alone are noisy at low traffic; missed evaluations look like silence."
+    },
+    {
+      "facet": "F5 — How short and long burn windows should be combined",
+      "queries": [
+        "multiwindow multi-burn-rate alerting technique",
+        "burn rate page ticket severity threshold",
+        "burn rate multiplier 2 percent budget one hour"
+      ],
+      "evidence": [
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure",
+        "tycho.page.b938ff1a06264492a425f2eff555ae7d#bounded-pattern-ownership-notes"
+      ],
+      "finding": "Long window supplies significance against the budget; short window supplies currency and fast reset; require both and tier the response from page to ticket to review, scoped to the release cohort."
+    },
+    {
+      "facet": "F6 — Release gating, containment and rollback boundaries",
+      "queries": [
+        "rollback trigger deployment health signal",
+        "canary analysis automatic rollback error rate",
+        "incident response actions rollback state compatibility"
+      ],
+      "evidence": [
+        "tycho.page.b938ff1a06264492a425f2eff555ae7d#purpose-and-mission",
+        "tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#purpose-and-mission"
+      ],
+      "finding": "A gate needs measurable signals, a tested stop condition, authority and a rollback-versus-forward-repair decision; stopping a rollout is containment, not restored state."
+    }
+  ],
+  "onboarding": {
+    "tool": "scripts/agent_session_cli.py describe",
+    "snapshot": "4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a",
+    "layers": [
+      "book"
+    ],
+    "note": "The question is conceptual and operational, so the book layer is sufficient; atlas and modeling-and-simulation were not searched and are not required for a citation-backed answer. No corpus, qrels, labels, answers or rankings were read."
+  },
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
