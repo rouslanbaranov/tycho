@@ -8784,7 +8784,7 @@
         "heading": "Leader-Follower Replication",
         "anchor": "leader-follower-replication",
         "level": 3,
-        "line": 179,
+        "line": 193,
         "unit_kind": "dedicated",
         "unit_terms": [
           "One leader accepts writes",
@@ -8966,7 +8966,7 @@
           "binding": {
             "source_id": "src.postgresql",
             "ledger_record": "read.pg18-ha.2026-10-30",
-            "section": "Chapter 26. High Availability, Load Balancing, and Replication",
+            "section": "26.2.5.2. Monitoring",
             "quote": "A standby server can also be used for read-only queries, in which case it is called a hot standby server.",
             "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
           }
@@ -8978,7 +8978,7 @@
           "binding": {
             "source_id": "src.postgresql",
             "ledger_record": "read.pg18-ha.2026-10-30",
-            "section": "26.2.8.1. Synchronous Replication",
+            "section": "26.2.8.1. Basic Configuration",
             "quote": "In the case that synchronous_commit is set to remote_apply, the standby sends reply messages when the commit record is replayed, making the transaction visible.",
             "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
           }
@@ -9030,9 +9030,9 @@
         ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
-      "notes": "Mechanism, invariant, failure recovery and alternative bind PostgreSQL hot standby, synchronous replay, WAL lag and read-only staleness; routing, freshness and leader/quorum preference are Tycho guidance. Coverage partial-bounded; promotion candidate."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Technical and decision coverage sufficient. PostgreSQL binds hot standby, remote_apply replay, WAL lag and read-only staleness; freshness, routing and leader/quorum preference are Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.quorum-based-reads-writes",
@@ -12349,7 +12349,7 @@
         "heading": "Consensus",
         "anchor": "consensus",
         "level": 3,
-        "line": 196,
+        "line": 210,
         "unit_kind": "dedicated",
         "unit_terms": [
           "nodes A, B and C",
@@ -18544,7 +18544,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Replication, consensus, multi-leader and read-replica patterns now have five dedicated units."
     },
@@ -18752,14 +18752,14 @@
     "invariant_supported": 100,
     "failure_recovery_supported": 98,
     "alternative_supported": 102,
-    "technical_partial_bounded": 9,
+    "technical_partial_bounded": 8,
     "technical_partial": 47,
     "technical_name_only": 0,
-    "technical_sufficient": 89,
-    "decision_partial_bounded": 56,
+    "technical_sufficient": 90,
+    "decision_partial_bounded": 55,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 89,
+    "decision_sufficient": 90,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

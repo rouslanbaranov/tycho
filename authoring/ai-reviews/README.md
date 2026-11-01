@@ -205,3 +205,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | Saga Orchestration | pass | `2026-11-01-saga-orchestration-deepseek.md` | `de710387ff28a033ebcaeff027541ae672a1f8aa17433ca42880359813e91826` |
 | 2026-11-01 | DeepSeek Reviewer | V12 semantic after promotion 89 | pass | `2026-11-01-v12-semantic-89-deepseek.md` | `7ab2a034e172eec739d9d223ccc81d8a48a18d1e164f6aabb85e914e42d242f8` |
 | 2026-11-01 | DeepSeek Reviewer | V12 semantic 89 minors delta | pass | `2026-11-01-v12-semantic-89-delta-deepseek.md` | `03de8e2f6bbbcf11cbd6d0ae374c998272022ff3de7b9fb08836a2c57629ab65` |
+| 2026-11-01 | DeepSeek Reviewer | Read Replicas + Multi-Leader rebind | pass | `2026-11-01-read-replicas-deepseek.md` | `cf756be9cd47324698660cfea70d7808ace3b7ea4d894e220fee9306d851d4cb` |

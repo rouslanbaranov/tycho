@@ -11,7 +11,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Decision card for Read Replicas with bounded owner evidence."
+summary: "Decision card for Read Replicas with sufficient owner evidence."
 route_hints:
   questions:
     - "Should read-only replicas serve queries to offload the writer?"
@@ -20,7 +20,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.22fa23c6c7a6b0c29a52137bc67a00c9"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "read replicas"

@@ -77,6 +77,7 @@ Alternative comparison: [PostgreSQL 18, section 26.1 Comparison of Different
 Solutions](https://www.postgresql.org/docs/current/different-replication-solutions.html),
 served 2026-10-29, SHA-256
 7a5bc0622dd4ff65ca5e13a3b449c0e7d2855f3ad875305d1f7df1569d2604f9.
+Read record read.postgresql-replication-solutions.2026-10-29, section 26.1.
 The comparison is documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
