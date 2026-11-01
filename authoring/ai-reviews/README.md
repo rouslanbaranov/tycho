@@ -193,3 +193,6 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | #540 V12 consistency | reject | `2026-11-01-v12-consistency-deepseek.md` | `e38c71c554d0e97b71edef1ffcb97487819bc60d61d04b98769bed961934626c` |
 | 2026-11-01 | DeepSeek Reviewer | #540 V12 consistency delta | pass | `2026-11-01-v12-consistency-delta-deepseek.md` | `00784a6786cd93fb69ffa4b566bfa4522c3c4d47ab1206c00da6152b2a5afd20` |
 | 2026-11-01 | DeepSeek Reviewer | #540 Cache Aside + TTL | pass | `2026-11-01-cache-aside-ttl-deepseek.md` | `cc796c1017e8a28f4ac1df2d3ad0f53aa3c8fa3c91ffcc262f7e0f31ade14f09` |
+| 2026-11-01 | DeepSeek Reviewer | #540 SOA + Microservices | pass | `2026-11-01-soa-deepseek.md` | `9f63cfd49707d8cf6468e06004b05acc384fb35789903e58b1d539a5259bbeee` |
+| 2026-11-01 | DeepSeek Reviewer | #540 API Composition + BFF | pass | `2026-11-01-api-composition-deepseek.md` | `f2e517876bc814e190043b1c9a34d99550784ae3e3cac409d2cae57e0e0ee1e0` |
+| 2026-11-01 | DeepSeek Reviewer | #540 Aggregator + Scatter-Gather | pass | `2026-11-01-aggregator-deepseek.md` | `dcd5e1afd7d1a9bd50ff9e3dd5c135d8339a01f6b3382b3a338425ecf8b444eb` |

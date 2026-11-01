@@ -39,13 +39,13 @@
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "section_id": "4-cache-aside-is-a-sequence-not-a-consistency-theorem",
-          "quote": "TTL-bound value and invalidates on writes",
+          "quote": "TTL is an optional policy, not part of the core sequence",
           "rationale": "The write path invalidates cached entries."
         },
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "section_id": "4-cache-aside-is-a-sequence-not-a-consistency-theorem",
-          "quote": "A write can commit while its delete fails.",
+          "quote": "a write can commit while its delete fails",
           "rationale": "A lost delete leaves cache and store divergent; the stale-fill race and lost-invalidation bound are described in the same section."
         }
       ],
@@ -63,7 +63,7 @@
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "section_id": "4-cache-aside-is-a-sequence-not-a-consistency-theorem",
-          "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a TTL-bound value and invalidates on writes; stampede hazards follow from that sequence.",
+          "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss and fills the cache. Azure and Redis also invalidate on writes; a TTL is an optional policy, not part of the core sequence.",
           "rationale": "Places TTL as the bound on the value written after a cache-aside miss."
         },
         {

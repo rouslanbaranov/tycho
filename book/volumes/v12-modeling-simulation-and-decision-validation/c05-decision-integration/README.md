@@ -86,8 +86,8 @@ insufficient-evidence outcome and reversal triggers.
 
 ## Boundaries and evidence
 
-The [decision-record contract](decision-record.md) cites MADR and Nygard for the record
-structure. The validation chapter cites Sargent for separating verification from validity for
+The [decision-record contract](../c02-contracts/decision-record.md) cites MADR and Nygard for the
+record structure. The validation chapter cites Sargent for separating verification from validity for
 a purpose. This landing adds no source claim of its own. The pattern links use the
 edition-level registry and owner pages without modifying them.
 
