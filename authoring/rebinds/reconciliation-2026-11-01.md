@@ -6,8 +6,16 @@ Scope: link and metadata repairs only; no new promotion.
 
 - Registry technical `sufficient` before: 92; after: 95.
 - Promotion set before: 95; after: 95 (unchanged).
-- The three registry corrections are CQRS, Event Sourcing and Load Balancing, already in the
-  promotion set; no entry was promoted by this change.
+- The three coverage corrections are Hexagonal Architecture, Load Balancing and Zero Trust
+  Architecture; all three were already in the promotion set. No entry was promoted by this
+  change.
+- Event Sourcing `review_status` changed from independent-reviewed to self-checked; this is a
+  review-claim downgrade, not a coverage change.
+- Six owner-unit `review_state` values were changed from independent-reviewed to self-checked.
+  Their DeepSeek reports still exist and their hashes still match the promotion records; the
+  downgrade is conservative and does not inflate any review claim.
+- Event Sourcing `decision_evidence.competing_alternative` was rewritten to match the card.
+  This is decision-metadata alignment, not new source evidence.
 
 ## Owner-page and card hashes
 
@@ -23,8 +31,8 @@ Server-Side Discovery and Load Balancing share `discovery-balancing.md`:
 
 - owner page `cf4454984da07c8a5f121df8bc281268970562114d1c65ca28e2b0cfb15c1bcf` ->
   `34b139c4294d752bd8a4d4eada4deac0eacdeaaacd0d21816f3c1e86566300ce`;
-- reason: page-level Load Balancing atlas link gains `#load-balancing` so the owner-unit
-  backlink points at the dedicated H3 anchor.
+- reason: page-level Load Balancing atlas link gains `#load-balancing`, matching the card H1
+  anchor used by the phase4 backlink dimension.
 - cards unchanged.
 
 These are link-target changes, not format-only rebinds. They require the normal delta review;
@@ -32,8 +40,8 @@ this record does not waive it.
 
 ## Link verification
 
-Ten edited relative links were resolved on disk and each fragment matched a heading slug on
-its target page (True/True for target file and anchor).
+Six link edits across eight changed files were resolved on disk; every fragment matched a
+heading slug on its target page (True/True for target file and anchor).
 
 ## H1 slugs
 
