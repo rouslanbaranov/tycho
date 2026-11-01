@@ -1,0 +1,325 @@
+{
+  "task_id": "Q212",
+  "answer": "# Direct answer\n\nThe hourly figure is arithmetically correct but analytically wrong for the claim service. 3,050 / 3,600 = 0.8472..., which the plan rounds to 0.85 operations/s; that is a long-window mean over a heterogeneous population, not a description of a 15-second window. The window receives 1,800 attempts, or 1,800 / 15 = 120 attempts/s, about 141.6 times the hourly rate. Under the plan's implicit uniformity assumption, 0.85 ops/s yields about 12.7 operations in 15 seconds; the window actually receives 1,800 attempts. The comparison is invalid at the unit level before the time-window mismatch is even considered. A mean is not a bound on a peak, and a stationary rate is not an empirical forecast of a burst; the observed burst is evidence that arrivals are not uniform [E1, E6, E10].\n\nThe mean also erases where demand lands. The 1,800 attempts are concentrated on a few keys, and an exclusive claim on one key is serialized at one authoritative owner. More application instances can authenticate and serve independent reads concurrently, but they cannot make two successful exclusive claims for the same key or slot; if attempts arrive faster than the safe serialization rate, queue age and rejections grow while accepted claims remain capped by the invariant [E13, E27]. Sizing at 0.85 ops/s therefore under-provisions both the burst rate and the per-key contention and concurrency budget [E15, E19].\n\nFinally, the plan divides a count of operations by 3,600 seconds and applies the result to a window measured in attempts. Operations, attempts, admitted work, completed work, successful unique claims and in-flight concurrency are different quantities [E7, E8, E9, E20]. The hour average can be a valid long-run throughput estimate for a stationary, uniform workload; it is not a capacity envelope for a short, skewed claim burst [E18, E25].\n\n# Facet matrix\n\nThe question has six decision-relevant facets. E-labels resolve to full section_keys in the evidence map (section 4) and in the citations array.\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. Hour-average arithmetic and observation-window mismatch | '3050 operations one hour 0.85'; 'average rate versus peak window'; 'one-hour mean hides ten-second surge' | E1, E6, E10 |\n| F2. Burst demand shape: count, rate, duration and onset | '1800 attempts 15 seconds 120 per second'; 'burst size and duration capacity'; 'peak-to-median arrival ratio' | E2, E20, E18 |\n| F3. Per-key skew and the serialized claim boundary | 'few keys claim contention'; 'hot key serialization'; 'average RPS shard key' | E4, E13, E15, E27 |\n| F4. Demand-quantity separation: offered, admitted, completed; attempts, logical operations, unique claims | 'offered admitted completed successful'; 'attempts logical operations retries'; 'unique claims duplicate retries' | E7, E8, E11, E17, E23, E24 |\n| F5. Sizing, queueing, admission and provisioning consequences | 'capacity envelope load states'; 'queue does not create capacity'; 'rate cap concurrency cap queue bound'; 'autoscaling lag burst' | E12, E16, E18, E19 |\n| F6. Evidence limits and falsification | 'synthetic workload no measurement'; 'what evidence would falsify'; 'p99 not predicted by mean' | E1, E3, E9, E25 |\n\n# 1. Why the hour average mis-sizes the service\n\nThe book's numerical examples are explicitly synthetic teaching material, not measured production traffic. The following separates what the book states from the arithmetic I derive from its numbers.\n\n## 1.1 Time: a 3,600-second mean cannot represent a 15-second burst\n\nThe plan's division is correct. 3,050 / 3,600 = 0.8472..., which rounds to 0.85 operations/s [E1]. The error is inferential. A mean over 3,600 seconds is a marginal statistic: it averages over time, over operation types and over keys. The claim window is a conditional statistic: 1,800 attempts in 15 seconds, or 120 attempts/s, on a few keys [E2]. The ratio is 120 / 0.8472 = 141.6. The plan's rate applied to 15 seconds yields 0.8472 × 15 = 12.7 operations, while the window receives 1,800 attempts; the comparison is already invalid at the unit level, before the time-window mismatch [INF1]. If the 1,800 attempts fall inside the same hour, the concentration is even starker: 1,800 / 3,050 = 59.0% of the hour's operations arrive in 15 / 3,600 = 0.42% of its time, and the remaining 1,250 operations over 3,585 seconds average 0.35/s, so the burst rate is about 344 times the rest-of-hour rate [INF4]. The book presents the two cases separately, so treat this as a conditional illustration rather than a premise. A mean is not a bound on a peak, and a stationary rate is not an empirical forecast of a burst; the book says explicitly that a one-hour mean hides a 10-second surge [E6].\n\nThe finite-window counterexample shows why substituting one mean for another is invalid. One request arrives at t = 0, stays inside the boundary for 10 seconds, and the observation window is [0,5). The arrival count divided by the window is 0.20/s; multiplying by the full 10-second residence gives 2, but the observed mean population is 1. The window ends with unfinished work, so arrival and residence intervals are incompatible [E10]. Applying the hourly mean to the 15-second claim window is the same category error: the denominator and the population do not match.\n\nThe queue walkthrough makes the consequence concrete. At 120 offered requests/s against 80 correct completions/s for 20 seconds, about 800 requests remain outstanding; substituting 120 offered/s into L = λW to infer a stable W is invalid because the window is not stationary [E11]. For the claim service: if capacity were 0.85 ops/s and all 1,800 attempts were admitted, about 1,787 would remain after 15 seconds, and draining at 0.85/s would take about 35 minutes, ignoring retries and timeouts [INF1]. That is arithmetic from the book's rate, not a measurement. Even capacity at exactly 120 attempts/s has no headroom: service-time variance, lock wait or per-key serialization turns the burst into a queue [E11, E19].\n\n## 1.2 Unit and composition: operations are not attempts, and reads are not claims\n\nThe hour and the window describe different demand populations, even if the 15-second window falls inside the hour. The book's Case A is 3,000 reads and 50 small writes in an hour (3,050 operations at 0.85/s); Case B is 1,800 claim attempts in 15 seconds against the same small set of unique resources (120 attempts/s) [E1, E2]. The operation classes differ in service time, lock hold and success semantics. The book warns that a service time must be labelled CPU time, wall time, database execution or queue wait, and that adding unrelated quantities into one demand average invites incorrect capacity planning [E5].\n\nThe nouns differ too. Case A counts operations; Case B counts attempts. An attempt is an actual transmitted request including retries; a logical operation is an independent business intent; a successful unique claim is an outcome on a resource [E7, E24]. Retry amplification is total attempts divided by offered requests, so three attempts per request can triple the load [E23]. Thus 1,800 attempts may be far fewer logical intents, and successful unique claims can be far lower still when key contention and duplicate retries dominate [E2].\n\nOutcomes are also collapsed by a single rate. Offered attempts may be rejected before admission; admitted work may expire or time out; completed work may be wrong; an outcome may remain unknown after a possible commit [E17]. A success-only rate hides shedding, an offered rate overstates service capacity, and an admitted rate is not completed throughput [E8, E17]. The book's accounting table keeps offered, admitted, completed and outstanding separate, with ambiguous committed effects in the outstanding category [E11].\n\n## 1.3 Space: the few keys are the scarce boundary\n\n'A few keys' is the decisive phrase. The book's reservation scenario runs eight application instances, but only one operation at a time can safely commit an exclusive reservation for a particular device/time combination. More instances can authenticate and serve independent reads concurrently; they cannot create two successful exclusive allocations for the same slot. If attempts arrive faster than safe serialization capacity, queue age and rejections grow while accepted bookings remain capped by the invariant [E13].\n\nThe shard-key argument is the same at a different layer. With 2,000 attempts/s across 100 workshops and one workshop at 1,500/s, the 20/s average misrepresents the hottest owner; evenly distributing the other 500 attempts does not split the 1,500/s single-owner workload, and hashing the hot key does not split its exclusivity invariant [E15, E27]. In the claim window, 120 attempts/s over K keys is 120/K per key only under an even distribution; with skew, the hot key can be close to 120/s, and successful unique claims are bounded by the number of distinct claimable resources and by the key's serialization rate, not by fleet CPU [INF2].\n\nSpare average CPU is therefore not evidence of spare claim capacity: all writes can target one popular resource and serialize despite spare average CPU capacity [E4]. The measurements that discriminate are per-key offered and finished operations, lock wait and hold time, conflict and retry rate, and queue age, not a single global request histogram [E4, E14].\n\n## 1.4 Queueing and provisioning turn the mean error into user-visible failure\n\nA queue can absorb a short burst only if its drain rate clears the work inside the deadline. The book states that a queue does not create capacity: if offered work exceeds the drain rate, backlog and age grow even while every worker is busy [E12]. At 0.85 ops/s, 1,800 attempts is about 35 minutes of work; at 120 attempts/s the service is at the burst rate with no margin [INF1]. Either way, the hourly mean cannot drain a 15-second burst inside the window.\n\nThe controls are not interchangeable. A rate cap, a concurrency cap and a queue bound constrain different populations; a token bucket's burst capacity and refill rate are different budgets [E16]. A service can sustain 0.85/s and still fail 1,800 immediate attempts; a large burst bucket without refill drains and then rejects; a refill rate without burst capacity rejects immediately. Admission, per-key limits, pre-warming and bounded queues are different responses, and rejection is not successful throughput [E12, E17].\n\nConcurrency is a third axis, not a synonym for rate. At 120 attempts/s and the book's illustrative 0.20-second mean residence, Little's Law gives L = 24 in-flight; at the plan's 0.85/s and the same residence it gives 0.17. If claim residence is longer, the in-flight requirement rises proportionally. The plan's rate supplies neither the claim service time nor the concurrency and queue budget [E9, INF3].\n\nProvisioning delay compounds the error. The book's synthetic control loop needs about 70 seconds (15 measurement + 10 decision + 20 scheduling + 25 warm-up) before new capacity is useful, after a 40-second burst; a 15-second burst ends long before that [E19]. Reactive autoscaling cannot cover it. The negative case is explicit: if extra replicas all contend on one hot reservation key, adding replicas can raise conflict retries and reduce correct throughput [E19].\n\nThe plan therefore needs a capacity envelope, not one average cell: normal, predictable peak, unexpected burst, degraded dependency, recovery and growth [E18]. The book compares options over steady, peak and degraded conditions [E29], and raw RPS per instance ignores rejected work, recovery and shared-state costs [E25]. A stable average over the run can conceal failed user journeys when a short burst coincides with a slow dependency [E26].\n\n# 2. Demand quantities that must stay distinct\n\nThe question is not only 'how much demand is there?' but 'which demand, at which boundary, in which window, counted in which unit?'. The following quantities change the sizing decision and must not be collapsed into the hourly mean.\n\n| Quantity | What it measures | What collapsing it with the hourly mean hides |\n|---|---|---|\n| Observation window and rate basis | A mean over 3,600 s; a peak over 15 s; the burst onset and duration; the peak-to-median ratio | 0.85/s and 120/s are both rates, but of different windows. The mean weights a burst by its duration and says nothing about its height [E1, E6, E20]. |\n| Offered, admitted, completed, successful | Attempts presented; work allowed in; work that exited; work that reached the correct business outcome; plus rejected, timed out and unknown | 1,800 attempts is offered, not 1,800 admitted, completed or successful claims. A success-only rate hides shedding; an offered rate overstates capacity [E8, E11, E17]. |\n| Attempts, logical operations, unique claims | Transmitted requests including retries; independent business intents; distinct resources successfully claimed | 1,800 attempts may be N intents times r retries; unique claims are bounded by distinct keys. Retries add load without new demand, and unique work alone understates contention [E2, E7, E23, E24]. |\n| Aggregate and per-key demand | Total rate; per-key or per-partition rate; hottest-key share and top-N concentration | 120/s total can be 40/s on each of three keys or 120/s on one key. The hot key serializes while the aggregate looks adequate [E4, E13, E15]. |\n| Rate, concurrency and queue | λ operations/s; L = λW mean in-flight work; queue depth and age | 0.85/s is a rate, not a concurrency requirement. L is a mean for a stable boundary, not a peak or a pool size; queue age captures the burst's cost [E9, E11, E16]. |\n| Burst capacity and sustained rate | Token-bucket capacity; refill rate; warm headroom; provisioning delay | A service can sustain 0.85/s and still fail 1,800 immediate attempts. Burst capacity without refill drains; refill without burst capacity rejects [E16, E18, E19]. |\n| Resource demand per operation class | CPU, wall, database execution, lock hold and I/O cost per operation type | 0.85 read ops/s and 120 exclusive claims/s have different per-operation costs; adding unrelated service times into one average is invalid [E5, E4]. |\n\nTwo further distinctions are foundational even though they are not the immediate arithmetic error. Population is not demand: registered users, active users, sessions or connections, in-flight work and RPS are distinct, and a user count cannot be converted to a rate without a behavioral model [E7, E8]. Arrival process is not demand either: an open schedule presents attempts independently of responses, while a closed loop waits for responses and can reduce its own arrivals as latency rises, hiding overload; the burst should be tested with an open-arrival model [E28, E20].\n\n# 3. Boundaries and trade-offs\n\n- The hour mean is not useless. If the service is genuinely stationary, keys are independent or uniformly distributed, the SLO is long-run average throughput, and the 15-second burst is outside the requirement, 0.85 ops/s can be a valid long-run estimate. It still does not predict p99 or the burst [E1, E9].\n- Duplicate retries cut both ways. If the 1,800 attempts are duplicate retries of a few intents and duplicate suppression is cheap, the unique business work is small. But the attempts still consume ingress, authentication, admission, lock contention and retry budget; idempotency prevents duplicate effects, not duplicate load, and retry budgets and admission counters must be kept separate from original demand [E21, E23, E24]. Sizing on unique claims alone understates the load.\n- Partitionability decides whether scale-out helps. If the few keys are independent, per-key capacity can be scaled horizontally. If one key carries an indivisible invariant, more replicas cannot split it; the remedies are to optimize the critical section, bound admission per key, change the ownership or invariant only with a correctness proof, or defer claims explicitly [E13, E15, E27].\n- Deferral is a business contract, not free capacity. A bounded queue or pending status can absorb the burst only if the business accepts deferred outcomes and the deadline is longer than the drain time. At 0.85/s the drain is about 35 minutes; at 120/s there is no headroom for retries [E12, INF1]. If claims must complete inside 15 seconds, the service needs pre-warmed capacity at or above the burst rate, or explicit rejection with a useful retry contract [E18, E19].\n- Little's Law is an average identity, not a peak-sizing formula. It requires a consistent boundary and a sufficiently stable window; offered rate cannot be substituted for completed throughput, and p99 cannot be substituted for mean W. L is mean in-flight work, not a peak, a pool size or a worker count [E9, E10].\n- Units must stay explicit. Attempts/s, operations/s, claims/s, transactions/s and in-flight operations are not interchangeable; 0.85 ops/s and 120 attempts/s differ in both numerator and denominator [E7, E20]. A rate cap is not a concurrency cap, and a queue bound is not a rate limit [E16].\n- Sizing to the burst is not free. Warm headroom, pre-warming and idle capacity cost money; the alternative is explicit rejection or deferral with a user-visible contract. The choice belongs in a capacity envelope compared over steady, peak and degraded conditions, not in a single average [E18, E25, E29].\n- The book's numbers are synthetic teaching examples, not measurements. It does not establish a specific claim protocol, lease duration, key count, retry ratio or production p99; the 15-second window is an example interval, not an observed service trace [E1, E3]. The arithmetic in this answer is arithmetic, not capacity measurement.\n\n# 4. Evidence map\n\nType 'book' means directly stated in the indexed book section; the book itself labels its numerical examples synthetic. Type 'inference' means arithmetic or synthesis I derived from those inputs.\n\n| Evidence | Claim | section_key | Type |\n|---|---|---|---|\n| E1-E3 | Hour mean 0.85/s; 1,800/15s = 120/s; successful unique claims lower under contention and duplicate retries; same account count but incomparable peaks; ask which state/resource boundary must process the work | tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs | book |\n| E4 | Hot key serializes despite spare average CPU; record operation type by key skew, retries by failure class, peak arrivals by window | tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter | book |\n| E5 | L = λW caveats; do not add unrelated service-time quantities; label CPU/wall/DB/queue time | tycho.page.f66686aeabca4f5b8f550696bf37e557#4-simple-demand-arithmetic-and-its-boundaries | book |\n| E6 | One-hour mean hides a 10-second surge; a stationary rate is not an empirical forecast of bursts; key skew can understate exclusive-lock cost | tycho.page.2a3a20bc92314c7597b1792b8607c9d5#2-arrival-shape-is-part-of-the-architecture-requirement | book |\n| E7 | Workload nouns table: registered, active, sessions, logical operations, attempts, offered, admitted, completed, in-flight, resource demand | tycho.page.2a3a20bc92314c7597b1792b8607c9d5#1-workload-nouns-that-must-not-be-interchanged | book |\n| E8 | Offered, admitted, exit/completion, successful throughput, in-system population and mean residence are distinct; users, DAU, sessions, connections, in-flight work and RPS are distinct | tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable | book |\n| E9 | L = λW is an average identity for a consistent stable boundary; not response time = offered RPS; p99 cannot replace mean W; L is not a pool size | tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity | book |\n| E10 | Finite-window counterexample: 0.20/s × 10 s = 2 versus actual L = 1; do not slice dashboards into arbitrary windows | tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window | book |\n| E11 | 120 offered/s versus 80 completions/s leaves about 800 outstanding in 20 s; offered, admitted, completed and outstanding accounted separately; finite window is not stationary | tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law | book |\n| E12 | A queue does not create capacity; if offered exceeds drain, backlog and age grow while workers are busy; admission and rejection are separate outcomes | tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery | book |\n| E13 | Exclusive reservation on one key/slot is serialized at one authoritative owner; eight instances cannot create two successful allocations; queue age and rejections grow while accepted bookings stay capped | tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority | book |\n| E14 | A single average can hide transient saturation or starvation; measure normal, peak and degraded; per-key skew and correct commits, not total SQL RPS | tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization | book |\n| E15 | 2,000 attempts/s across 100 workshops with one at 1,500/s: the 20/s average misrepresents the hottest owner; hashing the hot key does not split exclusivity | tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps | book |\n| E16 | Rate cap, concurrency cap and queue bound constrain different populations; token-bucket burst capacity and refill rate are different budgets | tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission | book |\n| E17 | Accepted/completed, rejected before acceptance, durable pending, deadline expired, outcome unknown and degraded partial are distinct; track offered/admitted/rejected/completed/failed | tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome | book |\n| E18 | Capacity envelope: normal, predictable peak, unexpected burst, degraded dependency, recovery, growth; a 60 s spike may exceed a 2-minute warm-up | tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count | book |\n| E19 | Synthetic 15+10+20+25 = 70 s to useful capacity after a 40 s burst; extra replicas on one hot reservation key can worsen correct throughput | tycho.page.49d9df04c0b4488e936b02e580a62271#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful | book |\n| E20 | Workload contract records offered RPS, attempts versus logical operations, admitted versus offered, concurrency, key popularity/tenant skew and peak-to-median ratio; RPS and TPS cannot be substituted | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number | book |\n| E21 | Admission control must count offered, accepted, rejected, timed-out and completed logical operations separately; retries are counted separately from original demand; retry budgets bound amplification | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment | book |\n| E22 | Contract example uses a 15-second publication window and top five keys at 60% of writes; these are decision-changing skew fields | tycho.page.59682af71a9f435680917ae5ece63088#6-workload-state-and-unknowns-a-usable-input-contract | book |\n| E23 | Retry amplification is total attempts divided by offered requests; three attempts per request can triple load | tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification | book |\n| E24 | Client request key, business entity ID and event ID are distinct; duplicate attempts must not be conflated with new logical demand | tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers | book |\n| E25 | Raw requests per second per instance ignores rejected work, recovery and shared-state costs; compare correct work over steady, peak and degraded conditions | tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#integrated-decision-and-reading-route | book |\n| E26 | A stable average over the entire run can conceal failed user journeys when a short burst coincides with a slow dependency | tycho.volume.f7679623ca274bff8a00389d409d68c6#a-worked-cross-chapter-synthesis | book |\n| E27 | One authoritative owner per key; detect and throttle the hot key; resharding does not split one key's invariant | tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission | book |\n| E28 | Open arrivals are scheduled independently of responses; closed loops wait for responses and can reduce arrivals as latency rises, hiding overload | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load | book |\n| E29 | Compare correct work per total operating cost over steady, peak and degraded conditions | tycho.chapter.b7924b3db65949df952fbb5ca706236c#decision-and-worked-result | book |\n| INF1 | 120 / 0.8472 = 141.6; 0.8472 × 15 = 12.7 operations; 1,800 − 12.7 = 1,787.3 outstanding; 1,787.3 / 0.85 ≈ 2,103 s ≈ 35 min | tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs | inference |\n| INF2 | 120/K per key only under even spread; a hot key can approach 120/s; unique claims are bounded by distinct resources and serialization rate | tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs | inference |\n| INF3 | At 120/s and 0.20 s residence, L = 24 in-flight; at 0.85/s and 0.20 s, L = 0.17; concurrency is separate from rate | tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity | inference |\n| INF4 | If 1,800 of the 3,050 operations occur in the same hour: 59.0% of volume in 0.42% of time; remaining 1,250 over 3,585 s average 0.35/s; burst is about 344× the rest-of-hour rate | tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs | inference |\n\n# 5. Unknowns and confidence\n\nThe question does not specify the quantities that would make a precise sizing possible: whether 3,050 counts offered, admitted or completed operations; whether 1,800 counts attempts or unique intents; how many distinct keys are involved; the per-key service time and lock hold; whether claims are exclusive and idempotent; the outcome SLO (p99, deadline, error budget); whether arrivals are open or closed; the capacity of the backing store and connection pool; and the autoscaling warm-up. Each changes the sizing, and the book does not supply them [E2, E3, E20, E22].\n\nConfidence is high that 0.85 ops/s is not a valid forecast of the 15-second burst and that the quantities in section 2 must remain distinct: the book states the mean-versus-burst and noun distinctions directly [E1, E6, E7, E8]. Confidence is medium that the 1,800-attempt window is an exclusive per-key claim workload: the book's Case B says 'claim access to the same small set of unique resources', and its reservation example is explicitly exclusive, but the question does not define the claim protocol [E2, E13]. Confidence is low in any specific capacity number, because the book provides no measured service time, key count, retry ratio or p99 [E1, E3].\n\nWhat would change the answer: a timestamped trace showing uniform arrivals and independent keys would remove the burst and skew concerns; evidence that the 1,800 attempts are duplicate retries of one intent with cheap dedupe would shrink the unique work (though not the ingress and contention load); a measured per-key serialization rate would replace the arithmetic with a capacity estimate; and a requirement that only hourly average throughput matters would make the hour mean acceptable for that narrow purpose, though still not for p99 or burst success [E1, E9]. The book does not define a production 15-second claim window or lease semantics, so that remains a gap rather than an assumption [E3].",
+  "citations": [
+    "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+    "tycho.page.f66686aeabca4f5b8f550696bf37e557#4-simple-demand-arithmetic-and-its-boundaries",
+    "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+    "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#1-workload-nouns-that-must-not-be-interchanged",
+    "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#2-arrival-shape-is-part-of-the-architecture-requirement",
+    "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+    "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+    "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+    "tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority",
+    "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+    "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+    "tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count",
+    "tycho.page.49d9df04c0b4488e936b02e580a62271#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load",
+    "tycho.page.59682af71a9f435680917ae5ece63088#6-workload-state-and-unknowns-a-usable-input-contract",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+    "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#integrated-decision-and-reading-route",
+    "tycho.volume.f7679623ca274bff8a00389d409d68c6#a-worked-cross-chapter-synthesis",
+    "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+    "tycho.chapter.b7924b3db65949df952fbb5ca706236c#decision-and-worked-result"
+  ],
+  "evidence": [
+    {
+      "claim": "3,050 operations in one hour produce a mean of 0.85 operations/s, but that mean does not predict the busiest ten seconds.",
+      "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+      "note": "Book: 'The derived mean is 3,050/3,600 ≈ 0.85 operations/s for that hour. That does not predict p99 or the busiest ten seconds.' The book labels the numbers fictional.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "1,800 attempts in a 15-second claim window produce 120 attempts/s, but successful unique claims can be far lower under key contention and duplicate retries.",
+      "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+      "note": "Book: 'suppose 1,800 attempts arrive in one 15-second window to claim access to the same small set of unique resources. The derived offered rate in that interval is 120 attempts/s, but completed successful unique claims can be far lower if key contention and duplicate retries dominate.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Two systems with the same account count can have incomparable peaks and synchronization costs; the relevant question is which state/resource boundary must process the work.",
+      "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+      "note": "Book: 'The two systems have the same number of accounts but incomparable peaks and synchronization costs'; 'The relevant question is which state/resource boundary must process the work, not whether one scenario earns the label high traffic.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "A hot key can serialize despite spare average CPU capacity; joint data by key skew, retry class and time window is required.",
+      "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+      "note": "Book: 'all writes may target one popular resource and serialize despite spare average CPU capacity'; 'Record joint information ... operation type by key skew ... retries by failure class ... peak arrivals by time window.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Demand arithmetic must not add unrelated service-time quantities; L = λW applies only within a consistent boundary.",
+      "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#4-simple-demand-arithmetic-and-its-boundaries",
+      "note": "Book: service time must be labelled CPU, wall, DB execution or queue wait; 'Adding unrelated quantities into a single demand average invites incorrect capacity planning.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "A one-hour mean hides a 10-second surge; a stationary rate is not an empirical forecast of bursts; key skew can understate exclusive-lock cost even when total attempts match.",
+      "section_key": "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#2-arrival-shape-is-part-of-the-architecture-requirement",
+      "note": "Book: 'Workload rates can vary within seconds; a one-hour mean hides a 10-second surge. A model without key skew can understate the cost of exclusive lock ownership even when total attempts match.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Registered users, active users, sessions/connections, logical operations, attempts, offered/admitted/completed rates, in-flight concurrency and resource demand are not interchangeable.",
+      "section_key": "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#1-workload-nouns-that-must-not-be-interchanged",
+      "note": "Book table: attempts are actual transmitted requests including retries, not distinct successful operations; offered rate is not completed throughput; in-flight concurrency is not more useful capacity.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Offered, admitted, exit/completion, successful throughput, in-system population and mean residence time are distinct; users, sessions, connections, in-flight work and RPS are distinct.",
+      "section_key": "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+      "note": "Book table and text: 'Registered users, DAU, active sessions, open connections, in-flight work and RPS are distinct.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "L = λW is an average identity for a consistent stable boundary, not response time = offered RPS; mean W cannot be replaced by p99; L is not a pool size or peak.",
+      "section_key": "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+      "note": "Book: 'This is not a rule that response time is always occupancy divided by offered RPS'; p99 arithmetic is 'an invalid use of the law'; L is mean occupancy, not a maximum or worker count.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "A finite window with unfinished work invalidates naive arithmetic; a 5-second window around a 10-second request yields 0.20/s × 10 = 2 while actual mean population is 1.",
+      "section_key": "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+      "note": "Book counterexample and consequence: do not estimate timeout, p99 or pool occupancy by slicing unrelated dashboards into arbitrary windows.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "At 120 offered/s against 80 completions/s for 20 seconds, about 800 requests remain outstanding; offered, admitted, completed and outstanding must be accounted separately.",
+      "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+      "note": "Book: '(120−80)×20 = 800 requests'; the offered/admitted/completed/outstanding table; substituting 120 offered/s into L = λW is invalid because the window is not stationary.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "A queue does not create capacity; if offered exceeds drain, backlog and age grow even while every worker is busy.",
+      "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+      "note": "Book: 'A queue does not create capacity: if offered work exceeds drain rate, backlog and age grow even while every worker is busy.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "An exclusive reservation for one key/slot is serialized at one authoritative owner; eight application instances cannot create two successful allocations, and queue age/rejections grow while accepted bookings stay capped.",
+      "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority",
+      "note": "Book: 'only one operation at a time can safely commit an exclusive reservation for a particular device/time combination'; 'queue age and rejections may grow while accepted bookings remain capped by the invariant.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "A single average can hide transient saturation or starvation; per-key skew and correct commits matter more than total SQL RPS.",
+      "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+      "note": "Book: 'Measure under normal, peak and degraded conditions; a single average can hide transient saturation or starvation'; the table lists per-key skew and correct commits for DB lock/transaction.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Shard-key selection cannot be made from average RPS: 2,000 attempts/s across 100 workshops with one at 1,500/s has a 20/s average that misrepresents the hottest owner.",
+      "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+      "note": "Book: 'Average across 100 workshops is 20 attempts/s but profoundly misrepresents the hottest owner'; hashing the hot key does not split its exclusivity invariant.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Rate caps, concurrency caps and queue bounds constrain different populations; a token bucket's burst capacity and refill rate are different budgets.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+      "note": "Book: 'A rate cap, concurrency cap and queue bound constrain different populations'; the token-bucket example separates immediate burst spend from steady refill.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Accepted/completed, rejected-before-acceptance, durable-pending, deadline-expired, outcome-unknown and degraded-partial outcomes are distinct; offered/admitted/rejected/completed/failed populations must be tracked separately.",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+      "note": "Book outcome table and text: 'Track offered, admitted, rejected, completed and failed populations separately.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "A capacity envelope must cover normal, predictable peak, unexpected burst, degraded dependency, recovery and growth; a 60-second spike may exceed a two-minute warm-up.",
+      "section_key": "tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count",
+      "note": "Book load-state table and text: 'A 60-second spike cannot necessarily be served by a replica that takes two minutes to become genuinely ready.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Autoscaling is delayed feedback: a synthetic 15+10+20+25 = 70 seconds elapses before new capacity is useful after a 40-second burst; extra replicas on one hot reservation key can worsen correct throughput.",
+      "section_key": "tycho.page.49d9df04c0b4488e936b02e580a62271#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful",
+      "note": "Book: first additional healthy capacity 'around 15+10+20+25=70 seconds after the triggering change—after the burst ends'; negative case on one hot reservation key.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "A workload contract records offered RPS, attempts versus logical operations, admitted versus offered demand, concurrency, key popularity/tenant skew and peak-to-median ratio; RPS and TPS cannot be substituted.",
+      "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+      "note": "Book: 'Distinguish attempts from logical operations and admitted from offered demand'; 'RPS and TPS cannot be substituted'; peak-to-median arrival ratio and key skew are contract fields.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Admission control must count offered, accepted, rejected, timed-out and completed logical operations separately; retries are counted separately from original demand and bounded by a retry budget.",
+      "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment",
+      "note": "Book: distinct metrics for offered, accepted, rejected, timed-out and completed logical operations; retry budgets bound extra attempts; count retries separately from original demand.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "The book's contract example uses a 15-second publication window and top five keys at 60% of writes, both decision-changing fields.",
+      "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load",
+      "note": "Book contract table: window '15 seconds during a publication event'; data model/skew 'Top five keys account for 60% of writes'; offered schedule tags duplicates separately.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Retry amplification is total attempts divided by offered requests; three attempts per request can triple the load.",
+      "section_key": "tycho.page.59682af71a9f435680917ae5ece63088#6-workload-state-and-unknowns-a-usable-input-contract",
+      "note": "Book: 'The retry amplification metric is total attempts divided by offered requests'; 'If every request is attempted three times, the load can be three times higher.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Client request key, business entity ID and event ID are distinct; duplicate attempts must not be conflated with new logical demand.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+      "note": "Book: three identities should not be conflated; same request key with different intent is rejected; a redelivered event keeps its identity.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Raw requests per second per instance ignores rejected work, recovery and shared-state costs.",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+      "note": "Book: 'Raw requests per second per instance ignores rejected work, recovery and shared-state costs; an apparent optimum can violate a hard requirement.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "A stable average computed over the entire run can conceal failed user journeys when a short burst coincides with a slow dependency.",
+      "section_key": "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#integrated-decision-and-reading-route",
+      "note": "Book cross-chapter synthesis: queues grow, retries multiply demand, extra replicas arrive after the burst; 'A stable average computed over the entire run conceals the failed user journeys.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "One authoritative owner must exist per key; hot-key skew should be detected and the hot key throttled; resharding does not split a single hot key's invariant.",
+      "section_key": "tycho.volume.f7679623ca274bff8a00389d409d68c6#a-worked-cross-chapter-synthesis",
+      "note": "Book purpose and mission: 'One authoritative owner must exist per key'; 'detect skew, throttle the hot key'; more shards cannot automatically spread a single hot tenant.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Open arrivals are scheduled independently of responses; closed loops wait for responses and can reduce their own arrivals as latency rises, hiding overload.",
+      "section_key": "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+      "note": "Book: open generator schedules arrivals independently; closed generator maintains users who wait; closed models can reduce offered traffic as response times rise.",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Capacity options should be compared over steady, peak and degraded conditions, not by one average.",
+      "section_key": "tycho.chapter.b7924b3db65949df952fbb5ca706236c#decision-and-worked-result",
+      "note": "Book: 'Compare correct work per total operating cost over steady, peak and degraded conditions with sensitivity to uncertain inputs.'",
+      "type": "book-evidence"
+    },
+    {
+      "claim": "Arithmetic from the book's numbers: 120/0.8472 = 141.6; 0.8472×15 = 12.7 operations; 1,800−12.7 = 1,787.3 outstanding; 1,787.3/0.85 ≈ 2,103 s ≈ 35 min.",
+      "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+      "note": "My arithmetic, not a book claim or measurement. Assumes all 1,800 attempts are admitted and capacity is a constant 0.85 ops/s; ignores retries, timeouts and service-time variation.",
+      "type": "inference"
+    },
+    {
+      "claim": "Inference: 120 attempts/s over K keys is 120/K per key only under even spread; a hot key can approach 120/s; unique claims are bounded by distinct resources and serialization rate.",
+      "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+      "note": "My inference from the book's claim example, the exclusive-reservation page and the shard hot-key example. The question does not define the claim protocol or the number of keys.",
+      "type": "inference"
+    },
+    {
+      "claim": "At 120 attempts/s and a 0.20-second mean residence, L = 24 in-flight; at 0.85/s and the same residence, L = 0.17; concurrency is a separate demand axis from rate.",
+      "section_key": "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+      "note": "My arithmetic using the book's illustrative L = 120 × 0.20 = 24 example; the claim service's actual residence time is unknown. L is mean occupancy, not a peak or pool size.",
+      "type": "inference"
+    },
+    {
+      "claim": "If the 1,800 attempts fall inside the same hour: 1,800/3,050 = 59.0% of the hour's operations in 15/3,600 = 0.42% of its time; the remaining 1,250 operations over 3,585 s average 0.35/s, so the burst rate is about 344 times the rest-of-hour rate.",
+      "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+      "note": "My conditional arithmetic; it assumes the 1,800 attempts are part of the 3,050 rather than the separate cases the book presents. Not a book claim or measurement.",
+      "type": "inference"
+    }
+  ],
+  "facets": [
+    {
+      "facet": "F1. Hour-average arithmetic and observation-window mismatch",
+      "queries": [
+        "3050 operations one hour 0.85",
+        "average rate versus peak window",
+        "one-hour mean hides ten-second surge"
+      ],
+      "section_keys": [
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+        "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#2-arrival-shape-is-part-of-the-architecture-requirement",
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window"
+      ]
+    },
+    {
+      "facet": "F2. Burst demand shape: count, rate, duration and onset",
+      "queries": [
+        "1800 attempts 15 seconds 120 per second",
+        "burst size and duration capacity",
+        "peak-to-median arrival ratio"
+      ],
+      "section_keys": [
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+        "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+        "tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count"
+      ]
+    },
+    {
+      "facet": "F3. Per-key skew and the serialized claim boundary",
+      "queries": [
+        "few keys claim contention",
+        "hot key serialization",
+        "average RPS shard key"
+      ],
+      "section_keys": [
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+        "tycho.volume.f7679623ca274bff8a00389d409d68c6#a-worked-cross-chapter-synthesis"
+      ]
+    },
+    {
+      "facet": "F4. Demand-quantity separation: offered, admitted, completed; attempts, logical operations, unique claims",
+      "queries": [
+        "offered admitted completed successful",
+        "attempts logical operations retries",
+        "unique claims duplicate retries"
+      ],
+      "section_keys": [
+        "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#1-workload-nouns-that-must-not-be-interchanged",
+        "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+        "tycho.page.59682af71a9f435680917ae5ece63088#6-workload-state-and-unknowns-a-usable-input-contract",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification"
+      ]
+    },
+    {
+      "facet": "F5. Sizing, queueing, admission and provisioning consequences",
+      "queries": [
+        "capacity envelope load states",
+        "queue does not create capacity",
+        "rate cap concurrency cap queue bound",
+        "autoscaling lag burst"
+      ],
+      "section_keys": [
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+        "tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful"
+      ]
+    },
+    {
+      "facet": "F6. Evidence limits and falsification",
+      "queries": [
+        "synthetic workload no measurement",
+        "what evidence would falsify",
+        "p99 not predicted by mean"
+      ],
+      "section_keys": [
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#3-original-example-two-identical-account-counts-different-costs",
+        "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers"
+      ]
+    }
+  ],
+  "abstain": false,
+  "evidence_note": "All book numerical examples are synthetic teaching material. 'book-evidence' means directly stated in the indexed book section, not production measurement; 'inference' means arithmetic or synthesis derived from those inputs.",
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
