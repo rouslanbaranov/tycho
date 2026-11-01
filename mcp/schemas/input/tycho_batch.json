@@ -1,0 +1,82 @@
+{
+  "additionalProperties": false,
+  "anyOf": [
+    {
+      "required": [
+        "section_keys"
+      ]
+    },
+    {
+      "required": [
+        "document_ids"
+      ]
+    },
+    {
+      "required": [
+        "claim_ids"
+      ]
+    },
+    {
+      "required": [
+        "source_ids"
+      ]
+    }
+  ],
+  "properties": {
+    "budget_chars": {
+      "default": 800,
+      "description": "Per-section content budget in codepoints; 100..2000.",
+      "maximum": 2000,
+      "minimum": 100,
+      "type": "integer"
+    },
+    "claim_ids": {
+      "description": "Registered claim IDs to resolve; at most eight.",
+      "items": {
+        "maxLength": 500,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 8,
+      "type": "array"
+    },
+    "document_ids": {
+      "description": "Registered document IDs to resolve; at most eight.",
+      "items": {
+        "maxLength": 500,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 8,
+      "type": "array"
+    },
+    "max_chars": {
+      "default": 8000,
+      "description": "Total response budget in UTF-8 characters; 2048..20000.",
+      "maximum": 20000,
+      "minimum": 2048,
+      "type": "integer"
+    },
+    "section_keys": {
+      "description": "Section keys to read; at most eight. Use keys returned by tycho_search.",
+      "items": {
+        "maxLength": 500,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 8,
+      "type": "array"
+    },
+    "source_ids": {
+      "description": "Registered source IDs to resolve; at most eight.",
+      "items": {
+        "maxLength": 500,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 8,
+      "type": "array"
+    }
+  },
+  "type": "object"
+}

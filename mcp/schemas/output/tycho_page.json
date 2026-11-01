@@ -1,0 +1,157 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "anchor": {
+      "description": "Alias for section_id (read).",
+      "type": "string"
+    },
+    "budget_overrun_chars": {
+      "description": "Codepoints added beyond budget to complete a diagram.",
+      "type": "integer"
+    },
+    "budget_requested_chars": {
+      "description": "Requested soft budget; may be exceeded to finish a diagram.",
+      "type": "integer"
+    },
+    "citation": {
+      "description": "Canonical citation.",
+      "type": "string"
+    },
+    "citation_scheme": {
+      "description": "Citation scheme.",
+      "type": "string"
+    },
+    "content": {
+      "description": "Bounded evidence text.",
+      "type": "string"
+    },
+    "content_trust": {
+      "description": "Always untrusted-evidence for book text.",
+      "type": "string"
+    },
+    "coverage": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      ],
+      "description": "Index or pattern coverage state."
+    },
+    "diagram_completed": {
+      "description": "Whether the returned slice completed a diagram.",
+      "type": "boolean"
+    },
+    "document_char_end": {
+      "description": "Section end (read).",
+      "type": "integer"
+    },
+    "document_char_start": {
+      "description": "Section start (read).",
+      "type": "integer"
+    },
+    "document_id": {
+      "description": "Stable document ID.",
+      "type": "string"
+    },
+    "document_sha256": {
+      "description": "Document content hash.",
+      "type": "string"
+    },
+    "evidence_status": {
+      "description": "Evidence status.",
+      "type": "string"
+    },
+    "frontmatter": {
+      "additionalProperties": true,
+      "description": "Parsed document frontmatter.",
+      "type": "object"
+    },
+    "heading": {
+      "description": "Section heading (read only).",
+      "type": "string"
+    },
+    "heading_level": {
+      "description": "Section heading level (read).",
+      "type": "integer"
+    },
+    "kind": {
+      "description": "Document kind; see catalog.",
+      "type": "string"
+    },
+    "next_offset": {
+      "description": "Next offset; null at end.",
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "offset": {
+      "description": "Codepoint offset returned.",
+      "type": "integer"
+    },
+    "page_char_end": {
+      "description": "Page body end in document.",
+      "type": "integer"
+    },
+    "page_char_start": {
+      "description": "Page body start in document.",
+      "type": "integer"
+    },
+    "path": {
+      "description": "Canonical book path.",
+      "type": "string"
+    },
+    "related": {
+      "description": "Resolved related documents.",
+      "type": "array"
+    },
+    "returned_chars": {
+      "description": "Number of content codepoints.",
+      "type": "integer"
+    },
+    "section_id": {
+      "description": "Section anchor (read only).",
+      "type": "string"
+    },
+    "section_key": {
+      "description": "Section key (read only).",
+      "type": "string"
+    },
+    "sections": {
+      "description": "Page section map (page only).",
+      "type": "array"
+    },
+    "snapshot": {
+      "description": "Snapshot ID; cite it with results.",
+      "type": "string"
+    },
+    "status": {
+      "description": "ok or a bounded error/abstention state.",
+      "type": "string"
+    },
+    "title": {
+      "description": "Document title.",
+      "type": "string"
+    },
+    "tool": {
+      "description": "Tool that produced this response.",
+      "type": "string"
+    },
+    "total_chars": {
+      "description": "Total codepoints in this unit.",
+      "type": "integer"
+    },
+    "truncated": {
+      "description": "Whether more content remains.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "type": "object"
+}

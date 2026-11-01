@@ -1,0 +1,158 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "abstain": {
+      "default": false,
+      "description": "Return candidates by default for agent use. Set true only for strict calibrated refusal; current gate has false abstention on answerable queries.",
+      "type": "boolean"
+    },
+    "all_sections": {
+      "default": false,
+      "description": "Return every matching section instead of the best section per document.",
+      "type": "boolean"
+    },
+    "artifact_type": {
+      "description": "Optional artifact-type filter; document is the only value currently indexed.",
+      "enum": [
+        "document"
+      ],
+      "type": "string"
+    },
+    "detail": {
+      "default": "snippets",
+      "description": "ids returns citation/navigation fields only; snippets also returns bounded excerpts.",
+      "enum": [
+        "ids",
+        "snippets"
+      ],
+      "type": "string"
+    },
+    "evidence_status": {
+      "description": "Optional evidence-status filter; unknown means not declared and warrants lower confidence.",
+      "enum": [
+        "source-linked",
+        "unknown"
+      ],
+      "type": "string"
+    },
+    "include_artifacts": {
+      "default": false,
+      "description": "Return V12 model/scenario/run/decision lookup.",
+      "type": "boolean"
+    },
+    "kind": {
+      "description": "Optional document-kind filter. Values are closed; see tycho_describe.metadata.kind.",
+      "enum": [
+        "book",
+        "chapter",
+        "decision",
+        "landing",
+        "page",
+        "volume"
+      ],
+      "type": "string"
+    },
+    "limit": {
+      "default": 5,
+      "description": "Maximum candidate sections to return.",
+      "maximum": 20,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "max_chars": {
+      "default": null,
+      "description": "Optional UTF-8 response budget. Results are removed from the end and truncated is set when needed.",
+      "maximum": 50000,
+      "minimum": 256,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "mode": {
+      "default": "strict",
+      "description": "Strict keeps calibrated abstention. Exploratory also returns low-confidence weak_results when strict would abstain; weak results are explicitly separate.",
+      "enum": [
+        "strict",
+        "exploratory"
+      ],
+      "type": "string"
+    },
+    "path_prefix": {
+      "description": "Optional relative book path prefix, for example book/volumes/v04-.",
+      "type": "string"
+    },
+    "pattern_ids": {
+      "description": "Optional pattern-ID filters; IDs come from tycho_patterns or frontmatter pattern_ids.",
+      "items": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "query": {
+      "description": "Natural-language or keyword query.",
+      "maxLength": 2000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "retrieval_mode": {
+      "default": "bm25",
+      "description": "bm25 keeps the default lexical path; best is the optional adaptive hybrid plus V12-gated reranker.",
+      "enum": [
+        "bm25",
+        "best"
+      ],
+      "type": "string"
+    },
+    "section_rerank": {
+      "default": false,
+      "description": "Opt-in section-aware reranking; BM25 remains default. Pair with section_rerank_margin for margin gating.",
+      "type": "boolean"
+    },
+    "section_rerank_margin": {
+      "default": 0.05,
+      "description": "Optional top1/top2 BM25 margin gate for section rerank.",
+      "maximum": 1,
+      "minimum": 0,
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "snapshot_id": {
+      "description": "Optional snapshot pin for consistency.",
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "topic": {
+      "description": "Optional topic ID. Values are dynamic from frontmatter; inspect search facets or tycho_outline before filtering.",
+      "type": "string"
+    },
+    "volume": {
+      "description": "Optional layer filter. Prefer atlas and modeling-and-simulation; v11/v12 are compatibility aliases.",
+      "enum": [
+        "atlas",
+        "modeling-and-simulation",
+        "v01",
+        "v02",
+        "v03",
+        "v04",
+        "v05",
+        "v06",
+        "v07",
+        "v08",
+        "v09",
+        "v10",
+        "v11",
+        "v12"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "query"
+  ],
+  "type": "object"
+}

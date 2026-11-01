@@ -1,0 +1,239 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "answerability": {
+      "additionalProperties": true,
+      "description": "Gate metadata; not answer correctness.",
+      "type": "object"
+    },
+    "artifacts": {
+      "description": "V12 artifacts when include_artifacts is true.",
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "artifact_type": {
+            "description": "model, scenario, run or decision.",
+            "type": "string"
+          },
+          "evidence_status": {
+            "description": "Artifact evidence status.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Artifact ID.",
+            "type": "string"
+          },
+          "path": {
+            "description": "Artifact JSON path.",
+            "type": "string"
+          },
+          "summary": {
+            "description": "Artifact summary.",
+            "type": "string"
+          },
+          "volume": {
+            "description": "Source volume.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "content_trust": {
+      "description": "Always untrusted-evidence for book text.",
+      "type": "string"
+    },
+    "coverage": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      ],
+      "description": "Index or pattern coverage state."
+    },
+    "facets": {
+      "additionalProperties": true,
+      "description": "Observed metadata counts; not a full catalog.",
+      "type": "object"
+    },
+    "filters": {
+      "additionalProperties": true,
+      "description": "Applied filters; layer and volume are canonicalized.",
+      "type": "object"
+    },
+    "layer": {
+      "description": "Canonical layer name: book, atlas or modeling-and-simulation.",
+      "type": "string"
+    },
+    "query": {
+      "description": "Echoed query.",
+      "type": "string"
+    },
+    "results": {
+      "description": "Bounded candidate sections.",
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "artifact_type": {
+            "description": "Artifact type; see enum.",
+            "type": "string"
+          },
+          "char_end": {
+            "description": "Section end in the document body.",
+            "type": "integer"
+          },
+          "char_start": {
+            "description": "Section start in the document body.",
+            "type": "integer"
+          },
+          "citation": {
+            "description": "path#section_id citation.",
+            "type": "string"
+          },
+          "document_id": {
+            "description": "Stable document ID.",
+            "type": "string"
+          },
+          "evidence_status": {
+            "description": "Evidence status; see enum.",
+            "type": "string"
+          },
+          "excerpt": {
+            "description": "Bounded evidence snippet.",
+            "type": "string"
+          },
+          "heading": {
+            "description": "Section heading.",
+            "type": "string"
+          },
+          "heading_level": {
+            "description": "Markdown heading level; 0 means page root.",
+            "type": "integer"
+          },
+          "kind": {
+            "description": "Document kind; see enum.",
+            "type": "string"
+          },
+          "match_source": {
+            "description": "Where the match came from.",
+            "type": "string"
+          },
+          "matched_terms": {
+            "description": "Query terms found in the section.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "metadata_snippet": {
+            "description": "Optional summary snippet.",
+            "type": "string"
+          },
+          "next_actions": {
+            "description": "Typed follow-up calls.",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "path": {
+            "description": "Canonical book path.",
+            "type": "string"
+          },
+          "pattern_ids": {
+            "description": "Pattern IDs attached to the section.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "perspectives": {
+            "description": "Document perspectives.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "related_ids": {
+            "description": "Related document IDs.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "score": {
+            "description": "Retrieval score.",
+            "type": "number"
+          },
+          "score_kind": {
+            "description": "bm25 or section-rerank.",
+            "type": "string"
+          },
+          "section_id": {
+            "description": "Section anchor within the document.",
+            "type": "string"
+          },
+          "section_key": {
+            "description": "Stable section key used by read/batch.",
+            "type": "string"
+          },
+          "summary": {
+            "description": "Document summary.",
+            "type": "string"
+          },
+          "title": {
+            "description": "Document title.",
+            "type": "string"
+          },
+          "topics": {
+            "description": "Document topic IDs.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "volume": {
+            "description": "Volume code or null.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "why": {
+            "description": "Short match explanation.",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "returned": {
+      "description": "Number of returned results.",
+      "type": "integer"
+    },
+    "snapshot": {
+      "description": "Snapshot ID; cite it with results.",
+      "type": "string"
+    },
+    "status": {
+      "description": "ok or a bounded error/abstention state.",
+      "type": "string"
+    },
+    "truncated": {
+      "description": "Response budget truncated.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "type": "object"
+}

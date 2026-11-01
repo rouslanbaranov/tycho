@@ -1,0 +1,46 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "content_trust": {
+      "description": "Always untrusted-evidence for book text.",
+      "type": "string"
+    },
+    "coverage": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      ],
+      "description": "Index or pattern coverage state."
+    },
+    "pattern": {
+      "additionalProperties": true,
+      "description": "One pattern entry.",
+      "type": "object"
+    },
+    "patterns": {
+      "description": "Pattern summaries.",
+      "type": "array"
+    },
+    "registry_snapshot": {
+      "description": "Pattern-registry snapshot.",
+      "type": "string"
+    },
+    "snapshot": {
+      "description": "Snapshot ID; cite it with results.",
+      "type": "string"
+    },
+    "status": {
+      "description": "ok or a bounded error/abstention state.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,45 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "content_trust": {
+      "description": "Always untrusted-evidence for book text.",
+      "type": "string"
+    },
+    "coverage": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      ],
+      "description": "Index or pattern coverage state."
+    },
+    "errors": {
+      "description": "Per-item failures; isolated.",
+      "type": "array"
+    },
+    "evidence": {
+      "description": "Evidence resolution outcomes.",
+      "type": "array"
+    },
+    "sections": {
+      "description": "Section read outcomes.",
+      "type": "array"
+    },
+    "snapshot": {
+      "description": "Snapshot ID; cite it with results.",
+      "type": "string"
+    },
+    "status": {
+      "description": "ok or a bounded error/abstention state.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "type": "object"
+}
