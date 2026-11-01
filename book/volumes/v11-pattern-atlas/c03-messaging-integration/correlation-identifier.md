@@ -42,7 +42,7 @@ content_review:
   status: "independent-reviewed"
   reviewed_at: "2026-11-01"
   reviewer: "DeepSeek Reviewer"
-  proof_uri: "authoring/ai-reviews/2026-11-01-correlation-identifier-deepseek.md"
+  proof_uri: "https://github.com/rouslanbaranov/tycho/blob/466d9044/authoring/ai-reviews/2026-11-01-correlation-identifier-deepseek.md"
 authored_at: "2026-11-01"
 updated_at: "2026-11-01"
 source_inspection_date: "2026-11-01"

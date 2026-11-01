@@ -548,9 +548,16 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Mapping layers can hide latency and translate adapter errors inconsistently; contract tests and explicit error translation keep the boundary honest.",
-          "reason": "Source names added-layer latency but not adapter-error translation or contract-test recovery."
+          "state": "supported",
+          "quote": "Mapping layers can hide latency and translate adapter errors inconsistently",
+          "reason": "AWS binds adapter maintenance and latency overhead; error translation and contract-test recovery are Tycho guidance.",
+          "binding": {
+            "source_id": "src.aws-hexagonal",
+            "ledger_record": "read.aws-hexagonal.2026-10-21",
+            "section": "Issues and considerations",
+            "quote": "Ports and adapters isolate domain logic from infrastructure, support multiple input/output adapters and independent testing, and add adapter maintenance and latency overhead.",
+            "revision": "1f1251e05084ad30f148d8f9b5491a56a9d1261513d0f6c36fc50045d721b17b"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -582,7 +589,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Port/adapter mechanism is in the walkthrough; the shorter definition sits in Purpose and decision question."
+      "notes": "Mechanism, invariant and alternative bind AWS hexagonal guidance; failure binds adapter maintenance/latency, while error translation and contract-test recovery are Tycho guidance. Coverage partial-bounded; promotion candidate."
     },
     {
       "pattern_id": "tycho.pattern.clean-onion-architecture",

@@ -52,7 +52,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-30"
+updated_at: "2026-11-01"
 source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
@@ -136,40 +136,7 @@ See the [dedicated Service-Oriented Architecture (SOA) card](service-oriented-ar
 
 ### Hexagonal Architecture / Ports and Adapters
 
-**Identity.** Hexagonal Architecture / Ports and Adapters; aliases Ports and Adapters;
-family Application architecture and boundaries; kind architecture-style; priority core.
-
-**Decision question.** Should domain logic be isolated from input/output technology
-through explicit ports and adapters?
-
-**Good-fit conditions.** The domain has behavior worth protecting; more than one adapter
-or technology is plausible; tests need to run without external systems; a legacy or
-vendor boundary is being replaced incrementally.
-
-**Hard contraindications.** Reject the claim for a trivial CRUD surface with one stable
-adapter; when no domain behavior exists to isolate; when the team cannot own mapping and
-contract tests; or when ports are used to justify a distributed service split without
-operational need.
-
-**Competing alternative.** Layered architecture without ports, or a modular monolith
-with direct adapters. Reverse the choice when adapter variability disappears or the
-abstraction cost exceeds the isolation benefit.
-
-**Failure and recovery.** Ports can leak technology types, adapter errors can be mapped
-inconsistently, and mapping layers can hide latency. Recovery requires contract tests,
-explicit error translation and a review of the adapter boundary in the technical owner.
-
-**Technical owner.** [Hexagonal Architecture / Ports and Adapters](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#hexagonal-architecture-and-ports-and-adapters).
-
-**Sources.** [src.aws-hexagonal](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.aws-hexagonal.2026-10-21`: all sixteen served headings read.
-This is a vendor pattern
-page, not a comparative study.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Layered Architecture; Clean / Onion Architecture; Anti-Corruption
-Layer; Modular Monolith.
+See the [dedicated Hexagonal Architecture card](hexagonal-architecture-ports-and-adapters.md).
 
 ### Clean / Onion Architecture
 
