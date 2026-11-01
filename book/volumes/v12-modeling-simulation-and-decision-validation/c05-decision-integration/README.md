@@ -20,7 +20,7 @@ route_hints:
     - "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26"
     - "tycho.page.ea9adae8cf8a3196a3515d383b075f53"
   excludes:
-    - "No production measurement, independent review or owner acceptance is asserted."
+    - "No measurement, independent review, owner acceptance or pattern promotion is asserted."
   keywords:
     - "simulation"
     - "architecture decision"
