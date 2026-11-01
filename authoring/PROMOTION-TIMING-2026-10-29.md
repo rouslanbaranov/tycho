@@ -28,7 +28,7 @@ research has been 60-120 minutes.
 
 ## Remaining estimate
 
-Current: 94 sufficient of 145; 7 owner-accepted of 94.
+Current: 94 sufficient of 145; 94 owner-accepted of 94.
 
 Remaining to 145: 51 entries. All 74 observed entries run 6-388 minutes (mean 48.1),
 including pre-optimization entries and review/remediation outliers. Using tiered
