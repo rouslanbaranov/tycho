@@ -196,3 +196,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | #540 SOA + Microservices | pass | `2026-11-01-soa-deepseek.md` | `9f63cfd49707d8cf6468e06004b05acc384fb35789903e58b1d539a5259bbeee` |
 | 2026-11-01 | DeepSeek Reviewer | #540 API Composition + BFF | pass | `2026-11-01-api-composition-deepseek.md` | `f2e517876bc814e190043b1c9a34d99550784ae3e3cac409d2cae57e0e0ee1e0` |
 | 2026-11-01 | DeepSeek Reviewer | #540 Aggregator + Scatter-Gather | pass | `2026-11-01-aggregator-deepseek.md` | `dcd5e1afd7d1a9bd50ff9e3dd5c135d8339a01f6b3382b3a338425ecf8b444eb` |
+| 2026-11-01 | DeepSeek Reviewer | V12 semantic consistency | pass | `2026-11-01-v12-semantic-deepseek.md` | `93d0478776cccb9e9bf07a16cb9a41b7816ea6d98ff2465d28dde0a2db4a02d6` |
