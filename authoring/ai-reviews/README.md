@@ -224,3 +224,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | Load Balancing | pass | `2026-11-01-load-balancing-deepseek.md` | `317d8e4bc6a768d9216b47b3c956d49cc524526126bf934872e2bbf6cd137c6d` |
 | 2026-11-01 | DeepSeek Reviewer | Reconciliation delta | pass | `2026-11-01-reconciliation-delta-deepseek.md` | `b0ec6936bfb856fb723f92e53e435d5c172789f83bd55e2ce19fb95a0249715c` |
 | 2026-11-02 | DeepSeek Reviewer | C03 navigation and legacy redirect | pass | `2026-11-02-c03-atlas-redirect-deepseek.md` | `90f01c58aaf5cf0697b651caec2ddfcaa70667fca9189d46efedc02225fd6f87` |
+| 2026-11-02 | DeepSeek Reviewer | Source-plan reconciliation | pass | `2026-11-02-source-plan-reconcile-deepseek.md` | `ae47a5a7004023c081a7320a43711799ff5c249cf77f429807800c8a0b15f725` |
