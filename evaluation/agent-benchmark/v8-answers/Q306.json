@@ -1,0 +1,598 @@
+{
+  "task_id": "Q306",
+  "answer": "# Q306 — Aggregate parity, comparison normalization, and why migration moves are not interchangeable\n\n**Layer state.** This is a conceptual and mechanism question, so the **book** layer carries it; I searched and read only the book layer, as instructed. Atlas registry identity and V12 run artifacts were not needed for the answer. Several V10/V11/V12 pages cited below are ordinary book prose (transition states, pattern cards, migration simulation); they were read as book sections, not as registry or model evidence. Snapshot: 3db217e9075d8572f71b62778b4ab91f1460bb9421174ede7e891136aa26101a.\n\n## 0. Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1 — What a count can and cannot prove | \"shadow reads matching counts not proof\"; \"set difference both directions missing extra rows\"; \"aggregate counts hide divergence\" | Meta #preconditions; Netflix #four-distinct-consistency-proofs; Netflix #evidence-based-migration-choreography; Stripe #observed-migration |\n| F2 — What a comparison normalization contract must contain | \"comparison normalization contract identity ordering nulls freshness\"; \"equality rule freshness window\"; \"semantic equivalence tolerance value comparison\" | Stripe #read-comparison; Meta #what-a-green-shadow-comparison-cannot-guarantee; Netflix #equality; Meta #preconditions |\n| F3 — Why matching error rates are uninformative | \"aggregate metric same error rate different population\"; \"distribution percentiles tails aggregate average hides\"; \"mismatch counter denominator cohort observation interval\" | Stripe #read-comparison; budget-actions #6; cardinality-retention #5; coexistence #failure-modes |\n| F4 — What shadow reads actually exercise | \"shadow read\"; \"shadow traffic production candidate read path\"; \"Parallel Run\" | dark-launching #overview; coexistence #coexistence-is-a-state-not-a-date; authority-states #bounded pattern notes; parallel-run card |\n| F5 — Why backfill, dual write, shadow read and authority are different moves | \"backfill versus dual write difference\"; \"write authority cutover dual write\"; \"partial dual-write failure ordering\" | Stripe #write-cutover; decision #applicability; decision #synthetic-dual-authority-failure-tests; coexistence #failure-modes |\n| F6 — Deprecation guard and out-of-band consumers | \"deprecate remove field zero callers\"; \"async job batch consumer\"; \"nightly reconciliation legacy data path\" | Stripe #write-cutover; Stripe #synthetic-acceptance; reader-writer matrix #1; Uber #failure-oracles; decision #synthetic tests |\n\nI stopped searching when two consecutive formulations returned only sections already in the ledger and no new decision-relevant mechanism. The remaining unknowns are listed in section 7.\n\n## Short answer\n\nMatching counts and matching error rates are **marginal statistics about different things than read equivalence**. A count is the size of a set, not its membership or its values: one missing row and one duplicated row cancel in the total; a record with the wrong trial state, renewal date, proration, null/default interpretation, authorization decision or TTL still counts as one row. An error rate is computed over *served* traffic, and shadow reads are deliberately designed so that a failing candidate cannot affect the served response — so the production error rate is structurally blind to candidate failure. Aggregates also erase the cohort denominator and the observation window, which is exactly where divergence hides.\n\nA comparison becomes evidence only when it is executed under a **declared normalization contract**: which entity and identity key, which population and cohort, which fields and canonical forms (null versus absent versus default, type and precision, ordering where observable, timestamp reference, TTL/tombstone), which authorization context, which temporal window and freshness bound, how candidate exceptions are classified, what two-sided difference counts as a pass, over what sample and sustained period, and who adjudicates a difference as a legitimate semantic change rather than a defect.\n\nBackfill, dual write, shadow read and write-authority change are **not interchangeable because each answers a different question and has a different failure mode**: a backfill is an inventory and historical copy, a dual write is an ongoing coexistence mechanism, a shadow read is a behavioral oracle on the read path, and changing write authority is a semantic cutover of which representation wins each mutation. None of them proves the others' invariant, and the order is causal.\n\n## 1. Why matching counts and error rates do not establish read equivalence\n\n### 1.1 A count is a marginal, and marginals do not determine a join\n\nEqual totals are consistent with unequal data. The Meta case states the general point in its gate table: **\"Two unequal sets can have identical counts.\"** Netflix's four-proof table makes the same point operationally: **\"Equal row counts hide duplicates and omissions.\"** Stripe's subscription migration says it directly for this domain: **\"Such equivalence cannot be assumed from equal row counts.\"**\n\nA count equality can be produced by offsetting errors — a missing record plus a duplicate, a dropped subscription plus a double-inserted one — and a read-equivalence claim needs both directions of the set difference, not a net total. Netflix's choreography requires exactly that: **\"check both C−M (missing rows) and M−C (extra rows); both counts must be zero for equivalence under the comparison rule.\"** It adds that the team investigated **\"differences in timestamps, TTL, consistency levels, backup choice and business logic rather than counting matching row totals as sufficient.\"**\n\n### 1.2 Counts also say nothing about values, time, or authorization\n\nEven equal *key sets* do not give read equivalence. The compared objects carry semantics: null versus absent versus default, numeric precision and rounding, array/field ordering where it is observable, trial and renewal state, proration, TTL and tombstone behavior at a reference instant, and the authorization context in which the value is returned. Netflix's four consistency proofs list **\"TTL reference instant, tombstones, expiring rows, ordering and consistency rule\"** and warn that **\"Same physical input interpreted at different expiration times\"** can diverge. Its consumer-contract proof warns that **\"Row equality passes while nullability or type mapping breaks clients.\"**\n\nThe decision playbook reduces this to a question the comparison must answer first: **\"first identify whether the business invariant is *identity*, *value equality*, *operation order*, *referential consistency*, *side-effect exactly-once*, or *bounded freshness*.\"** A row count is none of these.\n\n### 1.3 A matching error rate is the expected result of shadow isolation, not a correctness signal\n\nShadow reads are built so candidate failures do not reach users. Stripe's comparison section is explicit: **\"the experimental path should time out or raise an error without changing the result delivered by the authoritative path,\"** because **\"a broken candidate cannot be allowed to corrupt an otherwise healthy production request merely because it is shadowed.\"** Dark launching describes the same boundary: **\"Mirrored requests are fire-and-forget: their responses are discarded, so they do not affect the primary response.\"**\n\nTherefore the served-service error rate is, by construction, insensitive to whether the candidate path is correct. A candidate that throws on 30 percent of trial-renewal requests will produce no visible change in the production error rate if its exceptions are captured in a separate shadow channel. The equality the team observed is partly an artifact of the isolation they installed.\n\n### 1.4 Aggregates erase the denominator, the cohort and the window\n\nWhere a mismatch or exception counter does exist, it is interpretable only with its population. Stripe requires that **\"Exception and mismatch counters should include the cohort denominator and observation interval.\"** The SLO page states the general discipline: **\"Keep the numerator, denominator, units, target, data-source revision and effective date together,\"** and warns that **\"An unrelated region may hide under aggregate metrics.\"** The telemetry page adds that **\"a daily series average can hide a 10-minute queue crisis.\"** Equal aggregate error rates can therefore coexist with completely different error composition: the same rate over a different route mix, a different tenant mix, or a different set of clients. That is not equivalence; it is two different fractions with the same decimal value.\n\n### 1.5 The comparison population is the hidden variable\n\nShadow reads only see requests that are routed to the shadowed path. The dark-launching page bounds the method: **\"Shadow traffic is not a user-behavior sample; comparison coverage and data sensitivity bound what it can prove.\"** The decision playbook's \"four meanings of complete\" table is blunt about the limit of the Stripe-style gate: the comparison establishes that **\"Shadow Scientist reads match for inspected requests and cases,\"** while **\"Every mutation race, unobserved client, rollback after old data deletion\"** remains unproved.\n\nThis is the exact gap into which an out-of-band consumer falls. A nightly reconciliation job that reads the old representation directly — or through a private query, export, or batch path — is never in the shadow request population. Its reads were not compared, its semantics were not normalized, and its failure will not appear in the service error rate. Stripe's cleanup rule names the class: **\"Before removing old data, every live writer, async job and retry path must be accounted for in a new implementation.\"**\n\n### 1.6 Even a perfect two-sided comparison is relative parity, not domain truth\n\nThis matters for how much weight \"matches\" can carry. Netflix says exact set equality **\"is still a **relative parity guarantee**, not independent verification that historical Casspactor semantics were always right.\"** The decision playbook warns that **\"Identical outputs can still reflect a shared semantic bug\"** and that one must **\"not mistake equality with a buggy legacy output for proof of independent business correctness.\"** A green comparison can therefore certify that the new path reproduces the old path's behavior — including the old path's defects — on the observed population. It cannot certify business truth.\n\n### 1.7 What the described observations actually establish\n\nPut together, matching aggregate counts and error rates establish a bounded behavioral observation: for the requests that were shadowed, in the window that was observed, under whatever normalization the comparator silently applied, the served counters did not move. That is compatible with: offsetting identity errors; wrong field values; stale or differently-timed reads; authorization differences; an untested write path; and consumers outside the shadow population. It is not a read-equivalence proof. The coexistence page has a name for the resulting failure: **\"**False cutover signal.** A 100% traffic share is treated as success while divergence is still growing.\"**\n\n## 2. The normalization contract the comparison must define\n\nA comparison without a contract is a dashboard. The Stripe case calls the requirement out directly: **\"A robust implementation in a **different** system needs a comparison normalization contract: identity, ordering where observable, null/default semantics, trial/renewal state, old-client serialization, authorization and temporal freshness.\"** Meta generalizes it into a tuple: **\"Model each comparison as a tuple of `source snapshot + schema version + partition identity + job revision + equality rule + freshness window`.\"** Netflix names the same ingredients: **\"A different implementation needs a **comparison key, snapshot identity, temporal window, schema version and conflict adjudicator**.\"**\n\nThe contract must therefore state, at minimum, the following clauses.\n\n### 2.1 Identity and key mapping\n\n- The entity being compared (subscription, invoice line, entitlement), its stable key, and the old-to-new key map.\n- How duplicates, orphans, merged identities and re-created records are treated; the two-sided difference rather than a net count.\n- What the comparator does when no valid mapping exists: the reader/writer page's rule is **\"the new reader must say **unknown**, not invent an ID.\"** An invented identity is a silent false match.\n- Whether comparison is per record, per aggregate, or per business invariant, and which one the question actually needs.\n\n### 2.2 Projection: which fields, and which are excluded\n\n- The exact field set compared, and the business-critical fields that must be included. Meta's checksum gate warns that **\"Collisions/omitted columns/versioned canonicalization require own policy; matching checksum does not prove all data semantics.\"**\n- Derived versus stored fields: a derived field should be recomputed from canonical inputs under a declared rule, not compared as an opaque string.\n- Fields that are deliberately excluded because they are non-semantic (internal row ids, physical layout), with an owner and rationale. Silent exclusions are how a \"matching\" comparison passes while business state differs.\n\n### 2.3 Canonical value semantics\n\n- Null versus absent versus default versus empty; Meta warns that **\"null/value canonicalization is lossy\"** and can hide real divergence.\n- Types, precision, rounding, currency and unit conventions.\n- Ordering where order is observable; set semantics where it is not. A stable sort must be part of the contract if the API exposes order.\n- Timestamps: reference instant, time zone, clock source, truncation, and the treatment of equal-but-differently-expressed instants.\n- TTL, tombstones, soft deletes, expiry and retention boundaries at the declared reference time.\n- Trial, renewal, cancellation, proration and dunning states — the state machine, not just the row.\n- Old-client serialization and response-shape differences that preserve meaning but change bytes.\n\n### 2.4 Population, cohort and denominator\n\n- Which request classes, routes, clients, API versions and tenants are in scope; which are excluded and why.\n- Sampling method and rate, cohort sizes, and the denominator for every rate. Stripe's rule — **\"cohort denominator and observation interval\"** — is the minimum.\n- Authorization context: the same principal must see the same records with the same redactions. Aggregating tenants can hide authorization failures (the cardinality page: **\"aggregating tenants can hide fairness and authorization failures\"**).\n- Coverage of non-service readers: async jobs, batch exports, direct database readers, analytics and reconciliation. Uber's oracle list explicitly includes **\"offline/batch reads under exactly specified identity and time-window rules.\"**\n\n### 2.5 Temporality and freshness\n\n- Snapshot identity and the high-watermark at which each side was read; comparing a legacy snapshot to a later new-path read is not a comparison.\n- Allowed lag and freshness bound, and how in-flight writes at the boundary are classified.\n- The observation window, its start and end, and whether it covers steady state, mutation bursts, retries and failure injection.\n- Meta's audit rule is the test: **\"An audit should reject comparisons whose tuple differs in a way the domain owner has not explicitly normalized.\"**\n\n### 2.6 Failure classification and the decision rule\n\n- Candidate exceptions and timeouts must be counted as mismatches or as a declared exclusion class, separately from served errors, because they cannot appear in the served error rate.\n- The comparison must define what counts as equal: exact equality, equality after canonicalization, tolerance for a declared noisy field, or a business-invariant predicate. A tolerance is a policy decision, not an implementation detail: Stripe notes that **\"a numeric field can be different due to legitimate snapshot timing or because business logic diverged; a bare equality assertion cannot make that policy decision.\"**\n- The pass rule needs a threshold, a sample floor, a sustained period and an adjudicator. Netflix requires **\"both counts must be zero for equivalence under the comparison rule\"** for its exact setting; the coexistence model requires **\"a measured divergence below the business threshold across a sustained period\"** and insists those are **\"measurements and operational evidence, not model parameters.\"**\n- Differences must be adjudicated as defect, legitimate semantic change, or product decision. Netflix: **\"an extra row can be caused by a legitimate snapshot/interpretation difference rather than only a defective new connector,\"** and correcting an old bug instead of replicating it **\"is a product decision requiring separately approved output changes, not a hidden migration side effect.\"**\n\n### 2.7 Governance of the comparator itself\n\nThe comparator is an architectural interface, not a test script. It needs a version, an owner, change control, and a recorded result per run. The tuple in 2.1 should be part of the result. Two consequences follow:\n\n1. **A comparator change is a semantic change.** Loosening canonicalization to make a diff disappear is indistinguishable from hiding a defect unless reviewed.\n2. **A comparison that ignores nondeterminism or side effects produces false confidence** (authority-states pattern notes). Parallel-run sources also supply no mismatch threshold, sample size or cost measurement — **\"those remain synthetic\"** — so a real project must choose and defend them rather than import a default.\n\n### 2.8 A synthetic subscription clause (illustration, not source claim)\n\nFor a subscription record, a contract might read: compare by subscription id and account id; project state, plan, quantity, trial start/end, current period, cancellation flag, proration credit, currency and minor-unit amount, and entitlement set; canonicalize timestamps to UTC at the read instant, treat absent optional fields as undefined rather than as null unless the API says otherwise, sort entitlements, and exclude internal revision counters; require the same principal and tenant; include service reads, the nightly reconciliation job and batch exports in the population; classify candidate exceptions separately; require zero two-sided identity differences and zero value differences outside a declared tolerance, over a sustained window that includes renewal and cancellation bursts; and route every difference to a named owner for adjudication. This paragraph is my synthesis of the clauses above, not a claim about any company's comparator.\n\n## 3. Why backfill, dual write, shadow read and write-authority change are not interchangeable\n\n### 3.1 Four moves, four invariants\n\n| Move | What changes | Invariant it can test | What it cannot establish | Primary failure mode |\n|---|---|---|---|---|\n| **Backfill** | Historical records are copied or reconstructed from a snapshot | Identified missing records have been filled; the historical set is complete under the enumeration logic | Current values, lifecycle transitions, ordering under concurrent writes, read semantics | Snapshot drift, duplicated copy, late writes, enumeration that misses what it did not know to look for |\n| **Dual write** | New writes go to both representations during coexistence | Both paths can accept new work; lag and divergence can be measured | Read equivalence, conflict resolution, authority, rollback semantics | Partial write failure, retry races, divergence backlog outgrowing reconciliation capacity |\n| **Shadow read** | Candidate serves a copy of reads; responses are discarded | Behavioral parity on the observed read population under a declared rule | Write-path correctness, unobserved consumers, authority, mutation semantics | Coverage illusion; candidate errors isolated and therefore invisible in served metrics |\n| **Write-authority change** | The new representation becomes the winner for mutations | The new semantics are now the ones that count; old path can be retired | Nothing by itself — it is a decision, not a test | Unreconciled mutation classes, irreversible new-only features, loss of read rollback |\n\nThe Stripe case states the distinction in one sentence: **\"a backfill is an **inventory operation**, a dual write is a **coexistence mechanism**, a shadow read is a **behavioral oracle**, and changing write authority is a **semantic cutover**. None substitutes for the others.\"**\n\n### 3.2 Why each cannot substitute for the next\n\n**Backfill is not read equivalence.** It fills history. Even a second enumeration proves only absence of *identified* missing IDs: **\"by itself it does not prove every record has correct field values, valid lifecycle transitions or exactly-once event effects.\"** Uber's oracle list is equally direct: **\"do not treat 'all rows copied' as sufficient for a read cutover.\"** The decision playbook adds the ordering constraint: **\"backfills need live-write ordering,\"** because a backfill run against a moving store can copy a value that a concurrent write already superseded.\n\n**Dual write is not shadow read.** Dual write keeps both copies current, but it introduces exactly the divergence it is supposed to manage: **\"The two paths accept writes that cannot be reconciled. The backlog grows faster than the reconciliation capacity.\"** Partial failure is the normal case, not the exception: the test design requires simulating **\"old-write succeeds/new-write fails, and the reverse\"** and defining **\"repair ownership, idempotent reconciliation and limits on acknowledgement before both copies converge.\"** And dual write says nothing about which representation a *reader* should be served from or which one wins a conflicting mutation.\n\n**Shadow read is not write authority.** A shadow read leaves the old path authoritative and discards the candidate response. That is a read-path oracle. The coexistence page: **\"A shadow state can look healthy while the target's write path is untested.\"** A shadow read cannot validate create/update/cancel/renew/prorate ordering, retry idempotency, or the conflict rule for two concurrent mutations, because it never mutates. The authority-states page makes the boundary explicit: moving a read model is a derived-state migration, and **\"If the project later moves *authoritative writes*, the state machine and consistency requirements must be redesigned; the index example is not proof of safe writer migration.\"**\n\n**Write-authority change is not read cutover.** Switching reads is a routing decision with a rollback path while both stores remain synchronized. Changing authority changes which semantics win, and after new-only features exist, **\"merely switching readers back could lose semantics.\"** Stripe's table is precise: **\"The direction of write authority during stage 3 matters: switching the reads alone is *not* equivalent to retiring the original write representation.\"** The decision playbook adds: **\"Once a new-only feature is accepted, the ability to toggle readers back to old rows may cease.\"**\n\n### 3.3 The order is causal, not ceremonial\n\nThe playbook's modernization sequence is a dependency chain: state contracts, old source authority, dual-state writes, backfill with checkpoints, comparison with temporal alignment, low-risk read switch, **\"invert writes under canary,\"** and **\"decommission old only after proven zero callers.\"** Stripe's synthetic acceptance gate is the same chain in finer steps: enumerate writers and consumers; prove initial identity and query semantics; deploy dual writes with idempotency and divergence metrics; backfill from a fixed snapshot and reconcile online changes; shadow reads with a no-impact failure boundary; **\"move readers, then writers, in independently reversible cohorts\"**; block obsolete-field use only after monitoring confirms no remaining consumers; archive and remove after the rollback horizon.\n\nEach stage has a distinct exit gate. A count check is not an exit gate for a read cutover; a read cutover is not an exit gate for a write cutover; a write cutover is not an exit gate for deletion. The five-contract table in the authority-states page makes the same decomposition explicit: functional ownership, state authority (**\"How double-writing is prevented, which source is current, and how to reconcile\"**), API/event semantics, security/operations, and failure/recovery (**\"Exact cutover rollback window, irreversible effects, restore and forward-repair path\"**). A program that collapses those contracts into one release is not doing a faster migration; it is removing the evidence that would let it decide.\n\nMeta's ingestion lifecycle proves the point from the other direction: after the new job takes production authority, the old job keeps running as shadow — **\"the **new** ingestion job writes to the consumer-facing production table, while the **old** job begins writing to a shadow table\"** — so that **\"a rollback can restore the previous path without rebuilding it.\"** The first switch is not the end of verification.\n\n## 4. The described sequence, diagnosed\n\nThe scenario is not merely under-tested. Each step removes one of the protections that the previous step depended on.\n\n### 4.1 \"Matching counts and error rates\" was used to schedule a write cutover\n\nThis conflates a data-movement artifact with a read-equivalence result. Counts can match because dual writes and a backfill made the stores converge; that says nothing about per-record values, temporal semantics or unseen readers. Error rates can match because shadow isolation hides candidate errors. The decision playbook's refusal criterion is exactly this shape: refuse when **\"the comparison oracle covers only happy-path counts.\"**\n\n### 4.2 Switching mutation sites in one release is a big-bang semantic cutover\n\nA write cutover changes which representation wins for every mutation class at once. The playbook warns: **\"Avoid a big-bang cutover when you cannot reconcile every mutation class.\"** Subscription mutations are not one class — create, update, cancel, renew, prorate, retry and out-of-order delivery each have their own race. Stripe describes the write path as **\"especially difficult because subscription **updates, renewals and prorations** span multiple services and thousands of lines,\"** and it slices the change into increments while preserving consistency between the tables. A single release gives no per-class evidence, no cohort-level canary, no reverse-shadow period, and no independently reversible rollback.\n\n### 4.3 Making the old field throw immediately inverts the guard's purpose and timing\n\nThe throw is a *discovery* mechanism for stragglers, not a migration step. Stripe used it only after the staged migration: **\"That guard came **after** a staged migration; putting it into the first release would have broken old consumers.\"** Its synthetic contract puts the guard at step 7, after monitoring confirms no remaining consumers. The decision playbook's modernization plan says **\"decommission old only after proven zero callers,\"** and the reader/writer page says **\"contract only after old readers are proven absent.\"**\n\nDone in the same release as the mutation switch, the throw has three effects: it converts a latent diverging reader into a hard outage; it removes the old read path that any rollback would need; and it destroys the baseline against which the new path could still be compared. The safeguard becomes the incident.\n\n### 4.4 The nightly reconciliation job outside the new code path is an unobserved reader and a lost detector\n\nIf the job reads the old representation directly, it is not in the shadow population, so no comparison covered it. The reader/writer matrix's **\"Old background consumer\"** row is exactly this case: in the destructive new-only state it **\"May reject or silently misread new-only events.\"** And an additive-looking change is not automatically safe: **\"old code might deserialize a fixed projection, treat unknown enum values as errors, or misclassify absence as an allowed action.\"**\n\nThere is a second, sharper problem. A reconciliation job is a correctness detector. Keeping it outside the new code path means it is validating the old representation, not the new authority; its green result is about data the new path no longer owns. If it reads the old field, the immediate throw breaks it at precisely the moment its signal is most needed. The team has removed the detector and the detected baseline in one release. The decision playbook's long-lived-reader test is designed to expose this before cutover: **\"keep a deliberately outdated consumer active during the read cutover to expose stale aliases, field interpretation or unexpected fallback paths.\"**\n\n### 4.5 Combined effect: no evidence and no rollback at the same time\n\nBefore the release, the evidence was aggregate parity plus an incomplete shadow population. During the release, authority moved for all mutation classes and the compatibility window closed. After the release, the old read path throws and the out-of-band reconciler is either broken or reading the wrong store. That is the opposite of the \"observable authority changes before destructive cleanup\" principle, and it makes the last safe rollback point unrecordable — the authority-states page requires an **\"Exact cutover rollback window, irreversible effects, restore and forward-repair path\"** for every transition state.\n\n## 5. What evidence would actually support this cutover\n\nA defensible gate would look like this, with each item owned and dated:\n\n1. **Reader/writer inventory by code revision and owner**, including async jobs, batch exports, direct database readers and the nightly reconciler; no unclassified consumer.\n2. **A versioned comparison contract** covering identity, projection, canonical forms, population, temporal window, failure classification, threshold and adjudicator — with the tuple recorded per run.\n3. **Two-sided differences** (old-minus-new and new-minus-old) at zero, or within an approved tolerance, across a sustained window that includes renewal, cancellation and retry bursts.\n4. **Mutation-class parity**: create, update, cancel, renew, prorate, replay and out-of-order cases each validated separately, not as one release.\n5. **Dual-write lag and divergence measured** against reconciliation capacity, with a bounded upper confidence limit; a backlog that drains inside the rollback horizon.\n6. **A rehearsed rollback** that completes inside the observation window, with a reverse adapter and a recorded last-safe point.\n7. **A reverse-shadow or dual-run period** in which the old path still runs after the new one takes authority, so a rollback does not require rebuilding.\n8. **The reconciler migrated into the new path** (or deliberately run against both with the same identity/time rules), and its output compared — not left outside the change.\n9. **A staged guard**: old-field access warns and counts first, throws only after monitoring shows zero remaining consumers, and deletion follows the rollback horizon.\n\n## 6. Evidence map\n\n| Claim | Key evidence (read through the CLI) |\n|---|---|\n| Counts underdetermine sets | Meta #preconditions; Netflix #four; Stripe #observed |\n| Counts underdetermine values/time | Netflix #four; Meta #what-a-green; decision #four |\n| Error rate blind under shadow isolation | Stripe #read-comparison; dark-launching #overview |\n| Aggregates need denominator/window | Stripe #read-comparison; budget-actions #6; cardinality #5 |\n| Shadow coverage is bounded | dark-launching #overview; decision #four |\n| Parity is relative, not truth | Netflix #equality; decision #applicability; decision #decision-record |\n| Comparison is a tuple | Meta #what-a-green |\n| Contract needs identity/unknown | Stripe #read-comparison; Netflix #four; reader-writer #2 |\n| Contract needs canonical values/time | Stripe #read-comparison; Meta #what-a-green; Netflix #four |\n| Contract needs population and decision rule | Netflix #evidence; coexistence #what-supports |\n| Backfill is inventory | Stripe #why-data-copy; Uber #failure-oracles; decision #applicability |\n| Dual write is coexistence | Stripe #write-cutover; coexistence #failure-modes; decision #synthetic tests |\n| Shadow read is a read oracle | Stripe #write-cutover; coexistence #coexistence; authority #bounded |\n| Authority change is semantic | Stripe #write-cutover; Stripe #observed; authority #3 |\n| The four are not substitutes | Stripe #write-cutover; Meta #what-a-green |\n| Guard must follow staging | Stripe #write-cutover; Stripe #execution-stages; Stripe #synthetic-acceptance; decision #modernization-plan |\n| Out-of-band consumers must be inventoried | Stripe #write-cutover; reader-writer #1; Uber #failure-oracles |\n| Reversible cohorts and rollback | Stripe #synthetic-acceptance; Meta #preconditions; authority #1 |\n\n## 7. Unknowns and limits\n\n- The scenario gives no definition of the counts (rows, subscriptions, requests, or invoice lines), no error-rate denominator, and no observation window. I therefore describe the general failure, not a measured result for that team.\n- I do not know whether the shadow path covered all read APIs or only the service's own reads; whether the nightly reconciliation job reads the old field directly, a replica, or an export; or whether any dual-write divergence metric existed.\n- I cannot assert that the cutover caused an outage. The claim is narrower: the described sequence removes the evidence and the rollback capacity that would justify the cutover.\n- The company cases are public first-party accounts with different data shapes and observation windows; they are not A/B results. The Tycho decision playbook and synthetic tests are analytical drafts, and the cited pages mark them as pending independent review.\n- The model page's \"success rate 1.0 with large divergence\" is a synthetic fluid approximation, not production evidence; it is used only to illustrate that a green success metric is not a correctness metric.\n\n## 8. Mechanical self-check\n\nThe answer file was validated with the provided script against corpus-v8; it must print PASS. The claims array below carries one or more section-key evidence entries per claim, and the citations array equals the unique section keys in that ledger.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Equal counts are consistent with unequal data sets: cardinality does not fix identity, duplicates or omissions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+          "quote": "Two unequal sets can have identical counts",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#four-distinct-consistency-proofs-for-another-platform",
+          "quote": "Equal row counts hide duplicates and omissions",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority",
+          "quote": "Such equivalence cannot be assumed from equal row counts.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Count equality also leaves values, time semantics and authorization unverified; a record can differ in state, null/default, TTL/tombstone, ordering or visibility and still count once.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#four-distinct-consistency-proofs-for-another-platform",
+          "quote": "TTL reference instant, tombstones, expiring rows, ordering and consistency rule",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#four-distinct-consistency-proofs-for-another-platform",
+          "quote": "Same physical input interpreted at different expiration times",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+          "quote": "null/value canonicalization is lossy",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "For a new design, first identify whether the business invariant is *identity*, *value equality*, *operation order*, *referential consistency*, *side-effect exactly-once*, or *bounded freshness*.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A matching served error rate is expected under shadow isolation because candidate failures must not affect the served response; production error metrics therefore do not observe candidate correctness.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+          "quote": "the experimental path should time out or raise an error without changing the result delivered by the authoritative path",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+          "quote": "a broken candidate cannot be allowed to corrupt an otherwise healthy production request merely because it is shadowed.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+          "quote": "Mirrored requests are fire-and-forget: their responses are discarded, so they do not affect the primary response.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Error and mismatch rates are interpretable only with denominator, population, data-source revision and observation window; equal rates can hide different composition.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+          "quote": "Exception and mismatch counters should include the cohort denominator and observation interval.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+          "quote": "Keep the numerator, denominator, units, target, data-source revision and effective date together.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+          "quote": "An unrelated region may hide under aggregate metrics",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+          "quote": "a daily series average can hide a 10-minute queue crisis",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Shadow comparison covers only the shadowed request population and is not a representative user sample; unobserved clients and mutation races remain outside it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+          "quote": "Shadow traffic is not a user-behavior sample; comparison coverage and data sensitivity bound what it can prove.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "Shadow Scientist reads match for inspected requests and cases",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "Every mutation race, unobserved client, rollback after old data deletion",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Even a complete two-sided parity check is relative parity, not independent domain truth; both paths can share a semantic defect or reproduce a legacy bug.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth",
+          "quote": "It is still a **relative parity guarantee**, not independent verification that historical Casspactor semantics were always right.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+          "quote": "Identical outputs can still reflect a shared semantic bug",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+          "quote": "Do not mistake equality with a buggy legacy output for proof of independent business correctness.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A comparison is meaningful only relative to a declared tuple of snapshot, schema version, identity, revision, equality rule and freshness window; unnormalized tuple differences invalidate it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+          "quote": "Model each comparison as a tuple of `source snapshot + schema version + partition identity + job revision + equality rule + freshness window`.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+          "quote": "An audit should reject comparisons whose tuple differs in a way the domain owner has not explicitly normalized.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+          "quote": "matching checksum does not prove all data semantics",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "The contract must fix identity and key mapping, including duplicate/orphan handling and an explicit unknown instead of an invented id.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+          "quote": "identity, ordering where observable, null/default semantics, trial/renewal state, old-client serialization, authorization and temporal freshness.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#four-distinct-consistency-proofs-for-another-platform",
+          "quote": "Both old-minus-new and new-minus-old rows, including schema-normalized keys",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+          "quote": "If an old row has no valid mapping, the new reader must say **unknown**, not invent an ID.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The contract must fix value canonicalization and time semantics; these are policy choices because normalization is lossy and legitimate timing differences can mimic defects.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+          "quote": "A numeric field can be different due to legitimate snapshot timing or because business logic diverged; a bare equality assertion cannot make that policy decision.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+          "quote": "materialized output can match row count and checksum while *still* diverging semantically when time windows differ, null/value canonicalization is lossy or the fingerprint excludes business-critical fields.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth",
+          "quote": "an extra row can be caused by a legitimate snapshot/interpretation difference rather than only a defective new connector.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The contract must define the compared population and a decision rule: two-sided difference, threshold, sample floor, sustained window and adjudicator.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#evidence-based-migration-choreography",
+          "quote": "check both C−M (missing rows) and M−C (extra rows); both counts must be zero for equivalence under the comparison rule.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+          "quote": "a measured divergence below the business threshold across a sustained period",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+          "quote": "Those are measurements and operational evidence, not model parameters.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth",
+          "quote": "A different implementation needs a **comparison key, snapshot identity, temporal window, schema version and conflict adjudicator**.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+          "quote": "the comparison oracle covers only happy-path counts",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Backfill is an inventory and historical-copy operation; completeness of copied rows does not prove field values, lifecycle transitions, ongoing writes or read semantics.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#why-the-data-copy-did-not-overload-the-live-database",
+          "quote": "A second scan can prove absence of *identified* missing IDs within the examined snapshot/logic; by itself it does not prove every record has correct field values, valid lifecycle transitions or exactly-once event effects.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b369cf77ebee40c6a35f45effefe473d#failure-oracles-for-a-different-store",
+          "quote": "**do not** treat “all rows copied” as sufficient for a read cutover.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+          "quote": "backfills need live-write ordering",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Dual write is a coexistence mechanism that creates its own divergence and reconciliation burden; it does not prove read equivalence or transfer authority.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#write-cutover-is-the-hard-part-changing-mutation-semantics",
+          "quote": "a dual write is a **coexistence mechanism**",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "**Dual-write divergence.** The two paths accept writes that cannot be reconciled. The backlog grows faster than the reconciliation capacity.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+          "quote": "Two independently written stores can diverge with retry races or partial failure.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+          "quote": "3. **Partial dual-write failure:** simulate old-write succeeds/new-write fails, and the reverse. Detect the divergence; define repair ownership, idempotent reconciliation and limits on acknowledgement before both copies converge.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Shadow read is a behavioral oracle on reads only; it discards responses, keeps the old authority, and can look healthy while the write path is untested.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#write-cutover-is-the-hard-part-changing-mutation-semantics",
+          "quote": "a shadow read is a **behavioral oracle**",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+          "quote": "A shadow state can look healthy while the target's write path is untested.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+          "quote": "Shadow traffic copies live requests to a mirrored service while the old path remains authoritative.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+          "quote": "a comparison that ignores nondeterminism or side effects produces false confidence.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Write-authority change is a semantic cutover of which representation wins mutations; read cutover is not equivalent, it needs mutation-class validation, and rollback can lose semantics after new-only features.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#write-cutover-is-the-hard-part-changing-mutation-semantics",
+          "quote": "changing write authority is a **semantic cutover**",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority",
+          "quote": "switching the reads alone is *not* equivalent to retiring the original write representation.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+          "quote": "Once a new-only feature is accepted, the ability to toggle readers back to old rows may cease.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+          "quote": "Avoid a big-bang cutover when you cannot reconcile every mutation class.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+          "quote": "If the project later moves *authoritative writes*, the state machine and consistency requirements must be redesigned; the index example is not proof of safe writer migration.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "The four moves are not substitutes: each addresses a different invariant, and substituting one for another leaves its invariant untested.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#write-cutover-is-the-hard-part-changing-mutation-semantics",
+          "quote": "a backfill is an **inventory operation**, a dual write is a **coexistence mechanism**, a shadow read is a **behavioral oracle**, and changing write authority is a **semantic cutover**. None substitutes for the others.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+          "quote": "There is no safe universal “dual-write” shortcut that represents both histories.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+          "quote": "It is incorrect to generalize one row-count or sample-match gate across mutable OLTP authority, immutable batch output, historical migration ranges and streaming CDC feeds.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The hard removal guard is a discovery step that must follow staged migration and evidence that no consumers remain; placing it in the first release breaks old consumers and removes the comparison baseline.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#write-cutover-is-the-hard-part-changing-mutation-semantics",
+          "quote": "That guard came **after** a staged migration; putting it into the first release would have broken old consumers.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#synthetic-acceptance-and-rollback-contract",
+          "quote": "(6) move readers, then writers, in independently reversible cohorts; (7) block obsolete-field use only after monitoring confirms no remaining consumers;",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+          "quote": "decommission old only after proven zero callers.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+          "quote": "contract only after old readers are proven absent",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#execution-stages-validation-and-reversibility",
+          "quote": "After switching to new reads it incrementally changed mutation sites, then made old-field access throw errors and removed old data.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Out-of-band consumers such as a nightly reconciliation job belong in the reader inventory; if left outside the new path they are neither compared nor migrated and may reject or silently misread new-only data.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#write-cutover-is-the-hard-part-changing-mutation-semantics",
+          "quote": "Before removing old data, every live writer, async job and retry path must be accounted for in a new implementation.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#1-check-the-real-combinations-including-old-readers",
+          "quote": "| Old background consumer | Can replay historical events | Must tolerate optional/mapped fields | May reject or silently misread new-only events |",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b369cf77ebee40c6a35f45effefe473d#failure-oracles-for-a-different-store",
+          "quote": "compare create, edit, cancel, recompute, retry, arrival-order change and offline/batch reads under exactly specified identity and time-window rules.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+          "quote": "4. **Long-lived old reader:** keep a deliberately outdated consumer active during the read cutover to expose stale aliases, field interpretation or unexpected fallback paths.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "A big-bang mutation switch removes reversible cohorts and reverse-shadow rollback; safe cutover keeps the old path runnable after authority moves and records the rollback window.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#synthetic-acceptance-and-rollback-contract",
+          "quote": "(6) move readers, then writers, in independently reversible cohorts",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+          "quote": "the **new** ingestion job writes to the consumer-facing production table, while the **old** job begins writing to a shadow table.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Exact cutover rollback window, irreversible effects, restore and forward-repair path",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+          "quote": "A rollback that does not complete is not a failed model.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#synthetic-acceptance-and-rollback-contract",
+          "quote": "The general transfer principle is **observable authority changes before destructive cleanup**, not blind replication of a historic implementation.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "For the described sequence specifically, the nightly reconciler is outside the shadow population and an immediate throw removes it as both consumer and detector; the resulting cutover has neither complete evidence nor a reversible path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+          "quote": "Shadow traffic is not a user-behavior sample; comparison coverage and data sensitivity bound what it can prove.",
+          "supports": "C19",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#write-cutover-is-the-hard-part-changing-mutation-semantics",
+          "quote": "That guard came **after** a staged migration; putting it into the first release would have broken old consumers.",
+          "supports": "C19",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#write-cutover-is-the-hard-part-changing-mutation-semantics",
+          "quote": "Before removing old data, every live writer, async job and retry path must be accounted for in a new implementation.",
+          "supports": "C19",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The described evidence supports at most a bounded behavioral observation, not read equivalence: it is consistent with offsetting errors, uncompared values, untested mutations and unobserved consumers.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#failed-assumptions-and-when-not-to-transfer-the-design",
+          "quote": "Comparing only counts is insufficient; read results must match under a defined subscription identity and temporal snapshot.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+          "quote": "materialized output can match row count and checksum while *still* diverging semantically when time windows differ, null/value canonicalization is lossy or the fingerprint excludes business-critical fields.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+          "quote": "**False cutover signal.** A 100% traffic share is treated as success while divergence is still growing.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+    "tycho.page.50b3410cae7d4032babb15542e748cac#four-distinct-consistency-proofs-for-another-platform",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+    "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+    "tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+    "tycho.page.50b3410cae7d4032babb15542e748cac#evidence-based-migration-choreography",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#why-the-data-copy-did-not-overload-the-live-database",
+    "tycho.page.b369cf77ebee40c6a35f45effefe473d#failure-oracles-for-a-different-store",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#write-cutover-is-the-hard-part-changing-mutation-semantics",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#synthetic-acceptance-and-rollback-contract",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#execution-stages-validation-and-reversibility",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#1-check-the-real-combinations-including-old-readers",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#failed-assumptions-and-when-not-to-transfer-the-design"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
