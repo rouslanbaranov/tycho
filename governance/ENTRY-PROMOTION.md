@@ -212,6 +212,23 @@ Do not implement, move or rename book pages, create or split cards, change
 shared metadata, or open implementation sub-issues during this step. Analysis is
 not permission to start the work.
 
+### 4.7.4 Temporary suspension of green lane and V12 review
+
+By direct owner instruction on 2026-11-01, the green gate in 4.7.1 and the V12
+semantic review in 4.7.2 are temporarily suspended to accelerate promotions.
+
+While this suspension is in force:
+
+- do not run the full test suite or edit tests as a promotion gate;
+- do not run the V12 semantic review;
+- commit and merge even when the V12 protected baseline is stale;
+- do not claim that tests, CI or V12 review passed;
+- keep lane, integrator, independent review, promotion, merge and bookkeeping.
+
+Suspended stages resume only on a direct owner instruction. This section does not
+waive independence, evidence or source rules, and it does not convert a red suite
+or stale baseline into evidence.
+
 ## 5. Rebind rules
 
 A neighbour promotion may be rebound only when all are true:
