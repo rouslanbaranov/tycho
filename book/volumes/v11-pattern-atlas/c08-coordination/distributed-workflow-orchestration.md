@@ -29,8 +29,7 @@ route_hints:
     - "tycho.chapter.bee261b76181706235dd8fa7ccde01a9"
   excludes:
     - >-
-      No sufficient coverage, promotion or owner acceptance is claimed for this
-      moved page.
+      Product-specific engine configuration and benchmark results.
   keywords:
     - "pattern atlas"
     - "distributed workflow orchestration"
