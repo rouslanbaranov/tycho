@@ -88,34 +88,7 @@ See the [dedicated Sharding card](sharding.md).
 
 ### Partitioning
 
-**Identity.** Partitioning; family Database and storage architecture; kind
-data-distribution-pattern; priority core.
-
-**Decision question.** Should a large table or stream be divided into partitions for
-pruning, retention or parallelism?
-
-**Good-fit conditions.** Partition key aligns with query/retention; partition count is
-manageable; pruning is observable; maintenance is owned.
-
-**Hard contraindications.** Reject when queries cross all partitions, when partition count
-grows unbounded, or when partition keys create skew.
-
-**Competing alternative.** Single table/index or sharding across nodes. Reverse the choice
-when partition maintenance and pruning no longer justify the split.
-
-**Failure and recovery.** Partition skew and maintenance are common; verify
-pruning/lifecycle in the owner section.
-
-**Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#partitioning) — partition key and pruning are bounded; per-engine partition mechanics are implementation-specific.
-
-**Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-partition.2026-10-21: all thirteen headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Sharding; Consistent Hashing; Index Table; Online Data Migration.
+See the [Partitioning](partitioning.md) card.
 
 ### Consistent Hashing
 
@@ -123,34 +96,7 @@ See the [dedicated Consistent Hashing card](consistent-hashing.md).
 
 ### Leader-Follower Replication
 
-**Identity.** Leader-Follower Replication; family Database and storage architecture; kind
-replication-pattern; priority core.
-
-**Decision question.** Should one leader accept writes while followers replicate and serve
-reads?
-
-**Good-fit conditions.** A single writer is acceptable; failover is owned; replication lag
-is observable; read-after-write can be routed to the leader.
-
-**Hard contraindications.** Reject when writes must be accepted in multiple regions, when
-lag violates a hard read contract, or when failover is untested.
-
-**Competing alternative.** Multi-leader or quorum writes. Reverse the choice when leader
-unavailability or write locality dominates.
-
-**Failure and recovery.** Lag, failover and split-brain are common; verify leader change
-in the owner section.
-
-**Technical owner.** [Leader-Follower Replication](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#leader-follower-replication) — replication/leader change is bounded, not a complete multi-leader protocol.
-
-**Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-warm.2026-10-21: all twenty headings read; Hot
-Standby and Failover are separate pages. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Multi-Leader Replication; Read Replicas; Quorum; Backup/PITR.
+See the [Leader-Follower Replication](leader-follower-replication.md) card.
 
 ### Multi-Leader Replication
 
@@ -174,68 +120,11 @@ See the [dedicated Polyglot Persistence card](polyglot-persistence.md).
 
 ### CQRS Read Projections
 
-**Identity.** CQRS Read Projections; family Database and storage architecture; kind
-data-pattern; priority core.
-
-**Decision question.** Should a read model be projected asynchronously from an
-authoritative write model?
-
-**Good-fit conditions.** Stale reads are acceptable; projection ownership exists;
-duplicate/order handling is defined; rebuild is possible.
-
-**Hard contraindications.** Reject when every read needs immediate consistency, when
-projection lag violates the contract, or when rebuild cost is unbounded.
-
-**Competing alternative.** Synchronous read from the write model or a materialized view.
-Reverse the choice when projection freshness/complexity exceeds read-scale benefit.
-
-**Failure and recovery.** Stale and duplicate projections are common; verify freshness in
-the owner section.
-
-**Technical owner.** [CQRS Read Projections](../../../distributed/cqrs-event-sourcing-and-projections.md#cqrs-read-projections) — projection freshness is bounded, not a complete read-model design.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-cqrs.2026-10-21: all nine served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** CQRS; Materialized View; Event Sourcing; CDC.
+See the [CQRS Read Projections](cqrs-read-projections.md) card.
 
 ### Expand-and-Contract Schema
 
-**Identity.** Expand-and-Contract Schema; family Database and storage architecture; kind
-migration-pattern; priority core.
-
-**Decision question.** Should a schema change be deployed in expand, migrate and contract
-stages?
-
-**Good-fit conditions.** Old and new code coexist during rollout; a compatibility window
-is owned; backfill and validation are explicit.
-
-**Hard contraindications.** Reject when old and new readers cannot coexist, when no
-compatibility window or contract owner exists, or when the mapping cannot preserve identity
-and references.
-
-**Competing alternative.** Keep the schema and add a mapping layer, or use a smaller change
-when authority need not move. Reverse when staged migration cost exceeds rollout risk.
-
-**Failure and recovery.** Partial backfills and old readers are common; verify gates in
-the owner section.
-
-**Technical owner.** [Expand-and-Contract Schema](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#expand-and-contract-schema) — expand/contract is bounded, not a complete migration runbook.
-
-**Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-flyway.2026-10-21: all seventeen served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Online Data Migration; Expand-and-Contract; Backup/PITR; Migration
-Retirement.
+See the [Expand-and-Contract Schema](expand-and-contract-schema.md) card.
 
 ### Online Data Migration
 
