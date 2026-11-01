@@ -297,43 +297,7 @@ See the [dedicated Splitter card](splitter.md).
 
 ### Aggregator
 
-**Identity.** Aggregator; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should related messages be combined using completion and timeout
-rules?
-
-**Good-fit conditions.** Correlation is stable; completion conditions are explicit.
-Tycho guidance, not a source claim: partial results are representable, duplicate and late
-messages are handled, and a per-participant timeout is available.
-
-**Hard contraindications.** Reject when responses are unrelated, when one participant is
-authoritative, when atomicity across participants is required, when one slow participant
-would consume the caller's budget, when no bounded completion rule exists, or when
-aggregation state has no durable owner.
-
-**Competing alternative.** Tycho synthesis: scatter-gather broadcasts one request to
-several recipients and aggregates their responses through an aggregator. Reverse the
-choice when the request must reach several recipients rather than fan in
-already-correlated messages.
-
-**Failure and recovery.** Late, missing and duplicate messages are common; verify
-completion and eviction in the owner section.
-
-**Technical owner.** [Aggregator](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#aggregator) — aggregation key and timeout are bounded; partial-result policy is Tycho guidance.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-aggregator.2026-10-21: two H2 examples; Problem and
-Solution are unheaded, and the page is publisher-abridged.
-[src.aws-scatter-gather](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.aws-scatter-gather.2026-10-28: the Intent section defines the
-broadcast-and-aggregate pattern and names the aggregator component. The sources are public
-documentation, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Splitter; Scatter-Gather; Correlation Identifier; Resequencer.
+See the [dedicated Aggregator card](aggregator.md).
 
 ### Scatter-Gather
 

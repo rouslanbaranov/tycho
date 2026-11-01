@@ -59,7 +59,7 @@ content_verified_at: null
 > **Pattern atlas:**
 > [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md#request-reply-messaging) — decision conditions and contraindications.
 > [Splitter](../../v11-pattern-atlas/c03-messaging-integration/splitter.md#splitter) — decision conditions and contraindications.
-> [Aggregator](../../v11-pattern-atlas/c03-messaging-integration/README.md#aggregator) — decision conditions and contraindications.
+> [Aggregator](../../v11-pattern-atlas/c03-messaging-integration/aggregator.md#aggregator) — decision conditions and contraindications.
 > [Scatter-Gather](../../v11-pattern-atlas/c03-messaging-integration/README.md#scatter-gather) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:0 -->
@@ -127,15 +127,38 @@ one response and the participants can be queried independently. Tycho guidance: 
 it when one participant is authoritative, when atomicity across participants is required,
 or when one slow participant would consume the caller's complete budget.
 
+**Failure and recovery.** The source states: "A single missing or delayed message will
+prevent further processing of the whole aggregate." Recovery is bounded: "One way to deal with
+missing messages is to re-request the message."
+and, for a timeout strategy, "If no responses are received, the system may report an
+exception or retry."
+Tycho guidance, not a source claim: return a declared partial result, cancel remaining
+work or fail as a whole.
+
+**Alternative.** Tycho synthesis: API composition is the alternative when the caller can
+invoke the data-owning services and join their responses at query time. The source defines
+an API Composer that invokes those services and "performs an in-memory join of the
+results." The source does not compare API composition with aggregator; the comparison and
+reversal are Tycho synthesis. Reverse the choice when the related results already arrive
+as messages and completion must trigger the combined result. Scatter-gather is a related
+composite, not this alternative: it broadcasts a request and uses an aggregator as its
+gather step.
+
 **Limits.** Per-participant state, duplicate responses and cancellation are costs; a
 partial result needs a versioned schema and a caller-visible completeness marker.
 
-The source states that a missing or delayed message can prevent further processing and
-that an incomplete set should raise an error after a timeout. Tycho guidance, not a source
-claim: an implementation should also return a declared partial result, cancel remaining
-work or fail as a whole. Tycho synthesis: scatter-gather is the alternative when one
-request must reach several recipients; it broadcasts similar or related requests and
-aggregates their responses through an aggregator.
+**Source boundary.** Enterprise Integration Patterns,
+[Aggregator](https://www.enterpriseintegrationpatterns.com/patterns/messaging/Aggregator.html),
+section "Aggregator", read 2026-11-01; canonical text SHA-256
+`e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494` (raw HTML
+`15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58`). microservices.io,
+[API Composition](https://microservices.io/patterns/data/api-composition.html), sections
+"Solution" and "Resulting context", read 2026-11-01; canonical text SHA-256
+`75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7` (raw HTML
+`7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b`). The pages are
+living documents; no benchmark or execution was performed. The partial-result and
+cancellation rules, the API-composition comparison and the reversal are Tycho synthesis,
+not source statements.
 
 ### Splitter
 
