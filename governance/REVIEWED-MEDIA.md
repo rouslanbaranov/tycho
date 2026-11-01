@@ -17,7 +17,7 @@ acceptance, or legal review. It does not make a file independently sourced.
 A file may be listed only when:
 
 - it is public, project-supplied, or otherwise reusable under the project's terms;
-- it contains no restricted employer-specific material;
+- it contains no restricted-origin or private material;
 - a human has visually reviewed the exact file;
 - its SHA-256, review date, reviewer role, origin, and rights limits are recorded.
 

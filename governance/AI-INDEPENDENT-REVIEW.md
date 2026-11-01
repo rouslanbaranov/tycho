@@ -54,7 +54,7 @@ The authoring agent must locate a qualifying local CLI before preparing a hand-o
    checkout or read-only repository access.
 3. The reviewer must not write to the repository, change configuration, commit, open a PR
    or modify canonical artifacts.
-4. Use public sources only. Never supply restricted, employer-specific or private material.
+4. Use public sources only. Never supply restricted or private material.
 5. For each source, pin the URL, revision or content hash and access date.
 6. Review one bounded scope per run. Large scopes are split into non-overlapping batches.
 
