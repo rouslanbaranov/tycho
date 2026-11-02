@@ -27,7 +27,12 @@ class DistributedResearchChecks(unittest.TestCase):
     def test_pages_include_visuals_and_precise_sources(self):
         for page, references in PAGES.items():
             with self.subTest(page=page):
-                content = read_original_manuscript(canonical_path(BASE / page))
+                path = canonical_path(BASE / page)
+                if page == "cqrs-event-sourcing-and-projections.md":
+                    path = (ROOT / "book/volumes/v04-distributed-coordination-and-events"
+                            / "c05-outbox-inbox-sagas-and-durable-workflows"
+                            / "cqrs-event-sourcing-and-read-projections.md")
+                content = read_original_manuscript(path)
                 self.assertGreater(len(content), 8000)
                 self.assertGreaterEqual(content.count("```mermaid"), 3)
                 self.assertGreaterEqual(content.count("Text alternative:"), 3)

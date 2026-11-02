@@ -40,8 +40,8 @@ content_review:
   reviewed_at: null
   reviewer: null
   proof_uri: null
-authored_at: '2026-10-18'
-updated_at: '2026-10-30'
+authored_at: '2026-11-01'
+updated_at: '2026-11-01'
 source_inspection_date: null
 content_verified_at: null
 ---
