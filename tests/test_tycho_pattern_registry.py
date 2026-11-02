@@ -28,7 +28,7 @@ class PatternRegistryTests(unittest.TestCase):
         self.assertEqual((result["core"], result["advanced"]), (123, 22))
         self.assertEqual(result["technical_owners"], 145)
         self.assertEqual(result["atlas_sections"], 145)
-        self.assertEqual(result["source_units"], 401)
+        self.assertEqual(result["source_units"], 402)
 
     def test_missing_pattern_is_rejected(self):
         data = self.copy()
@@ -169,7 +169,8 @@ class PatternRegistryTests(unittest.TestCase):
 
     def test_atlas_state_is_rejected(self):
         data = self.copy()
-        pattern = data["patterns"][0]
+        pattern = next(item for item in data["patterns"]
+                       if item["coverage"]["technical"] != "sufficient")
         pattern["technical_owner"] = {
             "document_id": "tycho.book.37c50125355948f1b52ec66229ef59bd",
             "path": "book/README.md",

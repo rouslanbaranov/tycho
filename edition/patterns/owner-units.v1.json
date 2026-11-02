@@ -49,14 +49,28 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The owner of each layer names its public surface and the test that catches a bypass.",
-          "reason": "Source covers layer responsibilities and dependency direction, not layer ownership or bypass tests."
+          "state": "supported",
+          "quote": "layers are not deployment units",
+          "reason": "Fowler distinguishes logical layers from physical tiers; the deployment-unit limit is a Tycho implication.",
+          "binding": {
+            "source_id": "src.fowler-layering",
+            "ledger_record": "read.fowler-layering.2026-10-21",
+            "section": "Presentation Domain Data Layering",
+            "quote": "These layers are logical layers not physical tiers.",
+            "revision": "bb249131feb914aa939976528d7d28ce4063e6413fc1038826d9e80bf12e0444"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Transaction boundaries that span layers and anemic domain models are the failure modes",
-          "reason": "Source has no transaction-boundary or anemic-domain failure discussion."
+          "state": "supported",
+          "quote": "anemic domain models are the failure modes",
+          "reason": "Fowler names the anemic domain model anti-pattern; cross-layer transaction guidance remains Tycho.",
+          "binding": {
+            "source_id": "src.fowler-anemic-domain-model",
+            "ledger_record": "read.fowler-anemic.2026-11-02",
+            "section": "Anemic Domain Model",
+            "quote": "The fundamental horror of this anti-pattern is that it's so contrary to the basic idea of object-oriented design",
+            "revision": "70e73fefde700d6a74ca77941a8b43416a5c52dc87ab574dfc92235440161ec5"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -83,12 +97,19 @@
         "source_id": "src.fowler-layering",
         "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.fowler-anemic-domain-model",
+            "ledger_record": "read.fowler-anemic.2026-11-02",
+            "revision": "70e73fefde700d6a74ca77941a8b43416a5c52dc87ab574dfc92235440161ec5"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
-      "decision_coverage": "partial-bounded",
-      "notes": "Thin embedded definition; detailed layering mechanisms are explicitly delegated to dependencies-ports.md."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Promoted: four dimensions and decision evidence supported; cross-layer transactions remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.modular-monolith",
@@ -18852,22 +18873,22 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 102,
-    "failure_recovery_supported": 103,
+    "invariant_supported": 103,
+    "failure_recovery_supported": 104,
     "alternative_supported": 105,
     "technical_partial_bounded": 4,
-    "technical_partial": 45,
+    "technical_partial": 44,
     "technical_name_only": 0,
-    "technical_sufficient": 96,
-    "decision_partial_bounded": 49,
+    "technical_sufficient": 97,
+    "decision_partial_bounded": 48,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 96,
+    "decision_sufficient": 97,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 7,
       "deepen": 23,
+      "keep": 7,
       "split": 0
     },
     "split_deferred": 0

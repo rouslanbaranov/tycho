@@ -28,17 +28,18 @@ route_hints:
 evidence_scope:
   source_ids:
   - src.fowler-layering
+  - src.fowler-anemic-domain-model
   claim_ids: []
   status: source-linked
   notes: Source-level bindings remain in the owner unit.
 content_review:
   status: self-checked
-  reviewed_at: '2026-11-01'
+  reviewed_at: '2026-11-02'
   reviewer: Automated authoring agent
   proof_uri: null
 authored_at: '2026-11-01'
-updated_at: '2026-11-01'
-source_inspection_date: '2026-10-21'
+updated_at: '2026-11-02'
+source_inspection_date: '2026-11-02'
 content_verified_at: null
 ---
 
@@ -64,9 +65,9 @@ a modular monolith with module contracts. Reverse the choice when technology ada
 dominate or the dependency rule cannot be enforced.
 
 **Failure and recovery.** Layer leakage, transaction boundaries that span layers and
-anemic domain models are common. Recovery starts with dependency checks, explicit
-contracts and a review of the change boundary; the linked owner section states the
-remaining limits.
+anemic domain models are the failure modes. Recovery starts with dependency checks,
+explicit contracts and a review of the change boundary; the linked owner section
+states the remaining limits.
 
 **Technical owner.**
  [Layered
@@ -74,9 +75,10 @@ Architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular
 — The section owns layering and dependency direction; it is not a dedicated layering manuscript.
 
 **Sources.** [src.fowler-layering](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-layering.2026-10-21: Presentation Domain Data Layering,
-sections "Presentation Domain Data Layering", "Further Reading", "Acknowledgements",
-"Notes". This is a definitional article, not a comparative study.
+read record read.fowler-layering.2026-10-21: Presentation Domain Data Layering, sections
+"Presentation Domain Data Layering", "Further Reading", "Acknowledgements", "Notes". This
+is a definitional article, not a comparative study. The anemic-domain failure also cites
+read.fowler-anemic.2026-11-02, sections "Anemic Domain Model", "Transaction".
 
 **Decision state.** `applicable-under-conditions`.
 

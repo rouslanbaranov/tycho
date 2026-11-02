@@ -27,7 +27,7 @@ class PatternOwnerUnitTests(unittest.TestCase):
         self.assertEqual(result["entries"], 145)
         self.assertEqual(result["owner_pages"], 81)
         self.assertEqual(result["shared_pages"], 30)
-        self.assertEqual(result["sufficient"], 96)
+        self.assertEqual(result["sufficient"], 97)
         self.assertEqual(result["bounded"] + result["partial"] + result["sufficient"], 145)
         self.assertGreater(result["units"], 30)
 
@@ -137,7 +137,9 @@ class PatternOwnerUnitTests(unittest.TestCase):
 
     def test_sufficient_claim_is_rejected(self):
         data = self.copy()
-        data["entries"][0]["technical_coverage"] = "sufficient"
+        entry = next(item for item in data["entries"]
+                     if item["technical_coverage"] != "sufficient")
+        entry["technical_coverage"] = "sufficient"
         with self.assertRaises(ValueError):
             validate_data(data, ROOT)
 
