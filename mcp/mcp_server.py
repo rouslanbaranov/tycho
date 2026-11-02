@@ -25,6 +25,7 @@ import re
 import sqlite3
 import stat
 import sys
+import time
 
 try:
     import yaml
@@ -37,6 +38,7 @@ sys.path.insert(0, str(_ROOT / "scripts"))
 import best_search
 import mcp_contract
 import route_index
+import section_fts_index
 import section_search
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -120,6 +122,18 @@ class TychoMcpServer(
         self.query_log_raw = query_log_raw
         self.legacy_initialized = False
         self.legacy_version = None
+        self._last_refresh = 0.0
+        self.index_refresh = self.refresh_index(force=True)
+
+    def refresh_index(self, force=False):
+        """Verify or rebuild the derived index before serving a request."""
+        now = time.monotonic()
+        if not force and now - self._last_refresh < 0.5:
+            return self.index_refresh
+        self._last_refresh = now
+        self.index_refresh = section_fts_index.ensure_fresh(
+            self.root, self.index_path)
+        return self.index_refresh
 
     def load_patterns(self):
         try:
@@ -254,6 +268,7 @@ class TychoMcpServer(
                 os.close(descriptor)
 
     def handle(self, message):
+        self.refresh_index()
         if not isinstance(message, dict):
             raise ProtocolFailure(-32600, "JSON-RPC message must be an object")
         if message.get("jsonrpc") != "2.0":
@@ -445,6 +460,7 @@ class TychoMcpServer(
         return {"jsonrpc": "2.0", "id": request_id, "result": result}
 
     def open_snapshot(self):
+        self.refresh_index()
         return section_search.open_snapshot(self.root, self.index_path)
 
     @staticmethod
