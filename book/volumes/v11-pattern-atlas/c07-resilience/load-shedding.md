@@ -27,6 +27,7 @@ route_hints:
 evidence_scope:
   source_ids:
   - src.sre-overload
+  - src.aws-load-shedding
   claim_ids: []
   status: source-linked
   notes: Source-level bindings remain in the owner unit.
@@ -36,8 +37,8 @@ content_review:
   reviewer: Automated authoring agent
   proof_uri: null
 authored_at: '2026-11-01'
-updated_at: '2026-11-01'
-source_inspection_date: '2026-10-21'
+updated_at: '2026-11-02'
+source_inspection_date: '2026-11-02'
 content_verified_at: null
 ---
 
@@ -58,8 +59,9 @@ violate a hard obligation, or when capacity is actually available.
 **Competing alternative.** Queueing or autoscaling. Reverse the choice when queue delay is
 acceptable and capacity can expand.
 
-**Failure and recovery.** Shedding the wrong work, unfair tenant impact and synchronized
-retry storms are common; declare quotas and retry hints, and protect essential outcomes.
+**Failure and recovery.** Misconfigured shedding can disable reactive autoscaling.
+**Tycho guidance:** instrument shed work by class, watch silent starvation and declare
+quotas and retry hints.
 
 **Technical owner.**
 [Load
@@ -68,7 +70,8 @@ Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: all eleven served headings read.
-The source is a public pattern/documentation unit, not a benchmark.
+The AWS load-shedding record read.aws-load-shedding.2026-11-02 supports mechanism,
+failure and alternative; both are public documentation units, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
