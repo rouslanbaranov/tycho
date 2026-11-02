@@ -215,20 +215,21 @@ that triggers the mode.
 
 ### Load Shedding
 
-Shedding requires one named bottleneck and an admission point close to it. A load balancer
-rejecting traffic without that link merely relocates the queue.
+As utilization approaches a configured threshold, the server rejects excess requests
+before the queue grows. **Tycho guidance:** place the admission point at one named
+bottleneck; a load balancer rejecting traffic elsewhere only relocates the queue.
 
-The policy owner defines criticality classes, tenant fairness and the share of work that may be
-refused. Those are product choices that deserve review outside an incident. Publish the class
-definitions so callers can predict which requests may be refused.
+The policy owner defines criticality classes and the share of work that may be refused.
+**Tycho guidance:** tenant fairness and product review outside an incident remain
+required. Publish class definitions so callers can predict which requests may be refused.
 
-Return a typed rejection with a retry class and the protected resource, not a generic failure.
-Count shed work by class so silent starvation cannot masquerade as health. The rejection
-contract also states whether a retry is safe and when.
+**Failure.** A shedding policy that rejects at a threshold close to reactive autoscaling
+can disable scale-out. **Tycho guidance:** instrument shed work by class so silent
+starvation cannot masquerade as health, and return a typed rejection with a retry class.
 
-Deferral and added capacity remain the competing responses when rejection would waste useful
-work. Revisit the thresholds when traffic mix, tenant count or bottleneck capacity changes. The
-policy should also state who may approve an emergency exception and for how long.
+**Alternative.** Deferral and added capacity remain competing responses; proactive
+autoscaling is the primary alternative. **Tycho guidance:** revisit thresholds when
+traffic mix, tenant count or bottleneck capacity changes.
 
 ### Throttling
 

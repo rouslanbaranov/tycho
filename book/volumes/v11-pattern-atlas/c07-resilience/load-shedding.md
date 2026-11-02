@@ -27,6 +27,7 @@ route_hints:
 evidence_scope:
   source_ids:
   - src.sre-overload
+  - src.aws-load-shedding
   claim_ids: []
   status: source-linked
   notes: Source-level bindings remain in the owner unit.
@@ -36,8 +37,8 @@ content_review:
   reviewer: Automated authoring agent
   proof_uri: null
 authored_at: '2026-11-01'
-updated_at: '2026-11-01'
-source_inspection_date: '2026-10-21'
+updated_at: '2026-11-02'
+source_inspection_date: '2026-11-02'
 content_verified_at: null
 ---
 

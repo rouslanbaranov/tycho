@@ -11244,38 +11244,52 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Shedding requires one named bottleneck and an admission point close to it.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "rejects excess requests before the queue grows",
+          "reason": "AWS supports rejecting excess requests at overload; one named bottleneck is Tycho guidance.",
+          "binding": {
+            "source_id": "src.aws-load-shedding",
+            "ledger_record": "read.aws-load-shedding.2026-11-02",
+            "section": "Using load shedding to avoid overload",
+            "quote": "When a server approaches overload, it should start rejecting excess requests so that it can focus on the requests it decides to let in.",
+            "revision": "4f5300e644329318586e824f65869cc2408133cc3e1ee4133ff6528ca0a8bb66"
+          }
         },
         "invariant": {
           "state": "supported",
-          "quote": "A load balancer rejecting traffic without that link merely relocates the queue.",
-          "reason": "Bounded owner statement from the current section.",
+          "quote": "As utilization approaches a configured threshold, the server rejects excess requests",
+          "reason": "SRE supports rejecting at utilization thresholds; the one-bottleneck placement is Tycho guidance.",
           "binding": {
             "source_id": "src.sre-overload",
             "ledger_record": "read.sre-overload.2026-10-21",
-            "section": "Conclusions",
-            "quote": "However, these mechanisms depend on the propagation of state over a distributed system. While they perform reasonably well in the general case, real-world application has resulted in a small number of situations where they work imperfectly. As a result, we consider it critical to ensure that individual tasks are protected against overload.",
+            "section": "Utilization Signals",
+            "quote": "As utilization approaches configured thresholds, we start rejecting requests based on their criticality.",
             "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
           }
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "The policy owner defines criticality classes, tenant fairness and the share of work that may be refused.",
-          "reason": "Bounded owner statement from the current section.",
+          "quote": "A shedding policy that rejects at a threshold close to reactive autoscaling can disable scale-out",
+          "reason": "AWS documents that misconfigured shedding can disable reactive autoscaling; instrumentation is Tycho guidance.",
           "binding": {
-            "source_id": "src.sre-overload",
-            "ledger_record": "read.sre-overload.2026-10-21",
-            "section": "Criticality",
-            "quote": "When a customer runs out of global quota, a backend task will only reject requests of a given criticality if it's already rejecting all requests of all lower criticalities (in fact, the per-customer limits that our system supports, described earlier, can be set per criticality).",
-            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+            "source_id": "src.aws-load-shedding",
+            "ledger_record": "read.aws-load-shedding.2026-11-02",
+            "section": "Load shedding effects on automatic scaling and Availability Zone failure",
+            "quote": "If misconfigured, load shedding can disable reactive automatic scaling.",
+            "revision": "4f5300e644329318586e824f65869cc2408133cc3e1ee4133ff6528ca0a8bb66"
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Those are product choices that deserve review outside an incident.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "proactive autoscaling is the primary alternative",
+          "reason": "AWS supports proactive autoscaling; deferral is Tycho guidance.",
+          "binding": {
+            "source_id": "src.aws-load-shedding",
+            "ledger_record": "read.aws-load-shedding.2026-11-02",
+            "section": "Using load shedding to avoid overload",
+            "quote": "At Amazon we avoid overload by designing our systems to scale proactively, before they encounter overload situations.",
+            "revision": "4f5300e644329318586e824f65869cc2408133cc3e1ee4133ff6528ca0a8bb66"
+          }
         }
       },
       "decision_evidence": {
@@ -11290,12 +11304,19 @@
         "source_id": "src.sre-overload",
         "unit_type": "book-chapter",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-load-shedding",
+            "ledger_record": "read.aws-load-shedding.2026-11-02",
+            "revision": "4f5300e644329318586e824f65869cc2408133cc3e1ee4133ff6528ca0a8bb66"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Pending independent review and promotion record; labels remain partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.throttling",
