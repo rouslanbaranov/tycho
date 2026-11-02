@@ -113,7 +113,7 @@ def start(root, host, port, token_file, timeout):
                           "log": str(runtime["log"])}, sort_keys=True))
         return 1
     snapshot = (ready(host, port) or {}).get("snapshot")
-    print(json.dumps({"status": "running", "pid": process.pid,
+    print(json.dumps({"status": "running", "pid": process.pid, "port": port,
                       "url": base_url(host, port) + "/mcp",
                       "log": str(runtime["log"]),
                       "token_file": str(runtime["token"]),
@@ -143,7 +143,7 @@ def stop(root, token_file):
 def status(root, host, port, token_file):
     runtime = paths(root, token_file)
     pid = read_pid(runtime["pid"])
-    payload = {"pid": pid if running(pid) else None,
+    payload = {"pid": pid if running(pid) else None, "port": port,
                "health": health(host, port), "ready": ready(host, port)}
     print(json.dumps(payload, sort_keys=True))
     return 0 if payload["health"] else 1
@@ -158,6 +158,8 @@ def main(argv=None):
     parser.add_argument("--token-file", default=None)
     parser.add_argument("--timeout", type=float, default=15.0)
     args = parser.parse_args(argv)
+    if not 1 <= args.port <= 65535:
+        parser.error("--port must be in 1..65535")
     root = args.root.resolve()
     token_file = Path(args.token_file) if args.token_file else None
     if args.command == "start":

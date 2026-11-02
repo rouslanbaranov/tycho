@@ -183,7 +183,7 @@ running HTTP server.
 # optional: check the MCP files in the target project
 .venv/bin/python integration/verify.py --project "$PROJECT_ROOT"
 # optional: check a running HTTP server
-.venv/bin/python integration/verify.py --http-base "http://<TYCHO_HOST>:8765"
+.venv/bin/python integration/verify.py --http-base "http://<TYCHO_HOST>:<TYCHO_PORT>"
 ```
 
 After the harness file is applied, re-run the project check. Report the
@@ -205,6 +205,21 @@ Rules:
 - Keep the server name `tycho`; harness tool references depend on it.
 - Prefer stdio for a single local user; HTTP needs a server and token.
 - Use absolute paths; the portable format has no working-directory field.
+
+If the owner wants HTTP, ask for the port before writing any file:
+
+> Which port should the Tycho HTTP MCP server use? Default 8765. I will use the
+> same value in both configuration files and in the start command.
+
+Record the answer and export it for the remaining steps:
+
+```sh
+export TYCHO_PORT=8765
+```
+
+Keep the default unless it is taken. `integration/mcp_server_ctl.py start`
+reports `port-in-use` when the port is busy; ask for another one and retry.
+Never change the port in one file only.
 
 Then ask:
 
@@ -244,17 +259,17 @@ Requires a running server, see Step 8, and the token in the environment:
   "mcpServers": {
     "tycho": {
       "type": "http",
-      "url": "http://<TYCHO_HOST>:8765/mcp",
+      "url": "http://<TYCHO_HOST>:<TYCHO_PORT>/mcp",
       "headers": {"Authorization": "Bearer ${TYCHO_MCP_TOKEN}"}
     }
   }
 }
 ```
 
-Replace `<TYCHO_HOST>` with the loopback address used by the
-server, normally `127.0.0.1`. The HTTP transport implements the
-stateless 2026-07-28 revision; a client limited to the older handshake must use
-stdio.
+Replace `<TYCHO_HOST>` with the loopback address used by the server,
+normally `127.0.0.1`, and `<TYCHO_PORT>` with the chosen port. The HTTP
+transport implements the stateless 2026-07-28 revision; a client limited to the
+older handshake must use stdio.
 
 For the VS Code chat UI, use the same server under the `servers` key
 with `"type": "stdio"` or `"type": "http"`.
@@ -266,21 +281,25 @@ the file is not implemented, stop here and report.
 
 ## Step 8. Start and stop the HTTP server
 
-The stdio server is started and stopped by the harness. The HTTP server is
-user-managed:
+The stdio server is started and stopped by the harness; skip this step when
+the owner chose stdio only. The HTTP server is user-managed. Re-export
+`TYCHO_PORT` if this is a new shell:
 
 ```sh
+export TYCHO_PORT=8765   # the port chosen in Step 6
 cd "$INSTALL_DIR"
-.venv/bin/python integration/mcp_server_ctl.py start
-.venv/bin/python integration/mcp_server_ctl.py status
+.venv/bin/python integration/mcp_server_ctl.py start --port "$TYCHO_PORT"
+.venv/bin/python integration/mcp_server_ctl.py status --port "$TYCHO_PORT"
 .venv/bin/python integration/mcp_server_ctl.py stop
 ```
 
-`start` creates `.tycho-mcp-token` in the checkout with
-mode 600 if no token exists, starts the server in the background, waits for
-`/health` and prints the URL, pid, log path and snapshot. Options:
-`--host`, `--port`, `--token-file`,
-`--timeout`.
+`start` creates `.tycho-mcp-token` in the checkout with mode 600 if no
+token exists, starts the server in the background, waits for `/health` and
+prints the URL, pid, port, log path and snapshot. Options: `--host`,
+`--port`, `--token-file`, `--timeout`.
+
+If `start` reports `port-in-use`, ask the owner for another port, update both
+configuration files and retry. Do not silently pick a different port.
 
 To expose the token to the harness:
 
@@ -295,6 +314,7 @@ export TYCHO_MCP_TOKEN="$(cat "$INSTALL_DIR/.tycho-mcp-token")"
 - [ ] The build reported `published` and the check `verified`.
 - [ ] `integration/verify.py` exited zero and every line is `PASS`.
 - [ ] `.mcp.json` and `.vscode/mcp.json` contain `tycho`.
+- [ ] The chosen port is recorded and matches both configuration files.
 - [ ] The `.gitignore` decision is recorded.
 - [ ] The harness file was followed, or the pending status was reported.
 - [ ] The owner knows how to start, inspect and stop the server.
@@ -305,7 +325,7 @@ Tell the owner, in this order:
 
 1. Install directory and the Tycho commit and date.
 2. Python interpreter chosen and why.
-3. Index counts and snapshot ID.
+3. Index counts, snapshot ID and the chosen HTTP port.
 4. Verifier output.
 5. Files created or merged, and the `.gitignore` decision.
 6. Harness status: implemented or pending.

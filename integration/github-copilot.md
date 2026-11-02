@@ -40,8 +40,9 @@ instead of replacing other servers. The VS Code format for the chat UI:
 }
 ```
 
-For HTTP, keep the server running with `integration/mcp_server_ctl.py`
-and export the token before the harness starts.
+For HTTP, keep the server running with `integration/mcp_server_ctl.py`,
+use the port chosen in Step 6 in every URL, and export the token before the
+harness starts.
 
 Environment variables are a common failure: desktop applications on macOS and
 Windows do not inherit variables exported in a terminal. If the HTTP entry
