@@ -144,6 +144,7 @@ Public references:
 ## Start here
 
 - [Read the book](book/README.md)
+- [Project documentation](doc/README.md)
 - [Governance policies](governance/README.md)
 - [Current state and next action](authoring/STATE.md)
 - [Roadmap](authoring/ROADMAP.md)
