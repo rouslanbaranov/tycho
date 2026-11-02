@@ -1,8 +1,9 @@
 # Current state — Tycho
 
 > **Current promotion snapshot — 2026-11-02 (authoritative):** **96 of 145** entries
-> are technical/decision `sufficient`; **94 of 95** are owner-accepted (2026-11-01).
-> Event Sourcing remains acceptance-pending. **49** entries remain. Local full suite:
+> are technical/decision `sufficient`; **94 of 96** are owner-accepted (2026-11-01).
+> Event Sourcing and Durable Subscriber remain acceptance-pending. **49** entries remain.
+> Local full suite:
 > **709/709 OK** at `38af748f`; this is not a CI result. Timing covers 76 promotion cycles: mean **53.7 min**
 > (range 6-388, including reviewer/integration wait); forecast **2.6 / 3.6 / 5.6**
 > days (optimistic/base/pessimistic). The dated audit notes below describe the
