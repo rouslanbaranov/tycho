@@ -566,19 +566,19 @@
       "final_label": "answerable",
       "accepted": [
         {
-          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md",
           "section_id": "3-cqrs-and-asynchronous-projection-freshness",
           "quote": "The CQRS design separates update and read representations so each can optimize for different needs. The service may use separate objects, tables or storage engines; physical isolation is a choice, not an inherent definition. Fowler's CQRS description and Chris Richardson's public CQRS pattern both show a separate query view that can follow events from the owning service. [E02, E04]",
           "rationale": "Separates update and read representations; physical split is optional."
         },
         {
-          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md",
           "section_id": "6-sufficient-evidence-and-pattern-contraindications",
           "quote": "Choose event sourcing deliberately where history is itself business authority, temporal queries or reconstruction are required, deterministic transitions can be modeled, and the organization can govern event versions/replay. Choose CQRS where read and write workloads or models diverge enough to justify separate projections and their lifecycle. Choose both only when their combined benefits overcome additional failure points and synchronization cost.",
           "rationale": "Justified by divergent read/write models or workloads."
         },
         {
-          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md",
           "section_id": "1-four-patterns-frequently-mixed-together",
           "quote": "A team may implement only one. A simple service with complex command authorization but convenient read projections can adopt CQRS **without** event sourcing. An event-sourced aggregate can serve queries by reconstructing state without deploying an entirely separate read service. Architecture boundaries follow requirements.",
           "rationale": "CQRS does not require event sourcing or a separate read service."
@@ -596,13 +596,13 @@
       "final_label": "answerable",
       "accepted": [
         {
-          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md",
           "section_id": "3-cqrs-and-asynchronous-projection-freshness",
           "quote": "**CQRS failure and alternative.** Projection lag, duplicate apply, cursor gaps and schema drift are common; make the apply idempotent, commit view and cursor atomically, and rebuild with side effects disabled. A single model/CRUD service, a synchronous authority read or an event-sourced reconstruction may be preferable when read/write separation complexity exceeds the measured benefit.",
           "rationale": "Projection lag, duplicate apply, cursor gaps and rebuilds."
         },
         {
-          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md",
           "section_id": "3-cqrs-and-asynchronous-projection-freshness",
           "quote": "Some user journeys tolerate short projection lag; others require \"read your writes\" or an immediate authoritative confirmation.",
           "rationale": "Stale reads are a declared contract with fallback options."
@@ -620,13 +620,13 @@
       "final_label": "answerable",
       "accepted": [
         {
-          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md",
           "section_id": "2-event-sourcing-what-becomes-authoritative",
           "quote": "In event sourcing, a durable append-only record of domain facts becomes an authoritative input to reconstruct the present state. The chapter source ledger records the origin material as context; this section's technical boundary is the declared pattern source.",
           "rationale": "Append-only facts are the authoritative input for reconstruction."
         },
         {
-          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md",
           "section_id": "2-event-sourcing-what-becomes-authoritative",
           "quote": "A snapshot can accelerate replay by recording a state at a known stream offset/version, followed by applying later events. However, a snapshot is a **derivative cache** unless declared and validated as the authority. Rebuilds must check offset continuity and event schema compatibility. \"Append-only\" alone is not a security-compliant audit log: deletion policies, integrity protection, identity, corruption, retention and privileged access still matter.",
           "rationale": "Snapshot is a derivative cache at a known offset."
@@ -644,13 +644,13 @@
       "final_label": "answerable",
       "accepted": [
         {
-          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md",
           "section_id": "4-replay-duplication-ordering-and-external-side-effects",
           "quote": "If a projector crashes after applying an event but before recording its cursor, it may consume the **same event again**. The read-side update must be idempotent or use an atomic record of event/stream version with the state change.",
           "rationale": "Idempotent apply or atomic event/version record with the state change."
         },
         {
-          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md",
           "section_id": "3-cqrs-and-asynchronous-projection-freshness",
           "quote": "**Failure and recovery.** Projector crash, cursor gaps, schema drift and partial rebuilds are common. Resume from a recorded cursor, rebuild with external side effects disabled, and represent an unknown or lagging view explicitly rather than serving it as current.",
           "rationale": "Resume from a recorded cursor and rebuild with side effects disabled."
@@ -1314,13 +1314,13 @@
         {
           "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md",
           "section_id": "zero-trust-architecture",
-          "quote": "**Zero-trust mechanism.** Every request is authenticated and authorized at the resource boundary using principal identity, workload/device posture, policy and least privilege. Network location is not trust; a valid token is not object permission. Continuous verification applies to service-to-service and user-to-service paths alike.",
+          "quote": "**Tycho synthesis:** network location is not trust and a valid token is not object permission. Continuous verification applies to service-to-service and user-to-service paths alike.",
           "rationale": "Per-request authorization at the resource boundary; network is not trust."
         },
         {
           "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md",
           "section_id": "zero-trust-architecture",
-          "quote": "**Failure and recovery.** Policy gaps, legacy bypass paths and identity-provider outages are common. Deny by default, test indirect and confused-deputy paths, keep a bounded break-glass path with audit, and fail closed when authority cannot be established.",
+          "quote": "Policy gaps, legacy bypass paths and identity-provider outages are possible.",
           "rationale": "Deny by default and fail closed when authority is unproven."
         }
       ],
