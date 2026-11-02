@@ -30,7 +30,7 @@ and report that harness integration is pending.
 | `.mcp.json` | MCP registration for harness sessions and the CLI |
 | `.vscode/mcp.json` | MCP registration for the VS Code chat UI |
 | `.github/agents/<name>.agent.md` | Copilot agent, see `github-copilot.md` |
-| `.gitignore` entry, optional | Keeps credentials out of git |
+| `.gitignore` entries | Ignore the checkout, optionally the MCP configuration |
 
 ## Ground rules
 
@@ -72,6 +72,15 @@ If the directory exists and is not empty, stop and ask:
 If the owner chooses (a), remove the directory after a second confirmation and
 continue. If they choose (b), use the name they provide and keep it in
 `INSTALL_DIR` for the remaining steps. Never delete anything else.
+
+Keep the nested checkout out of the project history. Use the directory name,
+not the absolute path:
+
+```sh
+printf '\n%s/\n' "<install-dir-name>" >> "$PROJECT_ROOT/.gitignore"
+```
+
+For the default this appends `.tycho/`. Report the change.
 
 ## Step 2. Fetch the latest main
 

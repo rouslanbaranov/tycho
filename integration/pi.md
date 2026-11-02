@@ -8,7 +8,7 @@ configuration.
 
 What to do:
 
-1. Complete `../instructions.md` through Step 6.
+1. Complete `instructions.md` through Step 6.
 2. Register the same stdio server in Pi's MCP configuration only when a
    verified procedure exists in this repository.
 3. Report to the owner that Pi integration is pending and that the stdio
