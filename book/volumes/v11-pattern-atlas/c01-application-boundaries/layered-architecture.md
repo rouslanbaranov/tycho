@@ -34,7 +34,7 @@ evidence_scope:
   notes: Source-level bindings remain in the owner unit.
 content_review:
   status: self-checked
-  reviewed_at: '2026-11-01'
+  reviewed_at: '2026-11-02'
   reviewer: Automated authoring agent
   proof_uri: null
 authored_at: '2026-11-01'
