@@ -8701,8 +8701,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Each row belongs to exactly one partition, and the main query must name a partition key so pruning is possible.",
-          "reason": "Requires one partition per row and a named partition key for pruning.",
+          "quote": "Each row belongs to exactly one partition",
+          "reason": "PostgreSQL row routing supports the partition-membership invariant; query must name the key for pruning is Tycho guidance.",
           "binding": {
             "source_id": "src.postgresql",
             "ledger_record": "read.batch3-pg-partition.2026-10-21",
@@ -8725,8 +8725,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Keep one table and add an index",
-          "reason": "PostgreSQL notes partitioning is beneficial mainly for very large tables; keeping one table with an index is Tycho guidance.",
+          "quote": "partition only when the data volume",
+          "reason": "PostgreSQL says partitioning is beneficial only when the table is very large; keeping one table with an index is Tycho guidance.",
           "binding": {
             "source_id": "src.postgresql",
             "ledger_record": "read.batch3-pg-partition.2026-10-21",
