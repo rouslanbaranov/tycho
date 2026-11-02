@@ -1,8 +1,9 @@
 # Research coverage map
 
-> **Current enrichment candidate, 2026-10-20:** [Gap-to-owner contracts](../authoring/ENRICHMENT_SCOPE_2026-10-20.md) cover new network/object-storage chapters and twelve deepened pages. The 71-chapter/398-document candidate is self-reviewed writing with selected-source evidence; Python/Mermaid integration and substantive acceptance remain pending. Historical manuscript states below remain dated records.
-
-> **Historical manuscript transition — 2026-10-20, before edition assembly:** The owner confirmed independent substantive/content acceptance of all 69 primary chapter manuscripts at `986b1ddbe985079b7c647182fcf1c2fc8911d96c`. PR #218 merged into main at `f9834ef903fc5808f3a1edede208d82aac08f4e6`; #213 and E14 #15 are completed. #214 is open and ready for ten-volume/69-chapter edition assembly and named publication. The exact accepted-head 13/13 validation groups and 215/215 tests PASS are owner-reported in [PR #218](https://github.com/rouslanbaranov/tycho/pull/218#issuecomment-6294804915), not a new run on a later status commit. Earlier pending/0-of-69/review-open rows and pre-merge instructions below are historical and superseded for the manuscript acceptance gate. Their original observations and evidence limits are retained; no signed per-chapter reviewer records are manufactured. No finished physical edition or deployed service is claimed; visual rendering/live MCP remain owner-cancelled. See [current state](../authoring/STATE.md) and [reconciliation](../authoring/PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+> **Current scope:** This map records planned research areas and their discovered
+> public entry points. Current counts, review status and remaining gates live in
+> [current state](../authoring/STATE.md). Historical acceptance records remain in
+> the authoring archive.
 
 
 ## Purpose and interpretation

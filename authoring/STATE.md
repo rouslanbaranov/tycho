@@ -24,12 +24,10 @@
 > Historical review records remain historical evidence. See
 > [the AI review policy](../governance/AI-INDEPENDENT-REVIEW.md).
 
-> **Current structural candidate — 2026.10.2-rc.1 (cut 2026-10-21):** 11
-> volumes, 82 chapters and 423 canonical pages in the current tree. The book
-> and edition landings still record the 419-page cut; the #228 deep-source
-> splits added four pages after the cut. V11 is a self-checked Phase 6
-> pattern-atlas candidate (#288); a historical human review is recorded and owner
-> acceptance remains open. The #214/rc.3 status below is historical.
+> **Earlier structural candidate — 2026.10.2-rc.1 (historical):** the 2026-10-21
+> cut contained 11 volumes, 82 chapters and 423 canonical pages; the V11
+> pattern-atlas candidate (#288) remains self-checked with owner acceptance
+> open. The current tree is described by the V12 section below.
 
 **V12 isolated volume — 2026-10-29 (#587):** an additive twelfth volume is implemented
 with 31 pages, three model contracts, nine scenarios, nine seeded runs and two decision

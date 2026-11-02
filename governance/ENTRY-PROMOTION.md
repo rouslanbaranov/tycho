@@ -254,12 +254,12 @@ interpreter for final evidence.
 
 ## 7. Chat report templates
 
-Reports use the owner's language. Keep the section order exactly.
+Reports are written in English. Keep the section order exactly.
 
 ### 7.1 Lane started or lane complete
 
 ```text
-## B<n> <Entry>: lane зафиксирован, integrator работает
+## B<n> <Entry>: lane recorded, integrator working
 
 ### Lane
 
@@ -269,9 +269,9 @@ Reports use the owner's language. Keep the section order exactly.
 
 <what the integrator is doing now>
 
-### Текущее
+### Current
 
-| Показатель | Значение |
+| Metric | Value |
 |---|---:|
 | sufficient | **<n> / 145** |
 | owner-accepted | **<a> / <n>** |
@@ -281,13 +281,13 @@ Reports use the owner's language. Keep the section order exactly.
 | forecast | **<o> / <b> / <p>** |
 | main HEAD | `<sha>` |
 
-При review pass → **<n+1>**.
+On review pass → **<n+1>**.
 ```
 
 ### 7.2 Integrator complete, review pending
 
 ```text
-## B<n> <Entry>: интегрирован, review запущен
+## B<n> <Entry>: integrated, review started
 
 ### Integrator
 
@@ -297,19 +297,19 @@ Reports use the owner's language. Keep the section order exactly.
 
 <packet scope and what the reviewer checks>
 
-Verdict пока не получен.
+Verdict not received yet.
 
-### Текущее
+### Current
 
 <table as above>
 
-При review pass → **<n+1>**.
+On review pass → **<n+1>**.
 ```
 
 ### 7.3 Review fail and remediation
 
 ```text
-## B<n> <Entry>: review fail, findings исправлены
+## B<n> <Entry>: review fail, findings remediated
 
 ### Review
 
@@ -319,15 +319,15 @@ Verdict пока не получен.
 
 <what changed>
 
-### Проверки
+### Checks
 
 <preflight, validators, hashes>
 
-### Текущее
+### Current
 
 <table as above>
 
-Delta review отправлен; promotion не выполнен.
+Delta review sent; promotion not performed.
 ```
 
 ### 7.4 Delta review
@@ -347,21 +347,21 @@ Delta review отправлен; promotion не выполнен.
 
 <pass/fail>; <minor findings>
 
-### Текущее
+### Current
 
 <table as above>
 
-При delta pass → **<n+1>**.
+On delta pass → **<n+1>**.
 ```
 
 ### 7.5 Promotion complete
 
 ```text
-## <n> — <Entry> промоутирован
+## <n> — <Entry> promoted
 
 ### Compact receipt
 
-| Поле | Значение |
+| Field | Value |
 |---|---|
 | pattern_id | `<id>` |
 | reviewed HEAD | `<sha>` |
@@ -375,7 +375,7 @@ Delta review отправлен; promotion не выполнен.
 
 ### Coverage
 
-| Показатель | Значение |
+| Metric | Value |
 |---|---:|
 | sufficient | **<n> / 145** |
 | owner-accepted | **<a> / <n>** |
@@ -390,9 +390,9 @@ Delta review отправлен; promotion не выполнен.
 
 ### Charts
 
-![Promotion timing](<absolute-path-to-timing.png>)
-![Latest promotions](<absolute-path-to-latest.png>)
-![Forecast](<absolute-path-to-forecast.png>)
+- timing chart: <generated chart path>;
+- latest-promotions chart: <generated chart path>;
+- forecast chart: <generated chart path>.
 
 ### Verification
 
