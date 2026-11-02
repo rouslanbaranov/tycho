@@ -80,7 +80,7 @@ EVIDENCE_STATUS = {
     "unknown": "Evidence status was not declared; treat with lower confidence.",
 }
 ARTIFACT_TYPE = {
-    "document": "Prose document section; V12 model/scenario artifacts use other types.",
+    "document": "Prose document section; modeling-and-simulation model/scenario artifacts use other types.",
 }
 VOLUME = {
     "v01": "Foundations and quality attributes.",
@@ -93,8 +93,6 @@ VOLUME = {
     "v08": "Delivery, deployment and recovery.",
     "v09": "Observability, security and operations.",
     "v10": "Evolution and modernization.",
-    "v11": "Compatibility code for atlas.",
-    "v12": "Compatibility code for modeling-and-simulation.",
 }
 
 
@@ -117,7 +115,7 @@ LAYERS = [
     },
     {
         "name": "atlas",
-        "aliases": ["v11"],
+        "aliases": [],
         "purpose": "Pattern discovery: families, draft registry entries, cards and owner pages.",
         "contains": ["atlas pages and cards",
                      "draft pattern registry entries",
@@ -141,7 +139,7 @@ LAYERS = [
     },
     {
         "name": "modeling-and-simulation",
-        "aliases": ["v12"],
+        "aliases": [],
         "purpose": "Structured modeling, simulation, scenario, run, decision and validation evidence.",
         "contains": ["models and assumptions", "scenarios and inputs", "runs and results",
                      "decision records", "validation status", "provenance",
@@ -239,7 +237,7 @@ SEARCH_RESULT_FIELDS = [
     ("kind", "string", "Document kind; see enum.", "Filterable."),
     ("evidence_status", "string", "Evidence status; see enum.", "Unknown lowers confidence."),
     ("artifact_type", "string", "Artifact type; see enum.", "document is the only current value."),
-    ("volume", "string|null", "Volume code or null.", "v01..v12; null for non-volume docs."),
+    ("volume", "string|null", "Volume code or null.", "Use atlas or modeling-and-simulation for those layers; null for non-volume docs."),
     ("pattern_ids", "array[string]", "Pattern IDs attached to the section.", "May be empty."),
     ("char_start", "integer", "Section start in the document body.", "Codepoint offset."),
     ("char_end", "integer", "Section end in the document body.", "Codepoint offset."),

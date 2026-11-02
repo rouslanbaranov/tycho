@@ -80,7 +80,7 @@ class DescribeToolsMixin:
             "metadata": mcp_contract.catalog(),
             "operations": {
                 "search": ("lexical BM25 by default; retrieval_mode=best "
-                           "selects adaptive hybrid plus V12-gated reranker"),
+                           "selects adaptive hybrid plus modeling-and-simulation-gated reranker"),
                 "batch": "bounded multi-read and evidence resolution",
                 "outline": "canonical planning outline without full text",
                 "compare": "extractive cited option matrix without a winner",

@@ -103,7 +103,7 @@ class SearchToolsMixin:
                     max_chars=max_chars,
                 )
         except section_search.SearchError as exc:
-            if section_rerank and "disabled for V12" in str(exc):
+            if section_rerank and "disabled for modeling-and-simulation" in str(exc):
                 payload = section_search.search(
                     self.root, query, limit=limit, kind=kind, topic=topic,
                     evidence_status=evidence_status,

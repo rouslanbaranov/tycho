@@ -87,6 +87,33 @@ class McpToolContractTests(unittest.TestCase):
             for alternative in alternatives:
                 self.assertIn(alternative, description)
 
+    def test_external_copy_uses_canonical_layer_aliases(self):
+        def descriptions(value):
+            if isinstance(value, dict):
+                for key, item in value.items():
+                    if key == "description" and isinstance(item, str):
+                        yield item
+                    yield from descriptions(item)
+            elif isinstance(value, list):
+                for item in value:
+                    yield from descriptions(item)
+
+        for name in mcp_server.TOOL_ORDER:
+            texts = [mcp_server.TOOL_SPECS[name]["description"]]
+            for loader in (mcp_contract.input_schema,
+                           mcp_contract.output_schema):
+                texts.extend(descriptions(loader(name)))
+            text = " ".join(texts)
+            self.assertNotIn("V12", text)
+            self.assertNotIn("v12", text)
+            self.assertNotIn("v11", text)
+
+        layers = {layer["name"]: layer for layer in mcp_contract.LAYERS}
+        self.assertEqual(layers["atlas"]["aliases"], [])
+        self.assertEqual(layers["modeling-and-simulation"]["aliases"], [])
+        self.assertNotIn("v11", mcp_contract.VOLUME)
+        self.assertNotIn("v12", mcp_contract.VOLUME)
+
     def test_server_and_http_versions_agree(self):
         self.assertEqual(
             mcp_server.SERVER_VERSION, mcp_http_server.SERVICE_VERSION)

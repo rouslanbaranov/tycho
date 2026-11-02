@@ -32,14 +32,14 @@ def main(argv=None):
              "section_rerank_margin": 0.05}}},
         {"jsonrpc": "2.0", "id": 5, "method": "tools/call",
          "params": {"name": "tycho_search", "arguments": {
-             "query": "V12 replay", "volume": "v12"}}},
+             "query": "modeling-and-simulation replay", "volume": "modeling-and-simulation"}}},
         {"jsonrpc": "2.0", "id": 6, "method": "tools/call",
          "params": {"name": "tycho_search", "arguments": {
              "query": "nested text", "section_rerank": True,
              "section_rerank_margin": 1.0}}},
         {"jsonrpc": "2.0", "id": 7, "method": "tools/call",
          "params": {"name": "tycho_search", "arguments": {
-             "query": "service discovery", "volume": "v11"}}},
+             "query": "service discovery", "volume": "atlas"}}},
         {"jsonrpc": "2.0", "id": 8, "method": "tools/call",
          "params": {"name": "tycho_search", "arguments": {
              "query": "stock-flow offered work",
