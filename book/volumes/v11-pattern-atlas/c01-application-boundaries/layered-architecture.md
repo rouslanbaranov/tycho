@@ -28,6 +28,7 @@ route_hints:
 evidence_scope:
   source_ids:
   - src.fowler-layering
+  - src.fowler-anemic-domain-model
   claim_ids: []
   status: source-linked
   notes: Source-level bindings remain in the owner unit.
