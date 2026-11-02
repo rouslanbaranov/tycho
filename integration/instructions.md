@@ -79,7 +79,7 @@ continue. If they choose (b), use the name they provide and keep it in
 git clone --depth 1 --filter=blob:none --sparse \
   https://github.com/rouslanbaranov/tycho.git "$INSTALL_DIR"
 git -C "$INSTALL_DIR" sparse-checkout set \
-  book edition generated mcp schemas scripts integration
+  book edition generated mcp schemas scripts integration .github
 ```
 
 Verify:
@@ -90,7 +90,7 @@ git -C "$INSTALL_DIR" log -1 --format='%H %cd'
 du -sh "$INSTALL_DIR"
 ```
 
-Expected: seven paths and about 23 MB. Record the commit and date in your
+Expected: eight paths and about 23 MB. Record the commit and date in your
 notes; do not pin them in configuration.
 
 To refresh an existing install:
@@ -281,7 +281,7 @@ export TYCHO_MCP_TOKEN="$(cat "$INSTALL_DIR/.tycho-mcp-token")"
 
 ## Step 9. Acceptance checklist
 
-- [ ] The sparse checkout lists the seven paths.
+- [ ] The sparse checkout lists the eight paths.
 - [ ] The chosen interpreter is recorded and `dependencies ok` printed.
 - [ ] The build reported `published` and the check `verified`.
 - [ ] `integration/verify.py` exited zero and every line is `PASS`.

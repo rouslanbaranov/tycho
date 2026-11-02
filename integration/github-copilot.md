@@ -22,7 +22,23 @@ which surface applies, provide both entries; they do not conflict.
 ## 1. Add the server entry
 
 Use the stdio entry from Step 6 as the default. Merge it into an existing file
-instead of replacing other servers.
+instead of replacing other servers. The VS Code format for the chat UI:
+
+```json
+{
+  "servers": {
+    "tycho": {
+      "type": "stdio",
+      "command": "/ABS/PROJECT/.tycho/.venv/bin/python",
+      "args": [
+        "/ABS/PROJECT/.tycho/mcp/mcp_server.py",
+        "--root",
+        "/ABS/PROJECT/.tycho"
+      ]
+    }
+  }
+}
+```
 
 For HTTP, keep the server running with `integration/mcp_server_ctl.py`
 and export the token before the harness starts.
@@ -51,7 +67,7 @@ Then copy the template and, if the name changed, update both the file name and
 the `name:` field:
 
 ```sh
-cp "$INSTALL_DIR/integration/tycho.agent.md" .github/agents/tycho.agent.md
+cp "$INSTALL_DIR/.github/agents/tycho.agent.md" .github/agents/tycho.agent.md
 ```
 
 The template restricts tools to `tycho/*`, `read` and
