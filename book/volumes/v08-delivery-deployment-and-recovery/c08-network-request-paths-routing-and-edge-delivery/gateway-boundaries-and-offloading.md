@@ -52,7 +52,7 @@
   },
   "authored_at": "2026-10-22",
   "updated_at": "2026-10-30",
-  "source_inspection_date": "2026-10-20",
+  "source_inspection_date": "2026-10-21",
   "content_verified_at": null
 }
 ---
