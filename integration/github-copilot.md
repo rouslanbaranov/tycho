@@ -21,8 +21,8 @@ which surface applies, provide both entries; they do not conflict.
 
 ## 1. Add the server entry
 
-Use the stdio entry from Step 6 as the default. Merge it into an existing file
-instead of replacing other servers. The VS Code format for the chat UI:
+Step 6 registers both transports. Merge both entries into an existing file
+instead of replacing other servers. The VS Code chat UI format:
 
 ```json
 {
@@ -35,14 +35,22 @@ instead of replacing other servers. The VS Code format for the chat UI:
         "--root",
         "/ABS/PROJECT/.tycho"
       ]
+    },
+    "tycho-http": {
+      "type": "http",
+      "url": "http://<TYCHO_HOST>:<TYCHO_PORT>/mcp",
+      "headers": {"Authorization": "Bearer ${TYCHO_MCP_TOKEN}"}
     }
   }
 }
 ```
 
-For HTTP, keep the server running with `integration/mcp_server_ctl.py`,
-use the port chosen in Step 6 in every URL, and export the token before the
-harness starts.
+The Copilot agent template uses the `tycho` stdio server. To switch the agent
+to HTTP, replace `tycho/*` with `tycho-http/*` in its `tools` list.
+
+Keep the HTTP server running with `integration/mcp_server_ctl.py`, use the
+port chosen in Step 5 in every URL, and export the token before the harness
+starts.
 
 Environment variables are a common failure: desktop applications on macOS and
 Windows do not inherit variables exported in a terminal. If the HTTP entry

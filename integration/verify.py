@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Verify a local Tycho integration without a harness."""
+"""Verify a local Tycho integration over stdio and HTTP."""
 import argparse
 import json
+import os
 import subprocess
 import sys
 import urllib.error
@@ -10,6 +11,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_TOOLS = 11
+META_VERSION = "io.modelcontextprotocol/protocolVersion"
+META_CAPABILITIES = "io.modelcontextprotocol/clientCapabilities"
+MODERN_VERSION = "2026-07-28"
 
 
 def emit(ok, name, detail=""):
@@ -97,24 +101,79 @@ def check_stdio(root):
     return emit(ok, "stdio", "%d tools" % len(names))
 
 
-def http_get(base, path, token=None, timeout=5):
-    request = urllib.request.Request(base.rstrip("/") + path)
+def base_url(host, port):
+    return "http://" + host + ":" + str(port)
+
+
+def http_json(url, payload=None, token=None, timeout=5):
+    data = None
+    headers = {}
+    if payload is not None:
+        data = json.dumps(payload).encode("utf-8")
+        headers["Content-Type"] = "application/json"
     if token:
-        request.add_header("Authorization", "Bearer " + token)
+        headers["Authorization"] = "Bearer " + token
+    request = urllib.request.Request(url, data=data, headers=headers)
     with urllib.request.urlopen(request, timeout=timeout) as response:
         return json.loads(response.read().decode("utf-8"))
 
 
-def check_http(base):
+def serve(root, host, port):
+    script = root / "integration" / "mcp_server_ctl.py"
+    proc = run([sys.executable, script, "start", "--root", root,
+                "--host", host, "--port", str(port), "--timeout", "20"], root)
+    output = (proc.stdout + proc.stderr).strip()
+    if proc.returncode != 0:
+        return None, output[-300:]
     try:
-        health = http_get(base, "/health")
-        ready = http_get(base, "/ready")
+        return json.loads(proc.stdout.strip().splitlines()[-1]), ""
+    except (ValueError, IndexError):
+        return None, "unreadable start output"
+
+
+def stop_server(root):
+    script = root / "integration" / "mcp_server_ctl.py"
+    return run([sys.executable, script, "stop", "--root", root], root)
+
+
+def load_token(root):
+    value = os.environ.get("TYCHO_MCP_TOKEN")
+    if value:
+        return value
+    path = root / ".tycho-mcp-token"
+    if path.is_file():
+        return path.read_text(encoding="utf-8").strip()
+    return None
+
+
+def check_http(root, host, port):
+    base = base_url(host, port)
+    meta = {META_VERSION: MODERN_VERSION, META_CAPABILITIES: {}}
+    info, error = serve(root, host, port)
+    if error:
+        return emit(False, "http", "start failed: " + error)
+    owned = info.get("status") == "running"
+    try:
+        token = load_token(root)
+        if not token:
+            return emit(False, "http", "no token in environment or file")
+        health = http_json(base + "/health")
+        ready = http_json(base + "/ready")
+        listing = http_json(
+            base + "/mcp",
+            {"jsonrpc": "2.0", "id": 1, "method": "tools/list",
+             "params": {"_meta": meta}},
+            token=token)
+        count = len(listing.get("result", {}).get("tools", []))
     except (urllib.error.URLError, OSError, ValueError) as exc:
         return emit(False, "http", str(exc)[:200])
-    ok = health.get("status") == "ok" and ready.get("status") == "ok"
-    detail = "snapshot=%s documents=%s" % (
-        ready.get("snapshot"), ready.get("documents"))
-    return emit(ok, "http", detail)
+    finally:
+        if owned:
+            stop_server(root)
+    ok = (health.get("status") == "ok" and ready.get("status") == "ok"
+          and count == EXPECTED_TOOLS)
+    return emit(ok, "http", "%s tools, snapshot=%s" % (
+        count, ready.get("snapshot")))
 
 
 def check_project(project):
@@ -126,8 +185,11 @@ def check_project(project):
         except ValueError as exc:
             results.append(emit(False, "project", ".mcp.json: " + str(exc)))
         else:
-            has = "tycho" in (data.get("mcpServers") or {})
-            results.append(emit(has, "project", ".mcp.json tycho entry"))
+            servers = data.get("mcpServers") or {}
+            results.append(emit("tycho" in servers, "project",
+                                ".mcp.json tycho entry"))
+            results.append(emit("tycho-http" in servers, "project",
+                                ".mcp.json tycho-http entry"))
     else:
         results.append(emit(False, "project", ".mcp.json missing"))
     vscode = project / ".vscode" / "mcp.json"
@@ -137,8 +199,11 @@ def check_project(project):
         except ValueError as exc:
             results.append(emit(False, "project", ".vscode/mcp.json: " + str(exc)))
         else:
-            has = "tycho" in (data.get("servers") or {})
-            results.append(emit(has, "project", ".vscode/mcp.json tycho entry"))
+            servers = data.get("servers") or {}
+            results.append(emit("tycho" in servers, "project",
+                                ".vscode/mcp.json tycho entry"))
+            results.append(emit("tycho-http" in servers, "project",
+                                ".vscode/mcp.json tycho-http entry"))
     else:
         results.append(emit(False, "project", ".vscode/mcp.json missing"))
     agents = sorted((project / ".github" / "agents").glob("*.agent.md"))
@@ -150,18 +215,20 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT,
                         help="Tycho checkout, default: the parent directory")
-    parser.add_argument("--http-base", default=None,
-                        help="Base URL of a running HTTP server")
-    parser.add_argument("--token-env", default="TYCHO_MCP_TOKEN",
-                        help="Environment variable with the bearer token")
+    parser.add_argument("--http-host", default="127.0.0.1")
+    parser.add_argument("--http-port", type=int, default=8765)
+    parser.add_argument("--no-http", action="store_true",
+                        help="skip the HTTP check")
     parser.add_argument("--project", type=Path, default=None,
                         help="Target project to check for MCP configuration")
     args = parser.parse_args(argv)
+    if not 1 <= args.http_port <= 65535:
+        parser.error("--http-port must be in 1..65535")
     root = args.root.resolve()
     results = [check_python(), check_dependencies(), check_book(root),
                check_index(root), check_stdio(root)]
-    if args.http_base:
-        results.append(check_http(args.http_base))
+    if not args.no_http:
+        results.append(check_http(root, args.http_host, args.http_port))
     if args.project:
         results.append(check_project(args.project.resolve()))
     passed = sum(1 for item in results if item)

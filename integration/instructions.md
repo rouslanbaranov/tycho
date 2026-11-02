@@ -27,8 +27,8 @@ and report that harness integration is pending.
 | Item | Purpose |
 |---|---|
 | `INSTALL_DIR`, default `.tycho/` | Sparse checkout, venv and index |
-| `.mcp.json` | MCP registration for harness sessions and the CLI |
-| `.vscode/mcp.json` | MCP registration for the VS Code chat UI |
+| `.mcp.json` | stdio and HTTP registration for harness sessions |
+| `.vscode/mcp.json` | stdio and HTTP registration for the VS Code chat UI |
 | `.github/agents/<name>.agent.md` | Copilot agent, see `github-copilot.md` |
 | `.gitignore` entries | Ignore the checkout, optionally the MCP configuration |
 
@@ -167,31 +167,42 @@ the same snapshot ID. The database is
 If the build prints `Install schema and YAML dependencies`, Step 3
 did not complete in this interpreter. Record the snapshot ID; agents cite it.
 
-## Step 5. Run the verifier
+## Step 5. Verify both transports
+
+The verifier exercises stdio and HTTP. Ask for the port first:
+
+> Which port should the Tycho HTTP MCP server use? Default 8765. I will reuse
+> the same value in both configuration files.
 
 ```sh
+export TYCHO_PORT=8765
 cd "$INSTALL_DIR"
-.venv/bin/python integration/verify.py
+.venv/bin/python integration/verify.py --http-port "$TYCHO_PORT"
 ```
 
-The verifier prints one `PASS` or `FAIL` line per check and
-exits non-zero on failure. It checks the interpreter, dependencies, book,
-index, the stdio tool surface and, optionally, the target project and a
-running HTTP server.
+The verifier prints one `PASS` or `FAIL` line per check. It
+checks the interpreter, dependencies, book, index, the stdio tool surface and
+an HTTP server: it starts one on the chosen port, checks `/health`,
+`/ready` and an authenticated `tools/list`, then stops the
+server it started.
+
+Expected: six `PASS` lines and `SUMMARY 6/6 checks passed`.
+
+If HTTP cannot run in this environment, add `--no-http`, report the
+skipped check to the owner and do not claim HTTP support.
+
+After the harness file is applied, re-run with the project check:
 
 ```sh
-# optional: check the MCP files in the target project
-.venv/bin/python integration/verify.py --project "$PROJECT_ROOT"
-# optional: check a running HTTP server
-.venv/bin/python integration/verify.py --http-base "http://<TYCHO_HOST>:<TYCHO_PORT>"
+.venv/bin/python integration/verify.py --project "$PROJECT_ROOT" \
+  --http-port "$TYCHO_PORT"
 ```
 
-After the harness file is applied, re-run the project check. Report the
-complete output to the owner, including failures.
+Report the complete output to the owner, including failures.
 
-## Step 6. Register the MCP server
+## Step 6. Register both transports
 
-Two files exist and they are not interchangeable:
+Two configuration files exist and they are not interchangeable:
 
 | Surface | File | Top-level key |
 |---|---|---|
@@ -200,26 +211,12 @@ Two files exist and they are not interchangeable:
 
 Rules:
 
-- If a file exists, merge a `tycho` entry; never overwrite others.
-- If a file does not exist, create it.
-- Keep the server name `tycho`; harness tool references depend on it.
-- Prefer stdio for a single local user; HTTP needs a server and token.
+- Register both entries: `tycho` (stdio) and `tycho-http`
+  (HTTP). The integration supports both transports and verifies both.
+- If a file exists, merge the entries; never overwrite other servers.
+- Keep the names; the Copilot agent tool list references `tycho`.
 - Use absolute paths; the portable format has no working-directory field.
-
-If the owner wants HTTP, ask for the port before writing any file:
-
-> Which port should the Tycho HTTP MCP server use? Default 8765. I will use the
-> same value in both configuration files and in the start command.
-
-Record the answer and export it for the remaining steps:
-
-```sh
-export TYCHO_PORT=8765
-```
-
-Keep the default unless it is taken. `integration/mcp_server_ctl.py start`
-reports `port-in-use` when the port is busy; ask for another one and retry.
-Never change the port in one file only.
+- The HTTP entry needs a running server; see Step 8.
 
 Then ask:
 
@@ -230,7 +227,7 @@ Then ask:
 
 Apply the answer and report it.
 
-### stdio entry, recommended
+### `.mcp.json` for harness sessions and the CLI
 
 ```json
 {
@@ -242,22 +239,8 @@ Apply the answer and report it.
         "--root",
         "/ABS/PROJECT/.tycho"
       ]
-    }
-  }
-}
-```
-
-Replace `/ABS/PROJECT` with the absolute project path. The file
-contains no secret and can be committed.
-
-### HTTP entry, alternative
-
-Requires a running server, see Step 8, and the token in the environment:
-
-```json
-{
-  "mcpServers": {
-    "tycho": {
+    },
+    "tycho-http": {
       "type": "http",
       "url": "http://<TYCHO_HOST>:<TYCHO_PORT>/mcp",
       "headers": {"Authorization": "Bearer ${TYCHO_MCP_TOKEN}"}
@@ -266,13 +249,37 @@ Requires a running server, see Step 8, and the token in the environment:
 }
 ```
 
-Replace `<TYCHO_HOST>` with the loopback address used by the server,
-normally `127.0.0.1`, and `<TYCHO_PORT>` with the chosen port. The HTTP
-transport implements the stateless 2026-07-28 revision; a client limited to the
-older handshake must use stdio.
+### `.vscode/mcp.json` for the VS Code chat UI
 
-For the VS Code chat UI, use the same server under the `servers` key
-with `"type": "stdio"` or `"type": "http"`.
+```json
+{
+  "servers": {
+    "tycho": {
+      "type": "stdio",
+      "command": "/ABS/PROJECT/.tycho/.venv/bin/python",
+      "args": [
+        "/ABS/PROJECT/.tycho/mcp/mcp_server.py",
+        "--root",
+        "/ABS/PROJECT/.tycho"
+      ]
+    },
+    "tycho-http": {
+      "type": "http",
+      "url": "http://<TYCHO_HOST>:<TYCHO_PORT>/mcp",
+      "headers": {"Authorization": "Bearer ${TYCHO_MCP_TOKEN}"}
+    }
+  }
+}
+```
+
+Replace `/ABS/PROJECT` with the absolute project path,
+`<TYCHO_HOST>` with the loopback address used by the server,
+normally `127.0.0.1`, and `<TYCHO_PORT>` with the port
+chosen in Step 5.
+
+The HTTP transport implements the stateless 2026-07-28 revision; a client
+limited to the older handshake must use the `tycho` stdio entry.
+
 
 ## Step 7. Configure the harness
 
@@ -281,12 +288,13 @@ the file is not implemented, stop here and report.
 
 ## Step 8. Start and stop the HTTP server
 
-The stdio server is started and stopped by the harness; skip this step when
-the owner chose stdio only. The HTTP server is user-managed. Re-export
+The stdio server is started and stopped by the harness. The HTTP server is
+user-managed: start it before a harness uses the `tycho-http` entry and keep
+it running. The verifier starts and stops its own instance. Re-export
 `TYCHO_PORT` if this is a new shell:
 
 ```sh
-export TYCHO_PORT=8765   # the port chosen in Step 6
+export TYCHO_PORT=8765   # the port chosen in Step 5
 cd "$INSTALL_DIR"
 .venv/bin/python integration/mcp_server_ctl.py start --port "$TYCHO_PORT"
 .venv/bin/python integration/mcp_server_ctl.py status --port "$TYCHO_PORT"
@@ -313,7 +321,8 @@ export TYCHO_MCP_TOKEN="$(cat "$INSTALL_DIR/.tycho-mcp-token")"
 - [ ] The chosen interpreter is recorded and `dependencies ok` printed.
 - [ ] The build reported `published` and the check `verified`.
 - [ ] `integration/verify.py` exited zero and every line is `PASS`.
-- [ ] `.mcp.json` and `.vscode/mcp.json` contain `tycho`.
+- [ ] `.mcp.json` and `.vscode/mcp.json` contain `tycho` and `tycho-http`.
+- [ ] The verifier passed for stdio and HTTP, or the skipped check is recorded.
 - [ ] The chosen port is recorded and matches both configuration files.
 - [ ] The `.gitignore` decision is recorded.
 - [ ] The harness file was followed, or the pending status was reported.
@@ -326,7 +335,7 @@ Tell the owner, in this order:
 1. Install directory and the Tycho commit and date.
 2. Python interpreter chosen and why.
 3. Index counts, snapshot ID and the chosen HTTP port.
-4. Verifier output.
+4. Verifier output for stdio and HTTP.
 5. Files created or merged, and the `.gitignore` decision.
 6. Harness status: implemented or pending.
 7. Start, status and stop commands, and the token location.
