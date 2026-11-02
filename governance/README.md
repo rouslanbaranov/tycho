@@ -14,6 +14,8 @@ instructions in [AGENTS.md](../AGENTS.md) also apply.
   by pattern or family.
 - [Sufficient coverage](SUFFICIENT-COVERAGE.md) — coverage states, remediation
   and acceptance boundaries.
+- [Entry promotion](ENTRY-PROMOTION.md) — evidence gate, promotion, rebind and
+  bookkeeping workflow.
 - [Reviewed-media manifest](reviewed-media.json) — machine-readable hashes and
   origin records.
 

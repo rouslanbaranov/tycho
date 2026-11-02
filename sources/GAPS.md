@@ -1,6 +1,6 @@
 # Source gaps and limitations
 
-Updated: 2026-10-18.
+Updated: 2026-11-02.
 
 - This is an initial curated discovery pass. It cannot establish an exhaustive worldwide ranking, completeness of all architecture topics, or full reading of any source family.
 - Commercial books are a bibliography, not the currently accessible evidence corpus. Public previews and author pages do not grant full-text access. The openly readable alternatives form the initial usable research base.
@@ -12,4 +12,4 @@ Updated: 2026-10-18.
 - Deepen bare-metal/VM deployment, multi-cloud networking/DNS/CDN, storage/object stores, formal consistency results, distributed locks/fencing, cache invalidation, tenant isolation, secrets, feature flags and chaos testing as bounded follow-up research. Existing umbrella sources cover portions but do not close these topics.
 - Exact pool budgets, shard counts, machine sizes, RPS thresholds, SLO targets and recovery budgets cannot be prescribed without a workload and measured constraints. No universal crossover thresholds are claimed.
 - Search quality needs representative queries and labelled relevance judgments; infrastructure throughput alone does not establish relevance or ANN recall.
-- Source-register structural validation and catalogue freshness checks are implemented; a formal JSON Schema, chapter metadata/index validation, a knowledge graph and benchmark execution remain planned.
+- Source-register structural validation, catalogue freshness, strict metadata and source-reference schemas, route/index validators and V12 checks are implemented. A curated knowledge graph remains excluded; benchmark execution and complete claim-level coverage remain open.

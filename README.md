@@ -124,7 +124,7 @@ before contributing. Every contributor must follow [AGENTS.md](AGENTS.md).
 
 ## Name and inspiration
 
-The project name is a homage to Tycho Station from *The Expanse*. In the source
+The project name is an homage to Tycho Station from *The Expanse*. In the source
 material, Tycho Station is the largest mobile construction platform in the Sol
 system and the Belt headquarters of Tycho Manufacturing and Engineering
 Concern: a shipyard and engineering hub, not a scientific research station. The
@@ -144,6 +144,7 @@ Public references:
 ## Start here
 
 - [Read the book](book/README.md)
+- [Governance policies](governance/README.md)
 - [Current state and next action](authoring/STATE.md)
 - [Roadmap](authoring/ROADMAP.md)
 - [Knowledge platform and MCP delivery plan](authoring/knowledge-platform-and-mcp-plan.md)

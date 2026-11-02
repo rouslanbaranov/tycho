@@ -1,8 +1,13 @@
 # Reading and evidence acquisition plan
 
-## First-pass result
+## First-pass result (2026-10-18, historical)
 
-The public inventory establishes an initial research base. Source origin and entry-page/abstract access have been checked. No complete technical book or documentation tree has been read. No implementation has been executed. Paid books are bibliography-only, never unseen evidence.
+The initial public inventory established the research base. Source origin and
+entry-page or abstract access were checked. At that first pass, no complete
+technical book or documentation tree had been read and no implementation had
+been executed. Current reading and validation status lives in
+[current state](../authoring/STATE.md). Paid books remain bibliography-only,
+never unseen evidence.
 
 ## Selection rationale
 

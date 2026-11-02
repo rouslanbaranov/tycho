@@ -1,6 +1,10 @@
 # Tycho roadmap
 
-**Updated:** 2026-10-20, after manuscript acceptance and merge. See [current state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+> **Historical planning record, last updated 2026-10-20.** Current counts and
+> gates live in [current state](STATE.md). See also the dated
+> [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+The delivery table below records the plan at that date.
 
 ## Delivery order
 
