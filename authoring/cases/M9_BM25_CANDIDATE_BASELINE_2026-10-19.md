@@ -17,7 +17,7 @@ Inputs: `book/cases/*.md` (29 case pages), `tests/fixtures/m9-case-queries.json`
 
 **Answerable queries missing all gold in top 3:** 1. `m9-q042` (gold rank(s) 15/11).
 
-## Architectural consequence for Rocinante/Tycho
+## Architectural consequence for external-specialist/Tycho
 
 This pilot demonstrates the starting ceiling/weak spots for a **document-level lexical-only** baseline. Workload terms and company/technology overlaps can rank the wrong company case above the right one. Do not use title/code IDs alone to claim retrieval correctness. Future K18–K23 evaluation should compare full-document lexical, chunked lexical, semantic/hybrid and evidence-based reranking **on exactly the same fixture set**, preserving source/version anchors, false-claim refusal and token-cost measurement. No live system was changed; this work does **not** create a second production indexer or MCP agent.
 

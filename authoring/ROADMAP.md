@@ -10,7 +10,7 @@
 | #213 — 69-chapter manuscript | Owner-confirmed substantive acceptance at `986b1ddbe985079b7c647182fcf1c2fc8911d96c`; PR #218 merged; #213/E14 completed | Content baseline available for assembly |
 | **#214 — edition assembly/publication** | Open: enrichment candidate rc.3 has 71 chapters/406 canonical documents, including five additional mechanisms and three complete worked projects after the first-pass additions; readable directory migration is implemented; Python/Mermaid execution passed (16 groups, 233 tests, 221 diagrams); substantive acceptance remains pending | Substantive volume/chapter landings, bounded pages, reversible identity/path migration, synthesis/navigation, fresh index, full frozen-tree checks and named release |
 | Knowledge retrieval | Offline routing infrastructure exists; candidate index extends to 406 documents and Python regeneration/check passed; hosted lexical/semantic/hybrid service absent | Evaluated relevance, provenance, consistency and total agent cost |
-| MCP/Rocinante | Subsequent roadmap work, not deployed | Read-only search/read/verify, onboarding, specialist integration and isolation |
+| MCP/external agent | Subsequent roadmap work, not deployed | Read-only search/read/verify, onboarding, integration and isolation |
 | Deployment/operations | Planned | Immutable snapshots, Ansible/container delivery, monitoring and rollback |
 
 ## Validation and delivery policy

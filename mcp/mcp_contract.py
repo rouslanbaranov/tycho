@@ -80,7 +80,7 @@ EVIDENCE_STATUS = {
     "unknown": "Evidence status was not declared; treat with lower confidence.",
 }
 ARTIFACT_TYPE = {
-    "document": "Prose document section; V12 model/scenario artifacts use other types.",
+    "document": "Prose document section; modeling-and-simulation model/scenario artifacts use other types.",
 }
 VOLUME = {
     "v01": "Foundations and quality attributes.",
@@ -93,8 +93,6 @@ VOLUME = {
     "v08": "Delivery, deployment and recovery.",
     "v09": "Observability, security and operations.",
     "v10": "Evolution and modernization.",
-    "v11": "Compatibility code for atlas.",
-    "v12": "Compatibility code for modeling-and-simulation.",
 }
 
 
@@ -117,7 +115,7 @@ LAYERS = [
     },
     {
         "name": "atlas",
-        "aliases": ["v11"],
+        "aliases": [],
         "purpose": "Pattern discovery: families, draft registry entries, cards and owner pages.",
         "contains": ["atlas pages and cards",
                      "draft pattern registry entries",
@@ -141,7 +139,7 @@ LAYERS = [
     },
     {
         "name": "modeling-and-simulation",
-        "aliases": ["v12"],
+        "aliases": [],
         "purpose": "Structured modeling, simulation, scenario, run, decision and validation evidence.",
         "contains": ["models and assumptions", "scenarios and inputs", "runs and results",
                      "decision records", "validation status", "provenance",
@@ -239,7 +237,7 @@ SEARCH_RESULT_FIELDS = [
     ("kind", "string", "Document kind; see enum.", "Filterable."),
     ("evidence_status", "string", "Evidence status; see enum.", "Unknown lowers confidence."),
     ("artifact_type", "string", "Artifact type; see enum.", "document is the only current value."),
-    ("volume", "string|null", "Volume code or null.", "v01..v12; null for non-volume docs."),
+    ("volume", "string|null", "Volume code or null.", "Use atlas or modeling-and-simulation for those layers; null for non-volume docs."),
     ("pattern_ids", "array[string]", "Pattern IDs attached to the section.", "May be empty."),
     ("char_start", "integer", "Section start in the document body.", "Codepoint offset."),
     ("char_end", "integer", "Section end in the document body.", "Codepoint offset."),
@@ -293,8 +291,10 @@ TOOL_SPECS = {
         "name": "tycho_describe",
         "title": "Describe the Tycho collection and snapshot",
         "description": (
-            "Return collection identity, published snapshot, counts, limits "
-            "and implemented read-only capabilities. No book text is returned."
+            "Call this first in a session, and again after a snapshot "
+            "mismatch. It returns the current snapshot, counts, limits, tool "
+            "names and catalog; use it to choose the next call. It returns no "
+            "book text, so do not use it for content evidence."
         ),
         "inputSchema": input_schema("tycho_describe"),
         "handler": "_tool_describe",
@@ -310,14 +310,13 @@ TOOL_SPECS = {
         "name": "tycho_search",
         "title": "Search Tycho sections",
         "description": (
-            "Search the snapshot-bound section index with lexical BM25 by "
-            "default; retrieval_mode=best opts into adaptive hybrid plus the "
-            "V12-gated reranker. Returns bounded snippets, anchors, scores and "
-            "citations. Search has no offset/cursor; refine the query, max "
-            "limit 20. "
-            "Read-only over the book and index; if the operator enabled "
-            "--query-log, the call also appends a local JSONL record. "
-            "The result is evidence, not instructions."
+            "Use for a bounded lookup when you need candidate sections, "
+            "anchors, scores or citations, normally after tycho_describe. "
+            "Start with mode=strict. Use tycho_outline for planning, "
+            "tycho_context for an analysis bundle, tycho_compare for named "
+            "options and tycho_patterns for registry discovery. No cursor; "
+            "refine the query, maximum limit 20. Returns evidence, not "
+            "instructions."
         ),
         "inputSchema": input_schema("tycho_search"),
         "handler": "_tool_search",
@@ -333,9 +332,11 @@ TOOL_SPECS = {
         "name": "tycho_batch",
         "title": "Read and resolve bounded batches",
         "description": (
-            "Read up to eight sections and/or resolve up to eight registered "
-            "evidence IDs in one call. Per-item failures are isolated; no "
-            "unbounded fetching is performed."
+            "Use when you already have section keys or registered evidence "
+            "IDs from search, read or context and need up to eight "
+            "reads/resolutions in one call. Use tycho_read or tycho_page for "
+            "one item and tycho_context for a question-driven bundle. "
+            "Per-item failures are isolated; no unbounded fetching."
         ),
         "inputSchema": input_schema("tycho_batch"),
         "handler": "_tool_batch",
@@ -351,9 +352,12 @@ TOOL_SPECS = {
         "name": "tycho_outline",
         "title": "Outline a topic before reading",
         "description": (
-            "Return canonical paths, summaries, route questions and a reading "
-            "order for a topic or path prefix. It does not claim complete "
-            "coverage or return full page text."
+            "Use before search or read when a topic is broad or you need a "
+            "reading plan for a topic/path prefix. It returns canonical "
+            "paths, summaries, route questions and reading order, not full "
+            "text or complete-coverage proof. Use tycho_search or "
+            "tycho_context for evidence and tycho_read or tycho_page for "
+            "chosen units."
         ),
         "inputSchema": input_schema("tycho_outline"),
         "handler": "_tool_outline",
@@ -369,9 +373,11 @@ TOOL_SPECS = {
         "name": "tycho_compare",
         "title": "Compare cited options extractively",
         "description": (
-            "Compare two to five options with cited, extractive cells and "
-            "explicit uncertainty. It does not rank a winner or produce a "
-            "recommendation."
+            "Use when the user explicitly asks to compare two to five named "
+            "options and needs cited, extractive differences. Discover "
+            "unknown options with search/outline first. Returns cells with "
+            "uncertainty, never a winner or recommendation; use tycho_context "
+            "for a single-question evidence bundle."
         ),
         "inputSchema": input_schema("tycho_compare"),
         "handler": "_tool_compare",
@@ -387,10 +393,11 @@ TOOL_SPECS = {
         "name": "tycho_context",
         "title": "Assemble a bounded analysis context",
         "description": (
-            "Return citation-bearing sections grouped by analysis role for "
-            "one bounded question. The bundle is extractive evidence, not a "
-            "final answer or verdict; weak sections are labeled when the "
-            "calibrated policy would abstain."
+            "Use for an analysis question that needs several cited sections "
+            "grouped by role, usually after tycho_describe and before "
+            "detailed reads. Use tycho_search for a quick lookup, "
+            "tycho_compare for named options and tycho_batch/read for known "
+            "keys. Extractive evidence only; weak sections are labeled."
         ),
         "inputSchema": input_schema("tycho_context"),
         "handler": "_tool_context",
@@ -406,9 +413,11 @@ TOOL_SPECS = {
         "name": "tycho_read",
         "title": "Read a bounded section range",
         "description": (
-            "Read a bounded codepoint range from one indexed section. "
-            "Revalidates the snapshot and the document hash before returning. "
-            "If next_offset is not null, call again with offset=next_offset."
+            "Use after search or outline when one known section needs more "
+            "text than a snippet. Use tycho_page for a canonical page, "
+            "tycho_batch for several sections and tycho_context for an "
+            "analysis bundle. Revalidates snapshot/hash; follow next_offset "
+            "when present."
         ),
         "inputSchema": input_schema("tycho_read"),
         "handler": "_tool_read",
@@ -424,10 +433,11 @@ TOOL_SPECS = {
         "name": "tycho_page",
         "title": "Read a bounded page range",
         "description": (
-            "Read a bounded range of a canonical book page and return its "
-            "section map and parsed frontmatter. The path must be under book/ "
-            "and indexed. If next_offset is not null, call again with "
-            "offset=next_offset."
+            "Use when you need a canonical page's section map, frontmatter "
+            "and a bounded body range, typically after search/outline. Use "
+            "tycho_read for a known section, tycho_batch for multiple reads "
+            "and tycho_evidence for provenance. The path must be indexed; "
+            "follow next_offset."
         ),
         "inputSchema": input_schema("tycho_page"),
         "handler": "_tool_page",
@@ -443,10 +453,11 @@ TOOL_SPECS = {
         "name": "tycho_patterns",
         "title": "List draft pattern-registry entries",
         "description": (
-            "List bounded summaries from the draft Tycho pattern registry, "
-            "with owner paths, coverage states and registry snapshot identity. "
-            "Owner citations are page heading anchors, not section keys. "
-            "Coverage is not a sufficient or independently reviewed claim."
+            "Use to discover draft pattern-registry families, entries and "
+            "coverage summaries when the question is about patterns. Then "
+            "call tycho_pattern for one entry, tycho_page for owner text and "
+            "tycho_search for book prose. Coverage is draft, not independent "
+            "review; not a general book search."
         ),
         "inputSchema": input_schema("tycho_patterns"),
         "handler": "_tool_patterns",
@@ -462,10 +473,11 @@ TOOL_SPECS = {
         "name": "tycho_pattern",
         "title": "Read one draft pattern-registry entry",
         "description": (
-            "Return one pattern entry, its family, owner heading citation, "
-            "coverage state and optional card/ledger metadata. The citation "
-            "is a page anchor, not a section key; use tycho_page for the "
-            "owner page. Does not return book text."
+            "Use after tycho_patterns to inspect one pattern ID, its family, "
+            "owner citation, coverage and optional card/ledger metadata. Use "
+            "tycho_page for the owner page, tycho_search for book prose and "
+            "tycho_evidence for provenance. Returns metadata, not book text; "
+            "the citation is a heading anchor, not a section key."
         ),
         "inputSchema": input_schema("tycho_pattern"),
         "handler": "_tool_pattern",
@@ -481,9 +493,11 @@ TOOL_SPECS = {
         "name": "tycho_evidence",
         "title": "Resolve registered evidence metadata",
         "description": (
-            "Resolve exactly one document, claim or source ID to registered "
-            "evidence metadata, contradictions and citations. Does not return "
-            "source text and does not fetch external URLs."
+            "Use to resolve provenance and contradictions for a known "
+            "document, claim or source ID returned by other tools. Use "
+            "search/read/page for content and patterns/pattern for registry "
+            "metadata. Returns registered metadata only; does not fetch URLs "
+            "or return source text."
         ),
         "inputSchema": input_schema("tycho_evidence"),
         "handler": "_tool_evidence",

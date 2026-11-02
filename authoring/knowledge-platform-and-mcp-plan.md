@@ -4,8 +4,8 @@
 
 
 Status: scope revised 2026-10-19. Prior plan dated 2026-10-18. A proposed
-staged-modernization behaviour contract for Rocinante was recorded 2026-10-26;
-it is not implemented.
+external-specialist staged-modernization contract was retired during the
+2026-11-02 independence cleanup; it is not implemented.
 
 ## Product commitment and independence
 
@@ -13,7 +13,7 @@ Tycho is both a self-contained System Design book and a machine-readable knowled
 
 Implement the full reusable book-building and knowledge-delivery capability set independently. Do not import another corpus, private code, examples, identifiers, repository catalogues, deployment configuration or runtime dependencies. General methods are expressed here as independent product requirements. The book must remain understandable and locally navigable without the hosted service.
 
-Research and authoring take place in the ChatGPT project. The repository stores the book, specifications and independently implemented tooling. Integration with the shared Rocinante specialist is a product deliverable, not delegation of Tycho development.
+Research and authoring take place in the ChatGPT project. The repository stores the book, specifications and independently implemented tooling. Integration with an external specialist is a product deliverable, not delegation of Tycho development.
 
 ## Capability inventory and acceptance matrix
 
@@ -43,7 +43,7 @@ Status describes Tycho now. A written plan is not an implementation. Each planne
 | K20 | Reusable retrieval service | Planned; required | Search/read/evidence and architecture-decision guidance independent of MCP transport, with bounded outputs and snapshot consistency. |
 | K21 | Remote read-only MCP service | Planned; required | Verified transport/SDK/client compatibility, schema-described capabilities, safe limits, citations and interoperability tests. |
 | K22 | Generic-agent onboarding | Planned; required | Versioned entry capability describing collection, structure, query strategy, evidence, limits, versions and supported operations. |
-| K23 | Integration with the shared Rocinante specialist | Planned; required | Versioned provider instructions, lightweight compatibility checks, collection-scoped retrieval, attributable evidence-backed outputs and evidence-gated POC/MVP/Product proposals; no separate Tycho specialist. |
+| K23 | Integration with an external specialist | Planned; required | Versioned provider instructions, lightweight compatibility checks, collection-scoped retrieval, attributable evidence-backed outputs and evidence-gated POC/MVP/Product proposals; no separate Tycho specialist. |
 | K24 | Immutable knowledge snapshots | Planned; required | Manifest of book, metadata, provenance and approved retrieval indexes; integrity checks, atomic activation, version compatibility and rollback. |
 | K25 | Reproducible service deployment | Planned; required | Independent container build and deployment automation, environment configuration, smoke tests, readiness and rollback runbook. |
 | K26 | Safe access and source resolution | Planned; required | Explicit audience/auth policy, read-only boundaries, safe ID/path resolution, no arbitrary execution/fetching and no prohibited-source access. |
@@ -108,35 +108,21 @@ Plan one remote MCP transport entry point, for example /mcp, using a supported t
 
 No assumption that every client automatically loads server instructions, resources or prompts is allowed. Test chosen clients and document explicit/manual fallback. Generic clients must be able to discover how to use Tycho efficiently.
 
-## Shared Rocinante specialist integration
+## External-specialist integration
 
-There is one external specialist agent: **Rocinante**. It can work with multiple independent knowledge providers, including Tycho. Do not create a separate Tycho expert agent or duplicate the shared specialist's runtime, identity or general operating instructions.
+There is one external specialist agent. It can work with multiple independent knowledge providers, including Tycho. Do not create a separate Tycho expert agent or duplicate the shared specialist's runtime, identity or general operating instructions.
 
 The shared specialist and its common multi-provider routing/instruction package are owned at the platform integration level, outside this book's corpus. Their repository location and deployment are not assumed here. Tycho owns its provider contract: collection identity, versioned onboarding, capabilities, knowledge schema, source/evidence policy, retrieval behavior and compatibility fixtures.
 
-Provide a compact, versioned Tycho instruction module that can be included in Rocinante's existing shared package. Generate the relevant provider guidance from Tycho's authoritative onboarding source rather than maintaining contradictory copies. Rocinante carries general operating guidance and checks provider capabilities, authorization and snapshot/schema compatibility cheaply instead of downloading full onboarding every session. Detailed architecture facts remain dynamic in the appropriate provider.
+Provide a compact, versioned Tycho instruction module that can be included in the external specialist's existing shared package. Generate the relevant provider guidance from Tycho's authoritative onboarding source rather than maintaining contradictory copies. The external specialist carries general operating guidance and checks provider capabilities, authorization and snapshot/schema compatibility cheaply instead of downloading full onboarding every session. Detailed architecture facts remain dynamic in the appropriate provider.
 
 Route general System Design, pattern applicability and modernization-method questions to Tycho. The shared specialist may combine independently retrieved evidence with other authorized providers at the client/orchestration layer. Keep findings, citations, collection IDs and snapshot IDs attributable to their original provider; distinguish observed facts from general patterns, inferences and proposals. Failure or denial at one provider must not be silently filled with invented facts from another.
 
 Tycho must operate, build, validate, index, release and serve without any other corpus. It must not ingest, persist, embed, index, cache, log or write back another provider's private content. Cross-provider reasoning does not create a shared source register or evidence graph inside Tycho. Test provider routing and isolation using public or synthetic fixtures, never by importing a private corpus.
 
-Generic MCP clients retain standalone access through Tycho onboarding. Rocinante is an optimized shared consumer, not a prerequisite for understanding the book or using its MCP service. Integration tests cover provider identity, missing/incompatible capabilities, unavailable evidence, correct attribution, isolation and response quality.
+Generic MCP clients retain standalone access through Tycho onboarding. The external specialist is an optimized shared consumer, not a prerequisite for understanding the book or using its MCP service. Integration tests cover provider identity, missing/incompatible capabilities, unavailable evidence, correct attribution, isolation and response quality.
 
 The shared response contract covers findings, alternatives, constraints, evidence pointers, applicability, risks, inferences, unknowns, contradictions and next evidence needed. Tycho's MCP service remains read-only retrieval; an always-on hosted LLM is not a baseline dependency.
-
-### Staged modernization proposals (owner instruction, 2026-10-26)
-
-Rocinante must present modernization as a staged evolution: proof of concept,
-minimum viable product and product, with optional sub-stages, an architecture
-that may change at each stage, and per-stage justification that cites Tycho as
-the evidence source. The proposed ladder, evidence obligations, envelope,
-refusal rules and a synthetic example are defined in
-[the staged modernization contract](ROCINANTE-STAGED-MODERNIZATION-CONTRACT.md).
-
-This is a provider-boundary specification, not an implemented agent
-capability. Tycho's tools remain extractive and return no recommendation; the
-staged proposal is composed by the calling agent from cited evidence. Stage
-gates need local measurement and a named owner, not a citation.
 
 ## Snapshots, deployment, access and operations
 
@@ -154,11 +140,11 @@ Metrics and audit events should describe service behavior without logging confid
 
 Start with 20–30 evidence-grounded corpus questions, then expand toward 50–100 representative service/agent tasks as coverage grows. Include direct facts, cross-topic reasoning through cited pages, change impact, workload trade-offs, modernization, contradictions, stale evidence and truly unanswerable questions.
 
-Compare local file/index retrieval, MCP lexical retrieval with provenance verification, vector/hybrid prototype, and external use through the shared Rocinante specialist. Measure correctness, exact evidence precision, relevant-context coverage, false confidence, missing-evidence handling, retrieval latency, end-to-end latency, calls and total input/output tokens across all participating agents/tools. Report measured costs rather than assuming delegation saves tokens.
+Compare local file/index retrieval, MCP lexical retrieval with provenance verification, vector/hybrid prototype, and external use through a generic external agent. Measure correctness, exact evidence precision, relevant-context coverage, false confidence, missing-evidence handling, retrieval latency, end-to-end latency, calls and total input/output tokens across all participating agents/tools. Report measured costs rather than assuming delegation saves tokens.
 
 Test reproducible rebuilds, schema/link/section-index failures, snapshot mismatch, compatibility, source-access restrictions, read-only behavior, overload and rollback. Set concrete release thresholds from pilot/baseline observations; do not invent performance numbers in the plan.
 
-Product completion requires validated corpus structure and evidence, working ranked retrieval, working provenance/evidence resolution, generic onboarding, an interoperable remote MCP release, a compatible shared Rocinante integration, reproducible snapshots/deployment, operational checks and measured evaluation. A catalogue, design document, local prototype or running endpoint alone is insufficient.
+Product completion requires validated corpus structure and evidence, working ranked retrieval, working provenance/evidence resolution, generic onboarding, an interoperable remote MCP release, a compatible external-specialist integration, reproducible snapshots/deployment, operational checks and measured evaluation. A catalogue, design document, local prototype or running endpoint alone is insufficient.
 
 ## Work sequencing
 
@@ -170,7 +156,7 @@ Product completion requires validated corpus structure and evidence, working ran
 6. Build ranked lexical retrieval and exact provenance/evidence resolution; establish a measured baseline.
 7. Implement and evaluate the vector/hybrid prototype and record the production decision.
 8. Implement MCP adapter, discovery/onboarding and client interoperability.
-9. Integrate Tycho's provider guidance with the existing shared Rocinante specialist and test compatibility, routing, attribution and isolation.
+9. Integrate Tycho's provider guidance with an external specialist and test compatibility, routing, attribution and isolation.
 10. Build immutable snapshots, independent deployment automation, access controls and observability.
 11. Perform end-to-end quality, concurrency, safety and rollback evaluation; release the service and verified shared-agent integration.
 12. Expand the book and indexes incrementally with change-impact/freshness maintenance and regression evaluation.

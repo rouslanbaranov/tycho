@@ -95,14 +95,14 @@
 - [#59 — Implement canonical onboarding and discoverable entry](https://github.com/rouslanbaranov/tycho/issues/59) — depends on [#57](https://github.com/rouslanbaranov/tycho/issues/57)
 - [#60 — Test generic-client interoperability and manual fallback](https://github.com/rouslanbaranov/tycho/issues/60) — depends on [#58](https://github.com/rouslanbaranov/tycho/issues/58), [#59](https://github.com/rouslanbaranov/tycho/issues/59)
 
-### [M6 — Shared Rocinante integration](https://github.com/rouslanbaranov/tycho/milestone/6)
+### M6 — External specialist integration (retired 2026-11-02)
 
-**[E10 — Shared Rocinante specialist integration](https://github.com/rouslanbaranov/tycho/issues/11)** (#11)
+**E10 — External specialist integration** (#11)
 
-- [#61 — Define Tycho provider contract for the shared Rocinante agent](https://github.com/rouslanbaranov/tycho/issues/61) — depends on [#60](https://github.com/rouslanbaranov/tycho/issues/60)
+- [#61 — Define Tycho provider contract for an external agent](https://github.com/rouslanbaranov/tycho/issues/61) — depends on [#60](https://github.com/rouslanbaranov/tycho/issues/60)
 - [#62 — Generate compact versioned provider guidance](https://github.com/rouslanbaranov/tycho/issues/62) — depends on [#61](https://github.com/rouslanbaranov/tycho/issues/61)
 - [#63 — Test routing, attribution and provider isolation](https://github.com/rouslanbaranov/tycho/issues/63) — depends on [#62](https://github.com/rouslanbaranov/tycho/issues/62)
-- [#64 — Evaluate shared-specialist answer quality and global token cost](https://github.com/rouslanbaranov/tycho/issues/64) — depends on [#63](https://github.com/rouslanbaranov/tycho/issues/63), [#55](https://github.com/rouslanbaranov/tycho/issues/55)
+- [#64 — Evaluate external-agent answer quality and global token cost](https://github.com/rouslanbaranov/tycho/issues/64) — depends on [#63](https://github.com/rouslanbaranov/tycho/issues/63), [#55](https://github.com/rouslanbaranov/tycho/issues/55)
 
 ### [M7 — Operational release and end-to-end acceptance](https://github.com/rouslanbaranov/tycho/milestone/7)
 

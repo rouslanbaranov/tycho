@@ -114,7 +114,7 @@ A qualified reviewer other than the author must independently examine **every** 
 9. Uber MyRocks storage saving depends on disk/SQL compatibility and precedes a **MySQL 5.7→8.0 migration that took over a year**.
 10. Any source with metadata-only admission or an undated living wiki may justify a chapter's *scope* but not detailed deployment/revision assertions.
 11. All company diagrams are original Tycho simplifications, not copyright-reproduced original schematics; verify that no long article quotation slipped into case body.
-12. No private Adro/employer sources or corpus cross-indexing; `tycho-public` collection boundary remains explicit.
+12. No private restricted-origin sources or corpus cross-indexing; `tycho-public` collection boundary remains explicit.
 
 ## Proposed 60-query evaluation execution, when a real service is available
 

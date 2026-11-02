@@ -28,7 +28,7 @@ The change is documented in the [2026-07-28 spec changelog](https://github.com/m
 
 ## Onboarding and capabilities — one remote entry, standard discovery
 
-Remote address proposed: `https://<approved-host>/mcp` (operator-supplied; **no host exists yet**). Standard discovery for clients on the current protocol is `server/discover`; clients may also call `tools/list` and `resources/list`. An optional, versioned read-only resource `tycho://onboarding/v1` is a **proposed URI convention**, advertised through the standard resources mechanism only after it is implemented. The shared Rocinante specialist can ship onboarding rules alongside its own agent configuration, but it must still discover actual server capabilities/schema and cannot assume a future service is live.
+Remote address proposed: `https://<approved-host>/mcp` (operator-supplied; **no host exists yet**). Standard discovery for clients on the current protocol is `server/discover`; clients may also call `tools/list` and `resources/list`. An optional, versioned read-only resource `tycho://onboarding/v1` is a **proposed URI convention**, advertised through the standard resources mechanism only after it is implemented. An external specialist can ship onboarding rules alongside its own agent configuration, but it must still discover actual server capabilities/schema and cannot assume a future service is live.
 
 Proposed onboarding payload, not a registered method:
 - collection identity: `tycho`, schema version, supported protocol revisions and actual snapshot ID;
@@ -56,7 +56,7 @@ The [retrieval contract](models/retrieval-contracts.md) owns stable IDs, snapsho
 | Section/lexical retrieval engine | Independent partial source and index work; no deployed endpoint claimed | #49–#51 |
 | Standard MCP tools/resources/read adapter | **Not implemented by this issue** | #57 |
 | Evidence/provenance and decision-method tools | **Not implemented by this issue**; no curated graph tools are planned | #58 |
-| Remote deployment, authorization, observability, load testing | **Planned** separate rollout/evaluation scope | later E09 / Rocinante integration |
+| Remote deployment, authorization, observability, load testing | **Planned** separate rollout/evaluation scope | later E09 / external-specialist integration |
 
 This decision is intentionally reversible if a client compatibility matrix demonstrates that an older SDK is required. **Only exact-version client/server tests can justify changing the deployment stack**, and no speculative protocol-level onboarding method should be invented. Independent reviewer approval, end-to-end client roundtrip, auth pen-test and a live server are not claimed.
 

@@ -35,7 +35,7 @@ Focus: Netflix's changing Java/JVM, Spring Boot, RxJava, gRPC/GraphQL, Zuul, ZGC
 ## Separation of work and independence
 
 - All sources are public third-party practitioner articles, talks, repository docs and company reports. No employer/private-system content, sanitized reconstructions or sources from other collections.
-- Tycho remains independently understandable; Rocinante is the one shared specialist; future Tycho MCP exposes evidence-bound case search, not a dedicated agent.
+- Tycho remains independently understandable; an external specialist may consume it; future Tycho MCP exposes evidence-bound case search, not a dedicated agent.
 - This work **adds canonical case-specific pages and an indexed case layer**; existing foundational technical pages remain canonical for concepts. Cross-link, do not copy technical sections.
 - Conduct research in bounded case slices using [case template](../templates/real-world-modernization-case.md), [source register](../sources/REAL_WORLD_ARCHITECTURE_CASES.md), and [Netflix dossier](../sources/NETFLIX_MODERNIZATION_DOSSIER.md).
 - Public availability does not grant reproduction rights. Record access/copyright/reuse conditions; link source material, paraphrase with attribution; produce original diagrams and examples.
@@ -85,13 +85,11 @@ New conceptual metadata (adapt to K10/K11 schema rather than inventing an incomp
 - `document_kind: case-study`, stable `case_id`, `company`, `observation_period`, `source_ids`, `reported_vs_inferred`, `legacy_baseline`, `architecture_transitions`, `constraint_tags`, `workload_profile`, `failure_modes`, `patterns_applied`, `counterpatterns`, `result_metrics`, `migration_phases`, `confidence`, `verification_status`, `reviewed_at`.
 - Case relationships are **ordinary typed metadata and reviewable Markdown links**, not edges of a graph. A page may explicitly link to related patterns, contrary evidence, source sections, and applicable decision guides with the conditions in prose. No graph schema/ownership/assembly/traversal is requested.
 - Search routes by **problem first**, not company: e.g., 'high p99 JVM service with retry storms'; 'Cassandra hot partition'; 'complex microservice mesh ownership'; 'schema migration with no downtime'; 'Bazel vs Gradle build throughput'; 'migration agent with missing tests'.
-- A Rocinante response must separate **what a source says happened** from **what might work for the queried legacy system**. Test with candidate evaluation sets; never present these as measured agent gains before running benchmarks.
+- An external-agent response must separate **what a source says happened** from **what might work for the queried legacy system**. Test with candidate evaluation sets; never present these as measured agent gains before running benchmarks.
 - For modernization questions, the response also states which stage the case
   evidence can support — proof of concept, minimum viable product or product —
-  and which stage it cannot support. See
-  [the staged modernization contract](ROCINANTE-STAGED-MODERNIZATION-CONTRACT.md).
-  Stage labels and gates are Tycho-defined; a published case does not prove a
-  reader's stage.
+  and which stage it cannot support. Stage labels and gates are Tycho-defined; a
+  published case does not prove a reader's stage.
 
 ## Core evaluations
 

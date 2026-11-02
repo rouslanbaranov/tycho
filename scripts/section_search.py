@@ -476,9 +476,9 @@ def _artifact_detail_text(root, relative_path):
 
 
 def load_v12_artifacts(root):
-    """Load V12 model/scenario/run/decision facets from derived indexes.
+    """Load modeling-and-simulation model/scenario/run/decision facets from derived indexes.
 
-    The FTS index covers book pages; V12 artifacts are JSON contracts. This
+    The FTS index covers book pages; modeling-and-simulation artifacts are JSON contracts. This
     lookup keeps them discoverable without pretending they are book sections.
     """
     root = Path(root).resolve()
@@ -548,7 +548,7 @@ def _artifact_type_intent(terms):
 
 def v12_artifacts(root, pattern_ids=None, artifact_type=None, volume="v12",
                   limit=50, terms=None):
-    """Return V12 artifacts filtered and optionally ranked by query terms."""
+    """Return modeling-and-simulation artifacts filtered and optionally ranked by query terms."""
     pattern_ids = pattern_ids or []
     _require(isinstance(pattern_ids, (list, tuple)),
              "pattern_ids must be a list")
@@ -605,7 +605,7 @@ def v12_artifacts(root, pattern_ids=None, artifact_type=None, volume="v12",
                        if not key.startswith("_")}
                       for item in artifacts[:limit]],
         "scope": (
-            "Derived V12 model, scenario, run and decision lookup. "
+            "Derived modeling-and-simulation model, scenario, run and decision lookup. "
             "Not a semantic graph and not a source of claim truth."
         ),
     }
@@ -887,7 +887,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                     or (selected
                         and selected[0][3]["row"]["volume"] == "v12")):
                 raise SearchError(
-                    "section_rerank is disabled for V12 results",
+                    "section_rerank is disabled for modeling-and-simulation results",
                     "invalid-request")
             apply_rerank = section_rerank_margin is None
             if not apply_rerank:

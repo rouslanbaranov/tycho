@@ -129,10 +129,10 @@ class PatternToolsMixin:
         anchor = owner.get("anchor")
         coverage = pattern.get("coverage") or {}
         try:
-            v12_artifacts = section_search.v12_artifacts(
+            artifacts = section_search.v12_artifacts(
                 self.root, pattern_ids=[pattern_id], limit=50)
         except (OSError, ValueError, section_search.SearchError):
-            v12_artifacts = {
+            artifacts = {
                 "status": "not-available", "returned": 0, "total": 0,
                 "artifacts": [], "filters": {"pattern_ids": [pattern_id]},
             }
@@ -153,7 +153,7 @@ class PatternToolsMixin:
                 if path else None
             ),
             "coverage": coverage,
-            "v12_artifacts": v12_artifacts,
+            "modeling_and_simulation_artifacts": artifacts,
             "sufficiency": {
                 "sufficient": coverage.get("overall") == "sufficient",
                 "coverage_state": coverage.get("overall", "unknown"),
