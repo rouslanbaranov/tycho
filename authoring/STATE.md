@@ -1,9 +1,9 @@
 # Current state — Tycho
 
 > **Current promotion snapshot — 2026-11-02 (authoritative):** **100 of 145** entries
-> are technical/decision `sufficient`; **94 of 99** are owner-accepted (2026-11-01).
-> Event Sourcing, Durable Subscriber, Layered Architecture, Blue-Green Deployment and
-> Competing Consumers remain acceptance-pending.
+> are technical/decision `sufficient`; **94 of 100** are owner-accepted (2026-11-01).
+> Event Sourcing, Durable Subscriber, Layered Architecture, Blue-Green Deployment,
+> Competing Consumers and Canonical Data Model remain acceptance-pending.
 > **45** entries remain.
 > Local full suite:
 > **709/709 OK** at `38af748f`; this is not a CI result. Timing covers 80 promotion cycles: mean **54.0 min**
