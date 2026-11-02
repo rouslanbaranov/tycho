@@ -27,6 +27,7 @@ route_hints:
 evidence_scope:
   source_ids:
   - src.enterprise-integration
+  - src.jakarta-messaging
   claim_ids: []
   status: source-linked
   notes: Source-level bindings remain in the owner unit.
