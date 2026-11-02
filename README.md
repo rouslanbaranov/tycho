@@ -173,11 +173,14 @@ install `requirements-validation.txt` before schema checks.
 
 ## Current state
 
-Tycho is in active development. The book and pattern atlas are public; the
-read-only MCP adapter is a local candidate; the source-to-claim evidence layer is
-being expanded. Coverage, review status and remaining gates are tracked in
-[Current state and next action](authoring/STATE.md) and
-[Roadmap](authoring/ROADMAP.md).
+Tycho is in active development. The current tree has 12 volumes, 89 chapters
+and 612 documents. The pattern atlas has 145 entries: 104 are technically and
+decision sufficient, 94 are owner-accepted, and 41 remain partial. The public
+source register has 366 records. V12 adds three models, ten scenarios, ten seeded
+runs and two decision records. The read-only MCP adapter is a local candidate;
+the source-to-claim evidence layer is being expanded. Counts, review status and
+remaining gates are tracked in [Current state and next action](authoring/STATE.md),
+[project documentation](doc/README.md) and [Roadmap](authoring/ROADMAP.md).
 
 ## Industry-neutral delivery
 
