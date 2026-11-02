@@ -28,9 +28,9 @@ research has been 60-120 minutes.
 
 ## Remaining estimate
 
-Current: 103 sufficient of 145; 94 owner-accepted of 103.
+Current: 104 sufficient of 145; 94 owner-accepted of 104.
 
-Remaining to 145: 42 entries. All 83 observed entries run 6-406 minutes (mean 57.1),
+Remaining to 145: 41 entries. All 84 observed entries run 6-406 minutes (mean 57.0),
 including pre-optimization entries and review/remediation outliers. Using tiered
 estimates calibrated to that mean gives 37-79 focused hours, or
 **4.6-9.8 days of continuous work**. Base is **6.3 days**. The dominant cost is the
