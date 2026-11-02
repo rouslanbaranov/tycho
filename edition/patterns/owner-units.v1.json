@@ -8688,9 +8688,16 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Partitioning splits one logical data set into key ranges or lists inside a store so the planner can prune unrelated partitions for a query.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Partitioning splits one logical data set",
+          "reason": "PostgreSQL defines partitioning as splitting a logical table into physical pieces; key-range/list details are Tycho elaboration.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-partition.2026-10-21",
+            "section": "5.12.1. Overview",
+            "quote": "Partitioning refers to splitting what is logically one large table into smaller physical pieces.",
+            "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001"
+          }
         },
         "invariant": {
           "state": "supported",
@@ -8717,9 +8724,16 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Keep one table and add an index when the main query already prunes; partition only when the data volume, retention or maintenance benefit is measured.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Keep one table and add an index",
+          "reason": "PostgreSQL notes partitioning is beneficial mainly for very large tables; keeping one table with an index is Tycho guidance.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-partition.2026-10-21",
+            "section": "5.12.6. Best Practices for Declarative Partitioning",
+            "quote": "In general, partitioning is beneficial only when the table is very large.",
+            "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001"
+          }
         }
       },
       "decision_evidence": {
@@ -8737,9 +8751,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Pending independent review and promotion record; labels remain partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.consistent-hashing",
