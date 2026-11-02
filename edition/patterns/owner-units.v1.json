@@ -2997,9 +2997,16 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "It must own effect identity, deduplication and acknowledgement ordering",
-          "reason": "Page defines delivery/callback but not consumer-owned dedup or ack ordering."
+          "reason": "Idempotent Receiver supports duplicate-safe effect identity/dedup; acknowledgement ordering is Tycho guidance.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.eip-idempotent.2026-11-02",
+            "section": "Solution",
+            "quote": "Design a receiver to be an Idempotent Receiver --one that can safely receive the same message multiple times.",
+            "revision": "e9c278723f6c5bdcab0fdd9c410e8a17bc4eda0b2f63aefb8fe4afb22d76a86d"
+          }
         },
         "failure_recovery": {
           "state": "supported",
@@ -3014,9 +3021,16 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Polling a queue or a scheduled batch job may be preferable when volume is low, batch control matters or the consumer cannot own a cursor.",
-          "reason": "Page links Polling Consumer without comparison."
+          "state": "supported",
+          "quote": "Polling a queue or a scheduled batch job",
+          "reason": "Polling Consumer supports explicit pull when ready; scheduled batch equivalence is Tycho guidance.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.eip-polling.2026-11-02",
+            "section": "Solution",
+            "quote": "The application should use a Polling Consumer, one that explicitly makes a call when it wants to receive a message.",
+            "revision": "b984d2d43aec030f6c035d9abe848cd7cd7f7970c3b35a74fdbfbfd38d59f391"
+          }
         }
       },
       "decision_evidence": {
@@ -3031,12 +3045,24 @@
         "source_id": "src.enterprise-integration",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.eip-idempotent.2026-11-02",
+            "revision": "e9c278723f6c5bdcab0fdd9c410e8a17bc4eda0b2f63aefb8fe4afb22d76a86d"
+          },
+          {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.eip-polling.2026-11-02",
+            "revision": "b984d2d43aec030f6c035d9abe848cd7cd7f7970c3b35a74fdbfbfd38d59f391"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
-      "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Promoted: four dimensions and decision evidence supported; acknowledgement ordering and scheduled batch are Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.request-reply-messaging",
@@ -18936,17 +18962,17 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 106,
+    "invariant_supported": 107,
     "failure_recovery_supported": 106,
-    "alternative_supported": 106,
+    "alternative_supported": 107,
     "technical_partial_bounded": 4,
-    "technical_partial": 41,
+    "technical_partial": 40,
     "technical_name_only": 0,
-    "technical_sufficient": 100,
-    "decision_partial_bounded": 45,
+    "technical_sufficient": 101,
+    "decision_partial_bounded": 44,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 100,
+    "decision_sufficient": 101,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
