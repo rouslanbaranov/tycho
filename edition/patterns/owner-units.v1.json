@@ -4566,14 +4566,28 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The canonical schema must be versioned and lossless for the fields each consumer needs, and translation must fail explicitly when a required meaning is absent.",
-          "reason": "Page has no schema versioning or losslessness rule."
+          "state": "supported",
+          "quote": "The canonical schema must be versioned",
+          "reason": "Confluent supports unique schema versions and compatibility checks; losslessness is Tycho guidance.",
+          "binding": {
+            "source_id": "src.confluent-schema-evolution",
+            "ledger_record": "read.confluent-schema-evolution.2026-11-02",
+            "section": "Schema Evolution and Compatibility",
+            "quote": "Each schema version gets a unique ID and an incremented version number. When a schema is updated, Schema Registry checks compatibility before accepting the new version.",
+            "revision": "85ac200781579982b411b38cc18fb93b96344ea71f72662d5ad4d79a903a4b75"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A translation can preserve syntax while losing domain meaning; contract tests with representative payloads and an owner for schema changes are required.",
-          "reason": "Page has no semantic-loss or contract-test failure path."
+          "state": "supported",
+          "quote": "A translation can preserve syntax while losing domain meaning",
+          "reason": "Confluent accepts field removal as backward compatible and has consumers ignore removed fields, illustrating semantic loss; contract tests and schema owner are Tycho.",
+          "binding": {
+            "source_id": "src.confluent-schema-evolution",
+            "ledger_record": "read.confluent-schema-evolution.2026-11-02",
+            "section": "Backward compatibility",
+            "quote": "An example of a backward compatible change is removing a field. A consumer developed to process events without this field can process events written with the old schema, which contain the field. The consumer ignores that field.",
+            "revision": "85ac200781579982b411b38cc18fb93b96344ea71f72662d5ad4d79a903a4b75"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -4600,12 +4614,19 @@
         "source_id": "src.enterprise-integration",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.confluent-schema-evolution",
+            "ledger_record": "read.confluent-schema-evolution.2026-11-02",
+            "revision": "85ac200781579982b411b38cc18fb93b96344ea71f72662d5ad4d79a903a4b75"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
-      "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Pending independent review; no promotion or acceptance claimed."
     },
     {
       "pattern_id": "tycho.pattern.process-manager-routing-slip",
