@@ -14920,9 +14920,16 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The switch must remain reversible until the new version's persisted effects are proven compatible with the old version.",
-          "reason": "Unit gates promotion on analysis but has no persisted-data or contract compatibility rule."
+          "state": "supported",
+          "quote": "leaving the previous environment available for a short reversal",
+          "reason": "Argo blue-green keeps the previous stack available for rollback via scaleDownDelay; persisted-effect compatibility remains Tycho guidance.",
+          "binding": {
+            "source_id": "src.argo-rollouts",
+            "ledger_record": "read.batch5-argo-bluegreen.2026-10-21",
+            "section": "Overview",
+            "quote": "In order to prevent the packets from being sent to a node that killed the old pod, the rollout uses the scaleDownDelaySeconds field to give nodes enough time to broadcast the IP table changes.",
+            "revision": "7b9285254c0e92d6640d6bf7e458aef609b4adce4e96f49ed6da2b5d33a81ea3"
+          }
         },
         "failure_recovery": {
           "state": "supported",
@@ -14937,9 +14944,16 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A rolling or canary rollout uses less spare capacity; choose blue/green when a fast, complete reversal and a clean environment comparison justify the double capacity.",
-          "reason": "Unit does not compare blue/green with rolling or canary."
+          "state": "supported",
+          "quote": "A rolling or canary rollout uses less spare capacity",
+          "reason": "Argo canary releases a small traffic percentage; the lower-spare-capacity comparison is Tycho guidance.",
+          "binding": {
+            "source_id": "src.argo-rollouts",
+            "ledger_record": "read.argo-canary.2026-11-02",
+            "section": "Overview",
+            "quote": "A canary rollout is a deployment strategy where the operator releases a new version of their application to a small percentage of the production traffic.",
+            "revision": "925398c1c97a8e700b22ec0354648ae6240b405d73e219f2f3e5ffc286c982e7"
+          }
         }
       },
       "decision_evidence": {
@@ -14954,12 +14968,19 @@
         "source_id": "src.argo-rollouts",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.argo-rollouts",
+            "ledger_record": "read.argo-canary.2026-11-02",
+            "revision": "925398c1c97a8e700b22ec0354648ae6240b405d73e219f2f3e5ffc286c982e7"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
-      "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Promoted: four dimensions and decision evidence supported; persisted-effect compatibility and capacity comparison are Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.canary-release",
@@ -18873,17 +18894,17 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 103,
+    "invariant_supported": 104,
     "failure_recovery_supported": 104,
-    "alternative_supported": 105,
+    "alternative_supported": 106,
     "technical_partial_bounded": 4,
-    "technical_partial": 44,
+    "technical_partial": 43,
     "technical_name_only": 0,
-    "technical_sufficient": 97,
-    "decision_partial_bounded": 48,
+    "technical_sufficient": 98,
+    "decision_partial_bounded": 47,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 97,
+    "decision_sufficient": 98,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
