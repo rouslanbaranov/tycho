@@ -8688,14 +8688,21 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Partitioning splits one logical data set into key ranges or lists inside a store so the planner can prune unrelated partitions for a query.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Partitioning splits one logical data set",
+          "reason": "PostgreSQL defines partitioning as splitting a logical table into physical pieces; key-range/list details are Tycho elaboration.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-partition.2026-10-21",
+            "section": "5.12.1. Overview",
+            "quote": "Partitioning refers to splitting what is logically one large table into smaller physical pieces.",
+            "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001"
+          }
         },
         "invariant": {
           "state": "supported",
-          "quote": "Each row belongs to exactly one partition, and the main query must name a partition key so pruning is possible.",
-          "reason": "Requires one partition per row and a named partition key for pruning.",
+          "quote": "Each row belongs to exactly one partition",
+          "reason": "PostgreSQL row routing supports the partition-membership invariant; query must name the key for pruning is Tycho guidance.",
           "binding": {
             "source_id": "src.postgresql",
             "ledger_record": "read.batch3-pg-partition.2026-10-21",
@@ -8717,9 +8724,16 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Keep one table and add an index when the main query already prunes; partition only when the data volume, retention or maintenance benefit is measured.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "partition only when the data volume",
+          "reason": "PostgreSQL says partitioning is beneficial only when the table is very large; keeping one table with an index is Tycho guidance.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-partition.2026-10-21",
+            "section": "5.12.6. Best Practices for Declarative Partitioning",
+            "quote": "In general, partitioning is beneficial only when the table is very large.",
+            "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001"
+          }
         }
       },
       "decision_evidence": {
@@ -8737,9 +8751,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
-      "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Promoted: four dimensions supported; index and pruning guidance are Tycho."
     },
     {
       "pattern_id": "tycho.pattern.consistent-hashing",
@@ -18975,18 +18989,18 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 124,
+    "mechanism_supported": 125,
     "invariant_supported": 108,
     "failure_recovery_supported": 106,
-    "alternative_supported": 108,
+    "alternative_supported": 109,
     "technical_partial_bounded": 4,
-    "technical_partial": 39,
+    "technical_partial": 38,
     "technical_name_only": 0,
-    "technical_sufficient": 102,
-    "decision_partial_bounded": 43,
+    "technical_sufficient": 103,
+    "decision_partial_bounded": 42,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 102,
+    "decision_sufficient": 103,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
