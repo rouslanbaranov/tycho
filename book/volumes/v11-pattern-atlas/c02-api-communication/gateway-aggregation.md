@@ -59,9 +59,9 @@ consistency across owners; when one slow dependency would exhaust the gateway; w
 the aggregate becomes a hidden domain workflow; when partial results cannot be
 represented honestly.
 
-**Competing alternative.** Client-side composition or an API Composition layer with a
-narrow contract. Reverse the choice when aggregation latency and coupling exceed the
-client simplification benefit.
+**Competing alternative.** An aggregation service behind the gateway, or client-side
+composition/API Composition with a narrow contract. Reverse when aggregation latency and
+coupling exceed the client simplification benefit.
 
 **Failure and recovery.** Fan-out latency, partial failure and retry amplification are
 common. Recovery requires per-dependency deadlines and explicit partial results;

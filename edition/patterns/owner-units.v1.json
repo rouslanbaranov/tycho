@@ -1405,7 +1405,7 @@
         "heading": "API Gateway",
         "anchor": "api-gateway",
         "level": 2,
-        "line": 73,
+        "line": 74,
         "unit_kind": "dedicated",
         "unit_terms": [
           "centralize routing, quotas and common policy",
@@ -1794,13 +1794,13 @@
         "heading": "Gateway Aggregation",
         "anchor": "gateway-aggregation",
         "level": 2,
-        "line": 164,
+        "line": 165,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "read-mostly",
-          "own deadline",
-          "cap retries",
-          "API Composition"
+          "needs a timeout",
+          "fan out in parallel",
+          "partial response",
+          "aggregation service"
         ]
       },
       "technical_evidence": {
@@ -1817,32 +1817,46 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Each downstream call carries its own deadline and authorization.",
-          "reason": "Source page gives timeout guidance but does not require per-call deadline and authorization."
-        },
-        "failure_recovery": {
           "state": "supported",
-          "quote": "a gateway retry must not multiply load across every participant",
-          "reason": "Limits gateway retries so one failure does not multiply load across participants.",
+          "quote": "Each downstream call needs a timeout",
+          "reason": "Microsoft supports timeout and partial-result handling; per-call authorization and the universal requirement are Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-gateway-aggregation.2026-10-21",
             "section": "Problems and considerations",
-            "quote": "If one or more service calls take too long, it might be acceptable to time out and return a partial set of data. Consider how your application will handle this scenario.",
+            "quote": "If one or more service calls take too long, it might be acceptable to time out and return a partial set of data.",
+            "revision": "8c2a339db63a704b42c7cf66dae15cf2603825d934dc54f7dcc0ff061c68a300"
+          }
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "quote": "a gateway retry must not multiply load across every participant",
+          "reason": "Microsoft recommends retry/circuit breaking and warns about cascading failures; per-dependency retry caps are Tycho guidance.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-aggregation.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Implement a resilient design by using techniques such as bulkheads, circuit breaking, retry, and timeouts.",
             "revision": "8c2a339db63a704b42c7cf66dae15cf2603825d934dc54f7dcc0ff061c68a300"
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Client-side composition, a backend for frontend or an API Composition layer with a narrow contract may be preferable",
-          "reason": "Source page names an aggregation service behind the gateway, not client composition, BFF or API composition."
+          "state": "supported",
+          "quote": "An aggregation service behind the gateway",
+          "reason": "Microsoft names an aggregation service behind the gateway; client-side/BFF/API Composition are Tycho alternatives.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-aggregation.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Rather than build aggregation into the gateway, consider placing an aggregation service behind the gateway.",
+            "revision": "8c2a339db63a704b42c7cf66dae15cf2603825d934dc54f7dcc0ff061c68a300"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "gateway-aggregation",
         "question": "Should a gateway aggregate several downstream responses into one client-facing result, rather than making the client orchestrate every call?",
-        "competing_alternative": "Client-side composition or an API Composition layer with a narrow contract. Reverse the choice when aggregation latency and coupling exceed the client simplification benefit.",
+        "competing_alternative": "An aggregation service behind the gateway, or client-side composition/API Composition with a narrow contract. Reverse when aggregation latency and coupling exceed the client simplification benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -1854,9 +1868,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Pending independent review and promotion record; labels remain partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.gateway-offloading",
@@ -1868,7 +1882,7 @@
         "heading": "Gateway Offloading",
         "anchor": "gateway-offloading",
         "level": 2,
-        "line": 180,
+        "line": 184,
         "unit_kind": "dedicated",
         "unit_terms": [
           "terminate TLS",
@@ -2241,7 +2255,7 @@
         "heading": "Reverse Proxy",
         "anchor": "reverse-proxy",
         "level": 2,
-        "line": 197,
+        "line": 201,
         "unit_kind": "dedicated",
         "unit_terms": [
           "accepts client connections",

@@ -37,7 +37,8 @@
   "evidence_scope": {
     "source_ids": [
       "src.http-semantics",
-      "src.owasp-rest-enrichment"
+      "src.owasp-rest-enrichment",
+      "src.microsoft-cloud-patterns"
     ],
     "claim_ids": [],
     "status": "source-linked",
@@ -166,16 +167,19 @@ pages, not a benchmark or executed test.
 Gateway aggregation composes several owner responses into one client response at the edge. It fits
 a read-mostly view with a small, stable shape where the gateway is already the trust boundary.
 
-Each downstream call carries its own deadline and authorization. Fan out in parallel, cap retries
-per dependency and for the whole aggregate, and expose which dependency failed; a gateway retry
-must not multiply load across every participant. A partial response needs a versioned shape that
-marks missing parts rather than silently omitting them.
+Each downstream call needs a timeout; returning a partial set of data is acceptable when the
+application can represent it honestly. **Tycho guidance:** per-call authorization, capped retries
+and a versioned partial-response shape remain required. Fan out in parallel, cap retries per
+dependency and for the whole aggregate, and expose which dependency failed; a gateway retry must
+not multiply load across every participant.
 
 Do not aggregate when strong consistency across owners is required, one slow dependency exhausts the
 gateway, the composition is a hidden domain workflow, or partial results cannot be represented
-honestly. Client-side composition, a backend for frontend or an API Composition layer with a narrow
-contract may be preferable; API Composition owns the composition logic while the gateway remains the
-transport and trust boundary. Reverse when latency and coupling exceed the client benefit.
+honestly. An aggregation service behind the gateway may be preferable when aggregation has
+different resource requirements from the gateway. **Tycho guidance:** client-side composition, a
+backend for frontend or an API Composition layer with a narrow contract are also alternatives;
+API Composition owns the composition logic while the gateway remains the transport and trust
+boundary. Reverse when latency and coupling exceed the client benefit.
 
 ## Gateway Offloading
 
