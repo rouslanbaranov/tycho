@@ -36,6 +36,8 @@ limits.
     src="https://img.shields.io/badge/Evidence--Grounded-166534"></a>
   <a href="authoring/STATE.md"><img alt="Promoted 104 of 145 entries"
     src="https://img.shields.io/badge/Promoted-104%20of%20145-2ea043"></a>
+  <a href="authoring/STATE.md"><img alt="41 partial entries, not promoted"
+    src="https://img.shields.io/badge/Partial-41%20of%20145-d29922"></a>
   <a href="authoring/MCP-READ-ONLY-MVP.md"><img alt="MCP"
     src="https://img.shields.io/badge/MCP-111827"></a>
   <a href="authoring/MCP-AGENT-TOOL-CONTRACT.md"><img alt="AI Agents"
