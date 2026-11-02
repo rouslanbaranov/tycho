@@ -20,6 +20,7 @@ then atomically publishes a fresh complete SQLite file; it does NOT claim
 in-place incremental SQLite B-tree updates or stable heading IDs across rename.
 """
 import argparse
+import fcntl
 import hashlib
 import json
 import os
@@ -27,6 +28,7 @@ from pathlib import Path
 import re
 import sqlite3
 import tempfile
+from contextlib import contextmanager
 
 import route_index
 
@@ -654,6 +656,112 @@ def publish(root, supplied=None, *, full=False, allow_partial=False):
     return {"outcome": "published", "snapshot": manifest["snapshot_id"],
             "documents": manifest["document_count"], "sections": len(sections),
             "passages": len(passages), "reused_documents": reused}
+
+
+FRESH_SUFFIX = ".fresh.json"
+
+
+def _source_fingerprint(root):
+    """Cheap stat fingerprint of canonical inputs and the route index."""
+    root = Path(root)
+    digest = hashlib.sha256()
+    paths = sorted((root / "book").rglob("*"))
+    route = root / "generated" / "route-index.v1.json"
+    if route.is_file():
+        paths.append(route)
+    for path in paths:
+        if not path.is_file():
+            continue
+        stat = path.stat()
+        rel = path.relative_to(root).as_posix()
+        digest.update(rel.encode("utf-8") + b"\0")
+        digest.update(str(stat.st_size).encode("ascii") + b"\0")
+        digest.update(str(stat.st_mtime_ns).encode("ascii") + b"\n")
+    return digest.hexdigest()
+
+
+def _marker_path(index):
+    return Path(index).with_name(Path(index).name + FRESH_SUFFIX)
+
+
+def _marker_matches(root, index):
+    try:
+        marker = json.loads(_marker_path(index).read_text(encoding="utf-8"))
+        stat = Path(index).stat()
+    except (OSError, ValueError, json.JSONDecodeError):
+        return None
+    if marker.get("index_mtime_ns") != stat.st_mtime_ns:
+        return None
+    if marker.get("index_size") != stat.st_size:
+        return None
+    if marker.get("source_fingerprint") != _source_fingerprint(root):
+        return None
+    return marker
+
+
+def _write_marker(root, index, result):
+    marker = {
+        "snapshot": result.get("snapshot"),
+        "documents": result.get("documents"),
+        "sections": result.get("sections"),
+        "coverage": result.get("coverage"),
+        "index_mtime_ns": Path(index).stat().st_mtime_ns,
+        "index_size": Path(index).stat().st_size,
+        "source_fingerprint": _source_fingerprint(root),
+    }
+    target = _marker_path(index)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temp = target.with_suffix(target.suffix + ".tmp")
+    temp.write_text(json.dumps(marker, sort_keys=True) + "\n", encoding="utf-8")
+    os.replace(temp, target)
+
+
+@contextmanager
+def build_lock(index):
+    """Serialize index verification/build across CLI and HTTP processes."""
+    lock = Path(index).with_name(Path(index).name + ".lock")
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    with lock.open("a") as handle:
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+def ensure_fresh(root, supplied=None):
+    """Verify the index and rebuild it when stale or missing.
+
+    The rebuild is incremental and atomic. Errors are returned rather than
+    raised so a server can keep its normal not-available response behavior.
+    """
+    index = Path(supplied) if supplied is not None else Path(root) / "generated" / INDEX_NAME
+    cached = _marker_matches(root, index)
+    if cached is not None:
+        return {"status": "fresh", "cached": True,
+                "snapshot": cached.get("snapshot"),
+                "documents": cached.get("documents"),
+                "sections": cached.get("sections")}
+    with build_lock(index):
+        cached = _marker_matches(root, index)
+        if cached is not None:
+            return {"status": "fresh", "cached": True,
+                    "snapshot": cached.get("snapshot"),
+                    "documents": cached.get("documents"),
+                    "sections": cached.get("sections")}
+        try:
+            current = verify(root, index)
+            _write_marker(root, index, current)
+            return {"status": "fresh", **current}
+        except (ValueError, RuntimeError, OSError, sqlite3.Error):
+            pass
+        try:
+            publish(root, index, full=False)
+            current = verify(root, index)
+            _write_marker(root, index, current)
+            return {"status": "rebuilt", **current}
+        except (ValueError, RuntimeError, OSError, sqlite3.Error) as exc:
+            return {"status": "unavailable", "error": str(exc)}
 
 
 def verify(root, supplied=None):
