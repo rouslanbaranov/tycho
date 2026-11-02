@@ -77,6 +77,7 @@ Promotion also requires:
 
 - cherry-pick the lane into a clean branch from current `main`;
 - add sources, ledger records, source-plan units, registry and owner-units;
+- keep `owner-units` coverage at `partial-bounded` until the promotion record exists;
 - split a shared card when a promotion-bound card still sits on a chapter page;
 - preserve promoted sibling sections and cards;
 - refresh artifacts, preflight, and run the full suite once under Python 3.15;
@@ -122,7 +123,8 @@ full report and index its SHA-256.
 - rebind a promoted neighbour only when its section, card and promoted hashes are
   proven unchanged and the reviewer approved the rebind;
 - never raw-update a hash without the proof and approval;
-- set coverage to sufficient only after a pass;
+- set coverage to sufficient only after a pass **and** after the promotion record is
+  written; `owner-units` must never lead the promotion record in time or state;
 - update registry, owner-units, delivery evidence and derived counters.
 
 ### 4.6 PR/MR and merge
