@@ -229,3 +229,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-02 | DeepSeek Reviewer | Book-search restricted-origin cleanup | pass-with-findings | `2026-11-02-book-search-restricted-cleanup-deepseek.md` | `2e0a7827f291cd92daf8dfe2328f9eb59124155722165423b8c929f4ea614c6c` |
 | 2026-11-02 | DeepSeek Reviewer | Durable Subscriber | pass | `2026-11-02-durable-subscriber-deepseek.md` | `1181b97e9d3f86359bfb631db20509da36c77a725c5a9a4972408f60fded4752` |
 | 2026-11-02 | DeepSeek Reviewer | Layered Architecture | pass | `2026-11-02-layered-architecture-deepseek.md` | `901839b66205ff28626abee560d6ff4d746d3d03cf972f12ca57ab2c618be249` |
+| 2026-11-02 | DeepSeek Reviewer | Layered Architecture rebind | pass | `2026-11-02-layered-architecture-rebind-deepseek.md` | `35e2033239c291a32a59927c43fa6ad5956dc66bca5b8d4df484a36dc1588090` |
