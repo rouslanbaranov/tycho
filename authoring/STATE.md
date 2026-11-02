@@ -1,13 +1,13 @@
 # Current state — Tycho
 
-> **Current promotion snapshot — 2026-11-02 (authoritative):** **98 of 145** entries
+> **Current promotion snapshot — 2026-11-02 (authoritative):** **99 of 145** entries
 > are technical/decision `sufficient`; **94 of 98** are owner-accepted (2026-11-01).
 > Event Sourcing, Durable Subscriber, Layered Architecture and Blue-Green Deployment
 > remain acceptance-pending.
-> **47** entries remain.
+> **46** entries remain.
 > Local full suite:
-> **709/709 OK** at `38af748f`; this is not a CI result. Timing covers 78 promotion cycles: mean **52.8 min**
-> (range 6-388, including reviewer/integration wait); forecast **2.4 / 3.4 / 5.2**
+> **709/709 OK** at `38af748f`; this is not a CI result. Timing covers 79 promotion cycles: mean **52.9 min**
+> (range 6-388, including reviewer/integration wait); forecast **2.4 / 3.3 / 5.1**
 > days (optimistic/base/pessimistic). The dated audit notes below describe the
 > 2026-10-21 baseline and are historical. B47 Consistent Hashing, B48 Circuit Breaker, B49 Expand-and-Contract B50 Transactional Inbox B51 Feature Flags B52 Cache Stampede B53 Index Table B54 Priority Queue B55 SLI/SLO B56 Session Consistency B57 Synthetic Monitoring B58 Distributed Tracing B59 Backup/PITR B60 Failover-Failback B61 Hedged Requests B62 CDC B63 Online Data Migration B64 Negative Caching B65 Tenant Isolation B66 GitOps B67 Workflow Orchestration Branch by Abstraction, Geode, Cache Aside, SOA, API Composition, Aggregator, Gateway Routing, Saga Orchestration, Read Replicas, Zero Trust Architecture, Correlation Identifier, Hexagonal Architecture, Load Balancing and Event Sourcing were promoted on
 > 2026-10-31 after the Codex review; 94 of the 95 promotions are owner-accepted, with
