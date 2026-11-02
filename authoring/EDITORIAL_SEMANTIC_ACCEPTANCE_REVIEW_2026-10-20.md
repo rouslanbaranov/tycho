@@ -188,7 +188,7 @@ These checks compare deliberately narrow statements with official references. Th
 
 ## F-07 — standalone Tycho scope contamination risk; corrected
 
-An additional **69/69 canonical-chapter literal-scope scan** checked for explicit `UBS`, `Adro`, `Rocinante`, `900-page`, and distinctive large-system repository/chapter counts. There were **no literal UBS/Adro/Rocinante matches** in the 69 primary chapters. Two V06 search chapters nonetheless contained a **900-page example corpus size**, overlapping a different book's known sizing and unnecessary for a standalone System Design text:
+An additional **69/69 canonical-chapter literal-scope scan** checked for explicit restricted-origin identifiers, `900-page`, and distinctive large-system repository/chapter counts. There were **no literal restricted-origin identifier matches** in the 69 primary chapters. Two V06 search chapters nonetheless contained a **900-page example corpus size**, overlapping a different book's known sizing and unnecessary for a standalone System Design text:
 
 - V06/C03 `book/search/lexical-indexing-bm25-and-sql-fts.md`: removed a prescriptive sentence about a 900-page book needing a distributed cluster and replaced it with a corpus-independent measured-decision criterion.
 - V06/C04 `book/search/vector-hnsw-faiss-pgvector.md`: replaced the 900-page corpus sizing statement with an explicitly input-dependent chunk/vector/metadata/index formula.

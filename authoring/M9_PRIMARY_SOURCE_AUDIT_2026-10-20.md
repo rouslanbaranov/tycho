@@ -57,7 +57,7 @@
 | [Build and delivery migration](../book/cases/decisions/build-delivery-migration.md) | Original Tycho synthetic ADR, not a company decision | No independent product benchmark or company-level approval follows from comparing linked historical cases |
 | [Agent-assisted migration safety](../book/cases/decisions/agentic-migration-safety.md) | Original Tycho synthetic ADR, not a company decision | No independent product benchmark or company-level approval follows from comparing linked historical cases |
 
-**Independence correction:** all six playbooks carried generic result-routing language that referred directly to the separate **Rocinante** platform/agent. Replaced these with self-contained `architecture-analysis agent` / `its user` language. This is a book-ownership and terminology correction, not evidence of confidential content copied into the book.
+**Independence correction:** all six playbooks carried generic result-routing language that referred directly to a separate external platform/agent. Replaced these with self-contained `architecture-analysis agent` / `its user` language. This is a book-ownership and terminology correction, not evidence of confidential content copied into the book.
 
 ## Provenance/metadata gap, now partially repaired
 

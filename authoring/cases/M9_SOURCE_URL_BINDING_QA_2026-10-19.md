@@ -1,6 +1,6 @@
 # M9 E16-08 — Curated Source ID to Primary URL Integrity Gate
 
-**Date:** 2026-10-19 · **Issue:** #121 · **Scope:** Portable M9 `case-record` proposal, not production Rocinante/Adro provenance replacement.
+**Date:** 2026-10-19 · **Issue:** #121 · **Scope:** Portable M9 `case-record` proposal, not production external-specialist/restricted-origin provenance replacement.
 
 ## Defect
 
@@ -34,4 +34,4 @@ python3 scripts/validate_m9_cases.py --root .
 
 Preserve command outputs and revision SHA, run `jsonschema`'s optional FormatChecker where installed, and treat new errors as reviewable source-catalog discrepancies, not grounds to invent a different primary URL. Issue #121 must remain open for independent source/technical review and actual MCP evaluation or authorized dependency disposition.
 
-No employer/Adro sources, core M1–M8 features, Scheduled Tasks or GitHub Actions modifications were introduced.
+No employer or restricted-origin sources, core M1–M8 features, Scheduled Tasks or GitHub Actions modifications were introduced.

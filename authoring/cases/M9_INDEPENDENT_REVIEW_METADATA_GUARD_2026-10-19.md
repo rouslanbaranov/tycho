@@ -22,4 +22,4 @@ Python 3.13.5 and `jsonschema` 4.26.0 ran with two previously transferred case-r
 
 **Limitations:** This was an executed **isolated JSON validation** using copied JSON examples and in-memory schema changes, not authenticated full-checkout execution of the updated Python code or a byte-verified GitHub file read. The mere presence of non-empty reviewer metadata does **not** establish that a reviewer is real, independent, qualified, or has actually reviewed the sources and benchmarks. A real reviewer approval, source-by-source verdict and audit record are mandatory before M9 #121 closes.
 
-No Adro/private sources, employer data, new workflow, Scheduled Tasks or core M1–M8 files were used.
+No restricted-origin/private sources, employer data, new workflow, Scheduled Tasks or core M1–M8 files were used.

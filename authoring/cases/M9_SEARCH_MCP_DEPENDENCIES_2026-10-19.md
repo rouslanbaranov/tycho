@@ -47,6 +47,6 @@ When the owning core team exposes a usable pinned K18/K20/K21 service, run the *
 
 This report is authored solely under M9. Do **not** edit the core worker lock `automation/tycho-core-worker-lock`, PR #188 or E07/E08/E09 issues. No changes to their schemas, commands, implementation schedule or CI policy are authorized here.
 
-Tycho case data and tests remain a completely **public-source-only** collection. Adro data, employer code, private source paths and UBS-specific concepts are prohibited. Rocinante remains the single umbrella specialist agent; M9 does not create a second expert or duplicate search service.
+Tycho case data and tests remain a completely **public-source-only** collection. Restricted-origin data, private code, private source paths and sector-specific concepts are prohibited. An external specialist remains the single umbrella agent; M9 does not create a second expert or duplicate search service.
 
 **State:** dependency trace prepared; **independent review and genuine MCP evaluation still pending**.

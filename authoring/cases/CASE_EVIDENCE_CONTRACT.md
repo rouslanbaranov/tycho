@@ -14,7 +14,7 @@
 - `confidence` is claim-relative: `primary_statement`, `first_party_reported_measurement`, `independent_replication`, `analysis`, `insufficient_evidence`. Do not compute artificial confidence scores; independent replication must cite a real independently reproduced experiment.
 - `review_status`: `draft`, `source_reviewed`, `mechanically_validated`, `independent_reviewed`, `rejected`. A machine-readable record is not automatically `independent_reviewed`.
 - Every concrete numeric claim must include a unit, numerator/denominator where relevant, version/window, exact location in original publication and explicit comparison denominator. Unknown values remain unknown rather than invented.
-- Contract is collection-specific: `collection = tycho-public`; **Adro/private corpus must not enter Tycho's metadata, source register, evaluation cache or embeddings.**
+- Contract is collection-specific: `collection = tycho-public`; **Restricted-origin/private corpus must not enter Tycho's metadata, source register, evaluation cache or embeddings.**
 
 ## Proposed JSON Schema boundaries
 
@@ -36,7 +36,7 @@ Case-to-pattern, case-to-case, claim-to-source, and decision-to-contrary-evidenc
 
 **Verify:** resolve `claim_id → source_id → primary URL + section/revision`, and attach inaccessible/pending-reverify state. Never fabricate a quote or fetch restricted content.
 
-**Cross-provider:** specialist Rocinante chooses the appropriate provider; Tycho results must visibly say `tycho-public` and must not resolve internal private sources. Do not implement a Tycho-specific duplicate agent.
+**Cross-provider:** an external specialist chooses the appropriate provider; Tycho results must visibly say `tycho-public` and must not resolve internal private sources. Do not implement a Tycho-specific duplicate agent.
 
 **Versioning:** content revision, schema version, source snapshot ID and index build revision should be linked in future immutable snapshots (K24). If index is stale or missing, return explicit `not_indexed`, never a synthetic retrieval hit.
 

@@ -17,7 +17,7 @@ Tycho is a self-contained System Design book serving agent consumers through str
 | Architecture applicability cards, requirement profiles, ADRs and decision methods | **Retained**, canonical documents, not replicated graph nodes |
 | Lexical SQLite FTS5 sections and bounded read | **Retained**, implement and evaluate independently |
 | Vector/hybrid retrieval evaluation | **Retained**, evidence-based production choice |
-| Route → Read → Verify, MCP retrieval/lookup/onboarding, Rocinante specialist integration | **Retained**, with no graph traversal prerequisite |
+| Route → Read → Verify, MCP retrieval/lookup/onboarding, external-specialist integration | **Retained**, with no graph traversal prerequisite |
 | Curated concept/decision relationship graph, sharded graph assembly, graph query API | **Excluded** |
 | Static code relationships over approved, version-locked public examples | **Optional experimental research only**, not required for Tycho product or release |
 | Educational chapters about graph databases, graph algorithms and graph retrieval | **Retained** as System Design content; unrelated to product graph tooling |

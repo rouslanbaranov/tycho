@@ -4,7 +4,7 @@
 
 ## Mission and safety contract
 
-Rocinante and human users must be able to begin with either a **requirement**, an **operational symptom**, an existing **legacy constraint**, or a **modernization objective**; reach only relevant architecture evidence; and receive a conclusion with actual validity conditions, alternatives and missing evidence. Search/navigation does not manufacture a recommendation. When hard-gate data are absent the correct outcome is **insufficient evidence / measure first / retain current design**, not a confident technology name.
+External agents and human users must be able to begin with either a **requirement**, an **operational symptom**, an existing **legacy constraint**, or a **modernization objective**; reach only relevant architecture evidence; and receive a conclusion with actual validity conditions, alternatives and missing evidence. Search/navigation does not manufacture a recommendation. When hard-gate data are absent the correct outcome is **insufficient evidence / measure first / retain current design**, not a confident technology name.
 
 Canonical owners are [requirements and workload](requirements-workload-profile.md), [legacy baseline](legacy-modernization-profile.md), [applicability/contraindication cards](pattern-applicability-card.md), [candidate comparison and ADR](candidate-comparison-adr.md), and [target/transition architecture](target-transition-architecture.md). The source-to-claim ledger of any technical book page remains the authority on mechanism facts; a route explanation is only a navigation summary, never a competing canonical chapter.
 
@@ -65,8 +65,7 @@ This is a *proposed logical envelope*, not a JSON Schema or MCP interface. Stabl
 5. Record the decision and **revisit trigger**; never invent a successful migration.
 6. Express the transition as an evidence-gated stage ladder: proof of concept,
    minimum viable product and product. Each stage may change the architecture
-   but must state its delta, its gate and its evidence; see
-   [the staged contract](../ROCINANTE-STAGED-MODERNIZATION-CONTRACT.md).
+   but must state its delta, its gate and its evidence.
 7. Never present the target state as the first implementation step. If the
    lowest stage has no falsifier or gate evidence, return insufficient
    evidence with the next observation.

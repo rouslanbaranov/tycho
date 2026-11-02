@@ -4,7 +4,7 @@
 
 ## Common envelope, errors and identity
 
-The same request/response semantics apply to local CLI, Python harness and a future Rocinante MCP adapter. A transport adapter must never silently change a snapshot, widen security/coverage constraints or claim source verification from search relevance.
+The same request/response semantics apply to local CLI, Python harness and a future external MCP adapter. A transport adapter must never silently change a snapshot, widen security/coverage constraints or claim source verification from search relevance.
 
 | Field | Meaning |
 |---|---|
