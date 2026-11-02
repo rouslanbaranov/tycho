@@ -4039,14 +4039,28 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Delivery guarantees differ by broker and configuration.",
-          "reason": "Page does not state broker/config-dependent delivery guarantees."
+          "reason": "Jakarta leaves storage allocation and overflow consequences provider-defined, so retention guarantees vary by broker configuration; the exact guarantee is Tycho guidance.",
+          "binding": {
+            "source_id": "src.jakarta-messaging",
+            "ledger_record": "read.jakarta-messaging-durable.2026-11-02",
+            "section": "Durable subscriptions",
+            "quote": "The amount of resources allocated for message storage and the consequences of resource overflow are not defined by Jakarta Messaging.",
+            "revision": "e804878a30804e05eee522e650da874775e9324cd67cd9a47bd632f85b6858fb"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Resume is bounded only by retention, acknowledgement timeout and replay policy.",
-          "reason": "Page does not state retention, ack-timeout or replay bounds."
+          "state": "supported",
+          "quote": "Resume is bounded only by retention",
+          "reason": "Jakarta retains messages until consumed/expired; ack-timeout/replay are Tycho.",
+          "binding": {
+            "source_id": "src.jakarta-messaging",
+            "ledger_record": "read.jakarta-messaging-durable.2026-11-02",
+            "section": "Durable subscriptions",
+            "quote": "Jakarta Messaging retains the subscription’s messages until they are consumed or until they expire.",
+            "revision": "e804878a30804e05eee522e650da874775e9324cd67cd9a47bd632f85b6858fb"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -4073,12 +4087,19 @@
         "source_id": "src.enterprise-integration",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.jakarta-messaging",
+            "ledger_record": "read.jakarta-messaging-durable.2026-11-02",
+            "revision": "e804878a30804e05eee522e650da874775e9324cd67cd9a47bd632f85b6858fb"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
-      "decision_coverage": "partial-bounded",
-      "notes": "JetStream subsection explains persistent consumers but not retention or offline subscription semantics."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Promoted: four dimensions and decision evidence supported; ack-timeout and replay policy are Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.idempotent-receiver",
@@ -18831,17 +18852,17 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 101,
-    "failure_recovery_supported": 102,
+    "invariant_supported": 102,
+    "failure_recovery_supported": 103,
     "alternative_supported": 105,
     "technical_partial_bounded": 4,
-    "technical_partial": 46,
+    "technical_partial": 45,
     "technical_name_only": 0,
-    "technical_sufficient": 95,
-    "decision_partial_bounded": 50,
+    "technical_sufficient": 96,
+    "decision_partial_bounded": 49,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 95,
+    "decision_sufficient": 96,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
