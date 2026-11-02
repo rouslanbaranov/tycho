@@ -42,8 +42,8 @@ limits.
     src="https://img.shields.io/badge/AI%20Agents-c2410c"></a>
   <a href=".python-version"><img alt="Python 3.15.0"
     src="https://img.shields.io/badge/Python-3.15.0-3776ab"></a>
-  <a href="sources/CATALOG.md"><img alt="366 admitted sources"
-    src="https://img.shields.io/badge/Sources-366-166534"></a>
+  <a href="sources/CATALOG.md"><img alt="365 admitted sources"
+    src="https://img.shields.io/badge/Sources-365-166534"></a>
   <a href="authoring/STATE.md"><img alt="Active development"
     src="https://img.shields.io/badge/Status-active%20development-15803d"></a>
   <a href="LICENSE"><img alt="MIT License"
