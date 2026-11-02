@@ -2902,14 +2902,28 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Acknowledgment must follow the durable business effect, and redelivery after a missing acknowledgment must not duplicate that effect.",
-          "reason": "Page has no ack, dedup or idempotency requirement."
+          "state": "supported",
+          "quote": "each message is delivered to one of them",
+          "reason": "EIP point-to-point delivery assigns each message to one consumer; acknowledgment/idempotency mechanics remain Tycho guidance.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-competing.2026-10-21",
+            "section": "Solution (unlabelled)",
+            "quote": "When the channel delivers a message, any of the consumers could potentially receive it.",
+            "revision": "4e7aeddaaaf41076903f75e647af7990dcdb940fb5c13c1da0793261f33f003d"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A slow or poisoned message blocks progress through visibility timeouts and repeated redelivery; bound attempts and route permanently failing work to a declared terminal path.",
-          "reason": "Page has no visibility-timeout, poison or terminal path."
+          "state": "supported",
+          "quote": "A slow or poisoned message blocks progress through visibility timeouts and repeated redelivery",
+          "reason": "SQS visibility timeout supports redelivery after an unprocessed message; poison classification and terminal-path policy are Tycho guidance.",
+          "binding": {
+            "source_id": "src.aws-sqs-visibility",
+            "ledger_record": "read.aws-sqs-visibility.2026-11-02",
+            "section": "Handling failures",
+            "quote": "If you don't process and delete a message before the visibility timeout expires—due to application errors, crashes, or connectivity problems—the message becomes visible again in the queue.",
+            "revision": "006af0a321da7cfe46b6cc6128f53a303219ebd124d9b7aa306cc2064d3dfbc9"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -2936,12 +2950,19 @@
         "source_id": "src.enterprise-integration",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-sqs-visibility",
+            "ledger_record": "read.aws-sqs-visibility.2026-11-02",
+            "revision": "006af0a321da7cfe46b6cc6128f53a303219ebd124d9b7aa306cc2064d3dfbc9"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
-      "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Promoted: four dimensions and decision evidence supported; poison classification and terminal-path policy are Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.event-driven-consumer",
@@ -18894,17 +18915,17 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 104,
-    "failure_recovery_supported": 104,
+    "invariant_supported": 105,
+    "failure_recovery_supported": 105,
     "alternative_supported": 106,
     "technical_partial_bounded": 4,
-    "technical_partial": 43,
+    "technical_partial": 42,
     "technical_name_only": 0,
-    "technical_sufficient": 98,
-    "decision_partial_bounded": 47,
+    "technical_sufficient": 99,
+    "decision_partial_bounded": 46,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 98,
+    "decision_sufficient": 99,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
