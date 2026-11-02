@@ -5,7 +5,7 @@
 
 Decision recorded: 2026-10-20, Europe/Zurich.
 
-Authority: the project owner's explicit instruction in the Rocinante project
+Authority: the project owner's explicit instruction in this project
 conversation at 00:50:09 +02:00. Faithful English translation: "We cancel visual
 rendering and live MCP checks. Independent acceptance has been completed."
 

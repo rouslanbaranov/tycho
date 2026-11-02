@@ -16,9 +16,9 @@ Added a bounded work plan connecting requirements, workload, existing-system con
 
 ## 2026-10-18 — Complete knowledge-platform and MCP scope recorded
 
-Expanded the roadmap from book-first optional delivery to a mandatory self-contained book plus external-agent knowledge service. Added a 30-capability status/acceptance matrix covering authoring, metadata/schema/index validation, reproducible public code evidence, two graph layers, ranked retrieval, semantic/hybrid evaluation, read-only MCP, onboarding, shared Rocinante integration, snapshots, independent deployment, access controls, observability and quality/cost evaluation. Removed the prior deferred-until-justified wording for MCP delivery. Tool/engine choices remain evidence-based; development is not delegated. No platform implementation or deployment was performed in this planning update.
+Expanded the roadmap from book-first optional delivery to a mandatory self-contained book plus external-agent knowledge service. Added a 30-capability status/acceptance matrix covering authoring, metadata/schema/index validation, reproducible public code evidence, two graph layers, ranked retrieval, semantic/hybrid evaluation, read-only MCP, onboarding, external-specialist integration, snapshots, independent deployment, access controls, observability and quality/cost evaluation. Removed the prior deferred-until-justified wording for MCP delivery. Tool/engine choices remain evidence-based; development is not delegated. No platform implementation or deployment was performed in this planning update.
 
-The shared external specialist remains Rocinante. Tycho supplies provider-specific MCP/onboarding guidance and integration tests; no separate book-specific expert is planned. Multi-provider reasoning occurs outside the corpus, with source attribution and isolation, and creates no dependency on or ingestion of another knowledge collection.
+The shared external specialist remains an optional consumer. Tycho supplies provider-specific MCP/onboarding guidance and integration tests; no separate book-specific expert is planned. Multi-provider reasoning occurs outside the corpus, with source attribution and isolation, and creates no dependency on or ingestion of another knowledge collection.
 
 
 ## 2026-10-18 — TYCHO-17 requirements and workload profile (feature branch)
@@ -155,14 +155,10 @@ The environment recovered and the exact PR #222 snapshot was checked locally: 16
 
 The owner authorized physical directory migration after the naming requirements were merged. The explicit map covers ten volumes, 71 chapters and all 406 canonical IDs; 339 files move. Only local path segments and current path metadata change. Every canonical file reconstructs the exact baseline bytes through inverse path transformation; external URLs and fragments retain their spelling. Four historical migration/decomposition/enrichment records retain their original bytes. New validation and nine negative/coverage tests preserve those boundaries. [Migration and validation record](DIRECTORY_MIGRATION_2026-10-20.md). #214 remains open.
 
-## 2026-10-26 — Rocinante staged modernization contract (#61)
+## 2026-10-26 — External-specialist staged modernization contract (#61)
 
-Following the owner's instruction, recorded a proposed provider-behaviour
-contract for the shared specialist: POC → MVP → Product stages with optional
-sub-stages, an architecture delta per stage, and per-stage evidence gates that
-cite Tycho pages and sections as the evidence source. The contract defines
-stage definitions, evidence rules, a logical envelope, refusal rules and a
-synthetic example with no measurements. It is linked from the knowledge
-platform plan, decision navigation and the target/transition model. No agent
-implementation, tool change, fixture, benchmark, evaluation or human review is
-claimed. See [the contract](ROCINANTE-STAGED-MODERNIZATION-CONTRACT.md).
+Following the owner's instruction, a proposed provider-behaviour contract for
+a shared external specialist was recorded with POC → MVP → Product stages,
+evidence gates and a synthetic example. The restricted-origin artifact was
+removed during the 2026-11-02 independence cleanup. No agent implementation,
+tool change, fixture, benchmark, evaluation or human review is claimed.

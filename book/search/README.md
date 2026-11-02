@@ -85,7 +85,7 @@ Text alternative: exact tokens and vector similarity provide candidate sets, hyb
 - [Architecture dependency and event semantics](../distributed/README.md).
 - [25-question pilot methodology limits](../../evaluation/PILOT-ASSESSMENT.md).
 
-These pages provide independent **System Design education** and knowledge for future index, retrieval and MCP work. No curated Tycho knowledge graph is required, planned or implemented. The actual Tycho knowledge index, embedded vectors, permission and source gates, query evaluation and shared Rocinante specialist are separate roadmap capabilities and must not be falsely marked completed.
+These pages provide independent **System Design education** and knowledge for future index, retrieval and MCP work. No curated Tycho knowledge graph is required, planned or implemented. The actual Tycho knowledge index, embedded vectors, permission and source gates, query evaluation and external-specialist integration are separate roadmap capabilities and must not be falsely marked completed.
 
 ## Unresolved experiments
 

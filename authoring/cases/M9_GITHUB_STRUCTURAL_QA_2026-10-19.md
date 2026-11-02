@@ -27,7 +27,7 @@
 3. An example record with all required fields may violate hidden JSON Schema conditions if a true Draft 2020-12 engine is not run. Static checks are a partial fallback.
 4. Source publishers' company-reported metrics are **not** independently reproduced measurements. Never turn a bounded 2023 or 2026 blog report into a fleetwide present-day architecture guarantee.
 5. Full acceptance #121 requires independent human or equivalently independent qualified technical review, source/claim/date/negative evidence verdicts, reproduction or explicit limitation of numerical claims, and actual tests under the owning knowledge-platform contracts where available.
-6. The codebase is private, and no private Adro/employer data was copied into the public-source-only Tycho case content. Relative links and fixtures refer to the intended `tycho-public` collection.
+6. The codebase is private, and no private restricted-origin data was copied into the public-source-only Tycho case content. Relative links and fixtures refer to the intended `tycho-public` collection.
 7. This snapshot is no guarantee against changes made by other GitHub workers after the observed commit. Re-run the local validation script on the eventual integration revision.
 
 ## Reproduce when a checkout is available

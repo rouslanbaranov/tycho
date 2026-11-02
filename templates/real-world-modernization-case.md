@@ -72,7 +72,7 @@ Include original author, URL, access date, relevant section/timestamp, repositor
 - Related canonical Tycho patterns: links to existing pages; do not duplicate explanatory owners:
 - Search tags: baseline, bottleneck, quality attribute, workload regime, transition pattern, runtime version, evidence status:
 - Explicit Markdown cross-links to relevant cases, pattern pages and decision chapters, with the evidence/conditions in prose (not graph edges):
-- Decision prompts the Rocinante agent can use, including a valid `insufficient evidence` outcome:
+- Decision prompts an architecture-analysis agent can use, including a valid `insufficient evidence` outcome:
   - Stage gate the reported evidence supports — proof of concept, minimum
     viable product or product — and what remains unproven at the next gate.
 
