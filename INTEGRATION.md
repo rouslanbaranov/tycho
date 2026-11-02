@@ -12,15 +12,16 @@ agent harness.
 
 | Harness | File | Status |
 |---|---|---|
-| GitHub Copilot | `github-copilot.md` | Implemented |
-| Claude Code | `claude-code.md` | Not implemented |
-| Codex | `codex.md` | Not implemented |
-| Hermes | `hermes.md` | Not implemented |
-| Pi | `pi.md` | Not implemented |
+| GitHub Copilot | `integration/github-copilot.md` | Implemented |
+| Claude Code | `integration/claude-code.md` | Not implemented |
+| Codex | `integration/codex.md` | Not implemented |
+| Hermes | `integration/hermes.md` | Not implemented |
+| Pi | `integration/pi.md` | Not implemented |
 
-Read this file first, then exactly one harness file. A file marked not
-implemented contains no verified configuration. Complete Steps 0-6, then stop
-and report that harness integration is pending.
+This file is the entry point. Read it first, then exactly one harness
+file from `integration/`. A file marked not implemented contains no
+verified configuration. Complete Steps 0-6, then stop and report that harness
+integration is pending.
 
 ## What you will create
 
@@ -29,7 +30,7 @@ and report that harness integration is pending.
 | `INSTALL_DIR`, default `.tycho/` | Sparse checkout, venv and index |
 | `.mcp.json` | stdio and HTTP registration for harness sessions |
 | `.vscode/mcp.json` | stdio and HTTP registration for the VS Code chat UI |
-| `.github/agents/<name>.agent.md` | Copilot agent, see `github-copilot.md` |
+| `.github/agents/<name>.agent.md` | Copilot agent, see `integration/github-copilot.md` |
 | `.gitignore` entries | Ignore the checkout, optionally the MCP configuration |
 
 ## Ground rules
@@ -99,8 +100,14 @@ git -C "$INSTALL_DIR" log -1 --format='%H %cd'
 du -sh "$INSTALL_DIR"
 ```
 
-Expected: eight paths and about 23 MB. Record the commit and date in your
-notes; do not pin them in configuration.
+Expected: eight paths and about 23 MB. `INTEGRATION.md` is a root file
+and arrives automatically; confirm it:
+
+```sh
+test -f "$INSTALL_DIR/INTEGRATION.md" && echo 'entry point present'
+```
+
+Record the commit and date in your notes; do not pin them in configuration.
 
 To refresh an existing install:
 

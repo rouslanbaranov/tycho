@@ -5,7 +5,7 @@ VS Code MCP reference on 2026-11-02. A live Copilot session was not available
 while this file was written; the MCP surface itself is covered by
 `integration/verify.py`.
 
-Complete Steps 0-6 of `instructions.md` first.
+Complete Steps 0-6 of `../INTEGRATION.md` first.
 
 ## Files
 
@@ -105,7 +105,7 @@ Expected: the counts reported by Step 4, and at least one resolvable citation.
 - No tool call edits a file.
 
 If tools do not appear, check the harness log, confirm absolute paths, confirm
-the virtual environment exists, and run Step 5 of `instructions.md`.
+the virtual environment exists, and run Step 5 of `../INTEGRATION.md`.
 
 ## 5. Limits
 
