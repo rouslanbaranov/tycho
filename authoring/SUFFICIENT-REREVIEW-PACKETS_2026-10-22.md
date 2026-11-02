@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 40 |
+| Reviewed by independent agent | 41 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 95, "reviewed-by-independent-agent": 40}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 94, "reviewed-by-independent-agent": 41}.
 
 ## Review procedure
 
@@ -51,7 +51,7 @@ blank verdict template in the machine-readable file.
 
 - **API Gateway**
   Current: pass; historical: None; re-review: pass; report: pass.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Asynchronous Request-Reply**
   Current: reject; historical: None; re-review: pass; report: pass-with-findings.

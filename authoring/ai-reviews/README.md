@@ -234,3 +234,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-02 | DeepSeek Reviewer | Competing Consumers | pass | `2026-11-02-competing-consumers-deepseek.md` | `efe5b77457109cf2f719844b118414ce73ee9231f0d2a49b20e342fb3b972b27` |
 | 2026-11-02 | DeepSeek Reviewer | Canonical Data Model | pass | `2026-11-02-canonical-data-model-deepseek.md` | `f2bc539bc59e2a5c28728e5174306ca6a1852c8ce6987b386af33ceef6803f9d` |
 | 2026-11-02 | DeepSeek Reviewer | Event-Driven Consumer | pass | `2026-11-02-event-driven-consumer-deepseek.md` | `946c0ddae87a45245bf91388b5f7b50a9bd233b24fb3c1495dee0991a221bb9f` |
+| 2026-11-02 | DeepSeek Reviewer | Gateway Aggregation | pass | `2026-11-02-gateway-aggregation-deepseek.md` | `4515fc3293c7c6f668a7b1806b6256faaa5677b00b400cea21a9af798c7a65e9` |
