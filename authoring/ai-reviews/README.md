@@ -236,3 +236,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-02 | DeepSeek Reviewer | Event-Driven Consumer | pass | `2026-11-02-event-driven-consumer-deepseek.md` | `946c0ddae87a45245bf91388b5f7b50a9bd233b24fb3c1495dee0991a221bb9f` |
 | 2026-11-02 | DeepSeek Reviewer | Gateway Aggregation | pass | `2026-11-02-gateway-aggregation-deepseek.md` | `4515fc3293c7c6f668a7b1806b6256faaa5677b00b400cea21a9af798c7a65e9` |
 | 2026-11-02 | DeepSeek Reviewer | Partitioning | pass | `2026-11-02-partitioning-deepseek.md` | `ef609b60e648fc70e1d42c546e343836d2c1085647734462a814c9f9dc0bece6` |
+| 2026-11-02 | DeepSeek Reviewer | Load Shedding | pass | `2026-11-02-load-shedding-deepseek.md` | `4db8a838acca75e84f98258e8385b3a22277ffd771f96c26363e8cbd978d4984` |
