@@ -75,11 +75,10 @@ Architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular
 — The section owns layering and dependency direction; it is not a dedicated layering manuscript.
 
 **Sources.** [src.fowler-layering](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-layering.2026-10-21: Presentation Domain Data Layering; the
-anemic-domain failure also cites read.fowler-anemic.2026-11-02, section "Anemic Domain
-Model",
-sections "Presentation Domain Data Layering", "Further Reading", "Acknowledgements",
-"Notes". This is a definitional article, not a comparative study.
+read record read.fowler-layering.2026-10-21: Presentation Domain Data Layering, sections
+"Presentation Domain Data Layering", "Further Reading", "Acknowledgements", "Notes". This
+is a definitional article, not a comparative study. The anemic-domain failure also cites
+read.fowler-anemic.2026-11-02, sections "Anemic Domain Model", "Transaction".
 
 **Decision state.** `applicable-under-conditions`.
 
