@@ -70,7 +70,8 @@ Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: all eleven served headings read.
-The AWS load-shedding record read.aws-load-shedding.2026-11-02 supports mechanism, failure and alternative; both are public documentation units, not benchmarks.
+The AWS load-shedding record read.aws-load-shedding.2026-11-02 supports mechanism,
+failure and alternative; both are public documentation units, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
