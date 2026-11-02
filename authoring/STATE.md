@@ -31,7 +31,7 @@
 
 **V12 isolated volume — 2026-10-29 (#587):** an additive twelfth volume is implemented
 with 31 pages, three model contracts, nine scenarios, nine seeded runs and two decision
-records. The current tree has 12 volumes, 89 chapters and 492 canonical documents. V12
+records. The current tree has 12 volumes, 89 chapters and 612 canonical documents. V12
 links one way to existing patterns; no existing card, page or promotion record was edited
 (449 protected pages and four protected records unchanged). All V12 models are
 uncalibrated and the workloads are synthetic. Independent review and owner acceptance
