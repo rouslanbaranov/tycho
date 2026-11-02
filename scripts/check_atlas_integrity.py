@@ -43,6 +43,26 @@ def check(root=ROOT):
     promoted_without_card = [p for p in promotions if not cards.get(p)]
     if promoted_without_card:
         errors.append("promoted without card: " + ", ".join(sorted(promoted_without_card)))
+    sufficient_owner = {pid for pid, e in owner.items()
+                        if e["technical_coverage"] == "sufficient"}
+    if sufficient_owner != promotions:
+        errors.append("owner-units sufficient set differs from promotion set: "
+                      + ", ".join(sorted(sufficient_owner ^ promotions)))
+    sufficient_registry = {p["id"] for p in registry
+                           if p["coverage"]["technical"] == "sufficient"}
+    if sufficient_registry != promotions:
+        errors.append("registry sufficient set differs from promotion set: "
+                      + ", ".join(sorted(sufficient_registry ^ promotions)))
+    promoted_note_without_record = [pid for pid, e in owner.items()
+                                    if str(e.get("notes", "")).startswith("Promoted")]
+    promoted_note_without_record = [p for p in promoted_note_without_record
+                                    if p not in promotions]
+    if promoted_note_without_record:
+        errors.append("promoted note without record: "
+                      + ", ".join(sorted(promoted_note_without_record)))
+    summary = load("edition/patterns/owner-units.v1.json")["summary"]
+    if summary.get("technical_sufficient") != len(promotions):
+        errors.append("owner-units summary sufficient count differs from promotions")
     card_paths = [c for c in cards.values() if c]
     if len(card_paths) != len(set(card_paths)):
         errors.append("duplicate card_path values")
