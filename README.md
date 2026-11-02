@@ -34,16 +34,16 @@ limits.
     src="https://img.shields.io/badge/Pattern%20Atlas-145-0f766e"></a>
   <a href="sources/CATALOG.md"><img alt="Evidence-Grounded"
     src="https://img.shields.io/badge/Evidence--Grounded-166534"></a>
-  <a href="authoring/STATE.md"><img alt="Promoted 98 of 145 entries"
-    src="https://img.shields.io/badge/Promoted-98%20of%20145-2ea043"></a>
+  <a href="authoring/STATE.md"><img alt="Promoted 99 of 145 entries"
+    src="https://img.shields.io/badge/Promoted-99%20of%20145-2ea043"></a>
   <a href="authoring/MCP-READ-ONLY-MVP.md"><img alt="MCP"
     src="https://img.shields.io/badge/MCP-111827"></a>
   <a href="authoring/MCP-AGENT-TOOL-CONTRACT.md"><img alt="AI Agents"
     src="https://img.shields.io/badge/AI%20Agents-c2410c"></a>
   <a href=".python-version"><img alt="Python 3.15.0"
     src="https://img.shields.io/badge/Python-3.15.0-3776ab"></a>
-  <a href="sources/CATALOG.md"><img alt="362 admitted sources"
-    src="https://img.shields.io/badge/Sources-362-166534"></a>
+  <a href="sources/CATALOG.md"><img alt="363 admitted sources"
+    src="https://img.shields.io/badge/Sources-363-166534"></a>
   <a href="authoring/STATE.md"><img alt="Active development"
     src="https://img.shields.io/badge/Status-active%20development-15803d"></a>
   <a href="LICENSE"><img alt="MIT License"
