@@ -144,6 +144,7 @@ Public references:
 ## Start here
 
 - [Read the book](book/README.md)
+- [Project documentation](doc/README.md)
 - [Governance policies](governance/README.md)
 - [Current state and next action](authoring/STATE.md)
 - [Roadmap](authoring/ROADMAP.md)
@@ -172,11 +173,38 @@ install `requirements-validation.txt` before schema checks.
 
 ## Current state
 
-Tycho is in active development. The book and pattern atlas are public; the
-read-only MCP adapter is a local candidate; the source-to-claim evidence layer is
-being expanded. Coverage, review status and remaining gates are tracked in
-[Current state and next action](authoring/STATE.md) and
-[Roadmap](authoring/ROADMAP.md).
+Tycho is in active development. The current tree has 12 volumes, 89 chapters
+and 612 documents. The pattern atlas has 145 entries: 104 are technically and
+decision sufficient, 94 are owner-accepted, and 41 remain partial. The public
+source register has 366 records. V12 adds three models, ten scenarios, ten seeded
+runs and two decision records. The read-only MCP adapter is a local candidate;
+the source-to-claim evidence layer is being expanded. Counts, review status and
+remaining gates are tracked in [Current state and next action](authoring/STATE.md),
+[project documentation](doc/README.md) and [Roadmap](authoring/ROADMAP.md).
+
+## Onboard Tycho into your project
+
+Tycho can be added to another repository as a read-only MCP service. The
+[onboarding entry point](INTEGRATION.md) defines the local workflow: a sparse
+checkout, a Python 3.15.0 environment, a rebuilt section index, stdio and HTTP
+registration, token handling, verification and harness-specific setup.
+
+| Harness | Onboarding state |
+|---|---|
+| GitHub Copilot | Configuration implemented; live session not verified |
+| Claude Code | Scaffold only; not implemented |
+| Codex | Scaffold only; not implemented |
+| Hermes | Scaffold only; not implemented |
+| Pi | Scaffold only; not implemented |
+
+The service exposes 11 read-only tools over stdio or HTTP. It does not edit the
+repository, fetch arbitrary URLs, generate final answers or recommendations.
+HTTP access uses a bearer token and is intended for a trusted boundary; OAuth,
+per-client authorization and rate limiting are not implemented.
+
+This onboarding path remains a local candidate, not a production service. See
+[MCP layer](doc/mcp-layer.md), [index and search](doc/index-and-search.md) and
+[benchmarks](doc/benchmarks.md) for the technical and evidence limits.
 
 ## Industry-neutral delivery
 
