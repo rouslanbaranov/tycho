@@ -1,14 +1,14 @@
-# Integrate Tycho into another project
+# Onboard Tycho into your project
 
 **Audience:** an AI agent working in a repository that is not Tycho. The owner
-of that repository pointed you here and asked you to integrate Tycho.
+of that repository pointed you here and asked you to onboard Tycho.
 
 Tycho is an independent, source-grounded system-design knowledge product: a
 book, a decision-oriented pattern atlas and a read-only MCP service. You will
 install a small local copy, build its index and connect it to the project's
 agent harness.
 
-## Harness status
+## Harness onboarding status
 
 | Harness | File | Status |
 |---|---|---|
@@ -21,7 +21,7 @@ agent harness.
 This file is the entry point. Read it first, then exactly one harness
 file from `integration/`. A file marked not implemented contains no
 verified configuration. Complete Steps 0-6, then stop and report that harness
-integration is pending.
+onboarding is pending.
 
 ## What you will create
 
@@ -219,7 +219,7 @@ Two configuration files exist and they are not interchangeable:
 Rules:
 
 - Register both entries: `tycho` (stdio) and `tycho-http`
-  (HTTP). The integration supports both transports and verifies both.
+  (HTTP). This onboarding path supports both transports and verifies both.
 - If a file exists, merge the entries; never overwrite other servers.
 - Keep the names; the Copilot agent tool list references `tycho`.
 - Use absolute paths; the portable format has no working-directory field.

@@ -5,7 +5,7 @@ It is not a chat agent and does not produce final answers. Its job is to return
 bounded, attributable sections, evidence and pattern metadata to a calling
 client.
 
-The implementation is under [`mcp/`](../mcp/). The human integration entry
+The implementation is under [`mcp/`](../mcp/). The human onboarding entry
 point is [INTEGRATION.md](../INTEGRATION.md).
 
 ## Tool surface

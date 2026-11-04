@@ -182,14 +182,14 @@ the source-to-claim evidence layer is being expanded. Counts, review status and
 remaining gates are tracked in [Current state and next action](authoring/STATE.md),
 [project documentation](doc/README.md) and [Roadmap](authoring/ROADMAP.md).
 
-## Integration
+## Onboard Tycho into your project
 
 Tycho can be added to another repository as a read-only MCP service. The
-[integration entry point](INTEGRATION.md) defines the local workflow: a sparse
+[onboarding entry point](INTEGRATION.md) defines the local workflow: a sparse
 checkout, a Python 3.15.0 environment, a rebuilt section index, stdio and HTTP
 registration, token handling, verification and harness-specific setup.
 
-| Harness | Integration state |
+| Harness | Onboarding state |
 |---|---|
 | GitHub Copilot | Configuration implemented; live session not verified |
 | Claude Code | Scaffold only; not implemented |
@@ -202,7 +202,7 @@ repository, fetch arbitrary URLs, generate final answers or recommendations.
 HTTP access uses a bearer token and is intended for a trusted boundary; OAuth,
 per-client authorization and rate limiting are not implemented.
 
-The integration remains a local candidate, not a production service. See
+This onboarding path remains a local candidate, not a production service. See
 [MCP layer](doc/mcp-layer.md), [index and search](doc/index-and-search.md) and
 [benchmarks](doc/benchmarks.md) for the technical and evidence limits.
 

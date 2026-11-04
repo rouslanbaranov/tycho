@@ -66,7 +66,7 @@ These are catalogue and artifact counts, not marketing claims.
   → [Pattern atlas](pattern-atlas.md).
 - **Contributor:** [Evidence layer](evidence-layer.md) →
   [Tests and coverage](tests-and-coverage.md) → [AGENTS.md](../AGENTS.md).
-- **Engineer integrating retrieval:** [Index and search](index-and-search.md) →
+- **Engineer onboarding retrieval:** [Index and search](index-and-search.md) →
   [MCP layer](mcp-layer.md) → [Benchmarks](benchmarks.md).
 - **Reviewer:** [Evidence layer](evidence-layer.md) →
   [Benchmarks](benchmarks.md) → the cited artifact for a specific claim.
