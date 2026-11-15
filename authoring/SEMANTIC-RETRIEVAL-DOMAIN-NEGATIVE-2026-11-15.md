@@ -42,3 +42,21 @@ more than 155 training pairs. Without that, the current evidence is:
 
 No merge. The experimental code remains on
 `feature/TYCHO-1077-domain-tuned-semantic-retrieval`.
+
+## Source-grounded hard set
+
+Twenty questions were written from exact H2 section text; accepted_section was
+the section used to write the question. Mean query-term overlap with that
+section was 0.483 (range 0.297-0.655), so this is not a purely lexical set.
+
+| Method | page hit@1/3/5 | section hit@1/3/5 | MRR page/section |
+|---|---|---|---|
+| BM25 | 0.650/0.700/0.800 | 0.600/0.650/0.750 | 0.706/0.647 |
+| domain MiniLM semantic | 0.450/0.600/0.650 | 0.450/0.550/0.650 | 0.556/0.531 |
+| MiniLM semantic | 0.450/0.600/0.650 | 0.450/0.550/0.650 | 0.548/0.526 |
+| potion-8M semantic | 0.150/0.250/0.400 | 0.150/0.250/0.400 | 0.253/0.249 |
+| hybrid domain 0.25 | 0.550/0.650/0.800 | 0.500/0.550/0.700 | 0.630/0.555 |
+
+BM25 remains better at every rank. The hybrid matches page hit@5 but loses
+top-1 and section ranking. Twenty queries give wide confidence intervals; no
+statistically defensible semantic gain is present.
