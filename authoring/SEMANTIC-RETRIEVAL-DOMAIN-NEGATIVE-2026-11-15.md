@@ -60,3 +60,11 @@ section was 0.483 (range 0.297-0.655), so this is not a purely lexical set.
 BM25 remains better at every rank. The hybrid matches page hit@5 but loses
 top-1 and section ranking. Twenty queries give wide confidence intervals; no
 statistically defensible semantic gain is present.
+
+Bootstrap 95% CIs (2000 resamples, 20 hard queries):
+
+- BM25 page hit@1 0.65 (0.45-0.85), hit@5 0.80 (0.55-0.90), MRR 0.70 (0.49-0.88)
+- domain semantic page hit@1 0.45 (0.25-0.65), hit@5 0.65 (0.45-0.85),
+  MRR 0.554 (0.375-0.746)
+
+The CIs overlap; no statistically defensible improvement.
